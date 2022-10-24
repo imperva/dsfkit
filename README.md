@@ -2,7 +2,7 @@
 DSFKIT is the official Terraform toolkit designed to automate the deployment and maintanence of Imperva's Data Security Fabric AKA DSF.
 
 # Installation Modes
-DSFKIT supports two installation modes:
+DSFKit supports two installation modes:
 1. UI Mode
 2. CLI Mode
 
