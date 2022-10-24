@@ -80,7 +80,11 @@ sudo yum install -y yum-utils
 sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 sudo yum -y install terraform
 
+<<<<<<< HEAD
 sudo git clone https://***REMOVED***@github.com/imperva/dsfkit.git
+=======
+sudo git clone https://***REMOVED***@github.com/imperva/dsfkit.git
+>>>>>>> de99ae0ba38cd5e631bf7046d6f6cd1d9c42796c
 cd /dsfkit/deploy/examples/${example_name}
 
 sudo terraform init

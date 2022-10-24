@@ -17,9 +17,9 @@ resource "null_resource" "myip" {
 }
 
 # Check this account has permissions to access to tarballs' bucket
-data "aws_s3_bucket" "tarball_bucket" {
-  bucket = var.tarball_s3_bucket
-}
+# data "aws_s3_bucket" "tarball_bucket" {
+#   bucket = var.tarball_s3_bucket
+# }
 
 data "local_file" "myip_file" {
     filename = "tmp/myip"
