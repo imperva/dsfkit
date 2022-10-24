@@ -54,5 +54,5 @@ jobs:
       run: terraform apply -auto-approve -input=false
 
     - name: Terraform destroy
-      if: always()
+      if: always() && (github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       run: terraform destroy -auto-approve -input=false
