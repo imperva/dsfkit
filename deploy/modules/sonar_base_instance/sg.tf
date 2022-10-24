@@ -67,7 +67,7 @@ resource "aws_security_group_rule" "sonarrsyslog_self" {
 resource "aws_security_group_rule" "sg_ingress_self" {
  type              = "ingress"
  from_port         = 0
- to_port           = 65000
+ to_port           = 65535
  protocol          = "tcp"
  self              = true
  security_group_id = aws_security_group.dsf_base_sg.id
