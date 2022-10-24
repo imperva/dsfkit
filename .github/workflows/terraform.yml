@@ -3,7 +3,7 @@ name: 'Terraform'
 on:
   workflow_dispatch: {}
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   # pull_request:
 
 permissions:
