@@ -1,0 +1,14 @@
+output "public_address" {
+  description = "Public Elastic IP address of the DSF base instance"
+  value       = var.public_ip && can(aws_eip.dsf_instance_eip[0].public_ip) ? aws_eip.dsf_instance_eip[0].public_ip : null
+}
+
+output "private_address" {
+  description = "Private IP address of the DSF base instance"
+  value       = tolist(aws_network_interface.eni.private_ips)[0]
+}
+
+output "sg_id" {
+  description = "Security group on DSF base instance"
+  value       = aws_security_group.dsf_base_sg.id
+}

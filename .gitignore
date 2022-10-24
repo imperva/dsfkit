@@ -1,0 +1,14 @@
+dsf_hub_federation_ssh_key
+dsf_hub_federation_ssh_key.pub
+dsf_hub_ssh_key
+dsf_hub_ssh_key.pub
+**/.terraform/*
+*terraform.tfstate
+*terraform.tfstate.backup
+*.svg
+*terraform.tfvars
+*backend.tf
+*gitignore*
+*.terraform*
+*.DS_Store
+*ssh_keys*
