@@ -21,7 +21,7 @@ resource "null_resource" "myip" {
 #   bucket = var.tarball_s3_bucket
 # }
 
-data "local_file" "myip_file" {
+data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
     filename = "tmp/myip"
     depends_on = [
       resource.null_resource.myip
@@ -117,17 +117,6 @@ module "agentless_gw" {
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
 
-module "agentless_gw_public" {
-  count             = var.public_gw_count
-  source            = "../../modules/gw"
-  name              = local.deployment_name
-  subnet_id         = module.vpc.public_subnets[0]
-  key_pair          = module.key_pair.key_pair_name
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.public_address}/32", "${module.hub_secondary.public_address}/32"])
-  tarball_bucket_name = local.tarball_location.s3_bucket
-  public_ip         = true
-}
-
 module "hub_install" {
   for_each = {
     primary_hub = module.hub
@@ -158,19 +147,6 @@ module "gw_install" {
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
-module "public_gw_install" {
-  for_each              = { for idx, val in module.agentless_gw_public : idx => val }
-  source                = "../../modules/install"
-  admin_password        = local.admin_password
-  dsf_type              = "gw"
-  installation_location = local.tarball_location
-  ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.public_address
-  name                  = local.deployment_name
-  sonarw_public_key     = module.hub.sonarw_public_key
-  sonarw_secret_name    = module.hub.sonarw_secret.name
-}
-
 module "hadr" {
   source                = "../../modules/hadr"
   dsf_hub_primary_public_ip=module.hub.public_address
@@ -187,8 +163,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address, module.hub_secondary.public_address],
     concat(
-      [ for idx, val in module.agentless_gw : val.private_address ],
-      [ for idx, val in module.agentless_gw_public : val.public_address]
+      [ for idx, val in module.agentless_gw : val.private_address ]
     )
   )
 }

@@ -1,6 +1,5 @@
 output "dsf_agentless_gws" {
-  value = merge({ for idx, val in module.agentless_gw_public : "public-${idx}" => {public_address = val.public_address, private_address: val.private_address, jsonar_uid = module.public_gw_install[idx].jsonar_uid}},
-    { for idx, val in module.agentless_gw : "private-${idx}" => {private_address = val.private_address, jsonar_uid = module.gw_install[idx].jsonar_uid}})
+  value = { for idx, val in module.agentless_gw : "gw-${idx}" => {private_address = val.private_address, jsonar_uid = module.gw_install[idx].jsonar_uid}}
 }
 
 output "dsf_hubs" {
