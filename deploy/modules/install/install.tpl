@@ -35,10 +35,10 @@ function setup() {
 
 function set_environment_vars() {
     echo Setting environment vars
-    [ -f /etc/profile.d/jsonar.sh ] || cat | sudo tee -a /etc/profile.d/jsonar.sh << EOF 
-export $(cat /etc/sysconfig/jsonar)
-export $(cat /data_vol/sonar-dsf/jsonar/local/sonarg/sysconfig/machine)
-EOF
+    if [ ! -f /etc/profile.d/jsonar.sh ]; then
+        cat /etc/sysconfig/jsonar /data_vol/sonar-dsf/jsonar/local/sonarg/sysconfig/machine | \
+            sed -e 's/^/export /' > /etc/profile.d/jsonar.sh
+    fi
 }
 
 function install_ssh_keys() {
