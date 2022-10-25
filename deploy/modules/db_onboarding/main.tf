@@ -29,6 +29,7 @@ resource "aws_db_instance" "default" {
   username             = local.db_username
   password             = random_password.db_password.result
   parameter_group_name = "default.mysql5.7"
+  publicly_accessible  = true
   skip_final_snapshot  = true
   lifecycle {
     ignore_changes = [
