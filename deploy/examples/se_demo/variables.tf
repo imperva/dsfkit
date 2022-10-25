@@ -15,7 +15,7 @@ variable "tarball_s3_key" {
 
 variable "gw_count" {
   type    = number
-  default = 1
+  default = 2
 }
 
 variable "admin_password" {
