@@ -1,0 +1,14 @@
+{
+  "shared_preload_libraries": "pgaudit",
+  "log_connections": "1",
+  "log_disconnections": "1",
+  "pgaudit.log": "all",
+  "pgaudit.log_catalog": "1",
+  "pgaudit.log_relation": "0",
+  "pgaudit.log_parameter": "1",
+  "pgaudit.log_statement_once": "0",
+  "log_destination": "csvlog",
+  "log_rotation_size": "100000",
+  "log_rotation_age": "10",
+  "log_filename": "postgresql.log.%Y-%m-%d-%H%M"
+}

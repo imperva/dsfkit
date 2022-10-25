@@ -18,7 +18,8 @@ resource "random_pet" "pet" {
 #################################
 resource "aws_db_instance" "default" {
   allocated_storage    = 20
-  db_name              = "mydb_demo_${random_pet.pet.id}"
+  db_name              = "db_demo_${random_pet.pet.id}"
+  identifier           = "edsf-db-demo"
   engine               = "mysql"
   engine_version       = "5.7"
   instance_class       = "db.t3.micro"
@@ -37,15 +38,16 @@ data "template_file" "onboarder" {
     db_user             = local.db_username
     db_password         = random_password.admin_password.result
     db_arn              = aws_db_instance.default.arn
+    module_path         = path.module
   }
-  depends_on = [
-    aws_db_instance.default
-  ]
 }
 
-resource "null_resource" "onboarder_exec" {
+resource "null_resource" "onboarder" {
   provisioner "local-exec" {
     command         = "${data.template_file.onboarder.rendered}"
     interpreter     = ["/bin/bash", "-c"]
   }
+  depends_on = [
+    aws_db_instance.default
+  ]
 }
