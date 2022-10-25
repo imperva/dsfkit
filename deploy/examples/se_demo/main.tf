@@ -101,8 +101,9 @@ module "agentless_gw" {
   name              = local.deployment_name
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.public_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
+  public_ip         = true
 }
 
 module "hub_install" {
@@ -127,8 +128,8 @@ module "gw_install" {
   dsf_type              = "gw"
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.private_address
-  proxy_address         = module.hub.public_address
+  instance_address      = each.value.public_address
+  # proxy_address         = module.hub.public_address
   name                  = local.deployment_name
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
@@ -138,7 +139,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address],
     concat(
-      [ for idx, val in module.agentless_gw : val.private_address ]
+      [ for idx, val in module.agentless_gw : val.public_address ]
     )
   )
 }
@@ -156,3 +157,13 @@ module "gw_attachments" {
     module.gw_install,
   ]
 }
+
+# module "db_onboarding" {
+#   source = "../../modules/db_onboarding"
+#   hub_address = module.hub.public_address
+#   assignee_gw = module.gw_install[0].jsonar_uid
+#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+#   depends_on = [
+#     module.gw_attachments
+#   ]
+# }
