@@ -21,5 +21,7 @@ hub_token=$(cat hub_token)
 echo token: $hub_token
 
 # Run oboarder jar
-echo java -jar JAR --token $hub_token --user ${db_user} --pass ${db_password} --hub ${dsf_hub_address} --gw ${assignee_gw}
+
+echo java -jar .... ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+
 exit 1
