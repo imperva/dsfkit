@@ -27,6 +27,11 @@ resource "aws_db_instance" "default" {
   password             = random_password.admin_password.result
   parameter_group_name = "default.mysql5.7"
   skip_final_snapshot  = true
+  lifecycle {
+    ignore_changes = [
+      enabled_cloudwatch_logs_exports
+    ]
+  }
 }
 
 data "template_file" "onboarder" {
