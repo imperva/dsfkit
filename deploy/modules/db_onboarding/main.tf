@@ -1,5 +1,3 @@
-
-
 locals {
   db_username = "admin"
 }
@@ -56,7 +54,7 @@ resource "null_resource" "onboarder" {
     command         = "${data.template_file.onboarder.rendered}"
     interpreter     = ["/bin/bash", "-c"]
   }
-  depends_on = [
-    aws_db_instance.default
-  ]
+  triggers = {
+    db_arn = aws_db_instance.default.arn
+  }
 }
