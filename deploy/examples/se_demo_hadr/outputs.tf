@@ -9,6 +9,11 @@ output "dsf_hubs" {
         private_address = module.hub.private_address
         jsonar_uid = module.hub_install["primary_hub"].jsonar_uid
       }
+      secondary_hub = {
+        public_address = module.hub_secondary.public_address
+        private_address = module.hub_secondary.private_address
+        jsonar_uid = module.hub_install["secondary_hub"].jsonar_uid
+      }
   }
 }
 

@@ -91,7 +91,19 @@ module "hub" {
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
-  sg_ingress_cidr   = local.workstation_cidr
+  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
+  tarball_bucket_name = local.tarball_location.s3_bucket
+}
+
+module "hub_secondary" {
+  source            = "../../modules/hub"
+  name              = join("-", [local.deployment_name, "secondary"])
+  subnet_id         = module.vpc.public_subnets[0]
+  key_pair          = module.key_pair.key_pair_name
+  web_console_sg_ingress_cidr = var.web_console_cidr
+  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  hadr_secondary_node = true
+  hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
 
@@ -101,13 +113,14 @@ module "agentless_gw" {
   name              = local.deployment_name
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
 
 module "hub_install" {
   for_each = {
     primary_hub = module.hub
+    secondary_hub = module.hub_secondary
   }
   source                = "../../modules/install"
   admin_password        = local.admin_password
@@ -134,9 +147,21 @@ module "gw_install" {
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
+module "hadr" {
+  source                = "../../modules/hadr"
+  dsf_hub_primary_public_ip=module.hub.public_address
+  dsf_hub_primary_private_ip=module.hub.private_address
+  dsf_hub_secondary_public_ip=module.hub_secondary.public_address
+  dsf_hub_secondary_private_ip=module.hub_secondary.private_address
+  ssh_key_path          = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  depends_on = [
+    module.hub_install
+  ]
+}
+
 locals {
   hub_gw_combinations = setproduct(
-    [module.hub.public_address],
+    [module.hub.public_address, module.hub_secondary.public_address],
     concat(
       [ for idx, val in module.agentless_gw : val.private_address ]
     )
@@ -154,5 +179,6 @@ module "gw_attachments" {
   depends_on = [
     module.hub_install,
     module.gw_install,
+    module.hadr
   ]
 }
