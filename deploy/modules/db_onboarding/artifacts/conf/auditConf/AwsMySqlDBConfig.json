@@ -1,7 +1,0 @@
-{
-  "server_audit_excl_users": "rdsadmin",
-  "server_audit_events": "CONNECT,QUERY",
-  "server_audit_incl_users": " ",
-  "server_audit_file_rotations": "100",
-  "server_audit_file_rotate_size": "1000000000"
-}
