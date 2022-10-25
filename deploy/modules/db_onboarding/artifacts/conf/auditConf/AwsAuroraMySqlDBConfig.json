@@ -1,5 +1,0 @@
-{
-  "server_audit_logging": "1",
-  "server_audit_excl_users": "rdsadmin",
-  "server_audit_events": "CONNECT,QUERY"
-}
