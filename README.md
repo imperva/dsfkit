@@ -1,4 +1,8 @@
-# DSFKIT
+
+
+[Temporarly full documentation can be found here](https://docs.google.com/document/d/1wzCrAkU2tk5e7L8pYLOeyJYai7upFBLhANWY1yDTOao/edit?usp=sharing)
+
+<!-- # DSFKIT
 DSFKIT is the official Terraform toolkit designed to automate the deployment and maintanence of Imperva's Data Security Fabric AKA DSF.
 
 # Installation Modes
@@ -125,3 +129,4 @@ Customers with different deployment requirments can copy TF resources and module
 
 # IAM Roles
 TBD
+ -->
