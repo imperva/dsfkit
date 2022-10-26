@@ -21,4 +21,4 @@ hub_token=$(cat hub_token)
 echo token: $hub_token
 
 # Run oboarder jar
-java -jar ${module_path}/artifacts/sonar_onboarder-1.2-SNAPSHOT-all.jar ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+java -jar ${module_path}/artifacts/sonar_onboarder-1.4-SNAPSHOT-all.jar ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
