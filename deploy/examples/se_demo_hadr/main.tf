@@ -11,7 +11,7 @@ resource "null_resource" "myip" {
     always_run = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command         = "mkdir -p tmp && curl http://ipv4.icanhazip.com > tmp/myip"
+    command         = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
     interpreter     = ["/bin/bash", "-c"]
   }
 }
@@ -22,7 +22,7 @@ resource "null_resource" "myip" {
 # }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
-    filename = "tmp/myip"
+    filename = "myip-${terraform.workspace}"
     depends_on = [
       resource.null_resource.myip
     ]
@@ -61,7 +61,7 @@ module "key_pair" {
 resource "local_sensitive_file" "dsf_ssh_key_file" {
   content         = module.key_pair.private_key_pem
   file_permission = 400
-  filename        = "ssh_keys/dsf_hub_ssh_key"
+  filename        = "ssh_keys/dsf_hub_ssh_key-${terraform.workspace}"
 }
 
 ##############################
@@ -73,12 +73,12 @@ module "vpc" {
 
   cidr = "10.0.0.0/16"
 
+  enable_nat_gateway = true
+  single_nat_gateway = true
+
   azs             = ["${local.region}a", "${local.region}b", "${local.region}c"]
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-
-  enable_nat_gateway = false
-  single_nat_gateway = true
 }
 
 ##############################
@@ -98,7 +98,7 @@ module "hub" {
 module "hub_secondary" {
   source            = "../../modules/hub"
   name              = join("-", [local.deployment_name, "secondary"])
-  subnet_id         = module.vpc.public_subnets[0]
+  subnet_id         = module.vpc.public_subnets[1]
   key_pair          = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
   sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
@@ -111,7 +111,7 @@ module "agentless_gw" {
   count             = var.gw_count
   source            = "../../modules/gw"
   name              = local.deployment_name
-  subnet_id         = module.vpc.public_subnets[0]
+  subnet_id         = module.vpc.private_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
@@ -182,3 +182,16 @@ module "gw_attachments" {
     module.hadr
   ]
 }
+
+# module "db_onboarding" {
+#   count = 1
+#   source = "../../modules/db_onboarding"
+#   hub_address = module.hub.public_address
+#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+#   assignee_gw = module.hub_install["primary_hub"].jsonar_uid
+# }
+
+# output "db_details" {
+#   value = module.db_onboarding
+#   sensitive = true
+# }
