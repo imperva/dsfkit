@@ -156,14 +156,11 @@ module "gw_attachments" {
 #   count = 6
 #   source = "../../modules/db_onboarding"
 #   hub_address = module.hub.public_address
-#   assignee_gw = module.hub_install.jsonar_uid
 #   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
-#   depends_on = [
-#     module.gw_attachments
-#   ]
+#   assignee_gw = module.hub_install.jsonar_uid
 # }
-# output "db_login_command" {
-#   foreach              = { for idx, val in module.db_onboarding : idx => val }
-#   value = "mysql -h${each.value.db_endpoint} -P3306  --user ${each.value.db_username} mysql --password=${each.value.db_password}"
+
+# output "db_details" {
+#   value = module.db_onboarding
 #   sensitive = true
 # }
