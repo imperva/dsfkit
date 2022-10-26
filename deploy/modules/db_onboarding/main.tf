@@ -29,6 +29,7 @@ resource "aws_db_instance" "default" {
   parameter_group_name = "default.mysql5.7"
   publicly_accessible  = true
   skip_final_snapshot  = true
+  backup_retention_period = 0
   lifecycle {
     ignore_changes = [
       enabled_cloudwatch_logs_exports
