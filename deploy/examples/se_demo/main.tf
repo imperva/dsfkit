@@ -152,15 +152,15 @@ module "gw_attachments" {
   ]
 }
 
-# module "db_onboarding" {
-#   count = 6
-#   source = "../../modules/db_onboarding"
-#   hub_address = module.hub.public_address
-#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
-#   assignee_gw = module.hub_install.jsonar_uid
-# }
+module "db_onboarding" {
+  count = 1
+  source = "../../modules/db_onboarding"
+  hub_address = module.hub.public_address
+  hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  assignee_gw = module.hub_install.jsonar_uid
+}
 
-# output "db_details" {
-#   value = module.db_onboarding
-#   sensitive = true
-# }
+output "db_details" {
+  value = module.db_onboarding
+  sensitive = true
+}
