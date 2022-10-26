@@ -19,7 +19,7 @@ variable "subnet_id" {
 
 variable "instance_type" {
   type = string
-  default = "c5.9xlarge"
+  default = "r6i.2xlarge"
   description = "Ec2 instance type for the DSF hub"
 }
 
