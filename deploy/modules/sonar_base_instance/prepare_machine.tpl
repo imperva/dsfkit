@@ -54,6 +54,6 @@ function attach_disk() {
     mount -a
 }
 
-# wait_for_network
+wait_for_network
 install_deps
 attach_disk
