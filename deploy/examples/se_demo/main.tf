@@ -104,15 +104,12 @@ module "agentless_gw" {
 }
 
 module "hub_install" {
-  for_each = {
-    primary_hub = module.hub
-  }
   source                = "../../modules/install"
   admin_password        = local.admin_password
   dsf_type              = "hub"
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.public_address
+  instance_address      = module.hub.public_address
   name                  = local.deployment_name
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
@@ -156,11 +153,17 @@ module "gw_attachments" {
 }
 
 # module "db_onboarding" {
+#   count = 6
 #   source = "../../modules/db_onboarding"
 #   hub_address = module.hub.public_address
-#   assignee_gw = module.gw_install[0].jsonar_uid
+#   assignee_gw = module.hub_install.jsonar_uid
 #   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
 #   depends_on = [
 #     module.gw_attachments
 #   ]
+# }
+# output "db_login_command" {
+#   foreach              = { for idx, val in module.db_onboarding : idx => val }
+#   value = "mysql -h${each.value.db_endpoint} -P3306  --user ${each.value.db_username} mysql --password=${each.value.db_password}"
+#   sensitive = true
 # }
