@@ -23,7 +23,7 @@ resource "null_resource" "myip" {
 }
 
 data "local_file" "myip_file" {
-    filename = "tmp/myip"
+    filename = "myip-${terraform.workspace}"
     depends_on = [
       resource.null_resource.myip
     ]

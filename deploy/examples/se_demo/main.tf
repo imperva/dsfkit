@@ -11,7 +11,7 @@ resource "null_resource" "myip" {
     always_run = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command         = "mkdir -p tmp && curl http://ipv4.icanhazip.com > tmp/myip"
+    command         = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
     interpreter     = ["/bin/bash", "-c"]
   }
 }
@@ -22,7 +22,7 @@ resource "null_resource" "myip" {
 # }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
-    filename = "tmp/myip"
+    filename = "myip-${terraform.workspace}"
     depends_on = [
       resource.null_resource.myip
     ]
@@ -61,7 +61,7 @@ module "key_pair" {
 resource "local_sensitive_file" "dsf_ssh_key_file" {
   content         = module.key_pair.private_key_pem
   file_permission = 400
-  filename        = "ssh_keys/dsf_hub_ssh_key"
+  filename        = "ssh_keys/dsf_hub_ssh_key-${terraform.workspace}"
 }
 
 ##############################
