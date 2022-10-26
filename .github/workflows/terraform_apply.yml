@@ -2,9 +2,9 @@ name: 'Terraform Apply'
 
 on:
   schedule:
+    - cron: '0 22 * * *'
     - cron: '0 0 * * *'
     - cron: '0 2 * * *'
-    - cron: '0 4 * * *'
   workflow_dispatch: {}
   push:
     branches: [ "master" ]
