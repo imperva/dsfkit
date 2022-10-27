@@ -1,9 +1,12 @@
 provider "aws" {
-  # default_tags {
-  #   tags = {
-  #     Name        = "${local.deployment_name}"
-  #   }
-  # }
+  default_tags {
+    tags = {
+      owner                 = local.deployment_name
+      terraform_workspace   = terraform.workspace
+      vendor                = "Imperva"
+      product               = "EDSF"
+    }
+  }
 }
 
 resource "null_resource" "myip" {
@@ -100,7 +103,7 @@ module "hub" {
 module "agentless_gw" {
   count             = var.gw_count
   source            = "../../modules/gw"
-  name              = local.deployment_name
+  name              = join("-", [local.deployment_name, "gw", count.index])
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.public_address}/32"])
