@@ -24,6 +24,6 @@ else
         set -x
         tar -xvf ${module_path}/artifacts/unzip.tar
         PATH=$PATH:$PWD tar zxvf $JDK
-        ./jdk-16.0.2/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+        ./jdk-16.0.2/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${hub_role_arn} ${assignee_gw} ${db_user} ${db_password}
     fi
 fi
