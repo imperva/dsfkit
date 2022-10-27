@@ -16,7 +16,7 @@ output "sonarw_public_key" {
 
 output "sonarw_secret" {
   value = {
-    name = ! var.hadr_secondary_node ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].name : var.hadr_main_hub_sonarw_secret.name
-    arn = ! var.hadr_secondary_node ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].arn : var.hadr_main_hub_sonarw_secret.arn
+    name = local.secret_aws_name
+    arn  = local.secret_aws_arn
   }
 }

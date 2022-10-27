@@ -25,7 +25,7 @@ variable "public_ip" {
 
 variable "instance_type" {
   type = string
-  default = "c5.9xlarge"
+  default = "r6i.xlarge"
   description = "Ec2 instance type for the DSF agentless gw"
 }
 
