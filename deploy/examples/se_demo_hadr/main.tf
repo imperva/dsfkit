@@ -1,7 +1,10 @@
 provider "aws" {
   default_tags {
     tags = {
-      Name        = "${local.deployment_name}"
+      owner                 = local.deployment_name
+      terraform_workspace   = terraform.workspace
+      vendor                = "Imperva"
+      product               = "EDSF"
     }
   }
 }
@@ -33,13 +36,15 @@ resource "random_password" "admin_password" {
   special          = false
 }
 
-resource "random_pet" "pet" {}
+resource "random_id" "salt" {
+  byte_length = 2
+}
 
 data "aws_region" "current" {}
 
 locals {
   region           = data.aws_region.current.name
-  deployment_name  = join("-", [var.deployment_name, random_pet.pet.id])
+  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
   admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
@@ -87,7 +92,7 @@ module "vpc" {
 
 module "hub" {
   source            = "../../modules/hub"
-  name              = join("-", [local.deployment_name, "primary"])
+  name              = join("-", [local.deployment_name, "hub", "primary"])
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
@@ -97,7 +102,7 @@ module "hub" {
 
 module "hub_secondary" {
   source            = "../../modules/hub"
-  name              = join("-", [local.deployment_name, "secondary"])
+  name              = join("-", [local.deployment_name, "hub", "secondary"])
   subnet_id         = module.vpc.public_subnets[1]
   key_pair          = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
@@ -110,7 +115,7 @@ module "hub_secondary" {
 module "agentless_gw" {
   count             = var.gw_count
   source            = "../../modules/gw"
-  name              = local.deployment_name
+  name              = join("-", [local.deployment_name, "gw", count.index])
   subnet_id         = module.vpc.private_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
@@ -119,8 +124,8 @@ module "agentless_gw" {
 
 module "hub_install" {
   for_each = {
-    primary_hub = module.hub
-    secondary_hub = module.hub_secondary
+    primary = module.hub
+    secondary = module.hub_secondary
   }
   source                = "../../modules/install"
   admin_password        = local.admin_password
@@ -128,7 +133,7 @@ module "hub_install" {
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = each.value.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "hub", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -142,7 +147,7 @@ module "gw_install" {
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = each.value.private_address
   proxy_address         = module.hub.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -183,19 +188,19 @@ module "gw_attachments" {
   ]
 }
 
-# module "db_onboarding" {
-#   count = 1
-#   source = "../../modules/db_onboarding"
-#   hub_address = module.hub.public_address
-#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
-#   assignee_gw = module.hub_install["primary_hub"].jsonar_uid
-# }
+module "db_onboarding" {
+  count = 1
+  source = "../../modules/db_onboarding"
+  hub_address = module.hub.public_address
+  hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  assignee_gw = module.hub_install["primary"].jsonar_uid
+  assignee_role = module.hub.iam_role
+}
 
-# output "db_details" {
-#   value = module.db_onboarding
-#   sensitive = true
-# }
-
+output "db_details" {
+  value = module.db_onboarding
+  sensitive = true
+}
 
 module "statistics" {
   source = "../../modules/statistics"

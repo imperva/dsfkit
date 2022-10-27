@@ -4,15 +4,15 @@ output "dsf_agentless_gws" {
 
 output "dsf_hubs" {
   value = {
-      primary_hub = {
+      primary = {
         public_address = module.hub.public_address
         private_address = module.hub.private_address
-        jsonar_uid = module.hub_install["primary_hub"].jsonar_uid
+        jsonar_uid = module.hub_install["primary"].jsonar_uid
       }
-      secondary_hub = {
+      secondary = {
         public_address = module.hub_secondary.public_address
         private_address = module.hub_secondary.private_address
-        jsonar_uid = module.hub_install["secondary_hub"].jsonar_uid
+        jsonar_uid = module.hub_install["secondary"].jsonar_uid
       }
   }
 }
