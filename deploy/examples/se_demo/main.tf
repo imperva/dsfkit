@@ -167,3 +167,7 @@ module "gw_attachments" {
 #   value = module.db_onboarding
 #   sensitive = true
 # }
+
+module "statistics" {
+  source = "../../modules/statistics"
+}
