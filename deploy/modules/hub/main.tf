@@ -117,7 +117,7 @@ resource "aws_iam_role" "dsf_hub_role" {
 
 module "hub_instance" {
   source                = "../../modules/sonar_base_instance"
-  name                  = join("-", [var.name, "dsf", "hub"])
+  name                  = var.name
   subnet_id             = var.subnet_id
   key_pair              = var.key_pair
   ec2_instance_type     = var.instance_type
