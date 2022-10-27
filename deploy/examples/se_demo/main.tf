@@ -1,9 +1,9 @@
 provider "aws" {
-  default_tags {
-    tags = {
-      Name        = "${local.deployment_name}"
-    }
-  }
+  # default_tags {
+  #   tags = {
+  #     Name        = "${local.deployment_name}"
+  #   }
+  # }
 }
 
 resource "null_resource" "myip" {
@@ -157,16 +157,16 @@ module "gw_attachments" {
   ]
 }
 
-module "db_onboarding" {
-  count = 1
-  source = "../../modules/db_onboarding"
-  hub_address = module.hub.public_address
-  hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
-  assignee_gw = module.hub_install.jsonar_uid
-  assignee_role = module.hub.iam_role
-}
+# module "db_onboarding" {
+#   count = 1
+#   source = "../../modules/db_onboarding"
+#   hub_address = module.hub.public_address
+#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+#   assignee_gw = module.hub_install.jsonar_uid
+#   assignee_role = module.hub.iam_role
+# }
 
-output "db_details" {
-  value = module.db_onboarding
-  sensitive = true
-}
+# output "db_details" {
+#   value = module.db_onboarding
+#   sensitive = true
+# }
