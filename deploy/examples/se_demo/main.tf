@@ -33,13 +33,15 @@ resource "random_password" "admin_password" {
   special          = false
 }
 
-resource "random_pet" "pet" {}
+resource "random_id" "salt" {
+  byte_length = 2
+}
 
 data "aws_region" "current" {}
 
 locals {
   region           = data.aws_region.current.name
-  deployment_name  = join("-", [var.deployment_name, random_pet.pet.id])
+  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
   admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
@@ -87,7 +89,7 @@ module "vpc" {
 
 module "hub" {
   source            = "../../modules/hub"
-  name              = join("-", [local.deployment_name, "primary"])
+  name              = join("-", [local.deployment_name, "hub", "primary"])
   subnet_id         = module.vpc.public_subnets[0]
   key_pair          = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
@@ -113,7 +115,7 @@ module "hub_install" {
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = module.hub.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "hub"])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -127,7 +129,7 @@ module "gw_install" {
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = each.value.public_address
   # proxy_address         = module.hub.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -161,6 +163,7 @@ module "db_onboarding" {
   hub_address = module.hub.public_address
   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
   assignee_gw = module.hub_install.jsonar_uid
+  assignee_role = module.hub.iam_role
 }
 
 output "db_details" {
