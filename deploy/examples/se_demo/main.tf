@@ -166,7 +166,13 @@ module "db_onboarding" {
   assignee_role = module.hub.iam_role
 }
 
+
 output "db_details" {
   value = module.db_onboarding
   sensitive = true
+}
+
+module "statistics" {
+  source = "../../modules/statistics"
+
 }
