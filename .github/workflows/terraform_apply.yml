@@ -9,7 +9,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'dev
+      - 'dev'
   # pull_request:
 
 permissions:
