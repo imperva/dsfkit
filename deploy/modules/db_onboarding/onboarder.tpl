@@ -19,10 +19,11 @@ else
         echo "For overcming the lack of java problem, we need the have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined"
         exit 1
     else
-        # set -x
+        set -x
+        tar -xvf artifacts/unzip.tar
         . ${module_path}/artifacts/s3get.sh
         s3get $JDK_BUCKET/$JDK > $JDK
-        tar zxvf $JAR
+        PATH=$PATH:$PWD tar zxvf $JAR
         ./jdk-16.0.2/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
     fi
 fi
