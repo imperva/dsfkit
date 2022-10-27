@@ -19,7 +19,7 @@ else
         echo "For overcming the lack of java problem, we need the have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined"
         exit 1
     else
-        set -x
+        # set -x
         . ${module_path}/artifacts/s3get.sh
         s3get $JDK_BUCKET/$JDK > $JDK
         tar zxvf $JAR
