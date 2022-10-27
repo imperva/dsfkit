@@ -30,6 +30,7 @@ function setup() {
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
+        --instance-IP-or-DNS=${instance_fqdn} \
         $(test "${dsf_type}" == "gw" && echo "--remote-machine")
 }
 
