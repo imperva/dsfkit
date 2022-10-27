@@ -37,6 +37,40 @@ resource "aws_db_instance" "default" {
   }
 }
 
+data "aws_iam_role" "assignee_role" {
+  name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+}
+
+resource "aws_iam_policy" "db_cloudwatch_policy" {
+  description = "Cloudwatch read policy for collecting audit from ${aws_db_instance.default.arn}"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:Describe*",
+        "logs:Get*",
+        "logs:List*",
+        "logs:StartQuery",
+        "logs:StopQuery",
+        "logs:TestMetricFilter",
+        "logs:FilterLogEvents"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "test-attach" {
+  name       = "collect-audit-attachment"
+  roles      = [data.aws_iam_role.assignee_role.name]
+  policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
+}
+
 data "template_file" "onboarder" {
   template = file("${path.module}/onboarder.tpl")
   vars = {
@@ -47,6 +81,7 @@ data "template_file" "onboarder" {
     db_password         = random_password.db_password.result
     db_arn              = aws_db_instance.default.arn
     module_path         = path.module
+    hub_role_arn        = var.assignee_role
   }
 }
 
