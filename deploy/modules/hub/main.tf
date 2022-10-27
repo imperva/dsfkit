@@ -9,7 +9,10 @@ resource "tls_private_key" "dsf_hub_ssh_federation_key" {
 
 locals {
   dsf_hub_ssh_federation_key = "${chomp(resource.tls_private_key.dsf_hub_ssh_federation_key.public_key_openssh)} produced-by-terraform"
-  secret_aws_arn = ! var.hadr_secondary_node ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].arn : var.hadr_main_hub_sonarw_secret.arn
+  created_secret_aws_arn  = length(resource.aws_secretsmanager_secret.dsf_hub_federation_private_key) > 0 ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].arn : ""
+  created_secret_aws_name = length(resource.aws_secretsmanager_secret.dsf_hub_federation_private_key) > 0 ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].name : ""
+  secret_aws_arn  = ! var.hadr_secondary_node ? local.created_secret_aws_arn  : var.hadr_main_hub_sonarw_secret.arn
+  secret_aws_name = ! var.hadr_secondary_node ? local.created_secret_aws_name : var.hadr_main_hub_sonarw_secret.name
 }
 
 resource "aws_secretsmanager_secret" "dsf_hub_federation_public_key" {

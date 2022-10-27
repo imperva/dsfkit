@@ -13,11 +13,11 @@ output "dsf_hubs" {
 }
 
 output "dsf_hub_web_console_url" {
-    value     = can(module.hub.public_address) ? join("", ["https://", module.hub.public_address, ":8443/" ]) : null
+    value     = module.hub.public_address != null ? join("", ["https://", module.hub.public_address, ":8443/" ]) : null
 }
 
 output "primary_hub_ssh_command" {
-    value     = join("", ["ssh -i ${resource.local_sensitive_file.dsf_ssh_key_file.filename} ec2-user@", module.hub.public_address])
+    value     = module.hub.public_address != null ? join("", ["ssh -i ${resource.local_sensitive_file.dsf_ssh_key_file.filename} ec2-user@", module.hub.public_address]) : null
 }
 
 output "admin_password" {
