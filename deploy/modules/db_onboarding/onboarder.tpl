@@ -22,7 +22,7 @@ else
         . ${module_path}/artifacts/s3get.sh
         s3get $JDK_BUCKET/$JDK > $JDK
         set -x
-        tar -xvf artifacts/unzip.tar
+        tar -xvf ${module_path}artifacts/unzip.tar
         PATH=$PATH:$PWD tar zxvf $JAR
         ./jdk-16.0.2/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
     fi
