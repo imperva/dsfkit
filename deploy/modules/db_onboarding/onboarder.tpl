@@ -7,7 +7,7 @@ hub_token=$(cat hub_token)
 echo token: $hub_token
 
 # Run oboarder jar
-JAR=${module_path}/artifacts/sonar_onboarder-1.4.2-SNAPSHOT-all.jar
+JAR=${module_path}/artifacts/sonar_onboarder-1.4.3-SNAPSHOT-all.jar
 JDK=jdk-16.0.2_linux-x64_bin.tar.gz
 JDK_BUCKET=1ef8de27-ed95-40ff-8c08-7969fc1b7901
 
