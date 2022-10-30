@@ -34,6 +34,11 @@ variable "web_console_cidr" {
   default = ["0.0.0.0/0"]
 }
 
+variable "database_cidr" {
+  type    = list(string)
+  default = null
+}
+
 variable "workstation_cidr" {
   type    = list(string)
   default = null
