@@ -10,11 +10,11 @@ variable "assignee_gw" {
   nullable = false
 }
 
-# variable "assignee_role" {
-#   type = string
-#   description = "IAM role of the asset assignee"
-#   nullable = false
-# }
+variable "assignee_role" {
+  type = string
+  description = "IAM role of the asset assignee"
+  nullable = false
+}
 
 variable "hub_ssh_key_path" {
   type = string

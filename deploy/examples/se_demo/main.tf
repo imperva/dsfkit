@@ -166,6 +166,7 @@ module "db_onboarding" {
   hub_address = module.hub.public_address
   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
   assignee_gw = module.hub_install.jsonar_uid
+  assignee_role = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
 }
 
