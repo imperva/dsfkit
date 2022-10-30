@@ -1,11 +1,25 @@
+locals {
+  region           = data.aws_region.current.name
+  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
+  admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  tarball_location = {
+    "s3_bucket": var.tarball_s3_bucket
+    "s3_key": var.tarball_s3_key
+  }
+  tags = {
+      owner                 = local.deployment_name
+      terraform_workspace   = terraform.workspace
+      vendor                = "Imperva"
+      product               = "EDSF"
+      terraform             = "true"
+      environment           = "demo"
+  }
+}
+
 provider "aws" {
   default_tags {
-    tags = {
-      owner                 = local.deployment_name
-      # terraform_workspace   = terraform.workspace
-      # vendor                = "Imperva"
-      # product               = "EDSF"
-    }
+    tags = local.tags
   }
 }
 
@@ -19,10 +33,6 @@ resource "null_resource" "myip" {
   }
 }
 
-# Check this account has permissions to access to tarballs' bucket
-# data "aws_s3_bucket" "tarball_bucket" {
-#   bucket = var.tarball_s3_bucket
-# }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
     filename = "myip-${terraform.workspace}"
@@ -41,17 +51,6 @@ resource "random_id" "salt" {
 }
 
 data "aws_region" "current" {}
-
-locals {
-  region           = data.aws_region.current.name
-  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
-  admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
-  tarball_location = {
-    "s3_bucket": var.tarball_s3_bucket
-    "s3_key": var.tarball_s3_key
-  }
-}
 
 ##############################
 # Generating ssh key pair
@@ -74,20 +73,17 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 ##############################
 
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source              = "terraform-aws-modules/vpc/aws"
+  name                = local.deployment_name
+  cidr                = "10.0.0.0/16"
 
-  cidr = "10.0.0.0/16"
+  enable_nat_gateway  = true
+  single_nat_gateway  = true
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
-
-  azs             = ["${local.region}a", "${local.region}b", "${local.region}c"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
-
-  tags = {
-    "owner" = "sdf"
-  }
+  azs                 = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  private_subnets     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  public_subnets      = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  tags                = local.tags
 }
 
 ##############################
@@ -108,11 +104,10 @@ module "agentless_gw" {
   count             = var.gw_count
   source            = "../../modules/gw"
   name              = join("-", [local.deployment_name, "gw", count.index])
-  subnet_id         = module.vpc.public_subnets[0]
+  subnet_id         = module.vpc.private_subnets[0]
   key_pair          = module.key_pair.key_pair_name
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.public_address}/32"])
+  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
-  public_ip         = true
 }
 
 module "hub_install" {
@@ -134,8 +129,8 @@ module "gw_install" {
   dsf_type              = "gw"
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.public_address
-  # proxy_address         = module.hub.public_address
+  instance_address      = each.value.private_address
+  proxy_address         = module.hub.public_address
   name                  = join("-", [local.deployment_name, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
@@ -145,7 +140,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address],
     concat(
-      [ for idx, val in module.agentless_gw : val.public_address ]
+      [ for idx, val in module.agentless_gw : val.private_address ]
     )
   )
 }
