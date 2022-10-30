@@ -3,13 +3,23 @@ name: 'Terraform Apply'
 on:
   schedule:
     - cron: '0 22 * * *'
+    - cron: '0 23 * * *'
     - cron: '0 0 * * *'
+    - cron: '0 1 * * *'
     - cron: '0 2 * * *'
   workflow_dispatch: {}
   push:
     branches:
       - 'master'
       - 'dev'
+  on:
+    pull_request:
+      types:
+        - 'opened'
+        - 'reopened'
+      branches:
+        - 'master'
+        - 'dev'
   # pull_request:
 
 permissions:
