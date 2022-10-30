@@ -98,12 +98,12 @@ data "template_file" "onboarder" {
   }
 }
 
-# resource "null_resource" "onboarder" {
-#   provisioner "local-exec" {
-#     command         = "${data.template_file.onboarder.rendered}"
-#     interpreter     = ["/bin/bash", "-c"]
-#   }
-#   triggers = {
-#     db_arn = aws_db_instance.rds_instance.arn
-#   }
-# }
+resource "null_resource" "onboarder" {
+  provisioner "local-exec" {
+    command         = "${data.template_file.onboarder.rendered}"
+    interpreter     = ["/bin/bash", "-c"]
+  }
+  triggers = {
+    db_arn = aws_db_instance.rds_instance.arn
+  }
+}
