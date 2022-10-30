@@ -96,7 +96,6 @@ data "template_file" "onboarder" {
     db_password         = random_password.db_password.result
     db_arn              = aws_db_instance.rds_instance.arn
     module_path         = path.module
-    hub_role_arn        = var.assignee_role
   }
 }
 
