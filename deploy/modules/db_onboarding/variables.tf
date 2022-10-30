@@ -21,3 +21,8 @@ variable "hub_ssh_key_path" {
   description = "Hub ssh key path"
   nullable = false
 }
+
+variable database_sg_ingress_cidr {
+  type = list
+  description = "List of allowed ingress cidr patterns for the database"
+}

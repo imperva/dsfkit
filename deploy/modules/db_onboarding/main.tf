@@ -17,7 +17,7 @@ resource "random_pet" "db_id" {
 #################################
 # Provision db
 #################################
-resource "aws_db_instance" "default" {
+resource "aws_db_instance" "rds_instance" {
   allocated_storage    = 20
   db_name              = "db_demo_${random_pet.db_name.id}"
   identifier           = "edsf-db-demo-${random_pet.db_id.id}"
@@ -37,12 +37,25 @@ resource "aws_db_instance" "default" {
   }
 }
 
+data "aws_security_group" "rds_sg" {
+  id = one(aws_db_instance.rds_instance.vpc_security_group_ids)
+}
+
+resource "aws_security_group_rule" "sg_ingress_self" {
+ type              = "ingress"
+ from_port         = aws_db_instance.rds_instance.port
+ to_port           = aws_db_instance.rds_instance.port
+ protocol          = "tcp"
+ cidr_blocks       = var.database_sg_ingress_cidr
+ security_group_id = data.aws_security_group.rds_sg.id
+}
+
 data "aws_iam_role" "assignee_role" {
   name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
 resource "aws_iam_policy" "db_cloudwatch_policy" {
-  description = "Cloudwatch read policy for collecting audit from ${aws_db_instance.default.arn}"
+  description = "Cloudwatch read policy for collecting audit from ${aws_db_instance.rds_instance.arn}"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -79,18 +92,18 @@ data "template_file" "onboarder" {
     assignee_gw         = var.assignee_gw
     db_user             = local.db_username
     db_password         = random_password.db_password.result
-    db_arn              = aws_db_instance.default.arn
+    db_arn              = aws_db_instance.rds_instance.arn
     module_path         = path.module
     hub_role_arn        = var.assignee_role
   }
 }
 
-resource "null_resource" "onboarder" {
-  provisioner "local-exec" {
-    command         = "${data.template_file.onboarder.rendered}"
-    interpreter     = ["/bin/bash", "-c"]
-  }
-  triggers = {
-    db_arn = aws_db_instance.default.arn
-  }
-}
+# resource "null_resource" "onboarder" {
+#   provisioner "local-exec" {
+#     command         = "${data.template_file.onboarder.rendered}"
+#     interpreter     = ["/bin/bash", "-c"]
+#   }
+#   triggers = {
+#     db_arn = aws_db_instance.rds_instance.arn
+#   }
+# }

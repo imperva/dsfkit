@@ -3,6 +3,7 @@ locals {
   deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
   admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  database_cidr    = var.database_cidr    != null ? var.database_cidr    : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
     "s3_bucket": var.tarball_s3_bucket
     "s3_key": var.tarball_s3_key
@@ -33,10 +34,6 @@ resource "null_resource" "myip" {
   }
 }
 
-# Check this account has permissions to access to tarballs' bucket
-# data "aws_s3_bucket" "tarball_bucket" {
-#   bucket = var.tarball_s3_bucket
-# }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
     filename = "myip-${terraform.workspace}"
@@ -199,6 +196,7 @@ module "db_onboarding" {
   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
   assignee_gw = module.hub_install["primary"].jsonar_uid
   assignee_role = module.hub.iam_role
+  database_sg_ingress_cidr = local.database_cidr
 }
 
 output "db_details" {
