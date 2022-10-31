@@ -76,6 +76,10 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 # Generating network
 ##############################
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   name   = local.deployment_name
@@ -84,7 +88,7 @@ module "vpc" {
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  azs             = ["${local.region}a", "${local.region}b", "${local.region}c"]
+  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
   tags            = local.tags
