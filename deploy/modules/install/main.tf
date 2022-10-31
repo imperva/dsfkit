@@ -1,19 +1,6 @@
 locals {
   proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
-}
-
-# data "aws_s3_object" "test" {
-#   bucket = var.installation_location.s3_bucket
-#   key    = var.installation_location.s3_key
-# }
-
-#################################
-# Hub install script (AKA userdata)
-#################################
-
-data "template_file" "install" {
-  template = file("${path.module}/install.tpl")
-  vars = {
+  install_script = templatefile("${path.module}/install.tpl", {
     dsf_type            = var.dsf_type
     installation_s3_bucket = var.installation_location.s3_bucket
     installation_s3_key = var.installation_location.s3_key
@@ -28,12 +15,16 @@ data "template_file" "install" {
     sonarw_public_key   = var.sonarw_public_key
     sonarw_secret_name  = var.sonarw_secret_name
     instance_fqdn       = var.instance_address
-  }
+  })
 }
+
+#################################
+# Hub install script (AKA userdata)
+#################################
 
 resource "null_resource" "install_sonar" {
   provisioner "local-exec" {
-    command         = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${data.template_file.install.rendered}'"
+    command         = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${local.install_script}'"
     interpreter     = ["/bin/bash", "-c"]
   }
   triggers = {

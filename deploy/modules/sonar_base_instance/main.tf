@@ -35,15 +35,11 @@ data "aws_ami" "redhat-7-ami" {
 # Hub cloudinit script (AKA userdata)
 #################################
 
-data "template_file" "prepare_machine" {
-  template = file("${path.module}/prepare_machine.tpl")
-}
-
 resource "aws_instance" "dsf_base_instance" {
   ami                           = data.aws_ami.redhat-7-ami.image_id
   instance_type                 = var.ec2_instance_type
   key_name                      = var.key_pair
-  user_data                     = data.template_file.prepare_machine.rendered
+  user_data                     = templatefile("${path.module}/prepare_machine.tpl", {})
   root_block_device {
     volume_size                   = local.disk_size_app
   }
