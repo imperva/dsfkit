@@ -86,22 +86,18 @@ resource "aws_iam_policy_attachment" "test-attach" {
   policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
 }
 
-data "template_file" "onboarder" {
-  template = file("${path.module}/onboarder.tpl")
-  vars = {
-    dsf_hub_address     = var.hub_address
-    ssh_key_path        = var.hub_ssh_key_path
-    assignee_gw         = var.assignee_gw
-    db_user             = local.db_username
-    db_password         = random_password.db_password.result
-    db_arn              = aws_db_instance.rds_instance.arn
-    module_path         = path.module
-  }
-}
-
 resource "null_resource" "onboarder" {
   provisioner "local-exec" {
-    command         = "${data.template_file.onboarder.rendered}"
+    command             = templatefile("${path.module}/onboarder.tpl", {
+        dsf_hub_address     = var.hub_address
+        ssh_key_path        = var.hub_ssh_key_path
+        assignee_gw         = var.assignee_gw
+        db_user             = local.db_username
+        db_password         = random_password.db_password.result
+        db_arn              = aws_db_instance.rds_instance.arn
+        module_path         = path.module
+      }
+    )
     interpreter     = ["/bin/bash", "-c"]
   }
   triggers = {
