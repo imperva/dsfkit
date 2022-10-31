@@ -61,16 +61,18 @@ resource "aws_iam_policy" "db_cloudwatch_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
       "Action": [
         "logs:Describe*",
-        "logs:Get*",
         "logs:List*",
+        "rds:DescribeDBInstances",
         "logs:StartQuery",
         "logs:StopQuery",
         "logs:TestMetricFilter",
-        "logs:FilterLogEvents"
+        "logs:FilterLogEvents",
+        "logs:Get*"
       ],
-      "Effect": "Allow",
       "Resource": "*"
     }
   ]
@@ -94,7 +96,6 @@ data "template_file" "onboarder" {
     db_password         = random_password.db_password.result
     db_arn              = aws_db_instance.rds_instance.arn
     module_path         = path.module
-    hub_role_arn        = var.assignee_role
   }
 }
 

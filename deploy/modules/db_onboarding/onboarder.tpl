@@ -15,8 +15,8 @@ JDK=jdk-16.0.2_linux-x64_bin.tar.gz
 JDK_BUCKET=1ef8de27-ed95-40ff-8c08-7969fc1b7901
 
 if command -v java &> /dev/null; then
-    # echo java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${hub_role_arn} ${assignee_gw} ${db_user} ${db_password}
-    java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${hub_role_arn} ${assignee_gw} ${db_user} ${db_password}
+    # echo java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+    java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
 else
     echo "java is not installed on the workstation."
     if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
@@ -29,6 +29,6 @@ else
         tar -xvf ${module_path}/artifacts/unzip.tar -C ./$TMPDIR
         PATH=$PATH:$PWD/$TMPDIR tar zxvf ./$TMPDIR/$JDK -C ./$TMPDIR
         JAVA_TOP_LEVEL_DIR=$(tar tzf ./$TMPDIR/$JDK | sed -e 's@/.*@@' | uniq)
-        ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${hub_role_arn} ${assignee_gw} ${db_user} ${db_password}
+        ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
     fi
 fi
