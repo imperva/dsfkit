@@ -23,7 +23,7 @@ else
         echo "Please install java and run again." # For overcming the lack of java, we need the have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined
         exit 1
     else
-        set -x
+        # set -x
         . ${module_path}/artifacts/s3get.sh
         s3get $JDK_BUCKET/$JDK > ./$TMPDIR/$JDK
         tar -xvf ${module_path}/artifacts/unzip.tar -C ./$TMPDIR
