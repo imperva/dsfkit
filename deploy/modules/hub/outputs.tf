@@ -15,7 +15,7 @@ output "iam_role" {
 }
 
 output "sonarw_public_key" {
-  value = ! var.hadr_secondary_node ? local.dsf_hub_ssh_federation_key : null
+  value = !var.hadr_secondary_node ? local.dsf_hub_ssh_federation_key : null
 }
 
 output "sonarw_secret" {
