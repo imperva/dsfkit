@@ -2,12 +2,11 @@ provider "aws" {
   region     = var.region
 }
 
-data "template_file" "cloudinit" {
-  template = file("./cloudinit.tpl")
-  vars = {
+locals {
+  cloudinit_script = templatefile("./cloudinit.tpl", {
     bucket              = var.bucket
     tarball_path        = var.tarball_path
-  }
+  })
 }
 
 resource "random_password" "seed" {
@@ -43,7 +42,7 @@ resource "aws_instance" "dsf_base_instance" {
   instance_type                 = var.instance_type
   key_name                      = var.key_pair
   subnet_id                     = var.subnet_id
-  user_data                     = data.template_file.cloudinit.rendered
+  user_data                     = local.cloudinit_script
   iam_instance_profile          = aws_iam_instance_profile.dsf_hub_instance_iam_profile.id
   root_block_device {
     volume_size                   = 60
