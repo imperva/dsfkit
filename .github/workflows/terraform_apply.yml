@@ -20,6 +20,9 @@ on:
       - 'master'
       - 'dev'
 
+env:
+  TF_WARN_OUTPUT_ERRORS: 1
+
 permissions:
   contents: read
 
@@ -65,4 +68,4 @@ jobs:
 
     - name: Terraform Destroy
       if: always()
-      run: TF_WARN_OUTPUT_ERRORS=1 terraform destroy -auto-approve -input=false
+      run: terraform destroy -auto-approve -input=false
