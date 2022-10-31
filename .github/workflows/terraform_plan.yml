@@ -10,6 +10,8 @@ on:
 env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_WORKSPACE: dsfkit-ci-cd
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
 
 permissions:
   contents: read
@@ -49,7 +51,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan (simple)
-      run: terraform plan -no-color -input=false
+      run: terraform plan
 
     - name: Terraform Plan (hadr)
-      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan -no-color -input=false
+      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan
