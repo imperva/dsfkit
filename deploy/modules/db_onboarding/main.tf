@@ -3,8 +3,8 @@ locals {
 }
 
 resource "random_password" "db_password" {
-  length           = 15
-  special          = false
+  length  = 15
+  special = false
 }
 
 resource "random_pet" "db_name" {
@@ -18,17 +18,17 @@ resource "random_pet" "db_id" {
 # Provision db
 #################################
 resource "aws_db_instance" "rds_instance" {
-  allocated_storage    = 20
-  db_name              = "db_demo_${random_pet.db_name.id}"
-  identifier           = "edsf-db-demo-${random_pet.db_id.id}"
-  engine               = "mysql"
-  engine_version       = "5.7"
-  instance_class       = "db.t3.micro"
-  username             = local.db_username
-  password             = random_password.db_password.result
-  parameter_group_name = "default.mysql5.7"
-  publicly_accessible  = true
-  skip_final_snapshot  = true
+  allocated_storage       = 20
+  db_name                 = "db_demo_${random_pet.db_name.id}"
+  identifier              = "edsf-db-demo-${random_pet.db_id.id}"
+  engine                  = "mysql"
+  engine_version          = "5.7"
+  instance_class          = "db.t3.micro"
+  username                = local.db_username
+  password                = random_password.db_password.result
+  parameter_group_name    = "default.mysql5.7"
+  publicly_accessible     = true
+  skip_final_snapshot     = true
   backup_retention_period = 0
   lifecycle {
     ignore_changes = [
@@ -42,12 +42,12 @@ data "aws_security_group" "rds_sg" {
 }
 
 resource "aws_security_group_rule" "sg_ingress_self" {
- type              = "ingress"
- from_port         = aws_db_instance.rds_instance.port
- to_port           = aws_db_instance.rds_instance.port
- protocol          = "tcp"
- cidr_blocks       = var.database_sg_ingress_cidr
- security_group_id = data.aws_security_group.rds_sg.id
+  type              = "ingress"
+  from_port         = aws_db_instance.rds_instance.port
+  to_port           = aws_db_instance.rds_instance.port
+  protocol          = "tcp"
+  cidr_blocks       = var.database_sg_ingress_cidr
+  security_group_id = data.aws_security_group.rds_sg.id
 }
 
 data "aws_iam_role" "assignee_role" {
@@ -56,7 +56,7 @@ data "aws_iam_role" "assignee_role" {
 
 resource "aws_iam_policy" "db_cloudwatch_policy" {
   description = "Cloudwatch read policy for collecting audit from ${aws_db_instance.rds_instance.arn}"
-  policy = <<EOF
+  policy      = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -88,17 +88,17 @@ resource "aws_iam_policy_attachment" "test-attach" {
 
 resource "null_resource" "onboarder" {
   provisioner "local-exec" {
-    command             = templatefile("${path.module}/onboarder.tpl", {
-        dsf_hub_address     = var.hub_address
-        ssh_key_path        = var.hub_ssh_key_path
-        assignee_gw         = var.assignee_gw
-        db_user             = local.db_username
-        db_password         = random_password.db_password.result
-        db_arn              = aws_db_instance.rds_instance.arn
-        module_path         = path.module
+    command = templatefile("${path.module}/onboarder.tpl", {
+      dsf_hub_address = var.hub_address
+      ssh_key_path    = var.hub_ssh_key_path
+      assignee_gw     = var.assignee_gw
+      db_user         = local.db_username
+      db_password     = random_password.db_password.result
+      db_arn          = aws_db_instance.rds_instance.arn
+      module_path     = path.module
       }
     )
-    interpreter     = ["/bin/bash", "-c"]
+    interpreter = ["/bin/bash", "-c"]
   }
   triggers = {
     db_arn = aws_db_instance.rds_instance.arn
