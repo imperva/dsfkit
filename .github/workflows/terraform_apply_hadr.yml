@@ -1,15 +1,25 @@
-name: 'Terraform Plan'
+name: 'Terraform Apply (hadr)'
 
 on:
+  schedule:
+    - cron: '0 1 * * *'
+    - cron: '0 2 * * *'
+  workflow_dispatch: {}
   push:
     branches:
-      - '*'
-      - '!master'
-      - '!dev'
+      - 'master'
+      - 'dev'
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'master'
+      - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
-  TF_WORKSPACE: dsfkit-ci-cd
+  TF_WORKSPACE: dsfkit-ci-cd-hadr
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
 
@@ -51,8 +61,15 @@ jobs:
       continue-on-error: true
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan (simple)
+    - name: Terraform Plan
       run: terraform plan
 
-    - name: Terraform Plan (hadr)
-      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform apply -auto-approve
+
+    - name: Terraform Destroy
+      if: always()
+      run: terraform destroy -auto-approve
