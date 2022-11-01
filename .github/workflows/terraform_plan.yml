@@ -7,6 +7,12 @@ on:
       - '!master'
       - '!dev'
 
+env:
+  TF_WARN_OUTPUT_ERRORS: 1
+  TF_WORKSPACE: dsfkit-ci-cd
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+
 permissions:
   contents: read
 
@@ -36,10 +42,17 @@ jobs:
     - name: Terraform Init
       run: terraform init
 
+    - name: Terraform Validate
+      run: terraform validate
+
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check
+      continue-on-error: true
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -input=false
+    - name: Terraform Plan (simple)
+      run: terraform plan
+
+    - name: Terraform Plan (hadr)
+      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan

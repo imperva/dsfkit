@@ -1,10 +1,9 @@
 terraform {
-  backend "remote" {
-    # The name of your Terraform Cloud organization.
+  cloud {
     organization = "imperva-datasec"
-    # The name of the Terraform Cloud workspace to store Terraform state files in.
+
     workspaces {
-      name = "dsfkit-ci-cd"
+      tags = ["github_example"]
     }
   }
 }

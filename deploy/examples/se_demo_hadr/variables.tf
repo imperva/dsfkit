@@ -25,13 +25,18 @@ variable "gw_count" {
 
 variable "admin_password" {
   sensitive = true
-  type    = string
-  default = null # Random
+  type      = string
+  default   = null # Random
 }
 
 variable "web_console_cidr" {
   type    = list(string)
   default = ["0.0.0.0/0"]
+}
+
+variable "database_cidr" {
+  type    = list(string)
+  default = null
 }
 
 variable "workstation_cidr" {

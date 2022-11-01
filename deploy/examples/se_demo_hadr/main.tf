@@ -1,8 +1,29 @@
+locals {
+  region           = data.aws_region.current.name
+  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
+  admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  tarball_location = {
+    "s3_bucket" : var.tarball_s3_bucket
+    "s3_key" : var.tarball_s3_key
+  }
+  tags = {
+    owner                              = local.deployment_name
+    terraform_workspace                = terraform.workspace
+    vendor                             = "Imperva"
+    product                            = "EDSF"
+    terraform                          = "true"
+    environment                        = "demo"
+    deployment_orig_creation_timestamp = time_static.first_apply_ts.id
+  }
+}
+
+resource "time_static" "first_apply_ts" {}
+
 provider "aws" {
   default_tags {
-    tags = {
-      Name        = "${local.deployment_name}"
-    }
+    tags = local.tags
   }
 }
 
@@ -11,42 +32,29 @@ resource "null_resource" "myip" {
     always_run = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command         = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
-    interpreter     = ["/bin/bash", "-c"]
+    command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
+    interpreter = ["/bin/bash", "-c"]
   }
 }
 
-# Check this account has permissions to access to tarballs' bucket
-# data "aws_s3_bucket" "tarball_bucket" {
-#   bucket = var.tarball_s3_bucket
-# }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
-    filename = "myip-${terraform.workspace}"
-    depends_on = [
-      resource.null_resource.myip
-    ]
+  filename = "myip-${terraform.workspace}"
+  depends_on = [
+    resource.null_resource.myip
+  ]
 }
 
 resource "random_password" "admin_password" {
-  length           = 15
-  special          = false
+  length  = 15
+  special = false
 }
 
-resource "random_pet" "pet" {}
+resource "random_id" "salt" {
+  byte_length = 2
+}
 
 data "aws_region" "current" {}
-
-locals {
-  region           = data.aws_region.current.name
-  deployment_name  = join("-", [var.deployment_name, random_pet.pet.id])
-  admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
-  tarball_location = {
-    "s3_bucket": var.tarball_s3_bucket
-    "s3_key": var.tarball_s3_key
-  }
-}
 
 ##############################
 # Generating ssh key pair
@@ -68,17 +76,22 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 # Generating network
 ##############################
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-
-  cidr = "10.0.0.0/16"
+  name   = local.deployment_name
+  cidr   = "10.0.0.0/16"
 
   enable_nat_gateway = true
   single_nat_gateway = true
 
-  azs             = ["${local.region}a", "${local.region}b", "${local.region}c"]
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+  tags            = local.tags
 }
 
 ##############################
@@ -86,41 +99,41 @@ module "vpc" {
 ##############################
 
 module "hub" {
-  source            = "../../modules/hub"
-  name              = join("-", [local.deployment_name, "primary"])
-  subnet_id         = module.vpc.public_subnets[0]
-  key_pair          = module.key_pair.key_pair_name
+  source                      = "../../modules/hub"
+  name                        = join("-", [local.deployment_name, "hub", "primary"])
+  subnet_id                   = module.vpc.public_subnets[0]
+  key_pair                    = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
-  tarball_bucket_name = local.tarball_location.s3_bucket
+  sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
+  tarball_bucket_name         = local.tarball_location.s3_bucket
 }
 
 module "hub_secondary" {
-  source            = "../../modules/hub"
-  name              = join("-", [local.deployment_name, "secondary"])
-  subnet_id         = module.vpc.public_subnets[1]
-  key_pair          = module.key_pair.key_pair_name
+  source                      = "../../modules/hub"
+  name                        = join("-", [local.deployment_name, "hub", "secondary"])
+  subnet_id                   = module.vpc.public_subnets[1]
+  key_pair                    = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
-  hadr_secondary_node = true
+  sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  hadr_secondary_node         = true
   hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
-  tarball_bucket_name = local.tarball_location.s3_bucket
+  tarball_bucket_name         = local.tarball_location.s3_bucket
 }
 
 module "agentless_gw" {
-  count             = var.gw_count
-  source            = "../../modules/gw"
-  name              = local.deployment_name
-  subnet_id         = module.vpc.private_subnets[0]
-  key_pair          = module.key_pair.key_pair_name
-  sg_ingress_cidr   = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
+  count               = var.gw_count
+  source              = "../../modules/gw"
+  name                = join("-", [local.deployment_name, "gw", count.index])
+  subnet_id           = module.vpc.private_subnets[0]
+  key_pair            = module.key_pair.key_pair_name
+  sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
 
 module "hub_install" {
   for_each = {
-    primary_hub = module.hub
-    secondary_hub = module.hub_secondary
+    primary   = module.hub
+    secondary = module.hub_secondary
   }
   source                = "../../modules/install"
   admin_password        = local.admin_password
@@ -128,7 +141,7 @@ module "hub_install" {
   installation_location = local.tarball_location
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = each.value.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "hub", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -142,18 +155,18 @@ module "gw_install" {
   ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
   instance_address      = each.value.private_address
   proxy_address         = module.hub.public_address
-  name                  = local.deployment_name
+  name                  = join("-", [local.deployment_name, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
 module "hadr" {
-  source                = "../../modules/hadr"
-  dsf_hub_primary_public_ip=module.hub.public_address
-  dsf_hub_primary_private_ip=module.hub.private_address
-  dsf_hub_secondary_public_ip=module.hub_secondary.public_address
-  dsf_hub_secondary_private_ip=module.hub_secondary.private_address
-  ssh_key_path          = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  source                       = "../../modules/hadr"
+  dsf_hub_primary_public_ip    = module.hub.public_address
+  dsf_hub_primary_private_ip   = module.hub.private_address
+  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
+  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
+  ssh_key_path                 = resource.local_sensitive_file.dsf_ssh_key_file.filename
   depends_on = [
     module.hub_install
   ]
@@ -163,18 +176,18 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address, module.hub_secondary.public_address],
     concat(
-      [ for idx, val in module.agentless_gw : val.private_address ]
+      [for idx, val in module.agentless_gw : val.private_address]
     )
   )
 }
 
 module "gw_attachments" {
-  count            = length(local.hub_gw_combinations)
-  index            = count.index
-  source           = "../../modules/gw_attachment"
-  gw               = local.hub_gw_combinations[count.index][1]
-  hub              = local.hub_gw_combinations[count.index][0]
-  hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  count               = length(local.hub_gw_combinations)
+  index               = count.index
+  source              = "../../modules/gw_attachment"
+  gw                  = local.hub_gw_combinations[count.index][1]
+  hub                 = local.hub_gw_combinations[count.index][0]
+  hub_ssh_key_path    = resource.local_sensitive_file.dsf_ssh_key_file.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
     module.hub_install,
@@ -183,20 +196,22 @@ module "gw_attachments" {
   ]
 }
 
-# module "db_onboarding" {
-#   count = 1
-#   source = "../../modules/db_onboarding"
-#   hub_address = module.hub.public_address
-#   hub_ssh_key_path = resource.local_sensitive_file.dsf_ssh_key_file.filename
-#   assignee_gw = module.hub_install["primary_hub"].jsonar_uid
-# }
+module "db_onboarding" {
+  count                    = 1
+  source                   = "../../modules/db_onboarding"
+  hub_address              = module.hub.public_address
+  hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  assignee_gw              = module.hub_install["primary"].jsonar_uid
+  assignee_role            = module.hub.iam_role
+  database_sg_ingress_cidr = local.database_cidr
+}
 
-# output "db_details" {
-#   value = module.db_onboarding
-#   sensitive = true
-# }
-
+output "db_details" {
+  value     = module.db_onboarding
+  sensitive = true
+}
 
 # module "statistics" {
 #   source = "../../modules/statistics"
 # }
+

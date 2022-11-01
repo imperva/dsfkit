@@ -7,9 +7,9 @@ output "db_password" {
 }
 
 output "db_endpoint" {
-  value = aws_db_instance.default.endpoint
+  value = aws_db_instance.rds_instance.endpoint
 }
 
 output "db_arn" {
-  value = aws_db_instance.default.arn
+  value = aws_db_instance.rds_instance.arn
 }

@@ -80,22 +80,17 @@ data "aws_ami" "installer-ami" {
   }
 }
 
-data "template_file" "prepare_installer" {
-  template = file("${path.module}/prepare_installer.tpl")
-  vars = {
+resource "aws_instance" "installer_machine" {
+  ami                           = data.aws_ami.installer-ami.image_id
+  instance_type                 = var.ec2_instance_type
+  key_name                      = module.key_pair.key_pair_name
+  user_data                     = templatefile("${path.module}/prepare_installer.tpl", {
     access_key = var.aws_access_key_id
     secret_key = var.aws_secret_access_key
     region = var.aws_region
     example_name = var.example_name
     web_console_cidr= var.web_console_cidr != null ? var.web_console_cidr : format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))
-  }
-}
-
-resource "aws_instance" "installer_machine" {
-  ami                           = data.aws_ami.installer-ami.image_id
-  instance_type                 = var.ec2_instance_type
-  key_name                      = module.key_pair.key_pair_name
-  user_data                     = data.template_file.prepare_installer.rendered
+  })
   associate_public_ip_address = true
   tags = {
     Name = "dsf_installer_machine"
