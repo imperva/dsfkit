@@ -8,7 +8,8 @@ yum -y install git
 yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 yum -y install terraform
-yum -y install java
+yum -y install java-11-openjdk-devel
+export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-11.0.17.0.8-2.el7_9.x86_64/bin/java"
 
 git clone https://github.com/imperva/dsfkit.git
 cd /dsfkit/deploy/examples/${example_name}
