@@ -1,23 +1,23 @@
 variable "gw" {
-  type = string
+  type        = string
   description = "IP address or FQDN of the agentless gw. Must be accessible by the DSF Hub"
-  nullable = false
+  nullable    = false
 }
 
 variable "hub" {
-  type = string
+  type        = string
   description = "IP address or FQDN of the DSF hub. Must be accessible using SSH by the Terraform workstation"
-  nullable = false
+  nullable    = false
 }
 
 variable "hub_ssh_key_path" {
-  type = string
+  type        = string
   description = "Path of local ssh key file for DSF hub"
-  nullable = false
+  nullable    = false
 }
 
 variable "installation_source" {
-  type = string
+  type        = string
   description = "Changing this variable forces a re-federation process"
 }
 

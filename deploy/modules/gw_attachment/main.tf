@@ -6,36 +6,24 @@ resource "time_sleep" "wait_120_seconds" {
 # Federation script
 #################################
 
-data "template_file" "lock" {
-  # template = file("${path.module}/job_serializer.sh")
-  template = file("${path.module}/grab_lock.sh")
-  vars = {
-    index = var.index
-  }
-}
-
-data "template_file" "federate_hub" {
-  template = file("${path.module}/federate_hub.tpl")
-  vars = {
-    ssh_key_path        = var.hub_ssh_key_path
-    dsf_gw_ip           = var.gw
-    dsf_hub_ip          = var.hub
-  }
-}
-
-data "template_file" "federate_gw" {
-  template = file("${path.module}/federate_gw.tpl")
-  vars = {
-    ssh_key_path        = var.hub_ssh_key_path
-    dsf_gw_ip           = var.gw
-    dsf_hub_ip          = var.hub
-  }
+locals {
+  lock_shell_cmds = templatefile("${path.module}/grab_lock.sh", { index = var.index })
+  federate_hub_cmds = templatefile("${path.module}/federate_hub.tpl", {
+    ssh_key_path = var.hub_ssh_key_path
+    dsf_gw_ip    = var.gw
+    dsf_hub_ip   = var.hub
+  })
+  federate_gw_cmds = templatefile("${path.module}/federate_gw.tpl", {
+    ssh_key_path = var.hub_ssh_key_path
+    dsf_gw_ip    = var.gw
+    dsf_hub_ip   = var.hub
+  })
 }
 
 resource "null_resource" "federate_cmds" {
   provisioner "local-exec" {
-    command         = "${data.template_file.lock.rendered} ${data.template_file.federate_hub.rendered} ${data.template_file.federate_gw.rendered}"
-    interpreter     = ["/bin/bash", "-c"]
+    command     = "${local.lock_shell_cmds} ${local.federate_hub_cmds} ${local.federate_gw_cmds}"
+    interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
     time_sleep.wait_120_seconds,
