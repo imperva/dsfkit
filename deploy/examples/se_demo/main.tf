@@ -15,7 +15,7 @@ locals {
     product                            = "EDSF"
     terraform                          = "true"
     environment                        = "demo"
-    deployment_orig_creation_timestamp = time_static.first_apply_ts.id
+    creation_timestamp                 = time_static.first_apply_ts.id
   }
 }
 

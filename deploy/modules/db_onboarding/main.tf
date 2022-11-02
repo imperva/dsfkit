@@ -93,7 +93,7 @@ resource "null_resource" "onboarder" {
       ssh_key_path    = var.hub_ssh_key_path
       assignee_gw     = var.assignee_gw
       db_user         = local.db_username
-      db_password     = random_password.db_password.result
+      db_password     = nonsensitive(random_password.db_password.result)
       db_arn          = aws_db_instance.rds_instance.arn
       module_path     = path.module
       }

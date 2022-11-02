@@ -15,7 +15,7 @@ locals {
     product                            = "EDSF"
     terraform                          = "true"
     environment                        = "demo"
-    deployment_orig_creation_timestamp = time_static.first_apply_ts.id
+    creation_timestamp                 = time_static.first_apply_ts.id
   }
 }
 
@@ -197,20 +197,20 @@ module "gw_attachments" {
   ]
 }
 
-# module "db_onboarding" {
-#   count                    = 1
-#   source                   = "../../modules/db_onboarding"
-#   hub_address              = module.hub.public_address
-#   hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
-#   assignee_gw              = module.hub_install["primary"].jsonar_uid
-#   assignee_role            = module.hub.iam_role
-#   database_sg_ingress_cidr = local.database_cidr
-# }
+module "db_onboarding" {
+  count                    = 1
+  source                   = "../../modules/db_onboarding"
+  hub_address              = module.hub.public_address
+  hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  assignee_gw              = module.hub_install["primary"].jsonar_uid
+  assignee_role            = module.hub.iam_role
+  database_sg_ingress_cidr = local.database_cidr
+}
 
-# output "db_details" {
-#   value     = module.db_onboarding
-#   sensitive = true
-# }
+output "db_details" {
+  value     = module.db_onboarding
+  sensitive = true
+}
 
 # module "statistics" {
 #   source = "../../modules/statistics"
