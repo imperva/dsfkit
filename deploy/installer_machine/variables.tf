@@ -19,7 +19,7 @@ variable "aws_region" {
 
 variable "example_name" {
   type      = string
-  default   = "deploy/examples/se_demo"
+  default   = "se_demo"
 }
 
 variable "web_console_cidr" {
