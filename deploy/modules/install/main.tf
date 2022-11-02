@@ -24,7 +24,7 @@ locals {
 
 resource "null_resource" "install_sonar" {
   provisioner "local-exec" {
-    command     = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${local.install_script}'"
+    command     = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${nonsensitive(local.install_script)}'"
     interpreter = ["/bin/bash", "-c"]
   }
   triggers = {
