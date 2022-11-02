@@ -1,21 +1,21 @@
 name: 'Terraform Apply (hadr)'
 
 on:
-  schedule:
-    - cron: '0 1 * * *'
-    - cron: '0 2 * * *'
+  # schedule:
+  #   - cron: '0 1 * * *'
+  #   - cron: '0 2 * * *'
   workflow_dispatch: {}
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
+  # push:
+  #   branches:
+  #     - 'master'
+  #     - 'dev'
+  # pull_request:
+  #   types:
+  #     - 'opened'
+  #     - 'reopened'
+  #   branches:
+  #     - 'master'
+  #     - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1

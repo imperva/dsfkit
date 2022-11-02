@@ -9,7 +9,7 @@ locals {
     "s3_key" : var.tarball_s3_key
   }
   tags = {
-    owner                              = local.deployment_name
+    deployment_name                    = local.deployment_name
     terraform_workspace                = terraform.workspace
     vendor                             = "Imperva"
     product                            = "EDSF"
@@ -19,13 +19,13 @@ locals {
   }
 }
 
-resource "time_static" "first_apply_ts" {}
-
 provider "aws" {
   default_tags {
     tags = local.tags
   }
 }
+
+resource "time_static" "first_apply_ts" {}
 
 resource "null_resource" "myip" {
   triggers = {
@@ -36,7 +36,6 @@ resource "null_resource" "myip" {
     interpreter = ["/bin/bash", "-c"]
   }
 }
-
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
   filename = "myip-${terraform.workspace}"
@@ -76,6 +75,8 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 # Generating network
 ##############################
 
+data "aws_caller_identity" "current" {}
+
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -91,7 +92,7 @@ module "vpc" {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
-  tags            = local.tags
+  tags            = merge(local.tags, {"owner" = data.aws_caller_identity.current.arn})
 }
 
 ##############################
