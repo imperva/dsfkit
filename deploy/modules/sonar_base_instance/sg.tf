@@ -3,17 +3,17 @@ data "aws_subnet" "subnet" {
 }
 
 locals {
-  cidr_blocks   = concat(var.sg_ingress_cidr, var.public_ip ? ["${aws_eip.dsf_instance_eip[0].public_ip}/32"] : [])
-  ingress_ports = [ 22, 8080, 8443, 3030, 27117]
-  ingress_ports_map = { for port in local.ingress_ports: port => port }
+  cidr_blocks       = concat(var.sg_ingress_cidr, var.public_ip ? ["${aws_eip.dsf_instance_eip[0].public_ip}/32"] : [])
+  ingress_ports     = [22, 8080, 8443, 3030, 27117]
+  ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
 
 resource "aws_security_group" "dsf_base_sg" {
-    description = "Public internet access"
-    vpc_id      = data.aws_subnet.subnet.vpc_id
+  description = "Public internet access"
+  vpc_id      = data.aws_subnet.subnet.vpc_id
 
-    tags = {
-      Name = join("-", [var.name, "sg"])
+  tags = {
+    Name = join("-", [var.name, "sg"])
   }
 }
 
@@ -27,11 +27,11 @@ resource "aws_security_group" "dsf_base_sg" {
 # }
 
 resource "aws_security_group_rule" "all_out" {
-  type        = "egress"
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.dsf_base_sg.id
 }
 
@@ -65,12 +65,12 @@ resource "aws_security_group_rule" "sonarrsyslog_self" {
 }
 
 resource "aws_security_group_rule" "sg_ingress_self" {
- type              = "ingress"
- from_port         = 0
- to_port           = 65535
- protocol          = "tcp"
- self              = true
- security_group_id = aws_security_group.dsf_base_sg.id
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 65535
+  protocol          = "tcp"
+  self              = true
+  security_group_id = aws_security_group.dsf_base_sg.id
 }
 
 resource "aws_security_group_rule" "sg_web_console_access" {
