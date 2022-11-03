@@ -19,11 +19,17 @@ variable "_3_aws_region" {
 
 variable "example_name" {
   type      = string
-  default   = "deploy/examples/se_demo"
+  default   = "se_demo"
 }
 
 variable "web_console_cidr" {
   type = string
   default = null
+}
+
+
+variable "installer_ami_name_tag" {
+  type = string
+  default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
 }
 
