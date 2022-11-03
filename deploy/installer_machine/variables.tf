@@ -27,3 +27,9 @@ variable "web_console_cidr" {
   default = null
 }
 
+
+variable "installer_ami_name_tag" {
+  type = string
+  default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
+}
+
