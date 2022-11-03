@@ -214,4 +214,3 @@ output "db_details" {
 # module "statistics" {
 #   source = "../../modules/statistics"
 # }
-

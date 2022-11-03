@@ -176,6 +176,7 @@ module "db_onboarding" {
   assignee_gw              = module.hub_install.jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
+  onboarder_s3_bucket      = var.onboarder_s3_bucket
 }
 
 output "db_details" {

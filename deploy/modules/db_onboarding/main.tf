@@ -37,6 +37,7 @@ resource "aws_db_instance" "rds_instance" {
   }
 }
 
+#create new sg and attach it to rds
 data "aws_security_group" "rds_sg" {
   id = one(aws_db_instance.rds_instance.vpc_security_group_ids)
 }
@@ -86,6 +87,17 @@ resource "aws_iam_policy_attachment" "test-attach" {
   policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
 }
 
+data "aws_s3_object" "object_info" {
+  key    = "jdk-16.0.2_linux-x64_bin.tar.gz"
+  bucket = var.onboarder_s3_bucket
+
+}
+
+resource "local_file" "foo" {
+    content_base64  = "data.aws_s3_object.object_info.body"
+    filename = "pathtofile"
+}
+
 resource "null_resource" "onboarder" {
   provisioner "local-exec" {
     command = templatefile("${path.module}/onboarder.tpl", {
@@ -96,6 +108,7 @@ resource "null_resource" "onboarder" {
       db_password     = nonsensitive(random_password.db_password.result)
       db_arn          = aws_db_instance.rds_instance.arn
       module_path     = path.module
+      onboarder_jar_bucket = var.onboarder_s3_bucket
       }
     )
     interpreter = ["/bin/bash", "-c"]

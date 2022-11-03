@@ -10,25 +10,28 @@ hub_token=$(cat ./$TMPDIR/hub_token)
 # echo token: $hub_token
 
 # Run oboarder jar
-JAR=$(ls ${module_path}/artifacts/sonar_onboarder-*.jar | tail -1)
-JDK=jdk-16.0.2_linux-x64_bin.tar.gz
-JDK_BUCKET=1ef8de27-ed95-40ff-8c08-7969fc1b7901
+JAR_NAME=sonar_onboarder
+JAR_BUCKET=${onboarder_jar_bucket}
+JAR_KEY=$(aws s3 ls s3://$JAR_BUCKET | sort | grep $JAR_NAME | tail -1 | awk '{print $NF}')
+. ${module_path}/artifacts/s3get.sh
+s3get $JAR_BUCKET/$JAR_KEY > ./$TMPDIR/$JAR_KEY
 
 if command -v java &> /dev/null; then
-    # echo java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
-    java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+    # java -jar ./$TMPDIR/$JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+    java -jar ./$TMPDIR/$JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
 else
     echo "java is not installed on the workstation."
     if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
         echo "Please install java and run again." # For overcming the lack of java, we need the have AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY defined
         exit 1
     else
-        # set -x
-        . ${module_path}/artifacts/s3get.sh
-        s3get $JDK_BUCKET/$JDK > ./$TMPDIR/$JDK
+        set -x
+        JDK_NAME=jdk-16
+        JDK_KEY=$(aws s3 ls s3://$JAR_BUCKET | sort | grep $JDK_NAME | tail -1 | awk '{print $NF}')
+        s3get $JAR_BUCKET/$JDK_KEY > ./$TMPDIR/$JDK_KEY
         tar -xvf ${module_path}/artifacts/unzip.tar -C ./$TMPDIR
-        PATH=$PATH:$PWD/$TMPDIR tar zxvf ./$TMPDIR/$JDK -C ./$TMPDIR
-        JAVA_TOP_LEVEL_DIR=$(tar tzf ./$TMPDIR/$JDK | sed -e 's@/.*@@' | uniq)
-        ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $JAR ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+        PATH=$PATH:$PWD/$TMPDIR tar zxvf ./$TMPDIR/$JDK_KEY -C ./$TMPDIR
+        JAVA_TOP_LEVEL_DIR=$(tar tzf ./$TMPDIR/$JDK_KEY | sed -e 's@/.*@@' | uniq)
+        ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
     fi
 fi
