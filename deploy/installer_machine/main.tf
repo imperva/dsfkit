@@ -66,7 +66,7 @@ data "aws_ami" "installer-ami" {
 
   filter {
     name   = "name"
-    values = ["RHEL-7.9*"]
+    values = [var.installer_ami_name_tag]
   }
 
   filter {
