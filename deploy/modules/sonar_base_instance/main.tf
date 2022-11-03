@@ -17,7 +17,7 @@ data "aws_ami" "redhat-7-ami" {
 
   filter {
     name   = "name"
-    values = ["RHEL-7.9*"]
+    values = [var.dsf_base_ami_name_tag]
   }
 
   filter {

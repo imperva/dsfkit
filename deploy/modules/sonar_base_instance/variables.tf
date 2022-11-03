@@ -46,10 +46,7 @@ variable "iam_instance_profile_id" {
   description = "DSF base ec2 IAM instance profile id"
 }
 
-variable "dsf_base_amis_id" {
-  type = map(any)
-  default = {
-    us-east-1 = "ami-064196ba51ee65773"
-    eu-west-2 = "ami-03a6c38b3c0aa74f9"
-  }
+variable "dsf_base_ami_name_tag" {
+  type = string
+  default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
 }
