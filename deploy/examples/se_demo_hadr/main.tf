@@ -161,18 +161,6 @@ module "gw_install" {
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
-module "hadr" {
-  source                       = "../../modules/hadr"
-  dsf_hub_primary_public_ip    = module.hub.public_address
-  dsf_hub_primary_private_ip   = module.hub.private_address
-  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
-  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
-  ssh_key_path                 = resource.local_sensitive_file.dsf_ssh_key_file.filename
-  depends_on = [
-    module.hub_install
-  ]
-}
-
 locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address, module.hub_secondary.public_address],
@@ -193,7 +181,18 @@ module "gw_attachments" {
   depends_on = [
     module.hub_install,
     module.gw_install,
-    module.hadr
+  ]
+}
+
+module "hadr" {
+  source                       = "../../modules/hadr"
+  dsf_hub_primary_public_ip    = module.hub.public_address
+  dsf_hub_primary_private_ip   = module.hub.private_address
+  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
+  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
+  ssh_key_path                 = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  depends_on = [
+    module.gw_attachments
   ]
 }
 
