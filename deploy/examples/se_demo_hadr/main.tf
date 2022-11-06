@@ -88,6 +88,7 @@ module "vpc" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+  enable_dns_hostnames = true
 
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
@@ -204,6 +205,8 @@ module "db_onboarding" {
   assignee_gw              = module.hub_install["primary"].jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
+  public_subnets = module.vpc.public_subnets
+  deployment_name = local.deployment_name
 }
 
 output "db_details" {
