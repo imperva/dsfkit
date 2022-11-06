@@ -29,6 +29,7 @@ resource "aws_db_instance" "rds_instance" {
   parameter_group_name    = "default.mysql5.7"
   publicly_accessible     = true
   skip_final_snapshot     = true
+  db_subnet_group_name  = resource.aws_db_subnet_group.default.name
   backup_retention_period = 0
   lifecycle {
     ignore_changes = [
@@ -37,7 +38,11 @@ resource "aws_db_instance" "rds_instance" {
   }
 }
 
-#create new sg and attach it to rds
+resource "aws_db_subnet_group" "default" {
+  name       = var.deployment_name
+  subnet_ids = var.public_subnets
+}
+
 data "aws_security_group" "rds_sg" {
   id = one(aws_db_instance.rds_instance.vpc_security_group_ids)
 }
