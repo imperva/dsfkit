@@ -38,8 +38,8 @@ if [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
     fi
 fi
 
-scp -o StrictHostKeyChecking="no" -i ${ssh_key_path} ${module_path}/artifacts/generate_token.sh ec2-user@${dsf_hub_address}:generate_token.sh
-ssh -o StrictHostKeyChecking="no" -i ${ssh_key_path} ec2-user@${dsf_hub_address} -C "chmod +x ./generate_token.sh && ./generate_token.sh" > ./$TMPDIR/hub_token
+scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} ${module_path}/artifacts/generate_token.sh ec2-user@${dsf_hub_address}:generate_token.sh
+ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} ec2-user@${dsf_hub_address} -C "chmod +x ./generate_token.sh && ./generate_token.sh" > ./$TMPDIR/hub_token
 hub_token=$(cat ./$TMPDIR/hub_token)
 # echo token: $hub_token
 
