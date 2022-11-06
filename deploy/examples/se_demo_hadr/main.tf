@@ -108,6 +108,9 @@ module "hub" {
   web_console_sg_ingress_cidr = var.web_console_cidr
   sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
   tarball_bucket_name         = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "hub_secondary" {
@@ -120,6 +123,9 @@ module "hub_secondary" {
   hadr_secondary_node         = true
   hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
   tarball_bucket_name         = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "agentless_gw" {
@@ -130,6 +136,9 @@ module "agentless_gw" {
   key_pair            = module.key_pair.key_pair_name
   sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "hub_install" {
