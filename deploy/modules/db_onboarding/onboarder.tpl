@@ -4,6 +4,8 @@ TMPDIR=$(mktemp -u)
 mkdir -p ./$TMPDIR
 trap "rm -rf ./$TMPDIR" EXIT
 
+set -x
+
 function profile_to_access_keys() {
     INI_FILE=~/.aws/credentials
 
