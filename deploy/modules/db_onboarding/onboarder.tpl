@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# set -x
+set -x
 TMPDIR=$(mktemp -u)
 mkdir -p ./$TMPDIR
 trap "rm -rf ./$TMPDIR" EXIT
