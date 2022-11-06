@@ -5,7 +5,7 @@ locals {
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
-    "s3_bucket" : var.tarball_s3_bucket
+    "s3_bucket" : var.artifacts_s3_bucket
     "s3_key" : var.tarball_s3_key
   }
   tags = {
@@ -201,9 +201,10 @@ module "db_onboarding" {
   source                   = "../../modules/db_onboarding"
   hub_address              = module.hub.public_address
   hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
-  assignee_gw              = module.hub_install["primary"].jsonar_uid
+  assignee_gw              = module.hub_install.jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
+  onboarder_s3_bucket      = var.artifacts_s3_bucket
 }
 
 output "db_details" {
