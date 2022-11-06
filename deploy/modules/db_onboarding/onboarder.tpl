@@ -1,10 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash
 set -e
+# set -x
 TMPDIR=$(mktemp -u)
 mkdir -p ./$TMPDIR
 trap "rm -rf ./$TMPDIR" EXIT
-
-set -x
 
 function profile_to_access_keys() {
     INI_FILE=~/.aws/credentials
@@ -62,5 +61,5 @@ else
     tar -xvf ${module_path}/artifacts/unzip.tar -C ./$TMPDIR
     PATH=$PATH:$PWD/$TMPDIR tar zxvf ./$TMPDIR/$JDK_KEY -C ./$TMPDIR
     JAVA_TOP_LEVEL_DIR=$(tar tzf ./$TMPDIR/$JDK_KEY | sed -e 's@/.*@@' | uniq)
-    ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
+    ./$TMPDIR/$JAVA_TOP_LEVEL_DIR/bin/java -jar $TMPDIR/$JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}
 fi
