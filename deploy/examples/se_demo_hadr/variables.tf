@@ -3,9 +3,9 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "tarball_s3_bucket" {
+variable "artifacts_s3_bucket" {
   type    = string
-  default = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
+  default = "0ed58e18-0c0c-11ed-861d-0242ac120003"
 }
 
 variable "sonar_version" {
@@ -15,7 +15,7 @@ variable "sonar_version" {
 
 variable "tarball_s3_key" {
   type    = string
-  default = "jsonar-4.10.0.0.0-rc1_20221019194459.tar.gz"
+  default = "jsonar-4.10.eytan_20221104161124.tar.gz"
 }
 
 variable "gw_count" {

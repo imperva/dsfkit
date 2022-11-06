@@ -3,7 +3,7 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "tarball_s3_bucket" {
+variable "artifacts_s3_bucket" {
   type    = string
   default = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
 }
