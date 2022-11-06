@@ -34,3 +34,8 @@ variable "public_subnets" {
 variable "deployment_name" {
   type = string
 }
+
+variable "onboarder_s3_bucket" {
+  type    = string
+  description = "S3 bucket to get the onboarder jar from"
+}

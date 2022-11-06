@@ -102,6 +102,7 @@ resource "null_resource" "onboarder" {
       db_password     = nonsensitive(random_password.db_password.result)
       db_arn          = aws_db_instance.rds_instance.arn
       module_path     = path.module
+      onboarder_jar_bucket = var.onboarder_s3_bucket
       }
     )
     interpreter = ["/bin/bash", "-c"]
