@@ -41,6 +41,9 @@ resource "null_resource" "extract_jsonar_uid" {
   depends_on = [
     null_resource.install_sonar
   ]
+  triggers = {
+    always_run = "${timestamp()}" # Run only when isntallation path has changed
+  }
 }
 
 data "local_file" "jsonar_uid" {
