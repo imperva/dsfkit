@@ -1,9 +1,19 @@
+provider "aws" {
+  default_tags {
+    tags = local.tags
+  }
+}
+
+module "globals" {
+  source              = "../../modules/globals"
+}
+
 locals {
-  region           = data.aws_region.current.name
-  deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
-  admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
-  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  region           = module.globals.current_region
+  deployment_name  = join("-", [var.deployment_name, module.globals.salt])
+  admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
   tarball_location = {
     "s3_bucket" : var.tarball_s3_bucket
     "s3_key" : var.tarball_s3_key
@@ -15,45 +25,43 @@ locals {
     product                            = "EDSF"
     terraform                          = "true"
     environment                        = "demo"
-    creation_timestamp                 = time_static.first_apply_ts.id
+    creation_timestamp                 =  module.globals.now
   }
 }
 
-provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-}
 
-resource "time_static" "first_apply_ts" {}
 
-resource "null_resource" "myip" {
-  triggers = {
-    always_run = "${timestamp()}"
-  }
-  provisioner "local-exec" {
-    command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
-    interpreter = ["/bin/bash", "-c"]
-  }
-}
+# resource "time_static" "first_apply_ts" {}
 
-data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
-  filename = "myip-${terraform.workspace}"
-  depends_on = [
-    resource.null_resource.myip
-  ]
-}
+# resource "null_resource" "myip" {
+#   triggers = {
+#     always_run = "${timestamp()}"
+#   }
+#   provisioner "local-exec" {
+#     command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
+#     interpreter = ["/bin/bash", "-c"]
+#   }
+# }
 
-resource "random_password" "admin_password" {
-  length  = 15
-  special = false
-}
+# data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
+#   filename = "myip-${terraform.workspace}"
+#   depends_on = [
+#     resource.null_resource.myip
+#   ]
+# }
 
-resource "random_id" "salt" {
-  byte_length = 2
-}
+# resource "random_password" "admin_password" {
+#   length  = 15
+#   special = false
+# }
 
-data "aws_region" "current" {}
+# resource "random_id" "salt" {
+#   byte_length = 2
+# }
+
+# data "aws_region" "current" {}
+
+# data "aws_caller_identity" "current" {}
 
 ##############################
 # Generating ssh key pair
@@ -75,7 +83,7 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 # Generating network
 ##############################
 
-data "aws_caller_identity" "current" {}
+
 
 data "aws_availability_zones" "available" {
   state = "available"
@@ -93,7 +101,7 @@ module "vpc" {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
-  tags            = merge(local.tags, {"owner" = data.aws_caller_identity.current.arn})
+  tags            = merge(local.tags, {"owner" = module.globals.caller_identity.arn})
 }
 
 ##############################
