@@ -4,10 +4,10 @@ variable "instance_address" {
   nullable    = false
 }
 
-variable "dsf_type" {
+variable "resource_type" {
   type = string
   validation {
-    condition     = contains(["hub", "gw"], var.dsf_type)
+    condition     = contains(["hub", "gw"], var.resource_type)
     error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
   }
   nullable = false

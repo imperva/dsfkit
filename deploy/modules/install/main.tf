@@ -1,10 +1,10 @@
 locals {
   proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
   install_script = templatefile("${path.module}/install.tpl", {
-    dsf_type                            = var.dsf_type
+    resource_type                            = var.resource_type
     installation_s3_bucket              = var.installation_location.s3_bucket
     installation_s3_key                 = var.installation_location.s3_key
-    display-name                        = "DSF-${var.dsf_type}-${var.name}"
+    display-name                        = "DSF-${var.resource_type}-${var.name}"
     admin_password                      = var.admin_password
     secadmin_password                   = var.admin_password
     sonarg_pasword                      = var.admin_password

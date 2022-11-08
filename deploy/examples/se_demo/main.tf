@@ -33,8 +33,6 @@ locals {
     "s3_key" : var.tarball_s3_key
   }
   tags = merge(module.globals.tags, {"deployment_name" = local.deployment_name})
-#   hub = module.globals.resource_types["HUB"]
-#   gw = module.globals.resource_types["GW"]
 }
 
 module "vpc" {
@@ -79,7 +77,7 @@ module "agentless_gw" {
 module "hub_install" {
   source                = "../../modules/install"
   admin_password        = local.admin_password
-  dsf_type              = "hub"
+  resource_type         = "hub"
   installation_location = local.tarball_location
   ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = module.hub.public_address
@@ -92,7 +90,7 @@ module "gw_install" {
   for_each              = { for idx, val in module.agentless_gw : idx => val }
   source                = "../../modules/install"
   admin_password        = local.admin_password
-  dsf_type              = "gw"
+  resource_type         = "gw"
   installation_location = local.tarball_location
   ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = each.value.private_address
