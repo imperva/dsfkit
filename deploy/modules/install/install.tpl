@@ -1,7 +1,9 @@
 #!/bin/bash -x
 
 # exec > dsf-install.log
-set -x 
+set -e
+set -x
+
 function install_tarball() {
     echo Downloading tarball..
     # Download intallation tarball
@@ -31,7 +33,8 @@ function setup() {
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
         --instance-IP-or-DNS=${instance_fqdn} \
-        $(test "${dsf_type}" == "gw" && echo "--remote-machine")
+        --jsonar-uid ${uuid} \
+        $(test "${dsf_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
 }
 
 function set_environment_vars() {
@@ -67,7 +70,6 @@ STATE_DIR=/data_vol/sonar-dsf/jsonar
 LAST_INSTALLATION_SOURCE=$STATE_DIR/last_install_source.txt
 
 DIR=/opt/sonar-dsf/
-set -e
 
 until [ -d $STATE_DIR ]; do
     # curl ifconfig.me
@@ -79,5 +81,6 @@ if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" !=
     setup
     echo "s3://${installation_s3_bucket}/${installation_s3_key}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi
+
 set_environment_vars
 install_ssh_keys

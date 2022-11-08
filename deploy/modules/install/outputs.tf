@@ -3,5 +3,5 @@ output "instance_version" {
 }
 
 output "jsonar_uid" {
-  value = data.local_file.jsonar_uid.content
+  value = random_uuid.uuid.result
 }

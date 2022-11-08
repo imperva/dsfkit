@@ -42,6 +42,10 @@ scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_pat
 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${ssh_key_path} ec2-user@${dsf_hub_address} -C "chmod +x ./generate_token.sh && ./generate_token.sh" > ./$TMPDIR/hub_token
 hub_token=$(cat ./$TMPDIR/hub_token)
 # echo token: $hub_token
+if [ -z "$hub_token" ]; then
+    echo "Failed to extract token"
+    exit 1
+fi
 
 # Run oboarder jar
 JAR_NAME=sonar_onboarder
@@ -49,6 +53,12 @@ ARTIFACTS_BUCKET=${onboarder_jar_bucket}
 JAR_KEY=$(aws s3 ls s3://$ARTIFACTS_BUCKET | sort | grep $JAR_NAME | tail -1 | awk '{print $NF}')
 . ${module_path}/artifacts/s3get.sh
 s3get $ARTIFACTS_BUCKET/$JAR_KEY > ./$TMPDIR/$JAR_KEY
+
+echo db_arn: ${db_arn}
+echo hub_address: ${dsf_hub_address}
+echo token: $hub_token
+echo assignee_gw: ${assignee_gw}
+echo db_user: ${db_user}
 
 if command -v java &> /dev/null; then
     # java -jar ./$TMPDIR/$JAR_KEY ${db_arn} ${dsf_hub_address} $hub_token ${assignee_gw} ${db_user} ${db_password}

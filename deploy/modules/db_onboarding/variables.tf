@@ -8,6 +8,10 @@ variable "assignee_gw" {
   type        = string
   description = "jsonar uid of the assignee gw"
   nullable    = false
+  validation {
+    condition     = length(var.assignee_gw) >= 35
+    error_message = "Should be uuid in the form of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+  }
 }
 
 variable "assignee_role" {
