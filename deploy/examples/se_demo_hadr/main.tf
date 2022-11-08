@@ -5,7 +5,7 @@ locals {
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
-    "s3_bucket" : var.tarball_s3_bucket
+    "s3_bucket" : var.artifacts_s3_bucket
     "s3_key" : var.tarball_s3_key
   }
   tags = {
@@ -88,6 +88,7 @@ module "vpc" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+  enable_dns_hostnames = true
 
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
@@ -107,6 +108,9 @@ module "hub" {
   web_console_sg_ingress_cidr = var.web_console_cidr
   sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
   tarball_bucket_name         = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "hub_secondary" {
@@ -119,6 +123,9 @@ module "hub_secondary" {
   hadr_secondary_node         = true
   hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
   tarball_bucket_name         = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "agentless_gw" {
@@ -129,6 +136,9 @@ module "agentless_gw" {
   key_pair            = module.key_pair.key_pair_name
   sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "hub_install" {
@@ -161,18 +171,6 @@ module "gw_install" {
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
-module "hadr" {
-  source                       = "../../modules/hadr"
-  dsf_hub_primary_public_ip    = module.hub.public_address
-  dsf_hub_primary_private_ip   = module.hub.private_address
-  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
-  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
-  ssh_key_path                 = resource.local_sensitive_file.dsf_ssh_key_file.filename
-  depends_on = [
-    module.hub_install
-  ]
-}
-
 locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address, module.hub_secondary.public_address],
@@ -193,7 +191,18 @@ module "gw_attachments" {
   depends_on = [
     module.hub_install,
     module.gw_install,
-    module.hadr
+  ]
+}
+
+module "hadr" {
+  source                       = "../../modules/hadr"
+  dsf_hub_primary_public_ip    = module.hub.public_address
+  dsf_hub_primary_private_ip   = module.hub.private_address
+  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
+  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
+  ssh_key_path                 = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  depends_on = [
+    module.gw_attachments
   ]
 }
 
@@ -205,6 +214,9 @@ module "db_onboarding" {
   assignee_gw              = module.hub_install["primary"].jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
+  public_subnets = module.vpc.public_subnets
+  deployment_name = local.deployment_name
+  onboarder_s3_bucket      = var.artifacts_s3_bucket
 }
 
 output "db_details" {
@@ -215,4 +227,3 @@ output "db_details" {
 # module "statistics" {
 #   source = "../../modules/statistics"
 # }
-
