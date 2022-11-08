@@ -9,3 +9,7 @@ output "private_address" {
 output "iam_role" {
   value = resource.aws_iam_role.dsf_gw_role.arn
 }
+
+output "jsonar_uid" {
+  value = module.gw_instance.jsonar_uid
+}

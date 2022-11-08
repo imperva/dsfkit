@@ -24,3 +24,7 @@ output "sonarw_secret" {
     arn  = local.secret_aws_arn
   }
 }
+
+output "jsonar_uid" {
+  value = module.hub_instance.jsonar_uid
+}

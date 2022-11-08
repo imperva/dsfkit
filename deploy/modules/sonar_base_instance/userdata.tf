@@ -1,6 +1,8 @@
 locals {
   ssh_options = "-o ConnectionAttempts=30 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh ${local.ssh_options} -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
+  instance_address = var.public_ip ? aws_eip.dsf_instance_eip[0].public_ip : tolist(aws_network_interface.eni.private_ips)[0]
+
   install_script = templatefile("${path.module}/install.tpl", {
     dsf_type                            = var.dsf_type
     installation_s3_bucket              = var.installation_location.s3_bucket
@@ -15,7 +17,7 @@ locals {
     ssh_key_pair_path                   = var.ssh_key_pair_path
     sonarw_public_key                   = var.sonarw_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
-    instance_fqdn                       = var.instance_address
+    # instance_fqdn                       = local.instance_address
     uuid                                = random_uuid.uuid.result
     additional_install_parameters       = var.additional_install_parameters
   })
@@ -23,16 +25,12 @@ locals {
 
 resource "random_uuid" "uuid" {}
 
-#################################
-# Hub install script (AKA userdata)
-#################################
-
-resource "null_resource" "install_sonar" {
+resource "null_resource" "wait_for_installation_completion" {
   provisioner "local-exec" {
-    command     = "ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${nonsensitive(local.install_script)}'"
+    command     = "ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; fi; cloud-init status'"
     interpreter = ["/bin/bash", "-c"]
   }
   triggers = {
-    installation_file = join("", [var.installation_location.s3_bucket, var.installation_location.s3_key])
+    installation_file = aws_instance.dsf_base_instance.arn
   }
 }

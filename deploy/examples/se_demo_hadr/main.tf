@@ -93,7 +93,7 @@ module "vpc" {
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
-  tags            = merge(local.tags, {"owner" = data.aws_caller_identity.current.arn})
+  # tags            = local.tags
 }
 
 ##############################
@@ -107,7 +107,10 @@ module "hub" {
   key_pair                    = module.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
   sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
-  tarball_bucket_name         = local.tarball_location.s3_bucket
+  installation_location       = local.tarball_location
+  admin_password              = local.admin_password
+  ssh_key_pair_path           = local_sensitive_file.dsf_ssh_key_file.filename
+  additional_install_parameters = var.additional_install_parameters
   depends_on = [
     module.vpc
   ]
@@ -122,7 +125,10 @@ module "hub_secondary" {
   sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   hadr_secondary_node         = true
   hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
-  tarball_bucket_name         = local.tarball_location.s3_bucket
+  installation_location       = local.tarball_location
+  admin_password              = local.admin_password
+  ssh_key_pair_path           = local_sensitive_file.dsf_ssh_key_file.filename
+  additional_install_parameters = var.additional_install_parameters
   depends_on = [
     module.vpc
   ]
@@ -130,45 +136,21 @@ module "hub_secondary" {
 
 module "agentless_gw" {
   count               = var.gw_count
-  source              = "../../modules/gw"
+  source              = "../../modules/agentless_gw"
   name                = join("-", [local.deployment_name, "gw", count.index])
   subnet_id           = module.vpc.private_subnets[0]
   key_pair            = module.key_pair.key_pair_name
   sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
-  tarball_bucket_name = local.tarball_location.s3_bucket
+  installation_location = local.tarball_location
+  admin_password      = local.admin_password
+  ssh_key_pair_path   = local_sensitive_file.dsf_ssh_key_file.filename
+  additional_install_parameters = var.additional_install_parameters
+  sonarw_public_key   = module.hub.sonarw_public_key
+  sonarw_secret_name  = module.hub.sonarw_secret.name
+  proxy_address       = module.hub.public_address
   depends_on = [
     module.vpc
   ]
-}
-
-module "hub_install" {
-  for_each = {
-    primary   = module.hub
-    secondary = module.hub_secondary
-  }
-  source                = "../../modules/install"
-  admin_password        = local.admin_password
-  dsf_type              = "hub"
-  installation_location = local.tarball_location
-  ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.public_address
-  name                  = join("-", [local.deployment_name, "hub", each.key])
-  sonarw_public_key     = module.hub.sonarw_public_key
-  sonarw_secret_name    = module.hub.sonarw_secret.name
-}
-
-module "gw_install" {
-  for_each              = { for idx, val in module.agentless_gw : idx => val }
-  source                = "../../modules/install"
-  admin_password        = local.admin_password
-  dsf_type              = "gw"
-  installation_location = local.tarball_location
-  ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
-  instance_address      = each.value.private_address
-  proxy_address         = module.hub.public_address
-  name                  = join("-", [local.deployment_name, "gw", each.key])
-  sonarw_public_key     = module.hub.sonarw_public_key
-  sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
 locals {
@@ -182,15 +164,15 @@ locals {
 
 module "gw_attachments" {
   count               = length(local.hub_gw_combinations)
-  index               = count.index
   source              = "../../modules/gw_attachment"
   gw                  = local.hub_gw_combinations[count.index][1]
   hub                 = local.hub_gw_combinations[count.index][0]
   hub_ssh_key_path    = resource.local_sensitive_file.dsf_ssh_key_file.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
-    module.hub_install,
-    module.gw_install,
+    module.hub,
+    module.hub_secondary,
+    module.agentless_gw,
   ]
 }
 
@@ -211,19 +193,18 @@ module "db_onboarding" {
   source                   = "../../modules/db_onboarding"
   hub_address              = module.hub.public_address
   hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
-  assignee_gw              = module.hub_install["primary"].jsonar_uid
+  assignee_gw              = module.hub.jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
-  public_subnets = module.vpc.public_subnets
-  deployment_name = local.deployment_name
+  public_subnets           = module.vpc.public_subnets
+  deployment_name          = local.deployment_name
   onboarder_s3_bucket      = var.artifacts_s3_bucket
+  depends_on = [
+    module.hub
+  ]
 }
 
 output "db_details" {
   value     = module.db_onboarding
   sensitive = true
 }
-
-# module "statistics" {
-#   source = "../../modules/statistics"
-# }
