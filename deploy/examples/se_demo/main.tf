@@ -115,7 +115,7 @@ module "hub" {
 
 module "agentless_gw" {
   count               = var.gw_count
-  source              = "../../modules/gw"
+  source              = "../../modules/sonar_agentless_gw"
   name                = join("-", [local.deployment_name, "gw", count.index])
   subnet_id           = module.vpc.private_subnets[0]
   key_pair            = module.key_pair.key_pair_name
