@@ -17,7 +17,7 @@ output "dsf_hub_web_console_url" {
 }
 
 output "primary_hub_ssh_command" {
-  value = module.hub.public_address != null ? join("", ["ssh -i ${resource.local_sensitive_file.dsf_ssh_key_file.filename} ec2-user@", module.hub.public_address]) : null
+  value = module.hub.public_address != null ? join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub.public_address]) : null
 }
 
 output "admin_password" {
@@ -30,5 +30,5 @@ output "deployment_name" {
 
 output "dsf_private_ssh_key" {
   sensitive = true
-  value     = module.key_pair.private_key_pem
+  value     = module.globals.key_pair_private_pem
 }

@@ -12,6 +12,8 @@ data "aws_region" "current" {}
 
 data "aws_caller_identity" "current" {}
 
+data "aws_availability_zones" "available" { state = "available" }
+
 locals {
   region           = data.aws_region.current
   deployment_name  = join("-", [var.deployment_name, module.globals.salt])
@@ -69,17 +71,17 @@ locals {
 # Generating ssh key pair
 ##############################
 
-module "key_pair" {
-  source             = "terraform-aws-modules/key-pair/aws"
-  key_name_prefix    = "imperva-dsf-"
-  create_private_key = true
-}
+# module "key_pair" {
+#   source             = "terraform-aws-modules/key-pair/aws"
+#   key_name_prefix    = "imperva-dsf-"
+#   create_private_key = true
+# }
 
-resource "local_sensitive_file" "dsf_ssh_key_file" {
-  content         = module.key_pair.private_key_pem
-  file_permission = 400
-  filename        = "ssh_keys/dsf_hub_ssh_key-${terraform.workspace}"
-}
+# resource "local_sensitive_file" "dsf_ssh_key_file" {
+#   content         = module.key_pair.private_key_pem
+#   file_permission = 400
+#   filename        = "ssh_keys/dsf_hub_ssh_key-${terraform.workspace}"
+# }
 
 ##############################
 # Generating network
@@ -87,9 +89,7 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
 
 
 
-data "aws_availability_zones" "available" {
-  state = "available"
-}
+
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -114,7 +114,7 @@ module "hub" {
   source                      = "../../modules/hub"
   name                        = join("-", [local.deployment_name, "hub", "primary"])
   subnet_id                   = module.vpc.public_subnets[0]
-  key_pair                    = module.key_pair.key_pair_name
+  key_pair                    = module.globals.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
   sg_ingress_cidr             = local.workstation_cidr
   tarball_bucket_name         = local.tarball_location.s3_bucket
@@ -125,7 +125,7 @@ module "agentless_gw" {
   source              = "../../modules/gw"
   name                = join("-", [local.deployment_name, "gw", count.index])
   subnet_id           = module.vpc.private_subnets[0]
-  key_pair            = module.key_pair.key_pair_name
+  key_pair            = module.globals.key_pair.key_pair_name
   sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
@@ -135,7 +135,7 @@ module "hub_install" {
   admin_password        = local.admin_password
   dsf_type              = "hub"
   installation_location = local.tarball_location
-  ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
+  ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = module.hub.public_address
   name                  = join("-", [local.deployment_name, "hub"])
   sonarw_public_key     = module.hub.sonarw_public_key
@@ -148,7 +148,7 @@ module "gw_install" {
   admin_password        = local.admin_password
   dsf_type              = "gw"
   installation_location = local.tarball_location
-  ssh_key_pair_path     = local_sensitive_file.dsf_ssh_key_file.filename
+  ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = each.value.private_address
   proxy_address         = module.hub.public_address
   name                  = join("-", [local.deployment_name, "gw", each.key])
@@ -171,7 +171,7 @@ module "gw_attachments" {
   source              = "../../modules/gw_attachment"
   gw                  = local.hub_gw_combinations[count.index][1]
   hub                 = local.hub_gw_combinations[count.index][0]
-  hub_ssh_key_path    = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
     module.hub_install,
@@ -183,7 +183,7 @@ module "db_onboarding" {
   count                    = 1
   source                   = "../../modules/db_onboarding"
   hub_address              = module.hub.public_address
-  hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  hub_ssh_key_path         = module.globals.key_pair_private_pem.filename
   assignee_gw              = module.hub_install.jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
