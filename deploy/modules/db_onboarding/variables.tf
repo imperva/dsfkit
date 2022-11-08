@@ -26,3 +26,16 @@ variable "database_sg_ingress_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the database"
 }
+
+variable "public_subnets" {
+  type        = list(any)
+}
+
+variable "deployment_name" {
+  type = string
+}
+
+variable "onboarder_s3_bucket" {
+  type    = string
+  description = "S3 bucket to get the onboarder jar from"
+}

@@ -49,4 +49,5 @@ variable "iam_instance_profile_id" {
 variable "dsf_base_ami_name_tag" {
   type = string
   default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
+  # default = "RHEL-7.9_HVM-20220512-x86_64-1-Hourly2-GP2" Exists on all regions
 }

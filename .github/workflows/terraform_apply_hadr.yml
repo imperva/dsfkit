@@ -1,21 +1,21 @@
 name: 'Terraform Apply (hadr)'
 
 on:
-  # schedule:
-  #   - cron: '0 1 * * *'
-  #   - cron: '0 2 * * *'
+  schedule:
+    - cron: '0 1 * * *'
+    - cron: '0 2 * * *'
   workflow_dispatch: {}
-  # push:
-  #   branches:
-  #     - 'master'
+  push:
+    branches:
+      - 'master'
   #     - 'dev'
-  # pull_request:
-  #   types:
-  #     - 'opened'
-  #     - 'reopened'
-  #   branches:
-  #     - 'master'
-  #     - 'dev'
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'master'
+      # - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -41,6 +41,11 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Sets env vars for environment
+      run: |
+        echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/"master"'
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform

@@ -1,5 +1,6 @@
 locals {
-  proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
+  ssh_options = "-o ConnectionAttempts=30 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh ${local.ssh_options} -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
   install_script = templatefile("${path.module}/install.tpl", {
     dsf_type                            = var.dsf_type
     installation_s3_bucket              = var.installation_location.s3_bucket
@@ -24,7 +25,7 @@ locals {
 
 resource "null_resource" "install_sonar" {
   provisioner "local-exec" {
-    command     = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${nonsensitive(local.install_script)}'"
+    command     = "ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} '${nonsensitive(local.install_script)}'"
     interpreter = ["/bin/bash", "-c"]
   }
   triggers = {
@@ -34,14 +35,14 @@ resource "null_resource" "install_sonar" {
 
 resource "null_resource" "extract_jsonar_uid" {
   provisioner "local-exec" {
-    command     = "ssh -o ConnectionAttempts=30 -o StrictHostKeyChecking=no ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} 'echo -n $JSONAR_UID' > tmp-${var.instance_address}-${terraform.workspace}-jsonar-uid"
+    command     = "ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${var.instance_address} 'echo -n $JSONAR_UID' > tmp-${var.instance_address}-${terraform.workspace}-jsonar-uid"
     interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
     null_resource.install_sonar
   ]
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = "${timestamp()}" # Run only when isntallation path has changed
   }
 }
 
