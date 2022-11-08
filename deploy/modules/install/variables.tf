@@ -66,3 +66,11 @@ variable "proxy_address" {
   description = "Proxy address used for ssh"
   default     = null
 }
+
+######################## Additional (optional) parameters ########################
+# Use this param to specify any additional parameters for the initial setup, example syntax below
+# variable "additional_install_parameters" { default = "--smtp-ssl --ignore-system-warnings" }
+# https://sonargdocs.jsonar.com/4.5/en/sonar-setup.html#noninteractive-setup
+variable "additional_install_parameters" {
+  default = ""
+}

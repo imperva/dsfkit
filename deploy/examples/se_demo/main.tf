@@ -136,6 +136,7 @@ module "hub_install" {
   name                  = join("-", [local.deployment_name, "hub"])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
+  additional_install_parameters = var.additional_install_parameters
 }
 
 module "gw_install" {
@@ -150,6 +151,7 @@ module "gw_install" {
   name                  = join("-", [local.deployment_name, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
+  additional_install_parameters = var.additional_install_parameters
 }
 
 locals {

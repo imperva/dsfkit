@@ -16,6 +16,7 @@ locals {
     sonarw_public_key                   = var.sonarw_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
     instance_fqdn                       = var.instance_address
+    additional_install_parameters       = var.additional_install_parameters
   })
 }
 
