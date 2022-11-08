@@ -70,6 +70,12 @@ variable "hadr_main_hub_sonarw_secret" {
   description = "Secret of sonarw taken from the main hub node. This var must be defined for hadr seconday node"
 }
 
+variable "hadr_main_sonarw_public_key" {
+  type        = string
+  description = "SSH public key for sonarw user"
+  default     = null
+}
+
 variable "admin_password" {
   type        = string
   sensitive   = true

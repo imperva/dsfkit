@@ -125,6 +125,7 @@ module "hub_secondary" {
   sg_ingress_cidr             = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   hadr_secondary_node         = true
   hadr_main_hub_sonarw_secret = module.hub.sonarw_secret
+  hadr_main_sonarw_public_key = module.hub.sonarw_public_key
   installation_location       = local.tarball_location
   admin_password              = local.admin_password
   ssh_key_pair_path           = local_sensitive_file.dsf_ssh_key_file.filename
