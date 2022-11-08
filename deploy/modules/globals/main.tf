@@ -63,3 +63,22 @@ output "key_pair" {
 output "key_pair_private_pem" {
   value = resource.local_sensitive_file.dsf_ssh_key_file
 }
+
+output "tags" {
+  value = {
+    terraform_workspace                = terraform.workspace
+    vendor                             = "Imperva"
+    product                            = "EDSF"
+    terraform                          = "true"
+    environment                        = "demo"
+    creation_timestamp                 =  resource.time_static.current_time.id
+  }
+}
+
+
+# output "resource_types" {
+#     value = {
+#     "HUB"  = "hub"
+#     "GW" = "gw"
+#   }
+# }
