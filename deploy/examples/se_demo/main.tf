@@ -15,11 +15,19 @@ data "aws_caller_identity" "current" {}
 data "aws_availability_zones" "available" { state = "available" }
 
 locals {
+  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+}
+
+locals {
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+}
+
+locals {
   region           = data.aws_region.current
-  deployment_name  = join("-", [var.deployment_name, module.globals.salt])
+  deployment_name  = local.deployment_name_salted
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
+  database_cidr    = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location = {
     "s3_bucket" : var.tarball_s3_bucket
     "s3_key" : var.tarball_s3_key
