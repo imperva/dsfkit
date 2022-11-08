@@ -8,8 +8,12 @@ module "globals" {
   source              = "../../modules/globals"
 }
 
+data "aws_region" "current" {}
+
+data "aws_caller_identity" "current" {}
+
 locals {
-  region           = module.globals.current_region
+  region           = data.aws_region.current
   deployment_name  = join("-", [var.deployment_name, module.globals.salt])
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
@@ -28,8 +32,6 @@ locals {
     creation_timestamp                 =  module.globals.now
   }
 }
-
-
 
 # resource "time_static" "first_apply_ts" {}
 
@@ -92,16 +94,16 @@ data "aws_availability_zones" "available" {
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   name   = local.deployment_name
-  cidr   = "10.0.0.0/16"
+  cidr   = var.vpc_ip_range
 
   enable_nat_gateway = true
   single_nat_gateway = true
   enable_dns_hostnames = true
 
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
-  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
-  tags            = merge(local.tags, {"owner" = module.globals.caller_identity.arn})
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+  tags            = merge(local.tags, {"owner" = data.aws_caller_identity.current.arn})
 }
 
 ##############################

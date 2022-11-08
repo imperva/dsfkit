@@ -1,8 +1,3 @@
-provider "aws" {
-}
-
-data "aws_region" "current" {}
-
 resource "random_id" "salt" {
   byte_length = 2
 }
@@ -26,16 +21,9 @@ resource "null_resource" "myip" {
 
 resource "time_static" "current_time" {}
 
-
 resource "random_password" "pass" {
   length  = 15
   special = false
-}
-
-data "aws_caller_identity" "current" {}
-
-output "current_region" {
-  value = data.aws_region.current
 }
 
 output "salt" {
@@ -52,8 +40,4 @@ output "now" {
 
 output "random_password" {
   value = resource.random_password.pass.result
-}
-
-output "caller_identity" {
-  value = data.aws_caller_identity.current
 }
