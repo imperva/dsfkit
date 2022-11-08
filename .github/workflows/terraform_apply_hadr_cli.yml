@@ -20,6 +20,8 @@ env:
   TF_INPUT: 0
   EXAMPLE_DIR: ./deploy/examples/se_demo_hadr
   AWS_REGION: eu-central-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
   contents: read
@@ -34,9 +36,6 @@ jobs:
     defaults:
       run:
         shell: bash
-    with:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
