@@ -34,13 +34,6 @@ module "key_pair" {
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
 
-# resource "local_sensitive_file" "dsf_ssh_key_file" {
-#   content         = module.key_pair.private_key_pem
-#   file_permission = 400
-  
-# }
-
-
 output "salt" {
   value = resource.random_id.salt.hex
 }
@@ -75,11 +68,3 @@ output "tags" {
     creation_timestamp                 =  resource.time_static.current_time.id
   }
 }
-
-
-# output "resource_types" {
-#     value = {
-#     "HUB"  = "hub"
-#     "GW" = "gw"
-#   }
-# }
