@@ -28,16 +28,17 @@ resource "random_password" "pass" {
 
 
 module "key_pair" {
-  source             = "terraform-aws-modules/key-pair/aws"
+  source             = "../key_pair"
   key_name_prefix    = "imperva-dsf-"
   create_private_key = true
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
 
-resource "local_sensitive_file" "dsf_ssh_key_file" {
-  content         = module.key_pair.private_key_pem
-  file_permission = 400
-  filename        = "ssh_keys/dsf_hub_ssh_key-${terraform.workspace}"
-}
+# resource "local_sensitive_file" "dsf_ssh_key_file" {
+#   content         = module.key_pair.private_key_pem
+#   file_permission = 400
+  
+# }
 
 
 output "salt" {
@@ -57,11 +58,11 @@ output "random_password" {
 }
 
 output "key_pair" {
-  value = module.key_pair
+  value = module.key_pair.key_pair
 }
 
 output "key_pair_private_pem" {
-  value = resource.local_sensitive_file.dsf_ssh_key_file
+  value = module.key_pair.key_pair_private_pem
 }
 
 output "tags" {
