@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source              = "../../modules/globals"
+  source              = "../../modules/core/globals"
 }
 
 data "aws_region" "current" {}
