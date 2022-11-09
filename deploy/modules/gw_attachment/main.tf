@@ -7,7 +7,7 @@ resource "time_sleep" "wait_120_seconds" {
 #################################
 
 locals {
-  lock_shell_cmds = templatefile("${path.module}/grab_lock.sh", { index = var.index })
+  lock_shell_cmds = file("${path.module}/grab_lock.sh")
   federate_hub_cmds = templatefile("${path.module}/federate_hub.tpl", {
     ssh_key_path = var.hub_ssh_key_path
     dsf_gw_ip    = var.gw

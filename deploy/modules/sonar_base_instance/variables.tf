@@ -51,3 +51,60 @@ variable "dsf_base_ami_name_tag" {
   default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
   # default = "RHEL-7.9_HVM-20220512-x86_64-1-Hourly2-GP2" Exists on all regions
 }
+
+variable "dsf_type" {
+  type = string
+  validation {
+    condition     = contains(["hub", "gw"], var.dsf_type)
+    error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
+  }
+  nullable = false
+}
+
+variable "admin_password" {
+  type        = string
+  sensitive   = true
+  description = "Admin password"
+  validation {
+    condition     = length(var.admin_password) > 8
+    error_message = "Admin password must be at least 8 characters"
+  }
+  nullable = false
+}
+
+variable "ssh_key_pair_path" {
+  type        = string
+  description = "SSH key path"
+  nullable    = false
+}
+
+variable "additional_install_parameters" {
+  default = ""
+}
+
+variable "installation_location" {
+  type = object({
+    s3_bucket = string
+    s3_key    = string
+  })
+  description = "S3 DSF installation location"
+  nullable    = false
+}
+
+variable "proxy_address" {
+  type        = string
+  description = "Proxy address used for ssh"
+  default     = null
+}
+
+variable "sonarw_public_key" {
+  type        = string
+  description = "SSH public key for sonarw user"
+  nullable    = false
+}
+
+variable "sonarw_secret_name" {
+  type        = string
+  description = "Secret name for sonarw ssh key"
+  nullable    = false
+}

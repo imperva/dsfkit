@@ -12,3 +12,11 @@ output "sg_id" {
   description = "Security group on DSF base instance"
   value       = aws_security_group.dsf_base_sg.id
 }
+
+output "jsonar_uid" {
+  value = random_uuid.uuid.result
+}
+
+output "display_name" {
+  value = local.display_name
+}

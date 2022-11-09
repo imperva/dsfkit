@@ -43,3 +43,7 @@ variable "workstation_cidr" {
   type    = list(string)
   default = null
 }
+
+variable "additional_install_parameters" {
+  default = ""
+}

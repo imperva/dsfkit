@@ -20,7 +20,3 @@ variable "installation_source" {
   type        = string
   description = "Changing this variable forces a re-federation process"
 }
-
-variable "index" {
-  type = number
-}
