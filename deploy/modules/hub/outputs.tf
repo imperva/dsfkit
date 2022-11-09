@@ -28,3 +28,7 @@ output "sonarw_secret" {
 output "jsonar_uid" {
   value = module.hub_instance.jsonar_uid
 }
+
+output "display_name" {
+  value = module.hub_instance.display_name
+}

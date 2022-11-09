@@ -34,6 +34,7 @@ variable "disk_size" {
 variable "web_console_sg_ingress_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the DSF hub instance for web console"
+  default     = []
 }
 
 variable "sg_ingress_cidr" {

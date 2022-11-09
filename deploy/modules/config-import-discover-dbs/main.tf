@@ -7,7 +7,44 @@ provider "aws" {
 }
 
 data "aws_iam_role" "iam_role" {
-  name = var.dsf_iam_role_name
+  name = split("/", var.dsf_iam_role_name)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+}
+
+resource "aws_iam_policy" "db_cloudwatch_policy" {
+  description = "Cloudwatch read policy for collecting audit"
+  policy      = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "logs:Describe*",
+        "logs:List*",
+        "rds:DescribeDBInstances",
+        "logs:StartQuery",
+        "logs:StopQuery",
+        "logs:TestMetricFilter",
+        "logs:FilterLogEvents",
+        "logs:Get*",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents",
+        "rds:DescribeDBClusters",
+        "rds:DescribeOptionGroups"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "role_logs_and_discover_policy" {
+  name       = "collect-audit-attachment"
+  roles      = [data.aws_iam_role.iam_role.name]
+  policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
 }
 
 locals {
@@ -103,9 +140,12 @@ resource "null_resource" "discover_and_connect" {
 
   provisioner "remote-exec" {
     inline = [
-      "curl -k -X POST --cacert /opt/jsonar/local/ssl/ca/ca.cert.pem --key /opt/jsonar/local/ssl/client/admin/key.pem --cert /opt/jsonar/local/ssl/client/admin/cert.pem -H 'Content-Type: application/json' https://localhost:27989/playbook-engine/playbooks/import_discover_connect_gateway/run?synchronous=true -d '${jsonencode(local.asset_discovery)}' --header 'Content-Type:application/json'"
+      "sudo curl -k -X POST --cacert $JSONAR_LOCALDIR/ssl/ca/ca.cert.pem --key $JSONAR_LOCALDIR/ssl/client/admin/key.pem --cert $JSONAR_LOCALDIR/ssl/client/admin/cert.pem -H 'Content-Type: application/json' https://localhost:27989/playbook-engine/playbooks/import_discover_connect_gateway/run?synchronous=true -d '${jsonencode(local.asset_discovery)}' --header 'Content-Type:application/json'"
     ]
   }
+  depends_on = [
+    aws_iam_policy_attachment.role_logs_and_discover_policy
+  ]
 }
 
 # # data "local_file" "sql_script" {

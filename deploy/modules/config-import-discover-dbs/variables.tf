@@ -33,6 +33,11 @@ variable "gw1_display_name" {
   description = "Display name for gateway 1"
 }
 
+variable "gw1_iam_role" {
+  type = string
+  description = "IAM role for gateway 1"
+}
+
 variable "key_pair_pem_local_path" {
   type = string
   description = "Path to local key pair used to access dsf instances via ssh to run remote commands"

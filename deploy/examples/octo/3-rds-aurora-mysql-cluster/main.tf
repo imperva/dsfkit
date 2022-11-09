@@ -49,7 +49,7 @@ data "terraform_remote_state" "dsf" {
 # }
 
 module "rds-aurora-mysql" {
-	source  = "../../modules/rds-aurora-mysql"
+	source  = "../../../modules/rds-aurora-mysql"
 	region = data.terraform_remote_state.init.outputs.region
 	# master_username = local.rds_passwords_obj.master_username
 	# master_password = local.rds_passwords_obj.master_pasword	

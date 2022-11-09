@@ -49,7 +49,7 @@ data "terraform_remote_state" "dsf" {
 # }
 
 module "rds-mysql-db" {
-	source  = "../../modules/rds-mysql-db"
+	source  = "../../../modules/rds-mysql-db"
 	region = data.terraform_remote_state.init.outputs.region
 	# username = local.rds_passwords_obj.username
 	# password = local.rds_passwords_obj.pasword	

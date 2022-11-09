@@ -16,3 +16,7 @@ output "sg_id" {
 output "jsonar_uid" {
   value = random_uuid.uuid.result
 }
+
+output "display_name" {
+  value = local.display_name
+}

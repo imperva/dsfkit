@@ -13,3 +13,7 @@ output "iam_role" {
 output "jsonar_uid" {
   value = module.gw_instance.jsonar_uid
 }
+
+output "display_name" {
+  value = module.gw_instance.display_name
+}
