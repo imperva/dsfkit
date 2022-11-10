@@ -47,7 +47,7 @@ locals {
   #   sonarg_pasword = random_password.sonarg_pasword.result
   #   sonargd_pasword = random_password.sonargd_pasword.result
   # }
-  dsf_passwords_obj  = {
+  dsf_passwords_obj = {
     admin_password = var.default_password
     secadmin_password = var.default_password
     sonarg_pasword = var.default_password
