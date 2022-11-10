@@ -5,8 +5,8 @@ locals {
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
-    "s3_bucket" : var.artifacts_s3_bucket
-    "s3_key" : var.tarball_s3_key
+    s3_bucket = var.artifacts_s3_bucket
+    s3_key = var.tarball_s3_key
   }
   tags = {
     deployment_name                    = local.deployment_name
@@ -135,18 +135,8 @@ module "agentless_gw" {
   ]
 }
 
-# locals {
-#   hub_gw_combinations = setproduct(
-#     [module.hub.public_address],
-#     concat(
-#       [for idx, val in module.agentless_gw : val.private_address]
-#     )
-#   )
-# }
-
 module "gw_attachments" {
   for_each              = { for idx, val in module.agentless_gw : idx => val }
-  # count               = length(local.hub_gw_combinations)
   source              = "../../modules/gw_attachment"
   gw                  = each.value.private_address
   hub                 = module.hub.public_address
@@ -158,23 +148,34 @@ module "gw_attachments" {
   ]
 }
 
+module "rds_mysql" {
+  source  = "../../modules/rds-mysql-db"
+  rds_subnet_ids = module.vpc.public_subnets
+  security_group_ingress_cidrs = local.workstation_cidr
+}
+
 module "db_onboarding" {
   count                    = 1
   source                   = "../../modules/db_onboarding"
   hub_address              = module.hub.public_address
-  hub_ssh_key_path         = resource.local_sensitive_file.dsf_ssh_key_file.filename
+  hub_ssh_key_path         = local_sensitive_file.dsf_ssh_key_file.filename
   assignee_gw              = module.hub.jsonar_uid
   assignee_role            = module.hub.iam_role
-  database_sg_ingress_cidr = local.database_cidr
-  public_subnets           = module.vpc.public_subnets
-  deployment_name          = local.deployment_name
-  onboarder_s3_bucket      = var.artifacts_s3_bucket
+  database_details = {
+    db_username = module.rds_mysql.db_username
+    db_password = module.rds_mysql.db_password
+    db_arn = module.rds_mysql.db_arn
+    db_port = module.rds_mysql.db_port
+    db_identifier = module.rds_mysql.db_identifier
+    db_address = module.rds_mysql.db_endpoint
+    db_engine = module.rds_mysql.db_engine
+  }
   depends_on = [
     module.hub
   ]
 }
 
 output "db_details" {
-  value     = module.db_onboarding
+  value     = module.rds_mysql
   sensitive = true
 }

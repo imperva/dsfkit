@@ -11,22 +11,22 @@ variable "region" { default = "us-east-2" }
 #   }
 # }
 
-variable "master_username" {
+variable "username" {
   type = string
   default = "imperva_user"
   description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name can not be a word reserved by the database engine."
   validation {
-    condition = length(var.master_username) > 1
+    condition = length(var.username) > 1
     error_message = "Master username name must be at least 1 characters"
   }
 }
 
-variable "master_password" {
+variable "password" {
   type = string
   default = "YourPasswordHere#"
   description = "Master password must contain 8–41 printable ASCII characters, and can not contain /, \", @, or a space."
   validation {
-    condition = length(var.master_password) > 8
+    condition = length(var.password) > 8
     error_message = "Master password name must be at least 8 characters"
   }
 }

@@ -20,7 +20,6 @@ data "terraform_remote_state" "dsf" {
 
 module "config-import-discover-dbs" {
 	source  = "../../../modules/config-import-discover-dbs"
-	region = data.terraform_remote_state.init.outputs.region
 	dsf_iam_role_name = data.terraform_remote_state.dsf.outputs.gw1_iam_role
 	hub_ip = data.terraform_remote_state.dsf.outputs.hub_ip
 	hub_uuid = data.terraform_remote_state.dsf.outputs.hub_uuid

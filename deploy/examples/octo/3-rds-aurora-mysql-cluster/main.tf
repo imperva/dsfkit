@@ -21,8 +21,8 @@ data "terraform_remote_state" "dsf" {
 ##############################################################################
 ######## Generating db random password and populating aws secret #############
 ##############################################################################
-#### Uncomment the following section to generate a random master_password ####
-# resource "random_password" "master_password" {
+#### Uncomment the following section to generate a random password ####
+# resource "random_password" "password" {
 #   length = 13
 #   special = true
 #   override_special = "#"
@@ -30,10 +30,10 @@ data "terraform_remote_state" "dsf" {
 
 # locals {
 #   rds_passwords_obj  = {
-# 	master_username = var.master_username
-#     master_pasword = var.master_password
-# 	#### Uncomment the following line, and comment out the previous to use the randomly generated master_password ####
-#     # master_pasword = random_password.master_password
+# 	username = var.username
+#     master_pasword = var.password
+# 	#### Uncomment the following line, and comment out the previous to use the randomly generated password ####
+#     # master_pasword = random_password.password
 #   }
 # }
 
@@ -50,13 +50,10 @@ data "terraform_remote_state" "dsf" {
 
 module "rds-aurora-mysql" {
 	source  = "../../../modules/rds-aurora-mysql"
-	region = data.terraform_remote_state.init.outputs.region
-	# master_username = local.rds_passwords_obj.master_username
-	# master_password = local.rds_passwords_obj.master_pasword	
-	master_username = "imperva_user"
-	master_password = "Imperva123#"
-	cluster_identifier = var.cluster_identifier
+	# username = local.rds_passwords_obj.username
+	# password = local.rds_passwords_obj.master_pasword	
+	username = "imperva_user"
+	password = "Imperva123#"
+	identifier = var.cluster_identifier
 	rds_subnet_ids = var.rds_subnet_ids	
-	# key_pair_pem_local_path = var.key_pair_pem_local_path
-	key_pair_pem_local_path = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
 }

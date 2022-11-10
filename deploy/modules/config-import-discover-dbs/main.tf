@@ -1,11 +1,3 @@
-terraform {
-  required_version = ">= 0.13"
-}
-
-provider "aws" {
-  region = var.region
-}
-
 data "aws_iam_role" "iam_role" {
   name = split("/", var.dsf_iam_role_name)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
@@ -47,6 +39,8 @@ resource "aws_iam_policy_attachment" "role_logs_and_discover_policy" {
   policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
 }
 
+data "aws_region" "current" {}
+
 locals {
   asset_discovery  = {
     "sonark_aggregate": {
@@ -71,8 +65,8 @@ locals {
           "Server Host Name": "unused_placeholder_value",
           "admin_email": "admin@imperva.com",
           "Server Port": "443",
-          "location": "${data.aws_iam_role.iam_role.name}-${var.region}",
-          "region": var.region,
+          "location": "${data.aws_iam_role.iam_role.name}-${data.aws_region.current.name}",
+          "region": data.aws_region.current.name,
           "owned_by": "admin@imperva.com",
           "managed_by": "admin@imperva.com",
           "auth_mechanism":"default"

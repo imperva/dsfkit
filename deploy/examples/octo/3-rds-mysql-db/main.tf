@@ -50,16 +50,13 @@ data "terraform_remote_state" "dsf" {
 
 module "rds-mysql-db" {
 	source  = "../../../modules/rds-mysql-db"
-	region = data.terraform_remote_state.init.outputs.region
 	# username = local.rds_passwords_obj.username
 	# password = local.rds_passwords_obj.pasword	
 	username = var.username
 	password = var.password
 	rds_subnet_ids = var.rds_subnet_ids	
-	# key_pair_pem_local_path = var.key_pair_pem_local_path
-	key_pair_pem_local_path = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
-	db_identifier = var.db_identifier
-	db_name = "isbt_db"
+	identifier = var.db_identifier
+	name = "isbt_db"
 	init_sql_file_path = "init/init_db.sql"
 	security_group_ingress_cidrs = data.terraform_remote_state.dsf.outputs.security_group_ingress_cidrs
 }
