@@ -1,11 +1,3 @@
-terraform {
-  required_version = ">= 0.13"
-}
-
-provider "aws" {
-  region = var.region
-}
-
 # locals {
 #   asset_discovery  = {
 #     "sonark_aggregate": {

@@ -1,21 +1,25 @@
-terraform {
-  required_version = ">= 0.13"
+resource "random_password" "db_password" {
+  length  = 15
+  special = false
 }
 
-provider "aws" {
-  region = var.region
+resource "random_pet" "db_id" {
+}
+
+locals {
+  db_username = var.username
+  db_password = length(var.password) > 0 ? var.password : random_password.db_password.result
+  db_identifier = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
+  db_name = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
-  name       = "${var.cluster_identifier}-db-subnet-group"
+  name       = "${local.db_identifier}-db-subnet-group"
   subnet_ids = var.rds_subnet_ids
-  tags = {
-    Name = "My DB subnet group"
-  }
 }
 
 resource "aws_rds_cluster_parameter_group" "impv_rds_db_pg" {
-  name        = "${var.cluster_identifier}-pg"
+  name        = "${local.db_identifier}-pg"
   family      = "aurora-mysql5.7"
   description = "RDS default cluster parameter group"
   parameter {
@@ -33,14 +37,14 @@ resource "aws_rds_cluster_parameter_group" "impv_rds_db_pg" {
 }
 
 resource "aws_rds_cluster" "rds_db" {
-  depends_on                        = [aws_rds_cluster_parameter_group.impv_rds_db_pg,aws_db_subnet_group.rds_db_sg]
   db_subnet_group_name              = aws_db_subnet_group.rds_db_sg.name
-  cluster_identifier                = var.cluster_identifier
+  cluster_identifier                = local.db_identifier
+  database_name                     = local.db_name
   engine                            = "aurora-mysql"
-  master_username                   = var.master_username
-  master_password                   = var.master_password
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.impv_rds_db_pg.name
-  enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
+  master_username                   = local.db_username
+  master_password                   = local.db_password
+  db_cluster_parameter_group_name   = aws_rds_cluster_parameter_group.impv_rds_db_pg.name
+  enabled_cloudwatch_logs_exports   = ["audit", "error", "general", "slowquery"]
   skip_final_snapshot  = true
 }
 

@@ -1,7 +1,3 @@
-variable "region" { 
-    default = "us-east-2" 
-}
-
 variable "dsf_iam_role_name" {
   type = string
   default = null

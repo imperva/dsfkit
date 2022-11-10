@@ -1,11 +1,3 @@
-terraform {
-  required_version = ">= 0.13"
-}
-
-provider "aws" {
-  region = var.region
-}
-
 data "aws_iam_role" "iam_role" {
   name = split("/", var.dsf_iam_role_name)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
