@@ -19,7 +19,6 @@ locals {
 }
 
 locals {
-  region           = module.globals.current_region
   deployment_name  = local.deployment_name_salted
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
