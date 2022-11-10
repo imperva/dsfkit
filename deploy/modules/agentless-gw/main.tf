@@ -58,7 +58,7 @@ resource "aws_iam_role" "dsf_gw_role" {
 }
 
 module "gw_instance" {
-  source              = "../../modules/sonar_base_instance"
+  source              = "../../modules/sonar-base-instance"
   dsf_type            = "gw"
   name                = var.name
   subnet_id           = var.subnet_id
