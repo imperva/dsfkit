@@ -33,7 +33,7 @@ module "sonarw" {
 }
 
 module "sonarg1" {
-  source              = "../../../modules/agentless_gw"
+  source              = "../../../modules/agentless-gw"
   name                = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-agentless-gw1"
   subnet_id           = var.subnet_id
   key_pair            = data.terraform_remote_state.init.outputs.key_pair
@@ -51,7 +51,7 @@ module "sonarg1" {
 }
 
 module "gw_attachments" {
-  source              = "../../../modules/gw_attachment"
+  source              = "../../../modules/gw-attachment"
   gw                  = module.sonarg1.public_address
   hub                 = module.sonarw.public_address
   hub_ssh_key_path    = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
