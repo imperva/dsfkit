@@ -118,7 +118,7 @@ module "hub" {
 
 module "agentless_gw" {
   count               = var.gw_count
-  source              = "../../modules/agentless_gw"
+  source              = "../../modules/agentless-gw"
   name                = join("-", [local.deployment_name, "gw", count.index])
   subnet_id           = module.vpc.private_subnets[0]
   key_pair            = module.key_pair.key_pair_name
@@ -137,7 +137,7 @@ module "agentless_gw" {
 
 module "gw_attachments" {
   for_each              = { for idx, val in module.agentless_gw : idx => val }
-  source              = "../../modules/gw_attachment"
+  source              = "../../modules/gw-attachment"
   gw                  = each.value.private_address
   hub                 = module.hub.public_address
   hub_ssh_key_path    = resource.local_sensitive_file.dsf_ssh_key_file.filename
@@ -156,7 +156,7 @@ module "rds_mysql" {
 
 module "db_onboarding" {
   count                    = 1
-  source                   = "../../modules/db_onboarding"
+  source                   = "../../modules/db-onboarder"
   hub_address              = module.hub.public_address
   hub_ssh_key_path         = local_sensitive_file.dsf_ssh_key_file.filename
   assignee_gw              = module.hub.jsonar_uid
