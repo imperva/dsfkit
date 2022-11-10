@@ -20,13 +20,12 @@ function curl_fail_on_error() {
 }
 
 # Generate access token to hub
-sudo curl -w '\n' \
-    --cacert $JSONAR_LOCALDIR/ssl/ca/ca.cert.pem \
+sudo curl --cacert $JSONAR_LOCALDIR/ssl/ca/ca.cert.pem \
     --cert $JSONAR_LOCALDIR/ssl/client/admin/cert.pem \
     --key $JSONAR_LOCALDIR/ssl/client/admin/key.pem \
     -X POST 'https://localhost:27920/tokens' \
     -H 'Content-type: application/json' \
-    -d '{"client_id":"'$client_id'","user":"admin","reason":"'"$reason"'","grants":["usc:access"]}' | cut -d\" -f4 > ./$TMPDIR/hub_token
+    -d '{"client_id":"'$client_id'","user":"admin","reason":"'"$reason"'","grants":["usc:access"]}' | jq -r .access_token > ./$TMPDIR/hub_token
 
 hub_token=$(cat ./$TMPDIR/hub_token)
 

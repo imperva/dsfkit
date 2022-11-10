@@ -32,6 +32,6 @@ output "db_port" {
 }
 
 output "sql_cmd" {
-  value = "mysql -h${aws_db_instance.rds_db.endpoint} --user ${local.db_username} mysql --password=${local.db_password}"
+  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${local.db_password}"
 }
 
