@@ -19,7 +19,6 @@ function curl_fail_on_error() {
   rm $OUTPUT_FILE
 }
 
-
 # Generate access token to hub
 sudo curl -w '\n' \
     --cacert $JSONAR_LOCALDIR/ssl/ca/ca.cert.pem \
@@ -37,23 +36,42 @@ if [ -z "$hub_token" ]; then
     exit 1
 fi
 
-
 # Add cloud account
-echo ********Adding new cloud account********
-curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts' \
---header "Authorization: Bearer $hub_token" \
---header 'Content-Type: application/json' \
---data-raw '${cloud_account_data}'
+if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts/${account_arn}' --header "Authorization: Bearer $hub_token" &>/dev/null; then
+    echo ********Adding new cloud account********
+    curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts' \
+        --header "Authorization: Bearer $hub_token" \
+        --header 'Content-Type: application/json' \
+        --data-raw '${cloud_account_data}'
+fi
 
 # Add database asset
-echo ********Adding new database asset********
-curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/data-sources' \
---header "Authorization: Bearer $hub_token" \
---header 'Content-Type: application/json' \
---data-raw '${database_asset_data}'
+if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}' --header "Authorization: Bearer $hub_token" &>/dev/null; then
+    echo ********Adding new database asset********
+    curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/data-sources' \
+        --header "Authorization: Bearer $hub_token" \
+        --header 'Content-Type: application/json' \
+        --data-raw '${database_asset_data}'
+fi
 
 # Enable audit
 echo ********Enabling audit on new asset********
-curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}//operations/enable-audit-collection' \
---header "Authorization: Bearer $hub_token" \
---header 'Content-Type: application/json'
+curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}/operations/enable-audit-collection' \
+    --header "Authorization: Bearer $hub_token" \
+    --header 'Content-Type: application/json'
+
+# Verify log aggregator is active
+max_sleep=600
+while true; do
+    if [ "$(curl_fail_on_error -k 'https://127.0.0.1:8443/dsf/api/v1/log-aggregators/${db_arn}' --header "Authorization: Bearer $hub_token" | jq -r .data.auditState)" == "YES" ]; then
+        echo ********Log aggregator is found********
+        break
+    fi
+    sleep 10
+    max_sleep=$(($max_sleep - 10))
+    if [ "$max_sleep" -le 0 ]; then
+        echo ********Log aggregator is NOT found********
+        exit 1
+    fi
+done
+echo DONE

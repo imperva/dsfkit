@@ -2,8 +2,8 @@ data "aws_iam_role" "assignee_role" {
   name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
-resource "aws_iam_policy" "db_cloudwatch_policy" {
-  description = "Cloudwatch read policy for collecting audit"
+resource "aws_iam_policy" "db_policy" {
+  description = "IAM policy for collecting audit"
   policy      = <<EOF
 {
   "Version": "2012-10-17",
@@ -34,10 +34,10 @@ resource "aws_iam_policy" "db_cloudwatch_policy" {
 EOF
 }
 
-resource "aws_iam_policy_attachment" "test-attach" {
+resource "aws_iam_policy_attachment" "policy_attach" {
   name       = "collect-audit-attachment"
   roles      = [data.aws_iam_role.assignee_role.name]
-  policy_arn = aws_iam_policy.db_cloudwatch_policy.arn
+  policy_arn = aws_iam_policy.db_policy.arn
 }
 
 data "aws_caller_identity" "current" {}
@@ -103,10 +103,14 @@ resource "null_resource" "connect_dsf_to_db" {
         cloud_account_data=jsonencode(local.cloud_account_data),
         database_asset_data=jsonencode(local.database_asset_data)
         db_arn=var.database_details.db_arn
+        account_arn=local.cloud_account_data.data.id
         }))
     ]
   }
-  # triggers = {
-  #   always_run = "${timestamp()}"
-  # }
+  triggers = {
+    db_arn = var.database_details.db_arn
+  }
+  depends_on = [
+    aws_iam_policy_attachment.policy_attach
+  ]
 }
