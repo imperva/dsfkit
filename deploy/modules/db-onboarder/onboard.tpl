@@ -51,6 +51,8 @@ if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}' -
         --header "Authorization: Bearer $hub_token" \
         --header 'Content-Type: application/json' \
         --data-raw '${database_asset_data}'
+    echo ********Sleeping 60 seconds before validating log aggregators existence********
+    sleep 60
 fi
 
 # Enable audit
@@ -66,8 +68,8 @@ while true; do
         echo ********Log aggregator is found********
         break
     fi
-    sleep 10
-    max_sleep=$(($max_sleep - 10))
+    sleep 60
+    max_sleep=$(($max_sleep - 60))
     if [ "$max_sleep" -le 0 ]; then
         echo ********Log aggregator is NOT found********
         exit 1
