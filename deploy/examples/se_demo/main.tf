@@ -2,8 +2,8 @@ locals {
   region           = data.aws_region.current.name
   deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
   admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.external.public_ip.result.ip))]
-  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.external.public_ip.result.ip))]
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
   tarball_location = {
     s3_bucket = var.artifacts_s3_bucket
     s3_key = var.tarball_s3_key
@@ -27,16 +27,28 @@ provider "aws" {
 
 resource "time_static" "first_apply_ts" {}
 
-data "external" "public_ip" {
-  program = ["bash", "-c", "echo '{\"ip\":\"'$(curl http://ipv4.icanhazip.com)'\"}'"]
-}
-
-resource "null_resource" "print_ip" {
+resource "null_resource" "myip" {
+  triggers = {
+    always_run = "${timestamp()}"
+  }
   provisioner "local-exec" {
-    command     = "echo bash: $(curl http://ipv4.icanhazip.com); echo data: ${data.external.public_ip.result.ip}"
+    command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
     interpreter = ["/bin/bash", "-c"]
   }
+
+  provisioner "local-exec" {
+    command     = "rm -f myip-${terraform.workspace}"
+    interpreter = ["/bin/bash", "-c"]
+    when = destroy
+  }
+
 }
+
+data "local_file" "myip_file" { # data sources (like "http") on Terraform cloud platform don't run on the acutual runner resulting wrong IP address
+  filename = "myip-${terraform.workspace}"
+  depends_on = [
+    resource.null_resource.myip
+  ]
 
 resource "random_password" "admin_password" {
   length  = 15
