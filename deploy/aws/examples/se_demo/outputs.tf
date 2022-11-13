@@ -1,5 +1,5 @@
 output "dsf_agentless_gws" {
-  value = { for idx, val in module.agentless_gw : "gw-${idx}" => { private_address = val.private_address, jsonar_uid = module.gw_install[idx].jsonar_uid } }
+  value = { for idx, val in module.agentless_gw : "gw-${idx}" => { private_address = val.private_address, jsonar_uid = module.gw_setup[idx].jsonar_uid } }
 }
 
 output "dsf_hubs" {
@@ -7,7 +7,7 @@ output "dsf_hubs" {
     primary_hub = {
       public_address  = module.hub.public_address
       private_address = module.hub.private_address
-      jsonar_uid      = module.hub_install.jsonar_uid
+      jsonar_uid      = module.hub_setup.jsonar_uid
     }
   }
 }

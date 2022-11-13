@@ -69,8 +69,8 @@ module "agentless_gw" {
   tarball_bucket_name = local.tarball_location.s3_bucket
 }
 
-module "hub_install" {
-  source                = "../../modules/install"
+module "hub_setup" {
+  source                = "../../modules/setup"
   admin_password        = local.admin_password
   resource_type         = "hub"
   installation_location = local.tarball_location
@@ -81,9 +81,9 @@ module "hub_install" {
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
 
-module "gw_install" {
+module "gw_setup" {
   for_each              = { for idx, val in module.agentless_gw : idx => val }
-  source                = "../../modules/install"
+  source                = "../../modules/setup"
   admin_password        = local.admin_password
   resource_type         = "gw"
   installation_location = local.tarball_location
@@ -113,8 +113,8 @@ module "gw_attachments" {
   hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
-    module.hub_install,
-    module.gw_install,
+    module.hub_setup,
+    module.gw_setup,
   ]
 }
 
@@ -123,7 +123,7 @@ module "db_onboarding" {
   source                   = "../../modules/db_onboarding"
   hub_address              = module.hub.public_address
   hub_ssh_key_path         = module.globals.key_pair_private_pem.filename
-  assignee_gw              = module.hub_install.jsonar_uid
+  assignee_gw              = module.hub_setup.jsonar_uid
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
   public_subnets = module.vpc.public_subnets

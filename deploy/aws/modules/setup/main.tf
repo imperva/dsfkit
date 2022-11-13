@@ -1,6 +1,6 @@
 locals {
   proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
-  install_script = templatefile("${path.module}/install.tpl", {
+  install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                            = var.resource_type
     installation_s3_bucket              = var.installation_location.s3_bucket
     installation_s3_key                 = var.installation_location.s3_key
