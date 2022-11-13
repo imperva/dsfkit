@@ -30,10 +30,13 @@ resource "random_uuid" "uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
   provisioner "local-exec" {
-    command     = "ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; fi; cloud-init status'"
-    interpreter = ["/bin/bash", "-c"]
+    command     = "sleep 10; ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'echo Hola'"
+    interpreter = ["/bin/bash", "-cx"]
   }
   triggers = {
     installation_file = aws_instance.dsf_base_instance.arn
   }
+  depends_on = [
+    aws_instance.dsf_base_instance
+  ]
 }
