@@ -28,7 +28,7 @@ provider "aws" {
 resource "time_static" "first_apply_ts" {}
 
 data "external" "public_ip" {
-  program = ["bash", "-c", "echo '{\"ip\":\"'$(curl ifconfig.me)'\"}'"]
+  program = ["bash", "-c", "echo '{\"ip\":\"'$(curl http://ipv4.icanhazip.com)'\"}'"]
 }
 
 resource "random_password" "admin_password" {
