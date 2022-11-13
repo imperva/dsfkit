@@ -44,11 +44,12 @@ resource "null_resource" "myip" {
 
 }
 
-data "local_file" "myip_file" { # data sources (like "http") on Terraform cloud platform don't run on the acutual runner resulting wrong IP address
+data "local_file" "myip_file" { # data sources (like "http") doesn't work as expected on Terraform cloud platform. They are being run on another host resulting the wrong IP address
   filename = "myip-${terraform.workspace}"
   depends_on = [
     resource.null_resource.myip
   ]
+}
 
 resource "random_password" "admin_password" {
   length  = 15
