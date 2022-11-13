@@ -25,7 +25,7 @@ output "admin_password" {
 }
 
 output "deployment_name" {
-  value = local.deployment_name
+  value = local.deployment_name_salted
 }
 
 output "dsf_private_ssh_key" {

@@ -19,7 +19,6 @@ locals {
 }
 
 locals {
-  deployment_name  = local.deployment_name_salted
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr    = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
@@ -27,12 +26,12 @@ locals {
     "s3_bucket" : var.tarball_s3_bucket
     "s3_key" : var.tarball_s3_key
   }
-  tags = merge(module.globals.tags, {"deployment_name" = local.deployment_name})
+  tags = merge(module.globals.tags, {"deployment_name" = local.deployment_name_salted})
 }
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-  name   = local.deployment_name
+  name   = local.deployment_name_salted
   cidr   = var.vpc_ip_range
 
   enable_nat_gateway = true
@@ -51,7 +50,7 @@ module "vpc" {
 
 module "hub" {
   source                      = "../../modules/hub"
-  name                        = join("-", [local.deployment_name,"hub", "primary"])
+  name                        = join("-", [local.deployment_name_salted,"hub", "primary"])
   subnet_id                   = module.vpc.public_subnets[0]
   key_pair                    = module.globals.key_pair.key_pair_name
   web_console_sg_ingress_cidr = var.web_console_cidr
@@ -62,7 +61,7 @@ module "hub" {
 module "agentless_gw" {
   count               = var.gw_count
   source              = "../../modules/gw"
-  name                = join("-", [local.deployment_name, "gw", count.index])
+  name                = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id           = module.vpc.private_subnets[0]
   key_pair            = module.globals.key_pair.key_pair_name
   sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
@@ -76,7 +75,7 @@ module "hub_setup" {
   installation_location = local.tarball_location
   ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = module.hub.public_address
-  name                  = join("-", [local.deployment_name, "hub"])
+  name                  = join("-", [local.deployment_name_salted, "hub"])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -90,7 +89,7 @@ module "gw_setup" {
   ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
   instance_address      = each.value.private_address
   proxy_address         = module.hub.public_address
-  name                  = join("-", [local.deployment_name, "gw", each.key])
+  name                  = join("-", [local.deployment_name_salted, "gw", each.key])
   sonarw_public_key     = module.hub.sonarw_public_key
   sonarw_secret_name    = module.hub.sonarw_secret.name
 }
@@ -127,7 +126,7 @@ module "db_onboarding" {
   assignee_role            = module.hub.iam_role
   database_sg_ingress_cidr = local.database_cidr
   public_subnets = module.vpc.public_subnets
-  deployment_name = local.deployment_name
+  deployment_name = local.deployment_name_salted
 }
 
 output "db_details" {
