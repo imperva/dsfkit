@@ -31,6 +31,13 @@ data "external" "public_ip" {
   program = ["bash", "-c", "echo '{\"ip\":\"'$(curl http://ipv4.icanhazip.com)'\"}'"]
 }
 
+resource "null_resource" "print_ip" {
+  provisioner "local-exec" {
+    command     = "echo bash: $(curl http://ipv4.icanhazip.com); echo data: ${data.external.public_ip.result.ip}"
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 resource "random_password" "admin_password" {
   length  = 15
   special = false
