@@ -35,6 +35,13 @@ resource "null_resource" "myip" {
     command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
     interpreter = ["/bin/bash", "-c"]
   }
+
+  provisioner "local-exec" {
+    command     = "rm -f myip-${terraform.workspace}"
+    interpreter = ["/bin/bash", "-c"]
+    when = destroy
+  }
+
 }
 
 data "local_file" "myip_file" { # data "http" doesn't work as expected on Terraform cloud platform
@@ -171,7 +178,8 @@ module "db_onboarding" {
     db_engine = module.rds_mysql.db_engine
   }
   depends_on = [
-    module.hub
+    module.hub,
+    module.rds_mysql
   ]
 }
 
