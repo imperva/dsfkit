@@ -1,6 +1,7 @@
 #!/bin/bash -x
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 set -e
+set -u
 set -x
 cd /root || exit 1
 
@@ -70,7 +71,23 @@ function install_tarball() {
     sudo chown -R sonarw:sonar $DIR
 }
 
+function set_instance_fqdn() {
+    instance_fqdn=$(cloud-init query -a | jq -r .local_hostname)
+    if [ -z "$instance_fqdn" ]; then
+        echo "Failed to extract instance private FQDN"
+        exit 1
+    fi
+    if [ -n "${public_fqdn}" ]; then
+        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.public_hostname)
+        if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
+            echo "Failed to extract instance public FQDN"
+            exit 1
+        fi
+    fi
+}
+
 function setup() {
+    set_instance_fqdn
     VERSION=$(ls /opt/sonar-dsf/jsonar/apps/ -Art | tail -1)
     echo Setup sonar $VERSION
     sudo /opt/sonar-dsf/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
@@ -85,8 +102,8 @@ function setup() {
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
         --jsonar-uid ${uuid} \
+        --instance-IP-or-DNS=$instance_fqdn \
         $(test "${dsf_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
-        # --instance-IP-or-DNS=$${instance_fqdn}
 }
 
 function set_environment_vars() {
@@ -100,19 +117,17 @@ function set_environment_vars() {
 function install_ssh_keys() {
     echo Installing SSH keys
     if [ "${dsf_type}" == "hub" ]; then
-        for dir in "" "$${JSONAR_LOCALDIR}"; do
-            sudo mkdir -p $${dir}/home/sonarw/.ssh/
-            sudo /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text | sudo tee $${dir}/home/sonarw/.ssh/id_rsa > /dev/null
-            sudo echo "${sonarw_public_key}" | sudo tee $${dir}/home/sonarw/.ssh/id_rsa.pub > /dev/null
-            sudo touch $${dir}/home/sonarw/.ssh/authorized_keys
-            sudo grep -q "${sonarw_public_key}" $${dir}/home/sonarw/.ssh/authorized_keys || sudo cat $${dir}/home/sonarw/.ssh/id_rsa.pub | sudo tee -a $${dir}/home/sonarw/.ssh/authorized_keys > /dev/null
-            sudo chown -R sonarw:sonar $${dir}/home/sonarw/.ssh
-            sudo chmod -R 600 $${dir}/home/sonarw/.ssh
-            sudo chmod 700 $${dir}/home/sonarw/.ssh
-        done
+        sudo mkdir -p /home/sonarw/.ssh/
+        sudo /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text | sudo tee /home/sonarw/.ssh/id_rsa > /dev/null
+        sudo echo "${sonarw_public_key}" | sudo tee /home/sonarw/.ssh/id_rsa.pub > /dev/null
+        sudo touch /home/sonarw/.ssh/authorized_keys
+        sudo grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || sudo cat /home/sonarw/.ssh/id_rsa.pub | sudo tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+        sudo chown -R sonarw:sonar /home/sonarw/.ssh
+        sudo chmod -R 600 /home/sonarw/.ssh
+        sudo chmod 700 /home/sonarw/.ssh
     else
         sudo mkdir -p /home/sonarw/.ssh
-        sudo touch $${dir}/home/sonarw/.ssh/authorized_keys
+        sudo touch /home/sonarw/.ssh/authorized_keys
         sudo grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${sonarw_public_key}" | sudo tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
         sudo chown -R sonarw:sonar /home/sonarw
     fi

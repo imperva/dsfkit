@@ -20,7 +20,7 @@ locals {
     ssh_key_pair_path                   = var.ssh_key_pair_path
     sonarw_public_key                   = var.sonarw_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
-    # instance_fqdn                       = local.instance_address
+    public_fqdn                         = var.proxy_address != null ? "" : "True"
     uuid                                = random_uuid.uuid.result
     additional_install_parameters       = var.additional_install_parameters
   })
