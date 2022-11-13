@@ -58,7 +58,7 @@ module "hub" {
   tarball_bucket_name         = local.tarball_location.s3_bucket
 }
 
-module "agentless_gw" {
+module "agentless_gw_group" {
   count               = var.gw_count
   source              = "../../modules/gw"
   name                = join("-", [local.deployment_name_salted, "gw", count.index])
@@ -81,7 +81,7 @@ module "hub_setup" {
 }
 
 module "gw_setup" {
-  for_each              = { for idx, val in module.agentless_gw : idx => val }
+  for_each              = { for idx, val in module.agentless_gw_group : idx => val }
   source                = "../../modules/setup"
   admin_password        = local.admin_password
   resource_type         = "gw"
@@ -98,7 +98,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub.public_address],
     concat(
-      [for idx, val in module.agentless_gw : val.private_address]
+      [for idx, val in module.agentless_gw_group : val.private_address]
     )
   )
 }
