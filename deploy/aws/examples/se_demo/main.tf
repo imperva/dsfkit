@@ -104,10 +104,10 @@ locals {
   )
 }
 
-module "gw_attachments" {
+module "gw_registration" {
   count               = length(local.hub_gw_combinations)
   index               = count.index
-  source              = "../../modules/gw_attachment"
+  source              = "../../modules/gw_registration"
   gw                  = local.hub_gw_combinations[count.index][1]
   hub                 = local.hub_gw_combinations[count.index][0]
   hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
