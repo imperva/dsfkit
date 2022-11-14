@@ -32,7 +32,15 @@ function install_deps() {
 # Formatting and mounting the external ebs device
 function attach_disk() {
     ## Find device name ebs external device
+    number_of_expected_disks=2
+    lsblk
     DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+    while [ "$(wc -w <<< $DEVICES)" -lt "$number_of_expected_disks" ]; do
+        DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+        echo "Waiting for all external disk attachments"
+        sleep 10
+    done
+
     for d in $DEVICES; do
         if [ "$(lsblk --noheadings -o NAME| grep $d | wc -l)" -eq 1 ]; then
             DEVICE=$d;
@@ -40,6 +48,12 @@ function attach_disk() {
         fi;
     done
 
+    if [ -z "$DEVICE" ]; then
+        echo "No external device is found"
+        exit 1
+    fi
+
+    lsblk -no FSTYPE /dev/$DEVICE
     FS=$(lsblk -no FSTYPE /dev/$DEVICE)
     if [ "$FS" != "xfs" ]; then
         echo "/dev/$DEVICE fs is \"$FS\". Formatting it..."

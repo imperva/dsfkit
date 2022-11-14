@@ -15,7 +15,7 @@ variable "sonar_version" {
 
 variable "tarball_s3_key" {
   type    = string
-  default = "jsonar-4.10.0.0.0-rc1_20221019194459.tar.gz"
+  default = "jsonar-4.10.0.0.0-rc4_20221111045332.tar.gz"
 }
 
 variable "gw_count" {
