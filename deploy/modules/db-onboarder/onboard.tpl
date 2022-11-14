@@ -68,8 +68,8 @@ while true; do
         echo ********Log aggregator is found********
         break
     fi
-    sleep 60
-    max_sleep=$(($max_sleep - 60))
+    sleep 20
+    max_sleep=$(($max_sleep - 20))
     if [ "$max_sleep" -le 0 ]; then
         echo ********Log aggregator is NOT found********
         exit 1
