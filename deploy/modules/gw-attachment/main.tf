@@ -1,7 +1,3 @@
-resource "time_sleep" "wait_120_seconds" {
-  create_duration = "120s"
-}
-
 #################################
 # Federation script
 #################################
@@ -18,6 +14,11 @@ locals {
     dsf_gw_ip    = var.gw
     dsf_hub_ip   = var.hub
   })
+  sleep_value = "60s"
+}
+
+resource "time_sleep" "sleep" {
+  create_duration = local.sleep_value
 }
 
 resource "null_resource" "federate_cmds" {
@@ -26,7 +27,7 @@ resource "null_resource" "federate_cmds" {
     interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
-    time_sleep.wait_120_seconds,
+    time_sleep.sleep,
   ]
   triggers = {
     installation_source = "${var.installation_source}",
