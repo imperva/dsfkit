@@ -2,8 +2,9 @@ locals {
   region           = data.aws_region.current.name
   deployment_name  = join("-", [var.deployment_name, random_id.salt.hex])
   admin_password   = var.admin_password != null ? var.admin_password : random_password.admin_password.result
-  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
-  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.local_file.myip_file.content))]
+  workstation_public_ip = trimspace(data.http.workstation_public_ip.response_body)
+  workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", local.workstation_public_ip))]
+  database_cidr    = var.database_cidr != null ? var.database_cidr : [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", local.workstation_public_ip))]
   tarball_location = {
     s3_bucket = var.artifacts_s3_bucket
     s3_key = var.tarball_s3_key
@@ -27,27 +28,16 @@ provider "aws" {
 
 resource "time_static" "first_apply_ts" {}
 
-resource "null_resource" "myip" {
+resource "null_resource" "postpone_data_to_apply_phase" {
   triggers = {
     always_run = "${timestamp()}"
   }
-  provisioner "local-exec" {
-    command     = "curl http://ipv4.icanhazip.com > myip-${terraform.workspace}"
-    interpreter = ["/bin/bash", "-c"]
-  }
-
-  provisioner "local-exec" {
-    command     = "rm -f myip-${terraform.workspace}"
-    interpreter = ["/bin/bash", "-c"]
-    when = destroy
-  }
-
 }
 
-data "local_file" "myip_file" { # data sources (like "http") doesn't work as expected on Terraform cloud platform. They are being run on another host resulting the wrong IP address
-  filename = "myip-${terraform.workspace}"
+data "http" "workstation_public_ip" {
+  url = "http://ipv4.icanhazip.com"
   depends_on = [
-    resource.null_resource.myip
+    null_resource.postpone_data_to_apply_phase
   ]
 }
 

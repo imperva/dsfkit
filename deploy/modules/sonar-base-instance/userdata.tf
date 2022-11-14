@@ -1,5 +1,5 @@
 locals {
-  ssh_options = "-o ConnectionAttempts=30 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+  ssh_options = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   proxy_arg = var.proxy_address == null ? "" : "-o ProxyCommand='ssh ${local.ssh_options} -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
   public_ip = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
