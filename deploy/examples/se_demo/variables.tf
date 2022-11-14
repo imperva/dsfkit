@@ -20,7 +20,7 @@ variable "tarball_s3_key" {
 
 variable "gw_count" {
   type    = number
-  default = 2
+  default = 1
 }
 
 variable "admin_password" {
@@ -42,4 +42,8 @@ variable "database_cidr" {
 variable "workstation_cidr" {
   type    = list(string)
   default = null
+}
+
+variable "additional_install_parameters" {
+  default = ""
 }

@@ -19,7 +19,9 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   EXAMPLE_DIR: ./deploy/examples/se_demo_hadr
-  AWS_REGION: eu-central-1
+  AWS_REGION: eu-west-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
   contents: read
@@ -34,7 +36,6 @@ jobs:
     defaults:
       run:
         shell: bash
-
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -48,8 +49,6 @@ jobs:
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-      # with:
-      #   cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
