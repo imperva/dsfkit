@@ -50,7 +50,7 @@ jobs:
 
     - name: Create terraform backend file
       run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
+        cat << EOF > $EXAMPLE_DIR/backend.tf1
         terraform {
           backend "s3" {
             bucket         = "terraform-state-bucket-dsfkit-github-tests"
