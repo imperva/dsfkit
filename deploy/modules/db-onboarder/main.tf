@@ -99,12 +99,12 @@ resource "null_resource" "connect_dsf_to_db" {
 
   provisioner "remote-exec" {
     inline = [
-      nonsensitive(templatefile("${path.module}/onboard.tpl", {
+      templatefile("${path.module}/onboard.tpl", {
         cloud_account_data=jsonencode(local.cloud_account_data),
         database_asset_data=jsonencode(local.database_asset_data)
         db_arn=var.database_details.db_arn
         account_arn=local.cloud_account_data.data.id
-        }))
+        })
     ]
   }
   triggers = {
