@@ -15,15 +15,15 @@ on:
   #     - 'dev'
 
 env:
-  TF_WARN_OUTPUT_ERRORS: 1
-  TF_CLI_ARGS: "-no-color"
-  TF_INPUT: 0
-  EXAMPLE_DIR: ./deploy/examples/se_demo
-  TF_VAR_gw_count: 0
-  TF_WORKSPACE: hadr_cli
-  AWS_REGION: eu-west-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+TF_WARN_OUTPUT_ERRORS: 1
+TF_CLI_ARGS: "-no-color"
+TF_INPUT: 0
+EXAMPLE_DIR: ./deploy/examples/se_demo
+TF_VAR_gw_count: 0
+TF_WORKSPACE: hadr_cli
+AWS_REGION: eu-west-1
+AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
   contents: read
@@ -50,7 +50,7 @@ jobs:
 
     - name: Create terraform backend file
       run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf1
+        cat << EOF > $EXAMPLE_DIR/backend.tf
         terraform {
           backend "s3" {
             bucket         = "terraform-state-bucket-dsfkit-github-tests"
@@ -60,25 +60,14 @@ jobs:
           }
         }
         EOF
-        #cat $EXAMPLE_DIR/backend.tf
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: echo hello world
-      run: |
-        pwd
-        echo hello world
-        find $EXAMPLE_DIR
-        cat $EXAMPLE_DIR/*
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: |
-        set -x
-        terraform -chdir=$EXAMPLE_DIR init
+      run: terraform -chdir=$EXAMPLE_DIR init
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
