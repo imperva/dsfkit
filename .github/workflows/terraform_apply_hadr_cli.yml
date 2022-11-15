@@ -97,6 +97,7 @@ jobs:
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+      if: false
 
     - name: Terraform Destroy
       if: always()
