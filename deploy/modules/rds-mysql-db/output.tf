@@ -4,7 +4,7 @@ output db_username {
 }
 
 output db_password {
-  value = local.db_password
+  value = nonsensitive(local.db_password)
 }
 
 output db_name {
@@ -32,6 +32,6 @@ output "db_port" {
 }
 
 output "sql_cmd" {
-  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${local.db_password}"
+  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${nonsensitive(local.db_password)}"
 }
 
