@@ -18,7 +18,9 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  EXAMPLE_DIR: ./deploy/examples/se_demo_hadr
+  EXAMPLE_DIR: ./deploy/examples/se_demo
+  TF_VAR_gw_count: 0
+  TF_WORKSPACE: hadr_cli
   AWS_REGION: eu-west-1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -45,6 +47,18 @@ jobs:
       run: |
         echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
       if: github.ref != 'refs/heads/"master"'
+
+    - name: Create terraform backend file
+      run: |
+        cat << EOF > $EXAMPLE_DIR
+        terraform {
+          backend "s3" {
+            bucket         = "terraform-state-bucket-dsfkit-github-tests"
+            key            = "states/terraform.tfstate"
+            dynamodb_table = "terraform-state-lock"
+          }
+        }
+        EOF
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
