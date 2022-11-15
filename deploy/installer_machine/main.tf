@@ -11,7 +11,7 @@ data "http" "myip" {
 data "aws_region" "current" {}
 
 locals {
-  region           = data.aws_region.current.name
+  region = data.aws_region.current.name
 }
 
 ##############################
@@ -36,10 +36,10 @@ resource "local_sensitive_file" "installer_ssh_key" {
 
 
 locals {
-  disk_size_app         = 100
-  ebs_state_disk_type   = "gp3"
-  ebs_state_iops        = 16000
-  ebs_state_throughput  = 1000
+  disk_size_app        = 100
+  ebs_state_disk_type  = "gp3"
+  ebs_state_iops       = 16000
+  ebs_state_throughput = 1000
 }
 
 
@@ -68,11 +68,11 @@ resource "aws_security_group" "allow_ssh" {
   description = "Allow ssh inbound traffic"
 
   ingress {
-    description      = "ssh"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))]
+    description = "ssh"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))]
   }
 
   egress {
@@ -89,18 +89,18 @@ resource "aws_security_group" "allow_ssh" {
 }
 
 resource "aws_instance" "installer_machine" {
-  ami                           = data.aws_ami.installer-ami.image_id
-  instance_type                 = var.ec2_instance_type
-  key_name                      = module.key_pair.key_pair_name
-  user_data                     = templatefile("${path.module}/prepare_installer.tpl", {
-    access_key = var._1_aws_access_key_id
-    secret_key = var._2_aws_secret_access_key
-    region = var._3_aws_region
-    example_name = var.example_name
-    web_console_cidr= var.web_console_cidr != null ? var.web_console_cidr : format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))
+  ami           = data.aws_ami.installer-ami.image_id
+  instance_type = var.ec2_instance_type
+  key_name      = module.key_pair.key_pair_name
+  user_data = templatefile("${path.module}/prepare_installer.tpl", {
+    access_key       = var._1_aws_access_key_id
+    secret_key       = var._2_aws_secret_access_key
+    region           = var._3_aws_region
+    example_name     = var.example_name
+    web_console_cidr = var.web_console_cidr != null ? var.web_console_cidr : format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))
   })
   associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.allow_ssh.id]
+  vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
   tags = {
     Name = "dsf_installer_machine"
   }

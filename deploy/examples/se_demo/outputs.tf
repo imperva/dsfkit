@@ -21,7 +21,7 @@ output "primary_hub_ssh_command" {
 }
 
 output "admin_password" {
-  value     = nonsensitive(local.admin_password)
+  value = nonsensitive(local.admin_password)
 }
 
 output "deployment_name" {

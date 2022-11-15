@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source              = "../../modules/core/globals"
+  source = "../../modules/core/globals"
 }
 
 data "aws_availability_zones" "available" { state = "available" }
@@ -26,7 +26,7 @@ locals {
     "s3_bucket" : var.tarball_s3_bucket
     "s3_key" : var.tarball_s3_key
   }
-  tags = merge(module.globals.tags, {"deployment_name" = local.deployment_name_salted})
+  tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
 ##############################
@@ -38,8 +38,8 @@ module "vpc" {
   name   = local.deployment_name_salted
   cidr   = var.vpc_ip_range
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
   enable_dns_hostnames = true
 
   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
@@ -52,15 +52,15 @@ module "vpc" {
 ##############################
 
 module "hub" {
-  source                      = "../../modules/hub"
-  name                        = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                   = module.vpc.public_subnets[0]
-  key_pair                    = module.globals.key_pair.key_pair_name
-  web_console_sg_ingress_cidr = var.web_console_cidr
-  sg_ingress_cidr             = local.workstation_cidr
-  installation_location       = local.tarball_location
-  admin_password              = local.admin_password
-  ssh_key_pair_path           = module.globals.key_pair_private_pem.filename
+  source                        = "../../modules/hub"
+  name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
+  subnet_id                     = module.vpc.public_subnets[0]
+  key_pair                      = module.globals.key_pair.key_pair_name
+  web_console_sg_ingress_cidr   = var.web_console_cidr
+  sg_ingress_cidr               = local.workstation_cidr
+  installation_location         = local.tarball_location
+  admin_password                = local.admin_password
+  ssh_key_pair_path             = module.globals.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   depends_on = [
     module.vpc
@@ -68,26 +68,26 @@ module "hub" {
 }
 
 module "agentless_gw_group" {
-  count               = var.gw_count
-  source              = "../../modules/agentless-gw"
-  name                = join("-", [local.deployment_name_salted, "gw", count.index])
-  subnet_id           = module.vpc.private_subnets[0]
-  key_pair            = module.globals.key_pair.key_pair_name
-  sg_ingress_cidr     = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
-  installation_location = local.tarball_location
-  admin_password      = local.admin_password
-  ssh_key_pair_path     = module.globals.key_pair_private_pem.filename
+  count                         = var.gw_count
+  source                        = "../../modules/agentless-gw"
+  name                          = join("-", [local.deployment_name_salted, "gw", count.index])
+  subnet_id                     = module.vpc.private_subnets[0]
+  key_pair                      = module.globals.key_pair.key_pair_name
+  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  installation_location         = local.tarball_location
+  admin_password                = local.admin_password
+  ssh_key_pair_path             = module.globals.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
-  sonarw_public_key   = module.hub.sonarw_public_key
-  sonarw_secret_name  = module.hub.sonarw_secret.name
-  proxy_address       = module.hub.public_address
+  sonarw_public_key             = module.hub.sonarw_public_key
+  sonarw_secret_name            = module.hub.sonarw_secret.name
+  proxy_address                 = module.hub.public_address
   depends_on = [
     module.vpc
   ]
 }
 
 module "gw_attachments" {
-  for_each              = { for idx, val in module.agentless_gw_group : idx => val }
+  for_each            = { for idx, val in module.agentless_gw_group : idx => val }
   source              = "../../modules/gw-attachment"
   gw                  = each.value.private_address
   hub                 = module.hub.public_address
@@ -100,26 +100,26 @@ module "gw_attachments" {
 }
 
 module "rds_mysql" {
-  source  = "../../modules/rds-mysql-db"
-  rds_subnet_ids = module.vpc.public_subnets
+  source                       = "../../modules/rds-mysql-db"
+  rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
 module "db_onboarding" {
-  count                    = 1
-  source                   = "../../modules/db-onboarder"
-  hub_address              = module.hub.public_address
-  hub_ssh_key_path         = module.globals.key_pair_private_pem.filename
-  assignee_gw              = module.hub.jsonar_uid
-  assignee_role            = module.hub.iam_role
+  count            = 1
+  source           = "../../modules/db-onboarder"
+  hub_address      = module.hub.public_address
+  hub_ssh_key_path = module.globals.key_pair_private_pem.filename
+  assignee_gw      = module.hub.jsonar_uid
+  assignee_role    = module.hub.iam_role
   database_details = {
-    db_username = module.rds_mysql.db_username
-    db_password = module.rds_mysql.db_password
-    db_arn = module.rds_mysql.db_arn
-    db_port = module.rds_mysql.db_port
+    db_username   = module.rds_mysql.db_username
+    db_password   = module.rds_mysql.db_password
+    db_arn        = module.rds_mysql.db_arn
+    db_port       = module.rds_mysql.db_port
     db_identifier = module.rds_mysql.db_identifier
-    db_address = module.rds_mysql.db_endpoint
-    db_engine = module.rds_mysql.db_engine
+    db_address    = module.rds_mysql.db_endpoint
+    db_engine     = module.rds_mysql.db_engine
   }
   depends_on = [
     module.hub,
@@ -128,5 +128,5 @@ module "db_onboarding" {
 }
 
 output "db_details" {
-  value     = module.rds_mysql
+  value = module.rds_mysql
 }

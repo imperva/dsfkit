@@ -24,8 +24,8 @@ resource "random_password" "pass" {
 
 
 module "key_pair" {
-  source             = "../key_pair"
-  key_name_prefix    = "imperva-dsf-"
-  create_private_key = true
+  source                   = "../key_pair"
+  key_name_prefix          = "imperva-dsf-"
+  create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }

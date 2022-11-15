@@ -1,21 +1,21 @@
 provider "aws" {
-	region = data.terraform_remote_state.init.outputs.region
-	#### Uncomment the following line, and comment out the previous to override the region with the local var ####
-	# region = var.region
+  region = data.terraform_remote_state.init.outputs.region
+  #### Uncomment the following line, and comment out the previous to override the region with the local var ####
+  # region = var.region
 }
 
 data "terraform_remote_state" "init" {
-	backend = "local"
-	config = {
-		path = "${path.module}/../1-init/terraform.tfstate"
-	}
+  backend = "local"
+  config = {
+    path = "${path.module}/../1-init/terraform.tfstate"
+  }
 }
 
 data "terraform_remote_state" "dsf" {
-	backend = "local"
-	config = {
-		path = "${path.module}/../2-dsf/terraform.tfstate"
-	}
+  backend = "local"
+  config = {
+    path = "${path.module}/../2-dsf/terraform.tfstate"
+  }
 }
 
 ##############################################################################
@@ -49,11 +49,11 @@ data "terraform_remote_state" "dsf" {
 # }
 
 module "rds-aurora-mysql" {
-	source  = "../../../modules/rds-aurora-mysql"
-	# username = local.rds_passwords_obj.username
-	# password = local.rds_passwords_obj.master_pasword	
-	username = "imperva_user"
-	password = "Imperva123#"
-	identifier = var.cluster_identifier
-	rds_subnet_ids = var.rds_subnet_ids	
+  source = "../../../modules/rds-aurora-mysql"
+  # username = local.rds_passwords_obj.username
+  # password = local.rds_passwords_obj.master_pasword	
+  username       = "imperva_user"
+  password       = "Imperva123#"
+  identifier     = var.cluster_identifier
+  rds_subnet_ids = var.rds_subnet_ids
 }

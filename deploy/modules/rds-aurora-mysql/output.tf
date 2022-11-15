@@ -1,17 +1,17 @@
 
-output db_username {
+output "db_username" {
   value = local.db_username
 }
 
-output db_password {
+output "db_password" {
   value = local.db_password
 }
 
-output db_name {
+output "db_name" {
   value = local.db_name
 }
 
-output db_identifier {
+output "db_identifier" {
   value = local.db_identifier
 }
 

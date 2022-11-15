@@ -24,11 +24,11 @@ output "key_pair_private_pem" {
 
 output "tags" {
   value = {
-    terraform_workspace                = terraform.workspace
-    vendor                             = "Imperva"
-    product                            = "EDSF"
-    terraform                          = "true"
-    environment                        = "demo"
-    creation_timestamp                 =  resource.time_static.current_time.id
+    terraform_workspace = terraform.workspace
+    vendor              = "Imperva"
+    product             = "EDSF"
+    terraform           = "true"
+    environment         = "demo"
+    creation_timestamp  = resource.time_static.current_time.id
   }
 }

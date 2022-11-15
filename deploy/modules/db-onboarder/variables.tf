@@ -28,13 +28,13 @@ variable "hub_ssh_key_path" {
 
 variable "database_details" {
   type = object({
-    db_username = string
-    db_password = string
-    db_arn = string
-    db_port = number
-    db_engine = string
+    db_username   = string
+    db_password   = string
+    db_arn        = string
+    db_port       = number
+    db_engine     = string
     db_identifier = string
-    db_address = string
+    db_address    = string
   })
   description = "database details"
   nullable    = false

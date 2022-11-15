@@ -9,13 +9,13 @@
 #   filename        = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 
 variable "key_name_prefix" {
-    type = string
+  type = string
 }
 
 variable "create_private_key" {
-    type = bool
+  type = bool
 }
 
 variable "private_key_pem_filename" {
-    type = string
+  type = string
 }
