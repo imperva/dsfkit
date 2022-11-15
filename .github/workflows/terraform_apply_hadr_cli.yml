@@ -56,10 +56,11 @@ jobs:
             bucket         = "terraform-state-bucket-dsfkit-github-tests"
             key            = "states/terraform.tfstate"
             dynamodb_table = "terraform-state-lock"
-            region         = "$AWS_REGION"
+            region         = "us-east-1"
           }
         }
         EOF
+        cat $EXAMPLE_DIR/backend.tf
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
