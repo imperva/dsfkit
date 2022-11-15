@@ -216,5 +216,4 @@ module "db_onboarding" {
 
 output "db_details" {
   value     = module.rds_mysql
-  sensitive = true
 }
