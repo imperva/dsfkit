@@ -56,7 +56,7 @@ jobs:
             bucket         = "terraform-state-bucket-dsfkit-github-tests"
             key            = "states/terraform.tfstate"
             dynamodb_table = "terraform-state-lock"
-            region         = $AWS_REGION
+            region         = "$AWS_REGION"
           }
         }
         EOF
