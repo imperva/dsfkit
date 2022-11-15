@@ -38,10 +38,10 @@
 # Connect to hub with key_pair_pem, and call DSF API invoking import_discover_connect_gateway playbook to import the rds log group with the log_group_json above
 resource "null_resource" "discover_and_connect" {
   connection {
-    type     = "ssh"
-    user     = "ec2-user"
+    type        = "ssh"
+    user        = "ec2-user"
     private_key = file(var.key_pair_pem_local_path)
-    host     = var.hub_ip
+    host        = var.hub_ip
   }
 
   provisioner "remote-exec" {

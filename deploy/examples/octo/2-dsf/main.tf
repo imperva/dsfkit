@@ -1,12 +1,12 @@
 provider "aws" {
-	region = data.terraform_remote_state.init.outputs.region
+  region = data.terraform_remote_state.init.outputs.region
 }
 
 data "terraform_remote_state" "init" {
-	backend = "local"
-	config = {
-		path = "${path.module}/../1-init/terraform.tfstate"
-	}
+  backend = "local"
+  config = {
+    path = "${path.module}/../1-init/terraform.tfstate"
+  }
 }
 
 data "aws_secretsmanager_secret" "dsf_passwords" {
@@ -18,36 +18,36 @@ data "aws_secretsmanager_secret_version" "dsf_passwords" {
 }
 
 module "sonarw" {
-  	source  = "../../../modules/hub"
-	name = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-hub"
-	subnet_id = var.subnet_id
-	key_pair = data.terraform_remote_state.init.outputs.key_pair
-  	sg_ingress_cidr             = var.security_group_ingress_cidrs
-  	installation_location = {
-	  s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
-	  s3_key = var.dsf_install_tarball_path
-	}
-  	admin_password = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
-  	ssh_key_pair_path           = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
-  	additional_install_parameters = var.additional_parameters
+  source          = "../../../modules/hub"
+  name            = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-hub"
+  subnet_id       = var.subnet_id
+  key_pair        = data.terraform_remote_state.init.outputs.key_pair
+  sg_ingress_cidr = var.security_group_ingress_cidrs
+  installation_location = {
+    s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
+    s3_key    = var.dsf_install_tarball_path
+  }
+  admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
+  ssh_key_pair_path             = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
+  additional_install_parameters = var.additional_parameters
 }
 
 module "sonarg1" {
-  source              = "../../../modules/agentless-gw"
-  name                = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-agentless-gw1"
-  subnet_id           = var.subnet_id
-  key_pair            = data.terraform_remote_state.init.outputs.key_pair
-  sg_ingress_cidr     = concat(var.security_group_ingress_cidrs, ["${module.sonarw.public_address}/32"])
+  source          = "../../../modules/agentless-gw"
+  name            = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-agentless-gw1"
+  subnet_id       = var.subnet_id
+  key_pair        = data.terraform_remote_state.init.outputs.key_pair
+  sg_ingress_cidr = concat(var.security_group_ingress_cidrs, ["${module.sonarw.public_address}/32"])
   installation_location = {
-	s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
-	s3_key = var.dsf_install_tarball_path
+    s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
+    s3_key    = var.dsf_install_tarball_path
   }
-  admin_password      = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
-  ssh_key_pair_path   = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
+  admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
+  ssh_key_pair_path             = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
   additional_install_parameters = var.additional_parameters
-  sonarw_public_key   = module.sonarw.sonarw_public_key
-  sonarw_secret_name  = module.sonarw.sonarw_secret.name
-  public_ip = true
+  sonarw_public_key             = module.sonarw.sonarw_public_key
+  sonarw_secret_name            = module.sonarw.sonarw_secret.name
+  public_ip                     = true
 }
 
 module "gw_attachments" {

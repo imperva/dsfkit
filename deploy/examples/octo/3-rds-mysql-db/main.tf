@@ -1,21 +1,21 @@
 provider "aws" {
-	region = data.terraform_remote_state.init.outputs.region
-	#### Uncomment the following line, and comment out the previous to override the region with the local var ####
-	# region = var.region
+  region = data.terraform_remote_state.init.outputs.region
+  #### Uncomment the following line, and comment out the previous to override the region with the local var ####
+  # region = var.region
 }
 
 data "terraform_remote_state" "init" {
-	backend = "local"
-	config = {
-		path = "${path.module}/../1-init/terraform.tfstate"
-	}
+  backend = "local"
+  config = {
+    path = "${path.module}/../1-init/terraform.tfstate"
+  }
 }
 
 data "terraform_remote_state" "dsf" {
-	backend = "local"
-	config = {
-		path = "${path.module}/../2-dsf/terraform.tfstate"
-	}
+  backend = "local"
+  config = {
+    path = "${path.module}/../2-dsf/terraform.tfstate"
+  }
 }
 
 ##############################################################################
@@ -49,14 +49,14 @@ data "terraform_remote_state" "dsf" {
 # }
 
 module "rds-mysql-db" {
-	source  = "../../../modules/rds-mysql-db"
-	# username = local.rds_passwords_obj.username
-	# password = local.rds_passwords_obj.pasword	
-	username = var.username
-	password = var.password
-	rds_subnet_ids = var.rds_subnet_ids	
-	identifier = var.db_identifier
-	name = "isbt_db"
-	init_sql_file_path = "init/init_db.sql"
-	security_group_ingress_cidrs = data.terraform_remote_state.dsf.outputs.security_group_ingress_cidrs
+  source = "../../../modules/rds-mysql-db"
+  # username = local.rds_passwords_obj.username
+  # password = local.rds_passwords_obj.pasword	
+  username                     = var.username
+  password                     = var.password
+  rds_subnet_ids               = var.rds_subnet_ids
+  identifier                   = var.db_identifier
+  name                         = "isbt_db"
+  init_sql_file_path           = "init/init_db.sql"
+  security_group_ingress_cidrs = data.terraform_remote_state.dsf.outputs.security_group_ingress_cidrs
 }

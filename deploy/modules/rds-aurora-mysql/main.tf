@@ -7,10 +7,10 @@ resource "random_pet" "db_id" {
 }
 
 locals {
-  db_username = var.username
-  db_password = length(var.password) > 0 ? var.password : random_password.db_password.result
+  db_username   = var.username
+  db_password   = length(var.password) > 0 ? var.password : random_password.db_password.result
   db_identifier = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
-  db_name = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
+  db_name       = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
@@ -37,15 +37,15 @@ resource "aws_rds_cluster_parameter_group" "impv_rds_db_pg" {
 }
 
 resource "aws_rds_cluster" "rds_db" {
-  db_subnet_group_name              = aws_db_subnet_group.rds_db_sg.name
-  cluster_identifier                = local.db_identifier
-  database_name                     = local.db_name
-  engine                            = "aurora-mysql"
-  master_username                   = local.db_username
-  master_password                   = local.db_password
-  db_cluster_parameter_group_name   = aws_rds_cluster_parameter_group.impv_rds_db_pg.name
-  enabled_cloudwatch_logs_exports   = ["audit", "error", "general", "slowquery"]
-  skip_final_snapshot  = true
+  db_subnet_group_name            = aws_db_subnet_group.rds_db_sg.name
+  cluster_identifier              = local.db_identifier
+  database_name                   = local.db_name
+  engine                          = "aurora-mysql"
+  master_username                 = local.db_username
+  master_password                 = local.db_password
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.impv_rds_db_pg.name
+  enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
+  skip_final_snapshot             = true
 }
 
 resource "aws_cloudwatch_log_group" "audit" {
