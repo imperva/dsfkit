@@ -3,7 +3,7 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "artifacts_s3_bucket" {
+variable "tarball_s3_bucket" {
   type    = string
   default = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
 }
@@ -46,4 +46,19 @@ variable "workstation_cidr" {
 
 variable "additional_install_parameters" {
   default = ""
+}
+
+variable "private_subnets" {
+  type    = list(string)
+  default = ["10.0.1.0/24", "10.0.2.0/24"]
+}
+
+variable "public_subnets" {
+  type    = list(string)
+  default = ["10.0.101.0/24", "10.0.102.0/24"]
+}
+
+variable "vpc_ip_range" {
+  type    = string
+  default = "10.0.0.0/16"
 }

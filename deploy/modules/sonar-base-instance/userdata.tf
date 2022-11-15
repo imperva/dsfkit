@@ -4,10 +4,10 @@ locals {
   public_ip = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
   instance_address = var.public_ip ? local.public_ip : local.private_ip
-  display_name = "DSF-${var.dsf_type}-${var.name}"
+  display_name = "DSF-${var.resource_type}-${var.name}"
 
-  install_script = templatefile("${path.module}/install.tpl", {
-    dsf_type                            = var.dsf_type
+  install_script = templatefile("${path.module}/setup.tpl", {
+    resource_type                            = var.resource_type
     installation_s3_bucket              = var.installation_location.s3_bucket
     installation_s3_key                 = var.installation_location.s3_key
     display-name                        = local.display_name
