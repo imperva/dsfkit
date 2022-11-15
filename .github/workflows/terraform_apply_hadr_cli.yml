@@ -67,8 +67,14 @@ jobs:
       uses: hashicorp/setup-terraform@v1
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: echo hello world
+      run: echo hello world
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init 
+      run: |
+        set -x
+        terraform -chdir=$EXAMPLE_DIR init
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
