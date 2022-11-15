@@ -117,7 +117,7 @@ resource "aws_iam_role" "dsf_hub_role" {
 
 module "hub_instance" {
   source                      = "../../modules/sonar-base-instance"
-  dsf_type                    = "hub"
+  resource_type                    = "hub"
   name                        = var.name
   subnet_id                   = var.subnet_id
   key_pair                    = var.key_pair

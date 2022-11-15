@@ -52,10 +52,10 @@ variable "dsf_base_ami_name_tag" {
   # default = "RHEL-7.9_HVM-20220512-x86_64-1-Hourly2-GP2" Exists on all regions
 }
 
-variable "dsf_type" {
+variable "resource_type" {
   type = string
   validation {
-    condition     = contains(["hub", "gw"], var.dsf_type)
+    condition     = contains(["hub", "gw"], var.resource_type)
     error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
   }
   nullable = false

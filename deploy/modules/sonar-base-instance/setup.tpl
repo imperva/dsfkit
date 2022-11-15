@@ -117,7 +117,7 @@ function setup() {
         --jsonar-logdir=$STATE_DIR/logs \
         --jsonar-uid ${uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
-        $(test "${dsf_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
+        $(test "${resource_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
 }
 
 function set_environment_vars() {
@@ -130,7 +130,7 @@ function set_environment_vars() {
 
 function install_ssh_keys() {
     echo Installing SSH keys
-    if [ "${dsf_type}" == "hub" ]; then
+    if [ "${resource_type}" == "hub" ]; then
         sudo mkdir -p /home/sonarw/.ssh/
         sudo /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text | sudo tee /home/sonarw/.ssh/id_rsa > /dev/null
         sudo echo "${sonarw_public_key}" | sudo tee /home/sonarw/.ssh/id_rsa.pub > /dev/null
