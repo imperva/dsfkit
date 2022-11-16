@@ -141,3 +141,35 @@ module "hadr" {
     module.hub_secondary
   ]
 }
+
+module "rds_mysql" {
+  source                       = "../../modules/rds-mysql-db"
+  rds_subnet_ids               = module.vpc.public_subnets
+  security_group_ingress_cidrs = local.workstation_cidr
+}
+
+module "db_onboarding" {
+  count            = 1
+  source           = "../../modules/db-onboarder"
+  hub_address      = module.hub.public_address
+  hub_ssh_key_path = module.globals.key_pair_private_pem.filename
+  assignee_gw      = module.hub.jsonar_uid
+  assignee_role    = module.hub.iam_role
+  database_details = {
+    db_username   = module.rds_mysql.db_username
+    db_password   = module.rds_mysql.db_password
+    db_arn        = module.rds_mysql.db_arn
+    db_port       = module.rds_mysql.db_port
+    db_identifier = module.rds_mysql.db_identifier
+    db_address    = module.rds_mysql.db_endpoint
+    db_engine     = module.rds_mysql.db_engine
+  }
+  depends_on = [
+    module.hub,
+    module.rds_mysql
+  ]
+}
+
+output "db_details" {
+  value = module.rds_mysql
+}
