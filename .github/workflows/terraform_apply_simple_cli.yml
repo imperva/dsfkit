@@ -68,26 +68,26 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: |
-        ::group::{init}
+        ::group::init
         terraform -chdir=$EXAMPLE_DIR init
-        ::group::{destroy}
+        ::group::destroy
 
     - name: Terraform Validate
       run: |
-        ::group::{validate}
+        ::group::validate
         terraform -chdir=$EXAMPLE_DIR validate
-        ::group::{destroy}
+        ::group::destroy
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: |
-        ::group::{plan}
+        ::group::plan
         terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
         ::endgroup::
 
     - name: Cleaning envrionment
       run: |
-        ::group::{clean}
+        ::group::clean
         terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
         ::endgroup::
 
@@ -96,13 +96,13 @@ jobs:
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: |
-        ::group::{apply}
+        ::group::apply
         terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
         ::endgroup::
 
     - name: Terraform Destroy
       if: always()
       run: |
-        ::group::{destroy}
+        ::group::destroy
         terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
         ::endgroup::
