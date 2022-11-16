@@ -67,24 +67,42 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
+      run: |
+        ::group::{init}
+        terraform -chdir=$EXAMPLE_DIR init
+        ::group::{destroy}
 
     - name: Terraform Validate
-      run: terraform -chdir=$EXAMPLE_DIR validate
+      run: |
+        ::group::{validate}
+        terraform -chdir=$EXAMPLE_DIR validate
+        ::group::{destroy}
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+      run: |
+        ::group::{plan}
+        terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+        ::endgroup::
 
     - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+      run: |
+        ::group::{clean}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+        ::endgroup::
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+      run: |
+        ::group::{apply}
+        terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+        ::endgroup::
 
     - name: Terraform Destroy
       if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+      run: |
+        ::group::{destroy}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+        ::endgroup::
