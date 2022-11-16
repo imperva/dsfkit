@@ -40,19 +40,19 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init >> $GITHUB_OUTPUT
+      run: terraform init
 
     - name: Terraform Validate
-      run: terraform validate >> $GITHUB_OUTPUT
+      run: terraform validate
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
-      run: terraform fmt -check >> $GITHUB_OUTPUT
+      run: terraform fmt -check
       continue-on-error: true
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan (simple)
-      run: terraform plan >> $GITHUB_OUTPUT
+      run: terraform plan
 
     - name: Terraform Plan (hadr)
-      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan >> $GITHUB_OUTPUT
+      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan
