@@ -3,7 +3,7 @@ data "aws_subnet" "subnet" {
 }
 
 locals {
-  cidr_blocks       = concat(var.sg_ingress_cidr, var.public_ip ? ["${aws_eip.dsf_instance_eip[0].public_ip}/32"] : [])
+  cidr_blocks       = concat(var.sg_ingress_cidr, var.public_ip ? try(["${aws_eip.dsf_instance_eip[0].public_ip}/32"],[]) : [])
   ingress_ports     = [22, 8080, 8443, 3030, 27117]
   ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
