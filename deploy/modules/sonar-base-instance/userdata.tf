@@ -29,10 +29,29 @@ locals {
 resource "random_uuid" "uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
-  provisioner "local-exec" {
-    command     = "sleep 60; timeout 10m ssh -v ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; echo; cloud-init status; exit 1; fi'"
-    interpreter = ["/bin/bash", "-cx"]
+  connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    private_key = file(var.ssh_key_pair_path)
+    host     = local.instance_address
+
+    bastion_host = var.proxy_address == null ? null : var.proxy_address
+    bastion_private_key = var.proxy_address == null ? null : file(var.ssh_key_pair_path)
+    bastion_user = var.proxy_address == null ? null : "ec2-user"
+    # var.proxy_address == null ? "" : "-o ProxyCommand='ssh ${local.ssh_options} -i ${var.ssh_key_pair_path} -W %h:%p ec2-user@${var.proxy_address}'"
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      # "sleep 60",
+      "if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; echo; cloud-init status; exit 1; fi"
+    ]
+  }
+
+  # provisioner "local-exec" {
+  #   command     = "sleep 60; timeout 10m ssh -v ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; echo; cloud-init status; exit 1; fi'"
+  #   interpreter = ["/bin/bash", "-cx"]
+  # }
   triggers = {
     installation_file = aws_instance.dsf_base_instance.arn
   }
