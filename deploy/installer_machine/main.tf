@@ -4,6 +4,10 @@ provider "aws" {
   region     = var._3_aws_region
 }
 
+module "globals" {
+  source = "../modules/core/globals"
+}
+
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
 }
@@ -15,25 +19,12 @@ locals {
 }
 
 ##############################
-# Generating ssh key pair
-##############################
-
-module "key_pair" {
-  source             = "terraform-aws-modules/key-pair/aws"
-  key_name_prefix    = "imperva-dsf-"
-  create_private_key = true
-}
-
-resource "local_sensitive_file" "installer_ssh_key" {
-  content         = module.key_pair.private_key_pem
-  file_permission = 400
-  filename        = "ssh_keys/installer_ssh_key"
-}
-
-##############################
 # Generating deployment
 ##############################
 
+locals {
+  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+}
 
 locals {
   disk_size_app        = 100
@@ -72,7 +63,7 @@ resource "aws_security_group" "allow_ssh" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))]
+    cidr_blocks = local.workstation_cidr_24
   }
 
   egress {
@@ -91,13 +82,13 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_instance" "installer_machine" {
   ami           = data.aws_ami.installer-ami.image_id
   instance_type = var.ec2_instance_type
-  key_name      = module.key_pair.key_pair_name
+  key_name      = module.globals.key_pair.key_pair_name
   user_data = templatefile("${path.module}/prepare_installer.tpl", {
     access_key       = var._1_aws_access_key_id
     secret_key       = var._2_aws_secret_access_key
     region           = var._3_aws_region
     example_name     = var.example_name
-    web_console_cidr = var.web_console_cidr != null ? var.web_console_cidr : format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", data.http.myip.response_body))
+    web_console_cidr = var.web_console_cidr != null ? var.web_console_cidr : local.workstation_cidr_24[0]
   })
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
