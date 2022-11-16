@@ -136,9 +136,8 @@ module "hadr" {
   dsf_hub_secondary_private_ip = module.hub_secondary.private_address
   ssh_key_path                 = module.globals.key_pair_private_pem.filename
   depends_on = [
-    module.gw_attachments
-    module.gw_attachments
+    module.gw_attachments,
     module.hub,
-    module.hub_secondary,
+    module.hub_secondary
   ]
 }
