@@ -137,5 +137,8 @@ module "hadr" {
   ssh_key_path                 = module.globals.key_pair_private_pem.filename
   depends_on = [
     module.gw_attachments
+    module.gw_attachments
+    module.hub,
+    module.hub_secondary,
   ]
 }
