@@ -2,15 +2,62 @@
 #################################
 # Run HADR scripts
 #################################
-resource "null_resource" "exec_hadr" {
-  provisioner "local-exec" {
-    command = templatefile("${path.module}/hadr.tpl", {
-      dsf_hub_primary_public_ip    = var.dsf_hub_primary_public_ip
-      dsf_hub_primary_private_ip   = var.dsf_hub_primary_private_ip
-      dsf_hub_secondary_public_ip  = var.dsf_hub_secondary_public_ip
-      dsf_hub_secondary_private_ip = var.dsf_hub_secondary_private_ip
-      ssh_key_path                 = var.ssh_key_path
-    })
-    interpreter = ["/bin/bash", "-c"]
+resource "null_resource" "exec_hadr_primary" {
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file(var.ssh_key_path)
+    host        = var.dsf_hub_primary_public_ip
+
+    timeout = "5m"
   }
+
+  provisioner "remote-exec" {
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup setup-2hadr-replica-set --ipv4-address-main=${var.dsf_hub_primary_private_ip} --ipv4-address-dr=${var.dsf_hub_secondary_private_ip} --replication-sync-interval=1"]
+  }
+}
+
+resource "null_resource" "exec_hadr_secondary" {
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file(var.ssh_key_path)
+    host        = var.dsf_hub_secondary_public_ip
+
+    timeout = "5m"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup restart-secondary-services"]
+  }
+
+  depends_on = [
+    null_resource.exec_hadr_primary
+  ]
+}
+
+resource "time_sleep" "sleep" {
+  create_duration = "120s"
+  depends_on = [
+    null_resource.exec_hadr_secondary
+  ]
+}
+
+resource "null_resource" "hadr_verify" {
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = file(var.ssh_key_path)
+    host        = var.dsf_hub_primary_public_ip
+
+    timeout = "5m"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup check-2hadr-replica-set"]
+  }
+
+  depends_on = [
+    time_sleep.sleep
+  ]
 }
