@@ -30,7 +30,7 @@ resource "random_uuid" "uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
   provisioner "local-exec" {
-    command     = "sleep 20; ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; fi; cloud-init status'"
+    command     = "sleep 20; ssh ${local.ssh_options} ${local.proxy_arg} -i ${var.ssh_key_pair_path} ec2-user@${local.instance_address} 'if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then cat /var/log/user-data.log; echo; cloud-init status; exit 1; fi'"
     interpreter = ["/bin/bash", "-c"]
   }
   triggers = {

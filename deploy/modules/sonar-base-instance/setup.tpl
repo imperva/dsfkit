@@ -17,7 +17,7 @@ function install_deps() {
     yum install unzip jq -y || yum install unzip jq -y || yum install unzip jq -y
 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
+    unzip -q awscliv2.zip
     aws/install
     rm -rf aws awscliv2.zip
 
