@@ -54,7 +54,7 @@ module "vpc" {
 module "hub" {
   source                        = "../../modules/hub"
   name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                     = try(module.vpc.public_subnets[0])
+  subnet_id                     = module.vpc.public_subnets[0]
   key_pair                      = module.globals.key_pair.key_pair_name
   web_console_sg_ingress_cidr   = var.web_console_cidr
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
@@ -70,7 +70,7 @@ module "hub" {
 module "hub_secondary" {
   source                        = "../../modules/hub"
   name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                     = try(module.vpc.public_subnets[1])
+  subnet_id                     = module.vpc.public_subnets[1]
   key_pair                      = module.globals.key_pair.key_pair_name
   web_console_sg_ingress_cidr   = var.web_console_cidr
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
