@@ -18,11 +18,15 @@ output "dsf_hubs" {
 }
 
 output "dsf_hub_web_console_url" {
-  value = module.hub.public_address != null ? join("", ["https://", module.hub.public_address, ":8443/"]) : null
+  value = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
 }
 
-output "primary_hub_ssh_command" {
-  value = module.hub.public_address != null ? join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub.public_address]) : null
+output "hub_primary_ssh_command" {
+  value = try(join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub.public_address]), null)
+}
+
+output "hub_secondary_ssh_command" {
+  value = try(join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub_secondary.public_address]), null)
 }
 
 output "admin_password" {
