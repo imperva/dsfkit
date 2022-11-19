@@ -9,6 +9,12 @@ yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 yum -y install terraform
 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+yum -y install unzip
+unzip awscliv2.zip
+./aws/install
+export PATH=$PATH:/usr/local/bin
+
 git clone https://github.com/imperva/dsfkit.git
 cd /dsfkit/deploy/examples/${example_name}
 
