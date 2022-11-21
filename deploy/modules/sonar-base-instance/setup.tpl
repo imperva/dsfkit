@@ -14,10 +14,11 @@ function wait_for_network() {
 
 function install_deps() {
     # yum fails sporadically. So we try 3 times :(
-    yum install unzip jq -y || yum install unzip jq -y || yum install unzip jq -y
+    yum install unzip -y || yum install unzip -y || yum install unzip -y
+    yum install net-tools jq vim -y
 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
+    unzip -q awscliv2.zip
     aws/install
     rm -rf aws awscliv2.zip
 
@@ -32,7 +33,15 @@ function install_deps() {
 # Formatting and mounting the external ebs device
 function attach_disk() {
     ## Find device name ebs external device
+    number_of_expected_disks=2
+    lsblk
     DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+    while [ "$(wc -w <<< $DEVICES)" -lt "$number_of_expected_disks" ]; do
+        DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+        echo "Waiting for all external disk attachments"
+        sleep 10
+    done
+
     for d in $DEVICES; do
         if [ "$(lsblk --noheadings -o NAME| grep $d | wc -l)" -eq 1 ]; then
             DEVICE=$d;
@@ -40,6 +49,12 @@ function attach_disk() {
         fi;
     done
 
+    if [ -z "$DEVICE" ]; then
+        echo "No external device is found"
+        exit 1
+    fi
+
+    lsblk -no FSTYPE /dev/$DEVICE
     FS=$(lsblk -no FSTYPE /dev/$DEVICE)
     if [ "$FS" != "xfs" ]; then
         echo "/dev/$DEVICE fs is \"$FS\". Formatting it..."
@@ -103,7 +118,7 @@ function setup() {
         --jsonar-logdir=$STATE_DIR/logs \
         --jsonar-uid ${uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
-        $(test "${dsf_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
+        $(test "${resource_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
 }
 
 function set_environment_vars() {
@@ -116,7 +131,7 @@ function set_environment_vars() {
 
 function install_ssh_keys() {
     echo Installing SSH keys
-    if [ "${dsf_type}" == "hub" ]; then
+    if [ "${resource_type}" == "hub" ]; then
         sudo mkdir -p /home/sonarw/.ssh/
         sudo /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text | sudo tee /home/sonarw/.ssh/id_rsa > /dev/null
         sudo echo "${sonarw_public_key}" | sudo tee /home/sonarw/.ssh/id_rsa.pub > /dev/null

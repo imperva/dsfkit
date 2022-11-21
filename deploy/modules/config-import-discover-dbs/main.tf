@@ -42,34 +42,34 @@ resource "aws_iam_policy_attachment" "role_logs_and_discover_policy" {
 data "aws_region" "current" {}
 
 locals {
-  asset_discovery  = {
-    "sonark_aggregate": {
-        "remove_limit": null
+  asset_discovery = {
+    "sonark_aggregate" : {
+      "remove_limit" : null
     },
-    "root": {
-      "run_type": "direct",
-      "row_run": null,
-      "bulk_run": null,
-      "documents_to_import": [
+    "root" : {
+      "run_type" : "direct",
+      "row_run" : null,
+      "bulk_run" : null,
+      "documents_to_import" : [
         {
-          "service": "AWS", 
-          "asset_id": data.aws_iam_role.iam_role.arn,
-          "asset_display_name": data.aws_iam_role.iam_role.name,
-          "Server Type": "AWS",
-          "asset_source": "AWS",
-          "audit_pull_enabled": false,
-          "jsonar_uid": var.gw1_uuid,
-          "jsonar_uid_display_name": var.gw1_display_name,
-          "Service Name": "aws",
-          "Server IP": "unused_placeholder_value",
-          "Server Host Name": "unused_placeholder_value",
-          "admin_email": "admin@imperva.com",
-          "Server Port": "443",
-          "location": "${data.aws_iam_role.iam_role.name}-${data.aws_region.current.name}",
-          "region": data.aws_region.current.name,
-          "owned_by": "admin@imperva.com",
-          "managed_by": "admin@imperva.com",
-          "auth_mechanism":"default"
+          "service" : "AWS",
+          "asset_id" : data.aws_iam_role.iam_role.arn,
+          "asset_display_name" : data.aws_iam_role.iam_role.name,
+          "Server Type" : "AWS",
+          "asset_source" : "AWS",
+          "audit_pull_enabled" : false,
+          "jsonar_uid" : var.gw1_uuid,
+          "jsonar_uid_display_name" : var.gw1_display_name,
+          "Service Name" : "aws",
+          "Server IP" : "unused_placeholder_value",
+          "Server Host Name" : "unused_placeholder_value",
+          "admin_email" : "admin@imperva.com",
+          "Server Port" : "443",
+          "location" : "${data.aws_iam_role.iam_role.name}-${data.aws_region.current.name}",
+          "region" : data.aws_region.current.name,
+          "owned_by" : "admin@imperva.com",
+          "managed_by" : "admin@imperva.com",
+          "auth_mechanism" : "default"
         }
       ]
     }
@@ -126,10 +126,10 @@ locals {
 # Connect to hub with key_pair_pem, and call DSF API invoking import_discover_connect_gateway playbook to import the rds log group with the log_group_json above
 resource "null_resource" "discover_and_connect" {
   connection {
-    type     = "ssh"
-    user     = "ec2-user"
+    type        = "ssh"
+    user        = "ec2-user"
     private_key = file(var.key_pair_pem_local_path)
-    host     = var.hub_ip
+    host        = var.hub_ip
   }
 
   provisioner "remote-exec" {
