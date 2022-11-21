@@ -1,5 +1,5 @@
-output "dsf_agentless_gws" {
-  value = { for idx, val in module.agentless_gw : "gw-${idx}" => { private_address = val.private_address, jsonar_uid = val.jsonar_uid } }
+output "dsf_agentless_gw_group" {
+  value = { for idx, val in module.agentless_gw_group : "gw-${idx}" => { private_address = val.private_address, jsonar_uid = val.jsonar_uid } }
 }
 
 output "dsf_hubs" {
@@ -18,22 +18,26 @@ output "dsf_hubs" {
 }
 
 output "dsf_hub_web_console_url" {
-  value = module.hub.public_address != null ? join("", ["https://", module.hub.public_address, ":8443/"]) : null
+  value = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
 }
 
-output "primary_hub_ssh_command" {
-  value = module.hub.public_address != null ? join("", ["ssh -i ${resource.local_sensitive_file.dsf_ssh_key_file.filename} ec2-user@", module.hub.public_address]) : null
+output "hub_primary_ssh_command" {
+  value = try(join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub.public_address]), null)
+}
+
+output "hub_secondary_ssh_command" {
+  value = try(join("", ["ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@", module.hub_secondary.public_address]), null)
 }
 
 output "admin_password" {
-  value     = nonsensitive(local.admin_password)
+  value = nonsensitive(local.admin_password)
 }
 
 output "deployment_name" {
-  value = local.deployment_name
+  value = local.deployment_name_salted
 }
 
 output "dsf_private_ssh_key" {
   sensitive = true
-  value     = module.key_pair.private_key_pem
+  value     = module.globals.key_pair_private_pem
 }

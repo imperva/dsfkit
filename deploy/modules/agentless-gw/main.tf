@@ -58,21 +58,21 @@ resource "aws_iam_role" "dsf_gw_role" {
 }
 
 module "gw_instance" {
-  source              = "../../modules/sonar-base-instance"
-  dsf_type            = "gw"
-  name                = var.name
-  subnet_id           = var.subnet_id
-  key_pair            = var.key_pair
-  ec2_instance_type   = var.instance_type
-  ebs_state_disk_size = var.disk_size
-  sg_ingress_cidr     = var.sg_ingress_cidr
-  public_ip               = var.public_ip
-  iam_instance_profile_id = aws_iam_instance_profile.dsf_gw_instance_iam_profile.name
+  source                        = "../../modules/sonar-base-instance"
+  resource_type                 = "gw"
+  name                          = var.name
+  subnet_id                     = var.subnet_id
+  key_pair                      = var.key_pair
+  ec2_instance_type             = var.instance_type
+  ebs_state_disk_size           = var.disk_size
+  sg_ingress_cidr               = var.sg_ingress_cidr
+  public_ip                     = var.public_ip
+  iam_instance_profile_id       = aws_iam_instance_profile.dsf_gw_instance_iam_profile.name
   additional_install_parameters = var.additional_install_parameters
-  admin_password              = var.admin_password
-  ssh_key_pair_path           = var.ssh_key_pair_path
-  installation_location       = var.installation_location
-  sonarw_public_key           = var.sonarw_public_key
-  sonarw_secret_name          = var.sonarw_secret_name
-  proxy_address          = var.proxy_address
+  admin_password                = var.admin_password
+  ssh_key_pair_path             = var.ssh_key_pair_path
+  installation_location         = var.installation_location
+  sonarw_public_key             = var.sonarw_public_key
+  sonarw_secret_name            = var.sonarw_secret_name
+  proxy_address                 = var.proxy_address
 }
