@@ -170,6 +170,13 @@ module "db_onboarding" {
   ]
 }
 
+module "statistics" {
+  source = "../../modules/statistics"
+  depends_on = [
+    module.hadr
+  ]
+}
+
 output "db_details" {
   value = module.rds_mysql
 }
