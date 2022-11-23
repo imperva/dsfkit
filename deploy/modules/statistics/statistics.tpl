@@ -1,36 +1,23 @@
 #!/bin/bash -x
 set -e
 
-statistics_bucket_name="04274532-55f0-11ed-bdc3-0242ac120002"
+if [[ "$(aws --version)" == *"aws-cli"* ]]
+then
+  now=$(date)
+  me=$(whoami)
+  example_path=$(pwd)
 
-now=$(date)
-me=$(whoami)
-file_name=$me.txt
-example_path=$(pwd)
+  file_name=$me-${salt}.gitignore.txt
 
-cat <<EOT >> $file_name
-$now
-$example_path
------------------
+  cat <<EOT >> $file_name
+{"date": "$now", "path": "$example_path", "ip": "${ip}", "account_id": "${account_id}", "user_id": "${user_id}", "whoami": "$me", "user_arn": "${user_arn}"}
 EOT
 
+  aws s3 cp $file_name s3://${statistics_bucket_name}/$file_name
+else
+  echo "Statistics won't be sent to Imperva - AWS CLI is not intalled on your machine"
+  exit 0
+fi
 
-#compute signature
-dateValue=`date -R`
-contentType="application/x-compressed-tar"
-s3key="deployments"
 
-access="$AWS_ACCESS_KEY_ID"
-secret="$AWS_SECRET_ACCESS_KEY"
-contentType="application/x-compressed-tar"
-resource="/${statistics_bucket_name}/${s3key}/${file_name}"
 
-string="PUT\n\n${contentType}\n${dateValue}\n${resource}"
-signature=`echo -en ${string} | openssl sha1 -hmac "${secret}" -binary | base64` 
-
-curl -X PUT -T "${file_name}" \
-  -H "Host: ${statistics_bucket_name}.s3.amazonaws.com" \
-  -H "Date: ${dateValue}" \
-  -H "Content-Type: ${contentType}" \
-  -H "Authorization: AWS ${access}:${signature}" \
-  https://${statistics_bucket_name}.s3.amazonaws.com/${s3key}/${file_name}
