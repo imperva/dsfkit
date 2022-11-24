@@ -210,19 +210,19 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
 
-    * Enter “deploy/examples/se_demo” into the Terraform working directory input field. To understand what the se_demo example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/se_demo]()
+    * Enter “deploy/examples/se_demo” into the Terraform working directory input field. To understand what the se_demo example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/se_demo](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
     
-    * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203779580-e647b21c-2f69-4fa1-b2b1-86ab70e289ed.png)
+    * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
-    * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run triggers](images/image8.png)<br>
+    * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run triggers](https://user-images.githubusercontent.com/87799317/203820430-573edeb8-4698-4a03-bcc6-1f560963aeff.png)<br>
     As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
 
-    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](images/image9.png)
+    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/87799317/203820500-ec61fec1-8f8a-47b5-bd6f-10261ba60f51.png)
 
 3. **Add the AWS Variables:** The next few steps will configure the required AWS variables.
-    * Once Terraform has finished creating the DSFKit workspace, click the Workspace Overview button to continue.<br>![Workspace Overview](images/image10.png)
+    * Once Terraform has finished creating the DSFKit workspace, click the Workspace Overview button to continue.<br>![Workspace Overview](https://user-images.githubusercontent.com/87799317/203820579-c3ede713-4536-4d49-aae3-e148bd6030c1.png)
 
-    * Click on the Configure Variables button.<br>![Configure Variables](images/image11.png)
+    * Click on the Configure Variables button.<br>![Configure Variables](https://user-images.githubusercontent.com/87799317/203820695-330bd204-4b57-470d-b321-901c71fe0785.png)
 
     * Add the following workspace variables by entering the name, value, and category as listed below. 
 
@@ -269,26 +269,28 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
         </td>
         </tr>
         </table>
-        ![Workspace Variables](images/image12.png)
+        <br>
+
+        ![Workspace Variables](https://user-images.githubusercontent.com/87799317/203822280-1d6f4f62-b8f6-46f2-99a4-265daba8744a.png)
 
 4. **Run the Imperva GitHub Code:** The following steps complete setting up the DSFKit workspace and run the Imperva GitHub code. 
-    * Click on the **Actions** dropdown button from the top navigation bar, and select the Start **New Run** option from the list.![alt_text](images/image13.png)
+    * Click on the **Actions** dropdown button from the top navigation bar, and select the Start **New Run** option from the list.![alt_text](https://user-images.githubusercontent.com/87799317/203822365-6fb16b0e-e37a-401e-91da-37d4be5866a8.png)
 
-    * Enter a unique alphanumeric name for the run, and click on the **Start Run** button. As the run completes, Terraform will show what resources it has created and what resources are currently provisioned.<br>![Start Run](images/image14.png)
+    * Enter a unique alphanumeric name for the run, and click on the **Start Run** button. As the run completes, Terraform will show what resources it has created and what resources are currently provisioned.<br>![Start Run](https://user-images.githubusercontent.com/87799317/203822418-f3be0996-aab9-48eb-ace2-14c4d4aadee1.png)
 
 5. **Complete the Workspace Deployment:** These steps provide the necessary information to view and access the newly created workspace, and a fully functioning instance of Imperva’s DSF. 
-    * Once the run has completed, click to expand the **Apply Finished** section.<br>![Apply Finished](images/image15.png)
+    * Once the run has completed, click to expand the **Apply Finished** section.<br>![Apply Finished](https://user-images.githubusercontent.com/87799317/203822491-5713a8ec-1e9e-4025-a47c-94325dfe0e76.png)
 
-    * Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step.<br>![Outputs](images/image16.png)<br>![DSF Portal](images/image17.png)
+    * Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step.<br>![Outputs](https://user-images.githubusercontent.com/87799317/203822561-250f5ffe-1d02-4b3d-9fbd-263c9d59dc5b.png)
 
-    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console_url**.<br>![dsf_hub_web_console_url](images/image18.png)
+    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console_url**.<br>![dsf_hub_web_console_url](https://user-images.githubusercontent.com/87799317/203822608-2de059a5-e3af-49a7-944b-2ba390517d16.png)
 
-    * Copy the **dsf_hub_web_console_url** into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](images/image19.png)
+    * Copy the **dsf_hub_web_console_url** into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
     ```
     NOTE: Sonar is installed with a self-signed certificate, as result when opening the web page you may see a warning notification. Please click "Proceed to domain.com (unsafe)".
     ```
-    ![warning](images/image20.png)
+    ![warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
 
     * Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “admin_password” output. Click **Sign In**.
 
@@ -360,17 +362,17 @@ If a Linux machine is not available or DSFKit cannot be run locally, Imperva sup
 This can be done either manually or via an automated process. Select a method below and follow the instructions:
 
 
-## Manual Installer Machine
+### Manual Installer Machine
 
 Complete these steps to manually create an installer machine:
 
-1. **Launch an Instance:** Search  for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 Image and click “enter”:<br>![Launch an Instance](images/image21.png)
+1. **Launch an Instance:** Search  for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 Image and click “enter”:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
 
-2. Choose the “Community AMI”:<br>![Community AMI](images/image22.png)
+2. Choose the “Community AMI”:<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
 
-3. Expand the “Advanced details” panel:<br>![Advanced details](images/image23.png)
+3. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
-4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](images/image24.png)
+4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 5. Update the following parameter values in the bash script: 
     1. example_name (i.e se_demo)
@@ -465,15 +467,15 @@ DSFKit ships 2 built-in examples/recipes which are already configured to deploy 
     4. Federation
     5. Creation of a new “Demo DB”
     6. Auto configuration of new “Demo DB” to enable native audit
-    7. Onboarding database into Sonar \
+    7. Onboarding database into Sonar
 
 2. “se_demo_hadr” recipe, consist of:
-    8. New VPC
-    9. 1 Primary Hub
-    10. 1 Secondary Hub
-    11. 1 GW
-    12. Federation
-    13. HADR
+    1. New VPC
+    2. 1 Primary Hub
+    3. 1 Secondary Hub
+    4. 1 GW
+    5. Federation
+    6. HADR
 
 It is also possible to accommodate varying system requirements and deployments.  To customize the demo, please complete the following steps:
 
@@ -549,9 +551,9 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 
 
-1. To destroy the environment, click on Settings and find Destruction and Deletion from the navigation menu to open the Destroy Infrastructure page. Ensure that the Allow Destroy Plans toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](images/image25.png)
+1. To destroy the environment, click on Settings and find Destruction and Deletion from the navigation menu to open the Destroy Infrastructure page. Ensure that the Allow Destroy Plans toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
 
-2. The installed environment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](images/image26.png)
+2. The installed environment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
 
     ```
     NOTE: Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
