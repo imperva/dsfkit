@@ -1,112 +1,27 @@
 [Temporarly, the full documentation can be found here](https://docs.google.com/document/d/1wzCrAkU2tk5e7L8pYLOeyJYai7upFBLhANWY1yDTOao/edit?usp=sharing)
 
-<!-- Output copied to clipboard! -->
-
-<!-----
-
-You have some errors, warnings, or alerts. If you are using reckless mode, turn it off to see inline alerts.
-* ERRORs: 3
-* WARNINGs: 0
-* ALERTS: 29
-
-Conversion time: 8.599 seconds.
-
-
-Using this Markdown file:
-
-1. Paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0β33
-* Tue Nov 22 2022 01:19:03 GMT-0800 (PST)
-* Source doc: Untitled document
-* Tables are currently converted to HTML tables.
-
-ERROR:
-undefined internal link to this URL: "#heading=h.c1f4m4vol1z".link text: IAM Role section
-?Did you generate a TOC?
-
-
-ERROR:
-undefined internal link to this URL: "#heading=h.nr37ktb7vrv4".link text: Customizing Demos - Examples/Recipes
-?Did you generate a TOC?
-
-
-ERROR:
-undefined internal link to this URL: "#heading=h.nr37ktb7vrv4".link text: Customizing Demos
-?Did you generate a TOC?
-
-* This document has images: check for >>>>>  gd2md-html alert:  inline image link in generated source and store images to your server. NOTE: Images in exported zip file from Google Docs may not appear in  the same order as they do in your doc. Please check the images!
-
-
-WARNING:
-You have 8 H1 headings. You may want to use the "H1 -> H2" option to demote all headings by one level.
-
------>
-
-
-<p style="color: red; font-weight: bold">>>>>>  gd2md-html alert:  ERRORs: 3; WARNINGs: 1; ALERTS: 29.</p>
-<ul style="color: red; font-weight: bold"><li>See top comment block for details on ERRORs and WARNINGs. <li>In the converted Markdown or HTML, search for inline alerts that start with >>>>>  gd2md-html alert:  for specific instances that need correction.</ul>
-
-<p style="color: red; font-weight: bold">Links to alert messages:</p><a href="#gdcalert1">alert1</a>
-<a href="#gdcalert2">alert2</a>
-<a href="#gdcalert3">alert3</a>
-<a href="#gdcalert4">alert4</a>
-<a href="#gdcalert5">alert5</a>
-<a href="#gdcalert6">alert6</a>
-<a href="#gdcalert7">alert7</a>
-<a href="#gdcalert8">alert8</a>
-<a href="#gdcalert9">alert9</a>
-<a href="#gdcalert10">alert10</a>
-<a href="#gdcalert11">alert11</a>
-<a href="#gdcalert12">alert12</a>
-<a href="#gdcalert13">alert13</a>
-<a href="#gdcalert14">alert14</a>
-<a href="#gdcalert15">alert15</a>
-<a href="#gdcalert16">alert16</a>
-<a href="#gdcalert17">alert17</a>
-<a href="#gdcalert18">alert18</a>
-<a href="#gdcalert19">alert19</a>
-<a href="#gdcalert20">alert20</a>
-<a href="#gdcalert21">alert21</a>
-<a href="#gdcalert22">alert22</a>
-<a href="#gdcalert23">alert23</a>
-<a href="#gdcalert24">alert24</a>
-<a href="#gdcalert25">alert25</a>
-<a href="#gdcalert26">alert26</a>
-<a href="#gdcalert27">alert27</a>
-<a href="#gdcalert28">alert28</a>
-<a href="#gdcalert29">alert29</a>
-
-<p style="color: red; font-weight: bold">>>>>> PLEASE check and correct alert issues and delete this message and the inline alerts.<hr></p>
-
-
-
 # Data Security Fabric (DSF) Kit Installation Guide
 
 
-[TOC]
-
+[About This Guide](#about-this-guide)<br>
+[Getting Ready to Deploy](#getting-ready-to-deploy)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Binaries Location and Versioning](#binaries-location-and-versioning)<br>
+[DSFKit Installation](#dsfkit-installation)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[UI Installation Mode](#ui-installation-mode)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[UI Installation Steps](#ui-installation-steps)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[Local CLI Installation Mode]()<br>
 
 
 # About This Guide
 
 This guide is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations that deploy the Imperva Data Security Fabric (DSF) Kit solution.
-
-
 ```
 NOTE: This guide is for INTERNAL USE ONLY, to be used by in-house staff for POCs and demos of the new DSF installation.  The current focus is on Sonar parts only.
 ```
 
-
 **Typographical Conventions**
 
 This guide uses several text styles for an enhanced readability and several call-out features. Learn about their aspect and meaning from the table below.
-
 
 <table>
   <tr>
@@ -118,7 +33,12 @@ This guide uses several text styles for an enhanced readability and several call
   <tr>
    <td>Code Input
    </td>
-   <td><code># Code will be called out using this font and includes [ brackets ] for easy identification of required user input. #</code>
+   <td>
+   
+   ```json
+   Code will be called out using this font for easy identification of required user input. 
+   ```
+
    </td>
   </tr>
   <tr>
@@ -134,13 +54,11 @@ This guide uses several text styles for an enhanced readability and several call
 
 This document covers the following main topics. Additional guides are referenced throughout this document, as listed in the Quick Links reference section below, and are available for more information on each respective topic. 
 
-
-
 * How to install Imperva’s Data Security Fabric (DSF) Kit with step-by-step instructions. 
 * Verification of a successful installation via logging output. 
 * How to uninstall DSFKit with step-by-step instructions.
 
-**Quick Links **
+**Quick Links**
 
 This guide references the following information and links, most of which are available via the Document Portal on the Imperva website: [https://docs.imperva.com](https://docs.imperva.com). For a quick reference, the name and link for each URL is listed below. (Login required)
 
@@ -187,7 +105,6 @@ This guide references the following information and links, most of which are ava
 
 
 **Document Revisions**
-
 The following table lists the most recent document revisions, dates of publication, a high-level summary, and descriptions of the updated information. 
 
 
@@ -223,57 +140,41 @@ The Imperva DSFKit enables you to easily install a working instance of the DSF P
 
 Before installing DSFKit, it is necessary to complete the following steps:
 
-
-
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see 
-
-<p id="gdcalert1" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "IAM Role section"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert2">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[IAM Role section](#heading=h.c1f4m4vol1z)).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
 2. Deployment requires access to the tarball containing Sonar binaries. The tarball is located in a dedicated AWS Bucket owned by Imperva. Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
 3. UI Installation Mode requires access to a Terraform Cloud Platform account. Any  account may be used, whether the account is owned by Imperva or the customer. Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Account.
 4. [Download Git](https://git-scm.com/downloads).
 5. [Download Terraform](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "PACKAGE MANAGER" option during installation.
 
-    ```
+```
 NOTE: Note: It may take several hours for access to be granted to AWS and Terraform in Steps 2 and 3.
 ```
-
-
-
 
 ## Binaries Location and Versioning
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
-**File**: deploy/examples/se_demo/variables.tf` `
-
-
-```
+**File**: deploy/examples/se_demo/variables.tf
+```json
  variable "sonar_version" {
-  type    = string
-  default = "4.10"
+    type    = string
+    default = "4.10"
 }
-
+```
 
 ```
 NOTE: DSFKit version 1.0.0 is available and supports Sonar version 4.10.
 ```
 
-
-
 # DSFKit Installation 
 
 DSFKit is the official Terraform toolkit designed to automate the deployment and maintenance of Imperva's Data Security Fabric (DSF). DSFKit offers two installation methods:
 
-
-
 * **UI Installation Mode:** This method makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.** **This method is used in cases where we don't want to install any software on the client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).  \
 
-* **CLI Installation Mode: **This method offers a straightforward installation option that relies on entering and running a Terraform script. This method is recommended when the customer wants to install the demo environment on their own machine, or when using the Terraform Cloud is not possible.
+* **CLI Installation Mode:** This method offers a straightforward installation option that relies on entering and running a Terraform script. This method is recommended when the customer wants to install the demo environment on their own machine, or when using the Terraform Cloud is not possible.
 
 Please select the most appropriate method and follow the step-by-step instructions to ensure a successful installation. If you have any questions or issues during the installation process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
-
 
 ## UI Installation Mode
 
@@ -281,334 +182,180 @@ The User Interface (UI) installation mode uses the Terraform Cloud (TF Cloud) se
 
 [Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform)
 
-
 ```
 NOTE: The UI Installation Mode can be used to demo DSF in a customer's Terraform account or the Imperva Terraform account, which is accessible for internal use (SEs, QA, Research, etc') and can be used to deploy/destroy demo environments on AWS accounts owned by Imperva.
 ```
 
-
 Please complete the following step-by-step installation instructions provided below and contact [Imperva Technical Support](https://support.imperva.com/s/) with any issues or questions.
 
-
-### **UI Installation Steps**
+### UI Installation Steps
 
 Follow these instructions to install DSFKit via the UI Installation Mode:
 
+1. **Connect to Terraform Cloud:** Connect to the desired Terraform cloud account, either the internal Imperva account or a customer account if one is available.
+2. **Create a New Workspace:** Complete these steps to create a new workspace in Terraform cloud that will be used for the DSFKit deployment. 
+    * Click the **+ New Workspace** button in the top navigation bar to open the Create a new Workspace page.<br>![New Workspace](https://user-images.githubusercontent.com/87799317/203771096-f79f6621-9d29-41e8-a05c-a0d09cf319b4.png)
+    * Choose **Version Control Workflow** from the workflow type options.<br>![Version Control Workflow](https://user-images.githubusercontent.com/87799317/203772173-888eeb65-adc4-4e0b-94ec-daad24532282.png)
 
+    * Choose **github.com/dsfkit** as the version control provider.<br>![github.com/dsfkit](https://user-images.githubusercontent.com/87799317/203773848-9bdae743-2e56-4a5a-9c4c-aaa4812b4d78.png)
 
-1. **Connect to Terraform Cloud: **Connect to the desired Terraform cloud account, either the internal Imperva account or a customer account if one is available.
-2. **Create a New Workspace**: Complete these steps to create a new workspace in Terraform cloud that will be used for the DSFKit deployment. 
-* Click the **+ New Workspace** button in the top navigation bar to open the Create a new Workspace page. \
+    * Choose **imperva/dsfkit** as the repository. <br>
+    If this option is not displayed, type imperva/dsfkit in the “Filter” textbox.<br>![imperva/dsfkit](https://user-images.githubusercontent.com/87799317/203773953-69c615db-68d3-4703-a3ef-a7cfab6e3149.png)
 
+    * Name the workspace in the following format: <br>
+    Example:  
+    ```bash
+        dsfkit-[NAME_OF_CUSTOMER]-[NAME_OF_ENVIRONMENT]
+    ```
 
-<p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image1.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+    * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
 
-
-![alt_text](images/image1.png "image_tooltip")
-
-* Choose **Version Control Workflow** from the workflow type options. \
-
-
-<p id="gdcalert3" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert4">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image2.png "image_tooltip")
-
-* Choose **github.com/dsfkit** as the version control provider.  \
-
-
-<p id="gdcalert4" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image3.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert5">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image3.png "image_tooltip")
-
-* Choose **imperva/dsfkit **as the repository.  \
-If this option is not displayed, type imperva/dsfkit in the “Filter” textbox. \
-
-
-<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image4.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image4.png "image_tooltip")
-
-* Name the workspace in the following format:  \
-Example:  `dsfkit-[NAME_OF_CUSTOMER]-[NAME_OF_ENVIRONMENT] \
-`
-* Click on the Advanced options button. \
-
-
-<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image5.png "image_tooltip")
-
-* Enter “deploy/examples/se_demo” into the Terraform working directory input field. To understand what the se_demo example consists of or the create a custom demo, please see more details in the 
-
-<p id="gdcalert7" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Customizing Demos - Examples/Recipes"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert8">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Customizing Demos - Examples/Recipes](#heading=h.nr37ktb7vrv4) section. \
-
-
-<p id="gdcalert8" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image6.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert9">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image6.png "image_tooltip")
+    * Enter “deploy/examples/se_demo” into the Terraform working directory input field. To understand what the se_demo example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/se_demo]()
     
-* Select the “Auto apply” option as the Apply Method. \
-
-
-<p id="gdcalert9" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image7.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert10">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image7.png "image_tooltip")
-
-* To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”: \
-
-
-<p id="gdcalert10" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image8.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert11">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image8.png "image_tooltip")
- \
-As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
-* Click “Create workspace” to finish and save the new DSFKit workspace. \
-
-
-<p id="gdcalert11" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image9.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert12">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image9.png "image_tooltip")
-
-
-     \
-
-
-3. **Add the AWS Variables: **The next few steps will configure the required AWS variables.
-* Once Terraform has finished creating the DSFKit workspace, click the Workspace Overview button to continue. \
-
-
-<p id="gdcalert12" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image10.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert13">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image10.png "image_tooltip")
-
-* Click on the Configure Variables button. \
-
-
-<p id="gdcalert13" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image11.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert14">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image11.png "image_tooltip")
-
-* Add the following workspace variables by entering the name, value, and category as listed below. 
-
-<table>
-  <tr>
-   <td>
-<strong>Variable Name</strong>
-   </td>
-   <td><strong>Value</strong>
-   </td>
-   <td><strong>Category</strong>
-   </td>
-   <td><strong>Sensitive</strong>
-   </td>
-  </tr>
-  <tr>
-   <td>AWS_ACCESS_KEY_ID
-   </td>
-   <td>The AWS access key
-   </td>
-   <td>env
-   </td>
-   <td>True
-   </td>
-  </tr>
-  <tr>
-   <td>AWS_SECRET_ACCESS_KEY
-   </td>
-   <td>The AWS access key
-   </td>
-   <td>env
-   </td>
-   <td>True
-   </td>
-  </tr>
-  <tr>
-   <td>AWS_REGION
-   </td>
-   <td>The region you wish to deploy into
-   </td>
-   <td>env
-   </td>
-   <td>False
-   </td>
-  </tr>
-</table>
-
-
-
-
-<p id="gdcalert14" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image12.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert15">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image12.png "image_tooltip")
-  \
-
-
-
-
-4. **Run the Imperva GitHub Code: **The following steps complete setting up the DSFKit workspace and run the Imperva GitHub code. 
-* Click on the **Actions** dropdown button from the top navigation bar, and select the Start **New Run** option from the list.  \
-
-
-<p id="gdcalert15" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image13.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert16">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image13.png "image_tooltip")
-
-* Enter a unique alphanumeric name for the run, and click on the **Start Run** button. As the run completes, Terraform will show what resources it has created and what resources are currently provisioned. \
-
-
-<p id="gdcalert16" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image14.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert17">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image14.png "image_tooltip")
-
-5. **Complete the Workspace Deployment: **These steps provide the necessary information to view and access the newly created workspace, and a fully functioning instance of Imperva’s DSF. 
-* Once the run has completed, click to expand the **Apply Finished** section. 
-
-<p id="gdcalert17" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image15.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert18">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image15.png "image_tooltip")
- \
-
-* Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step. \
-
-
-<p id="gdcalert18" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image16.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert19">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image16.png "image_tooltip")
- \
-
-
-<p id="gdcalert19" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image17.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert20">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image17.png "image_tooltip")
- \
-
-* Expand outputs to view the environment settings and locate the **dsf_hub_web_console_url**.  \
-
-
-<p id="gdcalert20" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image18.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert21">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image18.png "image_tooltip")
- \
-
-* Copy the **dsf_hub_web_console_url** into a web browser to open the Imperva Data Security Fabric (DSF) login screen. \
-
-
-<p id="gdcalert21" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image19.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert22">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image19.png "image_tooltip")
- \
-
-
-        ```
-NOTE: Sonar is installed with a self-signed certificate, as result when opening the web page you may see a warning notification. Please click "Proceed to domain.com (unsafe)".
-```
-
-
-
-        
-
-<p id="gdcalert22" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image20.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert23">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image20.png "image_tooltip")
- \
-
-
-* Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “admin_password” output. Click **Sign In**.
+    * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203779580-e647b21c-2f69-4fa1-b2b1-86ab70e289ed.png)
+
+    * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run triggers](images/image8.png)<br>
+    As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
+
+    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](images/image9.png)
+
+3. **Add the AWS Variables:** The next few steps will configure the required AWS variables.
+    * Once Terraform has finished creating the DSFKit workspace, click the Workspace Overview button to continue.<br>![Workspace Overview](images/image10.png)
+
+    * Click on the Configure Variables button.<br>![Configure Variables](images/image11.png)
+
+    * Add the following workspace variables by entering the name, value, and category as listed below. 
+
+        <table>
+        <tr>
+        <td>
+        <strong>Variable Name</strong>
+        </td>
+        <td><strong>Value</strong>
+        </td>
+        <td><strong>Category</strong>
+        </td>
+        <td><strong>Sensitive</strong>
+        </td>
+        </tr>
+        <tr>
+        <td>AWS_ACCESS_KEY_ID
+        </td>
+        <td>The AWS access key
+        </td>
+        <td>env
+        </td>
+        <td>True
+        </td>
+        </tr>
+        <tr>
+        <td>AWS_SECRET_ACCESS_KEY
+        </td>
+        <td>The AWS access key
+        </td>
+        <td>env
+        </td>
+        <td>True
+        </td>
+        </tr>
+        <tr>
+        <td>AWS_REGION
+        </td>
+        <td>The region you wish to deploy into
+        </td>
+        <td>env
+        </td>
+        <td>False
+        </td>
+        </tr>
+        </table>
+        ![Workspace Variables](images/image12.png)
+
+4. **Run the Imperva GitHub Code:** The following steps complete setting up the DSFKit workspace and run the Imperva GitHub code. 
+    * Click on the **Actions** dropdown button from the top navigation bar, and select the Start **New Run** option from the list.![alt_text](images/image13.png)
+
+    * Enter a unique alphanumeric name for the run, and click on the **Start Run** button. As the run completes, Terraform will show what resources it has created and what resources are currently provisioned.<br>![Start Run](images/image14.png)
+
+5. **Complete the Workspace Deployment:** These steps provide the necessary information to view and access the newly created workspace, and a fully functioning instance of Imperva’s DSF. 
+    * Once the run has completed, click to expand the **Apply Finished** section.<br>![Apply Finished](images/image15.png)
+
+    * Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step.<br>![Outputs](images/image16.png)<br>![DSF Portal](images/image17.png)
+
+    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console_url**.<br>![dsf_hub_web_console_url](images/image18.png)
+
+    * Copy the **dsf_hub_web_console_url** into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](images/image19.png)
+
+    ```
+    NOTE: Sonar is installed with a self-signed certificate, as result when opening the web page you may see a warning notification. Please click "Proceed to domain.com (unsafe)".
+    ```
+    ![warning](images/image20.png)
+
+    * Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “admin_password” output. Click **Sign In**.
 
 **The UI Installation is now complete and a functioning version of DSF is now available.**
-
 
 ## Local CLI Installation Mode
 
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments. Terraform CLI uses a bash script and therefore requires a Linux/Mac machine. To deploy DSFKit using the CLI installation mode, please complete the following steps:
 
-
-
 1. [Download Git ](https://git-scm.com/downloads)
 2. [Download Terraform ](https://www.terraform.io/downloads)
-3. In case the “example” includes the creation of a “demo db” via the Onboarder then [Download Java 11](https://www.oracle.com/il-en/java/technologies/javase/jdk11-archive-downloads.html) and make sure it is your default java version:
 
-        ```
-        > java -version 
-
-The output should be something similar to the following:
-> java version "11.x.x" 2021-04-20 LTS
-
-        ```
-
-
-
-### **Local CLI Installation Steps**
+### Local CLI Installation Steps
 
 Follow these instructions to install DSFKit via the local CLI mode.
-
 
 ```
 NOTE: Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 ```
 
+1. Git clone dfskit:
+    ```bash
+    git clone https://github.com/imperva/dsfkit.git
+    ```
+2. Navigate to the directory "examples":
+    ```bash
+    cd dsfkit/deploy/examples/${example_name}
+    ```
 
 
-
-1. Git clone dfskit:  \
-<code>> git clone [https://github.com/imperva/dsfkit.git](https://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@github.com/imperva/dsfkit.git)</code>
-2. Navigate to the directory "examples":  \
-<code>> cd dsfkit/deploy/examples/${example_name}</code>
-
-    DSFKit arrives with a built-in example “se_demo” which should meet most POC requirements. See “
-
-<p id="gdcalert23" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: undefined internal link (link text: "Customizing Demos"). Did you generate a TOC? </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert24">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-[Customizing Demos](#heading=h.nr37ktb7vrv4)” to understand the environment created with the “se_demo” example and to learn how to create specific requirements if needed.  \
-For simplicity we will use the following: \
-<code>> cd dsfkit/deploy/examples/se_demo</code>
+    DSFKit arrives with a built-in example “se_demo” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “se_demo” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
+    ```bash
+    cd dsfkit/deploy/examples/se_demo
+    ```
 
 3. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
 For simplicity, in this example we will use environment variables:
 
-    ```
+    ```bash
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}
     export AWS_REGION=${region}
     ```
 
 
-4. Run:` >  terraform init `
-5. Run: `>  terraform apply -auto-approve`
+4. Run:
+    ```bash
+    terraform init
+    ```
+5. Run:
+    ```bash
+    terraform apply -auto-approve
+    ```
 
     This should take about 30 minutes.
 
-6. Extract the web console admin password and DSF URL using: \
-`> terraform output "admin_password" && terraform output "dsf_hub_web_console_url"`
+6. Extract the web console admin password and DSF URL using:
+    ```bash
+    terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+    ```
 7. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
 **The CLI Installation is now complete and a functioning version of DSF is now available.**
 
-
 ## Installer Machine Mode
 
-If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2:
+If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
 
 This can be done either manually or via an automated process. Select a method below and follow the instructions:
 
@@ -617,45 +364,13 @@ This can be done either manually or via an automated process. Select a method be
 
 Complete these steps to manually create an installer machine:
 
+1. **Launch an Instance:** Search  for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 Image and click “enter”:<br>![Launch an Instance](images/image21.png)
 
+2. Choose the “Community AMI”:<br>![Community AMI](images/image22.png)
 
-1. **Launch an Instance: **Search  for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 Image and click “enter”
+3. Expand the “Advanced details” panel:<br>![Advanced details](images/image23.png)
 
-    
-
-<p id="gdcalert24" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image21.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert25">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image21.png "image_tooltip")
-
-
-2. Choose the “Community AMI”.
-
-    
-
-<p id="gdcalert25" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image22.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert26">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image22.png "image_tooltip")
- \
-
-
-3. Expand the “Advanced details” panel. \
-
-
-<p id="gdcalert26" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image23.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert27">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image23.png "image_tooltip")
- \
-
-4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox. \
-
-
-<p id="gdcalert27" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image24.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert28">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image24.png "image_tooltip")
+4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](images/image24.png)
 
 5. Update the following parameter values in the bash script: 
     1. example_name (i.e se_demo)
@@ -663,47 +378,56 @@ Complete these steps to manually create an installer machine:
     3. aws_secret_access_key
     4. region
     5. web_console_cidr
-6. Click on **Launch Instance**. At this stage the Installer Machine is initializing and will automatically create all of the other necessary resources (Hub, GWs etc). View the progress logs by SSH into the machine and view the “user-data” logs”` > tail -f /var/logs/user-data.log`
 
+6. Click on **Launch Instance**. At this stage the Installer Machine is initializing and will automatically create all of the other necessary resources (Hub, GWs etc). View the progress logs by SSH into the machine and view the “user-data” logs:
+    ```bash
+    tail -f /var/logs/user-data.log
     ```
+
+```
 NOTES: 
-In this example 'web_console_cidr' was set to 0.0.0.0/0. This configuration opens the Hub web console as a public web site. If needed, specify a more restricted IP and CIDR range.
-The link to the GitHub repo can be updated and supplied by you, in the case of custom demos and examples. See Customizing Demos for more information.
-DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND HAVE DESTROYED ALL OTHER RESOURCES. OTHERWISE THERE WILL BE UNDELETABLE RESOURCES. For more information see  Uninstalling Installer Machine Mode section.
+
+1. In this example 'web_console_cidr' was set to 0.0.0.0/0. This configuration opens the Hub web console as a public web site. If needed, specify a more restricted IP and CIDR range.
+2. The link to the GitHub repo can be updated and supplied by you, in the case of custom demos and examples. See Customizing Demos section for more information.
+3. DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND HAVE DESTROYED ALL OTHER RESOURCES. OTHERWISE THERE WILL BE UNDELETABLE RESOURCES. For more information see Uninstalling Installer Machine Mode section.
 ```
 
-
 7. When installation is done extract the web console password and DSF URL using:
-    6. `> cd /dsfkit/deploy/examples/&lt;example-name>`
-    7. `> terraform output "admin_password" && terraform output "dsf_hub_web_console_url"`
+    1. ```bash
+        cd /dsfkit/deploy/examples/&lt;example-name>
+        ```
+    2. ```bash
+        terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+        ```
 8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.  \
-
-
 
 ### Automated Installer Machine
 
 In case you don’t want to manually create the Installer Machine, you can automate the creation of the Installer Machine. DSFKit exposes a dedicated Terraform example that automatically creates the installer machine with the “user-data”.  Complete these steps to automate the creation of an installer machine:
-
- \
+<br><br>
 To use the Terraform installer example follow the following step:
 
-
-
-1. <code>> git clone [https://github.com/imperva/dsfkit.git](https://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@github.com/imperva/dsfkit.git)</code>
-2. <code>> cd dsfkit/deploy/installer_machine </code>
-3. <code>> terraform init</code>
-4. <code>> terraform apply -auto-approve</code>
-5. This script will prompt you to input the aws_access_key, aws_secret_key and aws_region parameters. \
-
-
+1. ```bash
+    git clone https://github.com/imperva/dsfkit.git
     ```
+2. ```bash
+    cd dsfkit/deploy/installer_machine
+    ```
+3. ```bash
+    terraform init
+    ```
+4. ```bash
+    terraform apply -auto-approve
+    ```
+5. This script will prompt you to input the aws_access_key, aws_secret_key and aws_region parameters.
+
+```
 NOTE: At this stage the Installer Machine is initializing. At its initialization it will automatically create all the other resources (Hub, GWs etc).
 
-** DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OTHER RESOURCES. OTHERWISE YOU WILL LEAVE UNDELETABLE RESOURCES ** for more information see  Uninstalling Installer Machine Mode section
+DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OTHER RESOURCES. OTHERWISE YOU WILL LEAVE UNDELETABLE RESOURCES for more information see  Uninstalling Installer Machine Mode section
 ```
 
-
-6. After the the first phase of the installation is completed, it outputs the following ssh commands, for example:
+6. After the first phase of the installation is completed, it outputs the following ssh commands, for example:
 
     ```
     installer_machine_ssh_command = "ssh -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17"
@@ -711,30 +435,33 @@ NOTE: At this stage the Installer Machine is initializing. At its initialization
     ```
 
 
-7. The second and last phase of the installation runs in the background. To follow it and know when it is completed, run the `logs_tail_ssh_command` which appears in the first phase output.
+7. The second and last phase of the installation runs in the background. To follow it and know when it is completed, run 
+    ```
+    logs_tail_ssh_command
+    ```
+    which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
-9. `> cd /dsfkit/deploy/examples/&lt;example-name>`
-10. Extract the web console admin password and DSF URL using: \
-`> terraform output "admin_password" && terraform output "dsf_hub_web_console_url"`
+9. ```bash
+    cd /dsfkit/deploy/examples/&lt;example-name>
+    ```
+10. Extract the web console admin password and DSF URL using:
+    ```bash
+    terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+    ```
 11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
-    ```
+```
 NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
 ```
-
-
-
 
 # Customizing Demos - Examples/Recipes 
 
 DSFKit ships 2 built-in examples/recipes which are already configured to deploy a basic Sonar environment:
 
-
-
 1. “se_demo” recipe, consist of:
     1. New VPC
     2. 1 Hub
-    3. 2 GW
+    3. 1 GW
     4. Federation
     5. Creation of a new “Demo DB”
     6. Auto configuration of new “Demo DB” to enable native audit
@@ -744,34 +471,27 @@ DSFKit ships 2 built-in examples/recipes which are already configured to deploy 
     8. New VPC
     9. 1 Primary Hub
     10. 1 Secondary Hub
-    11. 2 GW
+    11. 1 GW
     12. Federation
     13. HADR
 
-It is also possible to accommodate varying system requirements and deployments.  To customize the demo, please complete the following steps: \
+It is also possible to accommodate varying system requirements and deployments.  To customize the demo, please complete the following steps:
 
-
-
-
-1. **<span style="text-decoration:underline;">Fork</span>** dsfkit from git. \
+1. Fork dsfkit from git. 
 
 2. In the Git account assemble a new Terraform recipe that meets the necessary requirements. 
 
+    ```bash
+    cd deploy/examples/<YOUR CUSTOM EXAMPLE>
+    terraform init
+    terraform appy -auto-approve
     ```
-    > cd deploy/examples/<YOUR CUSTOM EXAMPLE>
-    > terraform init
-    > terraform appy -auto-approve
-
-    ```
-
-
 
 # IAM Roles
 
 To be able to create AWS resources inside any AWS Account you need to provide an AWS User with the required permissions needed in order to run DSFKit Terraform.
 
-
-```
+```json
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -813,18 +533,15 @@ To be able to create AWS resources inside any AWS Account you need to provide an
         }
     ]
 }
-
+```
 
 ```
 NOTE: Currently the IAM Role is too broad and we are working on restricting it to the minimum.
 ```
 
-
-
 # DSFKit Uninstallation
 
 Please select the most appropriate method to uninstall and destroy the workspace.
-
 
 ## UI Mode
 
@@ -832,77 +549,56 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 
 
-1. To destroy the environment, click on Settings and find Destruction and Deletion from the navigation menu to open the Destroy Infrastructure page. Ensure that the Allow Destroy Plans toggle is selected, and click on the Queue Destroy Plan button to begin.  \
+1. To destroy the environment, click on Settings and find Destruction and Deletion from the navigation menu to open the Destroy Infrastructure page. Ensure that the Allow Destroy Plans toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](images/image25.png)
 
-
-<p id="gdcalert28" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image25.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert29">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image25.png "image_tooltip")
-
-2. The installed environment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings. \
-
-
-<p id="gdcalert29" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image26.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert30">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
-
-
-![alt_text](images/image26.png "image_tooltip")
-
+2. The installed environment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](images/image26.png)
 
     ```
-NOTE: Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
-```
-
-
-
+    NOTE: Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
+    ```
 
 ## Local CLI Mode 
 
 Please complete the following steps to completely uninstall the Imperva DSFKit and remove it from the application and system.
 
-
-
-1. cd into the installed “example”:  \
-`cd deploy/examples/se_demo`
+1. cd into the installed “example”:
+    ```bash
+    cd deploy/examples/se_demo
+    ```
 2. Run: 
-
+    ```bash
+    terraform destroy -auto-approve
     ```
-    > terraform destroy -auto-approve
-
-    ```
-
-
 
 ## Installer Machine Mode 
 
 Please complete the following steps to completely uninstall the Imperva DSFKit and remove it from the application and system.
 
-
-
 1. ssh into the “Installer Machine”.
-2. cd into the installed “example”: `cd /dsfkit/deploy/examples/&lt;example-name>`
-3. Run:`  `
-
+2. cd into the installed “example”: ```bash
+    cd /dsfkit/deploy/examples/&lt;example-name>
     ```
+3. Run:
+    ```bash
     sudo su
-export AWS_ACCESS_KEY_ID=${access_key}
-export AWS_SECRET_ACCESS_KEY=${secret_key}
-export AWS_REGION=${region}
+    export AWS_ACCESS_KEY_ID=${access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
+    export AWS_REGION=${region}
     terraform destroy -auto-approve
     ```
 
-
 4. Wait for the environment to be destroyed.
 
-#### 
-    Manual Installer Machine
+
+#### Automated Installer Machine
 
 1. Exit from the “Installer Machine”.
 2. On the local machine, cd into deploy/installer_machine/.
-3. `> terraform destroy` `-auto-approve`
+3. ```bash
+    terraform destroy -auto-approve
+    ```
 
-#### 
-    Automated Installer Machine
+#### Manual Installer Machine
 
 1. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS UI Console.
 
