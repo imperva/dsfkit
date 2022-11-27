@@ -1,16 +1,4 @@
-[Temporarly, the full documentation can be found here](https://docs.google.com/document/d/1wzCrAkU2tk5e7L8pYLOeyJYai7upFBLhANWY1yDTOao/edit?usp=sharing)
-
 # Data Security Fabric (DSF) Kit Installation Guide
-
-
-[About This Guide](#about-this-guide)<br>
-[Getting Ready to Deploy](#getting-ready-to-deploy)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Binaries Location and Versioning](#binaries-location-and-versioning)<br>
-[DSFKit Installation](#dsfkit-installation)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[UI Installation Mode](#ui-installation-mode)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[UI Installation Steps](#ui-installation-steps)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[Local CLI Installation Mode]()<br>
-
 
 # About This Guide
 
@@ -35,7 +23,7 @@ This guide uses several text styles for an enhanced readability and several call
    </td>
    <td>
    
-   ```json
+   ```
    Code will be called out using this font for easy identification of required user input. 
    ```
 
@@ -155,7 +143,7 @@ NOTE: Note: It may take several hours for access to be granted to AWS and Terraf
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
 **File**: deploy/examples/se_demo/variables.tf
-```json
+```bash
  variable "sonar_version" {
     type    = string
     default = "4.10"
@@ -652,38 +640,3 @@ Please review the following issues and troubleshooting remediations.
    </td>
   </tr>
 </table>
-
-
-
-# Property Rights Notice
-
-© 2002 - 2022 Imperva, Inc. All Rights Reserved. 
-
-THIS DOCUMENT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL IMPERVA BE LIABLE FOR ANY CLAIM OR DAMAGES OR OTHER LIABILITY, INCLUDING BUT NOT LIMITED TO DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY KIND ARISING FROM ANY ERROR IN THIS DOCUMENT, INCLUDING WITHOUT LIMITATION ANY LOSS OR INTERRUPTION OF BUSINESS, PROFITS, USE OR DATA.
-
-No part of this document may be used, disclosed, modified, reproduced, displayed, performed, distributed, stored in a retrieval system, or translated into any language in any form or by any means without the written permission of Imperva, Inc. To obtain this permission, write to the attention of the Imperva Legal Department at: 1 Curiosity Way, Suite 103, San Mateo, CA 94403.
-
-Information in this document is subject to change without notice and does not represent a commitment on the part of Imperva, Inc. Imperva reserves the right to modify or remove any of the features or components described in this document for the final product or a future version of the product, without notice. The software described in this document is furnished under a license agreement. The software may be used only in accordance with the terms of this agreement.
-
-This document contains proprietary and confidential information of Imperva, Inc. Imperva and its licensors retain all ownership and intellectual property rights to this document. This document is solely for the use of authorized Imperva customers.
-
-**TRADEMARK ATTRIBUTIONS**
-
-Imperva, the Imperva logo, SecureSphere, Incapsula, CounterBreach, ThreatRadar, Camouflage, Attack Analytics, Prevoty and design are trademarks of Imperva, Inc. and its subsidiaries. 
-
-All other brand and product names are trademarks or registered trademarks of their respective owners.
-
-**PATENT INFORMATION**
-
-The software described by this document may be covered by one or more of the following patents:
-
-US Patent Nos. 7,640,235, 7,743,420, 7,752,662, 8,024,804, 8,051,484, 8,056,141, 8,135,948, 8,181,246, 8,392,963, 8,448,233, 8,453,255, 8,713,682, 8,752,208, 8,869,279 and 8,904,558, 8,973,142, 8,984,630, 8,997,232, 9,009,832, 9,027,136, 9,027,137, 9,128,941, 9,148,440, 9,148,446 and 9,401,927.
-
-Imperva Inc.
-
-1 Curiosity Way, Suite 103
-
-San Mateo, CA 94403 \
-United States \
-Tel:  +1 (650) 345-9000 \
-Fax: +1 (650) 345-9004
