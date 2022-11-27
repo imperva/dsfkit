@@ -64,7 +64,12 @@ module "gw_instance" {
   subnet_id                     = var.subnet_id
   key_pair                      = var.key_pair
   ec2_instance_type             = var.instance_type
-  ebs_state_disk_size           = var.disk_size
+  ebs_values = {
+    disk_size = var.disk_size
+    provisioned_iops = var.ebs_provisioned_iops
+    throughput = var.ebs_througput
+  }
+  dsf_base_ami_name_tag         = var.dsf_base_ami_name_tag
   sg_ingress_cidr               = var.sg_ingress_cidr
   public_ip                     = var.public_ip
   iam_instance_profile_id       = aws_iam_instance_profile.dsf_gw_instance_iam_profile.name

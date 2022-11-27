@@ -37,6 +37,18 @@ variable "disk_size" {
   }
 }
 
+variable "ebs_provisioned_iops" {
+  type        = number
+  default     = 0
+  description = "Provisioned IOPS for ebs volume"
+}
+
+variable "ebs_througput" {
+  type        = number
+  default     = 125
+  description = "Throughput for ebs volume"
+}
+
 variable "sg_ingress_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
@@ -89,6 +101,11 @@ variable "ssh_key_pair_path" {
   type        = string
   description = "SSH key path"
   nullable    = false
+}
+
+variable "dsf_base_ami_name_tag" {
+  type     = string
+  default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
 }
 
 ######################## Additional (optional) parameters ########################
