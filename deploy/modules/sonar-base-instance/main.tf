@@ -1,8 +1,9 @@
 locals {
   disk_size_app        = 100
   ebs_state_disk_type  = "gp3"
-  ebs_state_iops       = 16000
-  ebs_state_throughput = 1000
+  ebs_state_disk_size  = var.ebs_values.disk_size
+  ebs_state_iops       = var.ebs_values.provisioned_iops
+  ebs_state_throughput = var.ebs_values.throughput
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -63,7 +64,7 @@ resource "aws_volume_attachment" "ebs_att" {
 }
 
 resource "aws_ebs_volume" "ebs_external_data_vol" {
-  size              = var.ebs_state_disk_size
+  size              = local.ebs_state_disk_size
   type              = local.ebs_state_disk_type
   iops              = local.ebs_state_iops
   throughput        = local.ebs_state_throughput

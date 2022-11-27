@@ -122,7 +122,12 @@ module "hub_instance" {
   subnet_id                     = var.subnet_id
   key_pair                      = var.key_pair
   ec2_instance_type             = var.instance_type
-  ebs_state_disk_size           = var.disk_size
+  ebs_values = {
+    disk_size = var.disk_size
+    provisioned_iops = var.ebs_provisioned_iops
+    throughput = var.ebs_througput
+  }
+  dsf_base_ami_name_tag         = var.dsf_base_ami_name_tag
   web_console_sg_ingress_cidr   = var.web_console_sg_ingress_cidr
   sg_ingress_cidr               = var.sg_ingress_cidr
   public_ip                     = true
