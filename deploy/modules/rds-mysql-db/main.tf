@@ -11,14 +11,18 @@ locals {
   db_password   = length(var.password) > 0 ? var.password : random_password.db_password.result
   db_identifier = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
   db_name       = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
+  cloudwatch_stream_names = ["audit", "error", "general", "slowquery"]
+}
+
+resource "aws_cloudwatch_log_group" "cloudwatch_streams" {
+  for_each              = { for name in local.cloudwatch_stream_names : name => name }
+  name = "/aws/rds/instance/${local.db_identifier}/${each.value}"
+  retention_in_days = 30
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
   name       = "${local.db_identifier}-db-subnet-group"
   subnet_ids = var.rds_subnet_ids
-  # tags = {
-  #   Name = "My DB subnet group"
-  # }
 }
 
 resource "aws_db_option_group" "impv_rds_db_pg" {
@@ -56,7 +60,10 @@ resource "aws_db_instance" "rds_db" {
   publicly_accessible     = true
   backup_retention_period = 0
 
-  enabled_cloudwatch_logs_exports = ["audit", "error", "general", "slowquery"]
+  enabled_cloudwatch_logs_exports = local.cloudwatch_stream_names
+  depends_on = [
+    aws_cloudwatch_log_group.cloudwatch_streams
+  ]
 }
 
 data "aws_subnet" "subnet" {
