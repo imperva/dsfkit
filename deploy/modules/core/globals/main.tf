@@ -15,6 +15,8 @@ data "http" "workstation_public_ip" {
   ]
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "time_static" "current_time" {}
 
 resource "random_password" "pass" {
