@@ -24,6 +24,7 @@ resource "random_password" "pass" {
 
 
 module "key_pair" {
+  count                    = var.create_ssh_key ? 1 : 0
   source                   = "../key_pair"
   key_name_prefix          = "imperva-dsf-"
   create_private_key       = true

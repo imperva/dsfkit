@@ -14,9 +14,9 @@ variable "ec2_instance_type" {
 
 variable "ebs_values" {
   type = object({
-    disk_size         = number
-    provisioned_iops    = number
-    throughput    = number
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
   })
   description = "Sonar base ebs attributes"
 }
@@ -49,7 +49,7 @@ variable "iam_instance_profile_id" {
 }
 
 variable "dsf_base_ami_name_tag" {
-  type    = string
+  type = string
 }
 
 variable "resource_type" {
