@@ -62,6 +62,7 @@ module "hub" {
   admin_password                = local.admin_password
   ssh_key_pair_path             = module.globals.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
+  ebs_details                   = var.hub_ebs_details
   depends_on = [
     module.vpc
   ]
@@ -81,6 +82,7 @@ module "agentless_gw_group" {
   sonarw_public_key             = module.hub.sonarw_public_key
   sonarw_secret_name            = module.hub.sonarw_secret.name
   proxy_address                 = module.hub.public_address
+  ebs_details                   = var.gw_group_ebs_details
   depends_on = [
     module.vpc
   ]
@@ -100,26 +102,27 @@ module "gw_attachments" {
 }
 
 module "rds_mysql" {
+  count                        = 1
   source                       = "../../modules/rds-mysql-db"
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
 module "db_onboarding" {
-  count            = 1
+  for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
   hub_address      = module.hub.public_address
   hub_ssh_key_path = module.globals.key_pair_private_pem.filename
   assignee_gw      = module.hub.jsonar_uid
   assignee_role    = module.hub.iam_role
   database_details = {
-    db_username   = module.rds_mysql.db_username
-    db_password   = module.rds_mysql.db_password
-    db_arn        = module.rds_mysql.db_arn
-    db_port       = module.rds_mysql.db_port
-    db_identifier = module.rds_mysql.db_identifier
-    db_address    = module.rds_mysql.db_endpoint
-    db_engine     = module.rds_mysql.db_engine
+    db_username   = each.value.db_username
+    db_password   = each.value.db_password
+    db_arn        = each.value.db_arn
+    db_port       = each.value.db_port
+    db_identifier = each.value.db_identifier
+    db_address    = each.value.db_endpoint
+    db_engine     = each.value.db_engine
   }
   depends_on = [
     module.hub,

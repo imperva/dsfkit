@@ -29,24 +29,13 @@ variable "instance_type" {
   description = "Ec2 instance type for the DSF agentless gw"
 }
 
-variable "disk_size" {
-  default = 150
-  validation {
-    condition     = var.disk_size >= 150
-    error_message = "DSF agentless gw disk size must be at least 150GB"
-  }
-}
-
-variable "ebs_provisioned_iops" {
-  type        = number
-  default     = 0
-  description = "Provisioned IOPS for ebs volume"
-}
-
-variable "ebs_througput" {
-  type        = number
-  default     = 125
-  description = "Throughput for ebs volume"
+variable "ebs_details" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "Compute instance volume attributes"
 }
 
 variable "sg_ingress_cidr" {
@@ -105,7 +94,13 @@ variable "ssh_key_pair_path" {
 
 variable "dsf_base_ami_name_tag" {
   type    = string
-  default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
+  default = null
+}
+
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to DSF gw"
 }
 
 ######################## Additional (optional) parameters ########################

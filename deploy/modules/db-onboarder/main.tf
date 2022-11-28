@@ -34,9 +34,8 @@ resource "aws_iam_policy" "db_policy" {
 EOF
 }
 
-resource "aws_iam_policy_attachment" "policy_attach" {
-  name       = "collect-audit-attachment"
-  roles      = [data.aws_iam_role.assignee_role.name]
+resource "aws_iam_role_policy_attachment" "policy_attach" {
+  role       = data.aws_iam_role.assignee_role.name
   policy_arn = aws_iam_policy.db_policy.arn
 }
 
@@ -111,6 +110,6 @@ resource "null_resource" "connect_dsf_to_db" {
     db_arn = var.database_details.db_arn
   }
   depends_on = [
-    aws_iam_policy_attachment.policy_attach
+    aws_iam_role_policy_attachment.policy_attach
   ]
 }
