@@ -35,7 +35,7 @@ locals {
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
-  name   = local.deployment_name_salted
+  name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   cidr   = var.vpc_ip_range
 
   enable_nat_gateway   = true
@@ -56,11 +56,11 @@ module "hub" {
   name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = module.vpc.public_subnets[0]
   key_pair                      = module.globals.key_pair.key_pair_name
-  web_console_sg_ingress_cidr   = var.web_console_cidr
+  web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_pair_path             = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.globals.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   depends_on = [
@@ -77,10 +77,9 @@ module "agentless_gw_group" {
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_pair_path             = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.globals.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
-  sonarw_secret_name            = module.hub.sonarw_secret.name
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
   depends_on = [

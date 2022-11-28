@@ -10,14 +10,14 @@ module "hub_instance" {
   key_pair                      = var.key_pair
   ec2_instance_type             = var.instance_type
   ebs_details                   = var.ebs_details
-  dsf_base_ami_name_tag         = var.dsf_base_ami_name_tag
-  web_console_sg_ingress_cidr   = var.web_console_sg_ingress_cidr
+  ami_name_tag                  = var.ami_name_tag
+  web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = var.sg_ingress_cidr
   public_ip                     = true
   iam_instance_profile_id       = aws_iam_instance_profile.dsf_hub_instance_iam_profile.id
   additional_install_parameters = var.additional_install_parameters
   admin_password                = var.admin_password
-  ssh_key_pair_path             = var.ssh_key_pair_path
+  ssh_key_path                  = var.ssh_key_path
   installation_location         = var.installation_location
   sonarw_public_key             = local.dsf_hub_ssh_federation_key
   sonarw_secret_name            = local.secret_aws_name
