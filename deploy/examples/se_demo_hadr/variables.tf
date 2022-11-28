@@ -62,3 +62,31 @@ variable "vpc_ip_range" {
   type    = string
   default = "10.0.0.0/16"
 }
+
+variable "hub_ebs_details" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "DSF Hub compute instance volume attributes"
+  default = {
+    disk_size        = 500
+    provisioned_iops = 0
+    throughput       = 125
+  }
+}
+
+variable "gw_group_ebs_details" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "Gw group compute instance volume attributes"
+  default = {
+    disk_size        = 150
+    provisioned_iops = 0
+    throughput       = 125
+  }
+}

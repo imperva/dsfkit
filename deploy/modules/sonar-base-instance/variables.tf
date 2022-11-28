@@ -12,13 +12,13 @@ variable "ec2_instance_type" {
   description = "Ec2 instance type for the DSF base instance"
 }
 
-variable "ebs_values" {
+variable "ebs_details" {
   type = object({
     disk_size        = number
     provisioned_iops = number
     throughput       = number
   })
-  description = "Sonar base ebs attributes"
+  description = "Compute instance volume attributes"
 }
 
 variable "public_ip" {

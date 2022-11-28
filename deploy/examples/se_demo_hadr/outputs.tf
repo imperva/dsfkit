@@ -5,6 +5,7 @@ output "dsf_agentless_gw_group" {
       private_address = val.private_address,
       jsonar_uid      = val.jsonar_uid,
       display_name    = val.display_name
+      role_arn        = val.iam_role
     }
   }
 }
@@ -15,16 +16,18 @@ output "dsf_hubs" {
       public_address  = module.hub.public_address
       private_address = module.hub.private_address
       jsonar_uid      = module.hub.jsonar_uid
+      display_name    = module.hub.display_name
+      role_arn        = module.hub.iam_role
     }
     secondary = {
       public_address  = module.hub_secondary.public_address
       private_address = module.hub_secondary.private_address
       jsonar_uid      = module.hub_secondary.jsonar_uid
       display_name    = module.hub_secondary.display_name
+      role_arn        = module.hub_secondary.iam_role
     }
   }
 }
-
 
 output "admin_password" {
   value = nonsensitive(local.admin_password)

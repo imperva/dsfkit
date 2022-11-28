@@ -1,74 +1,17 @@
-#################################
-# Hub IAM role
-#################################
-
-locals {
-  inline_policy_s3 = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "VisualEditor0",
-        "Effect" : "Allow",
-        "Action" : [
-          "s3:GetObject",
-          "s3:ListBucket"
-        ]
-        "Resource" : [
-          "arn:aws:s3:::${var.installation_location.s3_bucket}",
-          "arn:aws:s3:::${var.installation_location.s3_bucket}/*",
-        ]
-      }
-    ]
-    }
-  )
-  role_assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-}
 
 resource "random_string" "gw_id" {
   length  = 8
   special = false
 }
 
-resource "aws_iam_instance_profile" "dsf_gw_instance_iam_profile" {
-  name_prefix = "dsf-hub-instance-iam-profile"
-  role        = aws_iam_role.dsf_gw_role.name
-}
-
-resource "aws_iam_role" "dsf_gw_role" {
-  name_prefix         = "imperva-dsf-gw-role"
-  description         = "imperva-dsf-gw-role-${var.name}-${random_string.gw_id.result}"
-  managed_policy_arns = null
-  inline_policy {
-    name   = "imperva-dsf-s3-access"
-    policy = local.inline_policy_s3
-  }
-  assume_role_policy = local.role_assume_role_policy
-}
-
 module "gw_instance" {
-  source            = "../../modules/sonar-base-instance"
-  resource_type     = "gw"
-  name              = var.name
-  subnet_id         = var.subnet_id
-  key_pair          = var.key_pair
-  ec2_instance_type = var.instance_type
-  ebs_values = {
-    disk_size        = var.disk_size
-    provisioned_iops = var.ebs_provisioned_iops
-    throughput       = var.ebs_througput
-  }
+  source                        = "../../modules/sonar-base-instance"
+  resource_type                 = "gw"
+  name                          = var.name
+  subnet_id                     = var.subnet_id
+  key_pair                      = var.key_pair
+  ec2_instance_type             = var.instance_type
+  ebs_details                   = var.ebs_details
   dsf_base_ami_name_tag         = var.dsf_base_ami_name_tag
   sg_ingress_cidr               = var.sg_ingress_cidr
   public_ip                     = var.public_ip

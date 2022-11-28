@@ -1,9 +1,12 @@
 locals {
   disk_size_app        = 100
   ebs_state_disk_type  = "gp3"
-  ebs_state_disk_size  = var.ebs_values.disk_size
-  ebs_state_iops       = var.ebs_values.provisioned_iops
-  ebs_state_throughput = var.ebs_values.throughput
+  ebs_state_disk_size  = var.ebs_details.disk_size
+  ebs_state_iops       = var.ebs_details.provisioned_iops
+  ebs_state_throughput = var.ebs_details.throughput
+
+  ami_name_default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
+  ami_name         = var.dsf_base_ami_name_tag != null ? var.dsf_base_ami_name_tag : local.ami_name_default
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -18,7 +21,7 @@ data "aws_ami" "redhat-7-ami" {
 
   filter {
     name   = "name"
-    values = [var.dsf_base_ami_name_tag]
+    values = [local.ami_name]
   }
 
   filter {
@@ -48,7 +51,8 @@ resource "aws_instance" "dsf_base_instance" {
   tags = {
     Name = var.name
   }
-  disable_api_termination = true
+  disable_api_termination     = true
+  user_data_replace_on_change = true
 }
 
 # Attach an additional storage device to DSF base instance
