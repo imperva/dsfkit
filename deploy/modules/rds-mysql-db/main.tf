@@ -7,16 +7,16 @@ resource "random_pet" "db_id" {
 }
 
 locals {
-  db_username   = var.username
-  db_password   = length(var.password) > 0 ? var.password : random_password.db_password.result
-  db_identifier = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
-  db_name       = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
+  db_username             = var.username
+  db_password             = length(var.password) > 0 ? var.password : random_password.db_password.result
+  db_identifier           = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
+  db_name                 = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
   cloudwatch_stream_names = ["audit", "error", "general", "slowquery"]
 }
 
 resource "aws_cloudwatch_log_group" "cloudwatch_streams" {
-  for_each              = { for name in local.cloudwatch_stream_names : name => name }
-  name = "/aws/rds/instance/${local.db_identifier}/${each.value}"
+  for_each          = { for name in local.cloudwatch_stream_names : name => name }
+  name              = "/aws/rds/instance/${local.db_identifier}/${each.value}"
   retention_in_days = 30
 }
 

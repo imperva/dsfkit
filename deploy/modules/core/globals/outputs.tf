@@ -15,11 +15,11 @@ output "random_password" {
 }
 
 output "key_pair" {
-  value = module.key_pair.key_pair
+  value = try(module.key_pair[0].key_pair, null)
 }
 
 output "key_pair_private_pem" {
-  value = module.key_pair.key_pair_private_pem
+  value = try(module.key_pair[0].key_pair_private_pem, null)
 }
 
 output "tags" {
