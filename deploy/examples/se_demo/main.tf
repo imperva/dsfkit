@@ -131,9 +131,6 @@ module "db_onboarding" {
 
 module "statistics" {
   source = "../../modules/statistics"
-  depends_on = [
-    module.gw_attachments
-  ]
 }
 
 output "db_details" {
