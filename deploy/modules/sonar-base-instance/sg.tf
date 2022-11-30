@@ -74,11 +74,11 @@ resource "aws_security_group_rule" "sg_ingress_self" {
 }
 
 resource "aws_security_group_rule" "sg_web_console_access" {
-  count             = length(var.web_console_sg_ingress_cidr) == 0 ? 0 : 1
+  count             = length(var.web_console_cidr) == 0 ? 0 : 1
   type              = "ingress"
   from_port         = 8443
   to_port           = 8443
   protocol          = "tcp"
-  cidr_blocks       = var.web_console_sg_ingress_cidr
+  cidr_blocks       = var.web_console_cidr
   security_group_id = aws_security_group.dsf_base_sg.id
 }

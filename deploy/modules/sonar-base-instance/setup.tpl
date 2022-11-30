@@ -15,17 +15,19 @@ function wait_for_network() {
 function install_deps() {
     # yum fails sporadically. So we try 3 times :(
     yum install unzip -y || yum install unzip -y || yum install unzip -y
-    yum install net-tools jq vim -y
+    yum install net-tools jq vim nc lsof -y
 
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip -q awscliv2.zip
-    aws/install
-    rm -rf aws awscliv2.zip
+    if [ ! -f /usr/local/bin/aws ]; then
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip -q awscliv2.zip
+        aws/install
+        rm -rf aws awscliv2.zip
+    fi
 
-    useradd sonargd
-    useradd sonarg
-    useradd sonarw
-    groupadd sonar
+    id sonargd || useradd sonargd
+    id sonarg  || useradd sonarg
+    id sonarw  || useradd sonarw
+    getent group sonar || groupadd sonar
     usermod -g sonar sonarw
     usermod -g sonar sonargd
 }

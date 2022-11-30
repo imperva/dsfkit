@@ -7,7 +7,7 @@ output "private_address" {
 }
 
 output "iam_role" {
-  value = resource.aws_iam_role.dsf_gw_role.arn
+  value = local.role_arn
 }
 
 output "jsonar_uid" {

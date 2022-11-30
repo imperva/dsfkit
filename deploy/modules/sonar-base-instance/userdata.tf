@@ -1,7 +1,7 @@
 locals {
   ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_address
-  bastion_private_key = try(file(var.ssh_key_pair_path), "")
+  bastion_private_key = try(file(var.ssh_key_path), "")
   bastion_user        = "ec2-user"
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
@@ -20,7 +20,7 @@ locals {
     sonargd_pasword                     = var.admin_password
     dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
     dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
-    ssh_key_pair_path                   = var.ssh_key_pair_path
+    ssh_key_path                        = var.ssh_key_path
     sonarw_public_key                   = var.sonarw_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
     public_fqdn                         = var.proxy_address != null ? "" : "True"
@@ -35,7 +35,7 @@ resource "null_resource" "wait_for_installation_completion" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file(var.ssh_key_pair_path)
+    private_key = file(var.ssh_key_path)
     host        = local.instance_address
 
     timeout = "15m"

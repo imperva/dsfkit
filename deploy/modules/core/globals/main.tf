@@ -15,6 +15,8 @@ data "http" "workstation_public_ip" {
   ]
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "time_static" "current_time" {}
 
 resource "random_password" "pass" {
@@ -24,6 +26,7 @@ resource "random_password" "pass" {
 
 
 module "key_pair" {
+  count                    = var.create_ssh_key ? 1 : 0
   source                   = "../key_pair"
   key_name_prefix          = "imperva-dsf-"
   create_private_key       = true
