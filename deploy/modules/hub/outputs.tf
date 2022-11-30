@@ -11,7 +11,7 @@ output "sg_id" {
 }
 
 output "iam_role" {
-  value = resource.aws_iam_role.dsf_hub_role.arn
+  value = local.role_arn
 }
 
 output "sonarw_public_key" {
