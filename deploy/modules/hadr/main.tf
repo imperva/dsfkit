@@ -51,7 +51,6 @@ resource "null_resource" "hadr_verify" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file(var.ssh_key_path)
     private_key = file(local.primary_ssh_key_path)
     host        = var.dsf_hub_primary_public_ip
 
