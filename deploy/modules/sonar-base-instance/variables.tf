@@ -97,6 +97,12 @@ variable "proxy_address" {
   default     = null
 }
 
+variable "proxy_ssh_key_path" {
+  type        = string
+  default     = null
+  description = "Proxy ssh key path"
+}
+
 variable "sonarw_public_key" {
   type        = string
   description = "SSH public key for sonarw user"
@@ -106,5 +112,11 @@ variable "sonarw_public_key" {
 variable "sonarw_secret_name" {
   type        = string
   description = "Secret name for sonarw ssh key"
-  nullable    = false
+  default     = ""
+}
+
+variable "sonarw_secret_region" {
+  type        = string
+  description = "Region for sonarw ssh key"
+  default     = null
 }

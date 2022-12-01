@@ -1,3 +1,7 @@
+locals {
+  primary_ssh_key_path = var.ssh_key_path
+  ssh_key_path_secondary = var.ssh_key_path_secondary != null ? var.ssh_key_path_secondary : var.ssh_key_path
+}
 
 #################################
 # Run HADR scripts
@@ -6,7 +10,7 @@ resource "null_resource" "exec_hadr_primary" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file(var.ssh_key_path)
+    private_key = file(local.primary_ssh_key_path)
     host        = var.dsf_hub_primary_public_ip
 
     timeout = "5m"
@@ -21,7 +25,7 @@ resource "null_resource" "exec_hadr_secondary" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file(var.ssh_key_path)
+    private_key = file(local.ssh_key_path_secondary)
     host        = var.dsf_hub_secondary_public_ip
 
     timeout = "5m"
@@ -48,6 +52,7 @@ resource "null_resource" "hadr_verify" {
     type        = "ssh"
     user        = "ec2-user"
     private_key = file(var.ssh_key_path)
+    private_key = file(local.primary_ssh_key_path)
     host        = var.dsf_hub_primary_public_ip
 
     timeout = "5m"
