@@ -21,4 +21,5 @@ module "hub_instance" {
   installation_location         = var.installation_location
   sonarw_public_key             = local.dsf_hub_ssh_federation_key
   sonarw_secret_name            = local.secret_aws_name
+  sonarw_secret_region          = var.hadr_main_hub_region
 }

@@ -63,11 +63,16 @@ variable "sonarw_public_key" {
   nullable    = false
 }
 
-
 variable "proxy_address" {
   type        = string
   description = "Proxy address used for ssh for private gw (Usually hub address)"
   default     = null
+}
+
+variable "proxy_ssh_key_path" {
+  type        = string
+  default     = null
+  description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
 }
 
 variable "admin_password" {
@@ -96,7 +101,7 @@ variable "ami_name_tag" {
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF gw"
+  description = "IAM role to assign to DSF gw. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

@@ -24,6 +24,12 @@ variable "dsf_hub_secondary_private_ip" {
 
 variable "ssh_key_path" {
   type        = string
-  description = "ssh_key_path"
+  description = "SSH key path"
   nullable    = false
+}
+
+variable "ssh_key_path_secondary" {
+  type        = string
+  description = "SSH key path for seconday. Keep empty if the key is identical to primary one"
+  default     = null
 }
