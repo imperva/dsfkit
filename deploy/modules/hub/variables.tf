@@ -19,7 +19,7 @@ variable "subnet_id" {
 
 variable "instance_type" {
   type        = string
-  default     = "r6i.2xlarge"
+  default     = "r6i.xlarge"
   description = "Ec2 instance type for the DSF hub"
 }
 
@@ -72,6 +72,12 @@ variable "hadr_main_hub_sonarw_secret" {
   description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
 }
 
+variable "hadr_main_hub_region" {
+  type        = string
+  description = "Region for primary hub. This var must be defined for hadr seconday node"
+  default     = null
+}
+
 variable "hadr_main_sonarw_public_key" {
   type        = string
   description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
@@ -104,7 +110,7 @@ variable "ami_name_tag" {
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF hub"
+  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

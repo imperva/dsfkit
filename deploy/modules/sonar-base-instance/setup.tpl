@@ -134,19 +134,19 @@ function set_environment_vars() {
 function install_ssh_keys() {
     echo Installing SSH keys
     if [ "${resource_type}" == "hub" ]; then
-        sudo mkdir -p /home/sonarw/.ssh/
-        sudo /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text | sudo tee /home/sonarw/.ssh/id_rsa > /dev/null
-        sudo echo "${sonarw_public_key}" | sudo tee /home/sonarw/.ssh/id_rsa.pub > /dev/null
-        sudo touch /home/sonarw/.ssh/authorized_keys
-        sudo grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || sudo cat /home/sonarw/.ssh/id_rsa.pub | sudo tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-        sudo chown -R sonarw:sonar /home/sonarw/.ssh
-        sudo chmod -R 600 /home/sonarw/.ssh
-        sudo chmod 700 /home/sonarw/.ssh
+        mkdir -p /home/sonarw/.ssh/
+        /usr/local/bin/aws --region ${sonar_secret_region} secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+        echo "${sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+        touch /home/sonarw/.ssh/authorized_keys
+        grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
+        chown -R sonarw:sonar /home/sonarw/.ssh
+        chmod -R 600 /home/sonarw/.ssh
+        chmod 700 /home/sonarw/.ssh
     else
-        sudo mkdir -p /home/sonarw/.ssh
-        sudo touch /home/sonarw/.ssh/authorized_keys
-        sudo grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${sonarw_public_key}" | sudo tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-        sudo chown -R sonarw:sonar /home/sonarw
+        mkdir -p /home/sonarw/.ssh
+        touch /home/sonarw/.ssh/authorized_keys
+        grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+        chown -R sonarw:sonar /home/sonarw
     fi
 }
 
