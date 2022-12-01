@@ -17,6 +17,10 @@ data "http" "workstation_public_ip" {
 
 data "aws_caller_identity" "current" {}
 
+data "aws_region" "current" {}
+
+data "aws_availability_zones" "available" { state = "available" }
+
 resource "time_static" "current_time" {}
 
 resource "random_password" "pass" {
@@ -24,11 +28,10 @@ resource "random_password" "pass" {
   special = false
 }
 
-
 module "key_pair" {
   count                    = var.create_ssh_key ? 1 : 0
   source                   = "../key_pair"
   key_name_prefix          = "imperva-dsf-"
   create_private_key       = true
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}-${data.aws_caller_identity.current.account_id}-${data.aws_region.current.name}"
 }

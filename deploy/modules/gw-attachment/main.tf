@@ -11,10 +11,11 @@ locals {
   })
   federate_gw_cmds = templatefile("${path.module}/federate_gw.tpl", {
     ssh_key_path = var.hub_ssh_key_path
+    gw_ssh_key_path = var.gw_ssh_key_path != null ? var.gw_ssh_key_path : var.hub_ssh_key_path
     dsf_gw_ip    = var.gw
     dsf_hub_ip   = var.hub
   })
-  sleep_value = "60s"
+  sleep_value = "40s"
 }
 
 resource "time_sleep" "sleep" {

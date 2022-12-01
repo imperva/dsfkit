@@ -30,6 +30,14 @@ output "current_user_name" {
   value = split("/", data.aws_caller_identity.current.arn)[1] // arn:aws:iam::xxxxxxxxx:user/name
 }
 
+output "availability_zones" {
+  value = sort(data.aws_availability_zones.available.names)
+}
+
+output "region" {
+  value = data.aws_region.current.name
+}
+
 output "tags" {
   value = {
     terraform_workspace = terraform.workspace
