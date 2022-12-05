@@ -44,7 +44,6 @@ jobs:
           backend "s3" {
             bucket         = "tf-state-dsfkit-github-tests"
             key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
             region         = "ap-southeast-2"
           }
         }
