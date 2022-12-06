@@ -23,4 +23,5 @@ module "gw_instance" {
   sonarw_public_key             = var.sonarw_public_key
   sonarw_secret_name            = ""
   proxy_address                 = var.proxy_address
+  proxy_private_key             = var.proxy_private_key 
 }

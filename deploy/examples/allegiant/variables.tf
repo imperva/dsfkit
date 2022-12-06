@@ -30,6 +30,7 @@ variable "admin_password" {
 
 variable "web_console_cidr" {
   type        = list(string)
+  default = ["0.0.0.0/0"]
   description = "CIDR blocks allowing DSF hub web console access"
 }
 
@@ -92,24 +93,30 @@ variable "gw_group_ebs_details" {
 
 variable "aws_profile_hub" {
   type    = string
+  default = "innogabistage"
 }
 
 variable "aws_region_hub" {
   type    = string
+  default = "eu-west-2"
 }
 
 variable "subnet_hub" {
   type    = string
+  default = "subnet-091492f8de998aa28"#subnet-091492f8de998aa28
 }
 
 variable "aws_profile_gw" {
   type    = string
+  default = "innogabi"
 }
 
 variable "aws_region_gw" {
   type    = string
+  default = "eu-west-1"
 }
 
 variable "subnet_gw" {
   type    = string
+  default = "subnet-0a30b0b7a66b810bb"#subnet-0a30b0b7a66b810bb
 }

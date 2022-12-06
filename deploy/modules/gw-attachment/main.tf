@@ -10,9 +10,10 @@ locals {
     dsf_hub_ip   = var.hub
   })
   federate_gw_cmds = templatefile("${path.module}/federate_gw.tpl", {
-    ssh_key_path = var.hub_ssh_key_path
+    ssh_key_path = var.gw_ssh_key_path
     dsf_gw_ip    = var.gw
     dsf_hub_ip   = var.hub
+    proxy_private_key = var.hub_ssh_key_path
   })
   sleep_value = "60s"
 }

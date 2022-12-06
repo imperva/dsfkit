@@ -61,7 +61,7 @@ locals {
 
 module "key_pair_hub" {
   source                   = "../../modules/core/key_pair"
-  key_name_prefix          = "imperva-dsf-"
+  key_name_prefix          = "imperva-dsf-hub"
   create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
@@ -69,7 +69,7 @@ module "key_pair_hub" {
 
 module "key_pair_gw" {
   source                   = "../../modules/core/key_pair"
-  key_name_prefix          = "imperva-dsf-"
+  key_name_prefix          = "imperva-dsf-gw"
   create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   providers = {
@@ -90,12 +90,12 @@ module "hub" {
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
-  depends_on = [
-    module.vpc
-  ]
+  # depends_on = [
+  #   module.vpc
+  # ]
 }
 
 module "agentless_gw_group" {
@@ -107,14 +107,18 @@ module "agentless_gw_group" {
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair_gw.key_pair_private_pem.filename
+  proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
-  depends_on = [
-    module.vpc
-  ]
+  # depends_on = [
+  #   module.vpc
+  # ]
+  providers = {
+    aws = aws.gw 
+   }
 }
 
 module "gw_attachments" {
@@ -122,7 +126,8 @@ module "gw_attachments" {
   source              = "../../modules/gw-attachment"
   gw                  = each.value.private_address
   hub                 = module.hub.public_address
-  hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
+  hub_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
+  gw_ssh_key_path    = module.key_pair_gw.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
     module.hub,
@@ -130,7 +135,7 @@ module "gw_attachments" {
   ]
 }
 
-module "statistics" {
-  source = "../../modules/statistics"
-}
+# module "statistics" {
+#   source = "../../modules/statistics"
+# }
 
