@@ -97,10 +97,10 @@ variable "proxy_address" {
   default     = null
 }
 
-variable "proxy_ssh_key_path" {
+variable "proxy_private_key" {
   type        = string
+  description = "Proxy private ssh key"
   default     = null
-  description = "Proxy ssh key path"
 }
 
 variable "sonarw_public_key" {
