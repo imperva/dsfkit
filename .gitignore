@@ -17,3 +17,4 @@ dsf_hub_ssh_key.pub
 generate_token.sh
 hub_token
 myip-default
+.idea
