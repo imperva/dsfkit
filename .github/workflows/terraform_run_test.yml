@@ -73,7 +73,7 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
     - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output -lock-timeout=1800s
+      run: terraform -chdir=$EXAMPLE_DIR output
 
     - name: Terraform Destroy
       if: always()
