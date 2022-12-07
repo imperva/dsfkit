@@ -3,7 +3,7 @@
 #################################
 
 locals {
-  role_arn  = var.role_arn != null ? var.role_arn : aws_iam_role.dsf_hub_role[0].arn
+  role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.dsf_hub_role[0].arn, null)
   role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
