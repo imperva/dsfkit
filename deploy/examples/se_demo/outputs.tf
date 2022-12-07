@@ -2,10 +2,10 @@ output "dsf_agentless_gw_group" {
   value = {
     for idx, val in module.agentless_gw_group : "gw-${idx}" =>
     {
-      private_address = val.private_address,
-      jsonar_uid      = val.jsonar_uid,
-      display_name    = val.display_name
-      role_arn        = val.iam_role
+      private_address = try(val.private_address, null)
+      jsonar_uid      = try(val.jsonar_uid, null)
+      display_name    = try(val.display_name, null)
+      role_arn        = try(val.iam_role, null)
     }
   }
 }
@@ -13,11 +13,11 @@ output "dsf_agentless_gw_group" {
 output "dsf_hubs" {
   value = {
     primary_hub = {
-      public_address  = module.hub.public_address
-      private_address = module.hub.private_address
-      jsonar_uid      = module.hub.jsonar_uid
-      display_name    = module.hub.display_name
-      role_arn        = module.hub.iam_role
+      public_address  = try(module.hub.public_address, null)
+      private_address = try(module.hub.private_address, null)
+      jsonar_uid      = try(module.hub.jsonar_uid, null)
+      display_name    = try(module.hub.display_name, null)
+      role_arn        = try(module.hub.iam_role, null)
     }
   }
 }
@@ -32,7 +32,7 @@ output "deployment_name" {
 
 output "dsf_private_ssh_key" {
   sensitive = true
-  value     = module.globals.key_pair_private_pem
+  value     = try(module.globals.key_pair_private_pem, null)
 }
 
 output "dsf_hub_web_console_url" {
@@ -40,7 +40,7 @@ output "dsf_hub_web_console_url" {
 }
 
 output "ssh_command_hub" {
-  value = "ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}"
+  value = try("ssh -i ${module.globals.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}", null)
 }
 
 output "ssh_command_gw" {
