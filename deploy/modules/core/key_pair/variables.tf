@@ -4,7 +4,7 @@
 # }
 
 # resource "local_sensitive_file" "dsf_ssh_key_file" {
-#   content         = module.globals.key_pair_private_pem
+#   content         = module.key_pair.key_pair_private_pem
 #   file_permission = 400
 #   filename        = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 
