@@ -1,6 +1,5 @@
 module "globals" {
   source         = "../../modules/core/globals"
-  create_ssh_key = false
 }
 
 data "aws_caller_identity" "current" {}

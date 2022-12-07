@@ -14,14 +14,6 @@ output "random_password" {
   value = resource.random_password.pass.result
 }
 
-output "key_pair" {
-  value = try(module.key_pair[0].key_pair, null)
-}
-
-output "key_pair_private_pem" {
-  value = try(module.key_pair[0].key_pair_private_pem, null)
-}
-
 output "current_user_arn" {
   value = data.aws_caller_identity.current.arn
 }

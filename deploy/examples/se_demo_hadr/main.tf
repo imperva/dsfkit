@@ -8,6 +8,13 @@ module "globals" {
   source = "../../modules/core/globals"
 }
 
+module "key_pair" {
+  source                   = "../../modules/core/key_pair"
+  key_name_prefix          = "imperva-dsf-"
+  create_private_key       = true
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+}
+
 data "aws_availability_zones" "available" { state = "available" }
 
 locals {
@@ -55,12 +62,12 @@ module "hub" {
   source                        = "../../modules/hub"
   name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = module.vpc.public_subnets[0]
-  key_pair                      = module.globals.key_pair.key_pair_name
+  key_pair                      = module.key_pair.key_pair.key_pair_name
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   depends_on = [
@@ -72,7 +79,7 @@ module "hub_secondary" {
   source                        = "../../modules/hub"
   name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                     = module.vpc.public_subnets[1]
-  key_pair                      = module.globals.key_pair.key_pair_name
+  key_pair                      = module.key_pair.key_pair.key_pair_name
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   hadr_secondary_node           = true
@@ -80,7 +87,7 @@ module "hub_secondary" {
   hadr_main_sonarw_public_key   = module.hub.sonarw_public_key
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   depends_on = [
@@ -93,15 +100,16 @@ module "agentless_gw_group" {
   source                        = "../../modules/agentless-gw"
   name                          = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                     = module.vpc.private_subnets[0]
-  key_pair                      = module.globals.key_pair.key_pair_name
+  key_pair                      = module.key_pair.key_pair.key_pair_name
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
+  proxy_private_key             = module.hub.sonarw_public_key
   depends_on = [
     module.vpc
   ]
@@ -121,8 +129,9 @@ module "gw_attachments" {
   source              = "../../modules/gw-attachment"
   gw                  = local.hub_gw_combinations[count.index][1]
   hub                 = local.hub_gw_combinations[count.index][0]
-  hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
+  hub_ssh_key_path    = module.key_pair.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
+  gw_ssh_key_path     = module.key_pair.key_pair_private_pem.filename
   depends_on = [
     module.hub,
     module.hub_secondary,
@@ -136,7 +145,7 @@ module "hadr" {
   dsf_hub_primary_private_ip   = module.hub.private_address
   dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
   dsf_hub_secondary_private_ip = module.hub_secondary.private_address
-  ssh_key_path                 = module.globals.key_pair_private_pem.filename
+  ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   depends_on = [
     module.gw_attachments,
     module.hub,
@@ -155,7 +164,7 @@ module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
   hub_address      = module.hub.public_address
-  hub_ssh_key_path = module.globals.key_pair_private_pem.filename
+  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
   assignee_gw      = module.hub.jsonar_uid
   assignee_role    = module.hub.iam_role
   database_details = {

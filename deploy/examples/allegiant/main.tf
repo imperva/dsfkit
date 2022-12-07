@@ -17,7 +17,6 @@ provider "aws" {
 
 module "globals" {
   source = "../../modules/core/globals"
-  create_ssh_key = false
 }
 
 data "aws_availability_zones" "available" { state = "available" }
@@ -43,21 +42,6 @@ locals {
 ##############################
 # Generating network
 ##############################
-
-# module "vpc" {
-#   source = "terraform-aws-modules/vpc/aws"
-#   name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
-#   cidr   = var.vpc_ip_range
-
-#   enable_nat_gateway   = true
-#   single_nat_gateway   = true
-#   enable_dns_hostnames = true
-
-#   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
-#   private_subnets = var.private_subnets
-#   public_subnets  = var.public_subnets
-# }
-
 
 module "key_pair_hub" {
   source                   = "../../modules/core/key_pair"
