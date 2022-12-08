@@ -112,6 +112,36 @@ module "gw_attachments" {
   ]
 }
 
+module "rds_mysql" {
+  count                        = 1
+  source                       = "../../modules/rds-mysql-db"
+  rds_subnet_ids               = ["subnet-27b9576c", "subnet-8c3926ea"]
+  security_group_ingress_cidrs = local.workstation_cidr
+}
+
+module "db_onboarding" {
+  for_each         = { for idx, val in module.rds_mysql : idx => val }
+  source           = "../../modules/db-onboarder"
+  sonar_version    = var.sonar_version
+  hub_address      = module.hub.private_address
+  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  assignee_gw      = module.agentless_gw_group[0].jsonar_uid
+  assignee_role    = module.agentless_gw_group[0].iam_role
+  database_details = {
+    db_username   = each.value.db_username
+    db_password   = each.value.db_password
+    db_arn        = each.value.db_arn
+    db_port       = each.value.db_port
+    db_identifier = each.value.db_identifier
+    db_address    = each.value.db_endpoint
+    db_engine     = each.value.db_engine
+  }
+  depends_on = [
+    module.gw_attachments,
+    module.rds_mysql
+  ]
+}
+
 module "statistics" {
   source = "../../modules/statistics"
 }
