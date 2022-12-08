@@ -48,15 +48,14 @@ module "key_pair_hub" {
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
-
 module "key_pair_gw" {
   source                   = "../../modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-gw"
   create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   providers = {
-    aws = aws.gw 
-   }
+    aws = aws.gw
+  }
 }
 
 ##############################
@@ -75,6 +74,7 @@ module "hub" {
   ssh_key_path                  = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
+  public_ip                     = false
 }
 
 module "agentless_gw_group" {
@@ -90,21 +90,21 @@ module "agentless_gw_group" {
   proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
-  proxy_address                 = module.hub.public_address
+  proxy_address                 = module.hub.private_address
   ebs_details                   = var.gw_group_ebs_details
 
   providers = {
-    aws = aws.gw 
-   }
+    aws = aws.gw
+  }
 }
 
 module "gw_attachments" {
   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
   source              = "../../modules/gw-attachment"
   gw                  = each.value.private_address
-  hub                 = module.hub.public_address
+  hub                 = module.hub.private_address
   hub_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
-  gw_ssh_key_path    = module.key_pair_gw.key_pair_private_pem.filename
+  gw_ssh_key_path     = module.key_pair_gw.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
   depends_on = [
     module.hub,
