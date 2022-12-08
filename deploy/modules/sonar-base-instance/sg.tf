@@ -92,6 +92,6 @@ resource "aws_security_group_rule" "sg_allow_ssh_in_vpc" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = data.aws_vpc.selected.cidr_block
+  cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.dsf_base_sg.id
 }
