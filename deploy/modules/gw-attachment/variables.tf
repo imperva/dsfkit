@@ -28,6 +28,12 @@ variable "gw_ssh_key_path" {
   nullable    = false
 }
 
+variable "gw_ssh_key_path" {
+  type        = string
+  description = "Path of local ssh key file for DSF GW"
+  nullable    = false
+}
+
 variable "installation_source" {
   type        = string
   description = "Changing this variable forces a re-federation process"
