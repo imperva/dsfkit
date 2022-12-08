@@ -92,6 +92,12 @@ variable "ssh_key_path" {
   nullable    = false
 }
 
+variable "proxy_private_key" {
+  type        = string
+  description = "proxy_private_key"
+  nullable    = false
+}
+
 variable "ami_name_tag" {
   type        = string
   default     = null

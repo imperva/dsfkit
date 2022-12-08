@@ -22,5 +22,5 @@ module "gw_instance" {
   installation_location         = var.installation_location
   sonarw_public_key             = var.sonarw_public_key
   proxy_address                 = var.proxy_address
-  proxy_ssh_key_path            = var.proxy_ssh_key_path != null ? var.proxy_ssh_key_path : var.ssh_key_path
+  proxy_private_key             = var.proxy_private_key 
 }
