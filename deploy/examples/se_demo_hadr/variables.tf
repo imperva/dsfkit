@@ -12,11 +12,17 @@ variable "tarball_s3_bucket" {
 variable "sonar_version" {
   type    = string
   default = "4.10"
+  validation {
+    condition     = contains(["4.10"], var.sonar_version)
+    error_message = "The sonar_version value must be '4.10'."
+  }
 }
 
-variable "tarball_s3_key" {
-  type        = string
-  default     = "jsonar-4.10.0.0.0.tar.gz"
+variable "tarball_s3_key_map" {
+  type    = map(string)
+  default = {
+    "4.10"  = "jsonar-4.10.0.0.0.tar.gz"
+  }
   description = "S3 object key for installation tarball"
 }
 
@@ -24,6 +30,10 @@ variable "gw_count" {
   type        = number
   default     = 1
   description = "Number of agentless gateways"
+  validation {
+    condition     = var.gw_count > 0
+    error_message = "The gw_count value must be greater than 0."
+  }
 }
 
 variable "admin_password" {

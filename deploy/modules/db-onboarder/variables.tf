@@ -1,3 +1,9 @@
+variable "sonar_version" {
+  type        = string
+  description = "jsonar installation version"
+  nullable    = false
+}
+
 variable "hub_address" {
   type        = string
   description = "Hub address"
