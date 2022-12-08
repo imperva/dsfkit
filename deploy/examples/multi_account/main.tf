@@ -143,6 +143,9 @@ module "db_onboarding" {
     module.gw_attachments,
     module.rds_mysql
   ]
+  providers = {
+    aws = aws.gw
+  }
 }
 
 module "statistics" {
