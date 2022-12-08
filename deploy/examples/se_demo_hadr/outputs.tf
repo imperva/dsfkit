@@ -55,5 +55,5 @@ output "ssh_command_secondary_hub" {
 }
 
 output "ssh_command_gw" {
-  value = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i $module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i $module.key_pair.key_pair_private_pem.filename} ec2-user@${module.agentless_gw_group[0].private_address}", null)
+  value = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.agentless_gw_group[0].private_address}", null)
 }
