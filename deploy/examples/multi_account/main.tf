@@ -117,14 +117,17 @@ module "rds_mysql" {
   source                       = "../../modules/rds-mysql-db"
   rds_subnet_ids               = ["subnet-27b9576c", "subnet-8c3926ea"]
   security_group_ingress_cidrs = local.workstation_cidr
+  providers = {
+    aws = aws.gw
+  }
 }
 
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
-  sonar_version    = var.sonar_version
+  sonar_version    = "4.10"
   hub_address      = module.hub.private_address
-  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  hub_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
   assignee_gw      = module.agentless_gw_group[0].jsonar_uid
   assignee_role    = module.agentless_gw_group[0].iam_role
   database_details = {
