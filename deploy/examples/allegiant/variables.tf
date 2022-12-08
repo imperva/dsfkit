@@ -1,3 +1,33 @@
+variable "aws_profile_hub" {
+  type    = string
+  description = "Aws profile name for the DSF hub account"
+}
+
+variable "aws_region_hub" {
+  type    = string
+  description = "Aws region for the DSF hub (e.g us-east-2)"
+}
+
+variable "subnet_hub" {
+  type    = string
+  description = "Aws subnet id for the DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+}
+
+variable "aws_profile_gw" {
+  type    = string
+  description = "Aws profile name for the DSF agentless gw account"
+}
+
+variable "aws_region_gw" {
+  type    = string
+  description = "Aws region for the DSF agentless gw (e.g us-east-1)"
+}
+
+variable "subnet_gw" {
+  type    = string
+  description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
+}
+
 variable "deployment_name" {
   type    = string
   default = "imperva-dsf"
@@ -89,34 +119,4 @@ variable "gw_group_ebs_details" {
     provisioned_iops = 0
     throughput       = 125
   }
-}
-
-variable "aws_profile_hub" {
-  type    = string
-  default = "innogabistage"
-}
-
-variable "aws_region_hub" {
-  type    = string
-  default = "eu-west-2"
-}
-
-variable "subnet_hub" {
-  type    = string
-  default = "subnet-091492f8de998aa28"#subnet-091492f8de998aa28
-}
-
-variable "aws_profile_gw" {
-  type    = string
-  default = "innogabi"
-}
-
-variable "aws_region_gw" {
-  type    = string
-  default = "eu-west-1"
-}
-
-variable "subnet_gw" {
-  type    = string
-  default = "subnet-0a30b0b7a66b810bb"#subnet-0a30b0b7a66b810bb
 }
