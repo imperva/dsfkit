@@ -114,6 +114,6 @@ module "gw_attachments" {
   ]
 }
 
-module "statistics" {
-  source = "../../modules/statistics"
-}
+# module "statistics" {
+#   source = "../../modules/statistics"
+# }
