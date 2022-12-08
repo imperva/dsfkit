@@ -19,8 +19,6 @@ module "globals" {
   source = "../../modules/core/globals"
 }
 
-data "aws_availability_zones" "available" { state = "available" }
-
 locals {
   workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
 }
@@ -40,7 +38,7 @@ locals {
 }
 
 ##############################
-# Generating network
+# Generating ssh keys
 ##############################
 
 module "key_pair_hub" {
@@ -77,9 +75,6 @@ module "hub" {
   ssh_key_path                  = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
-  # depends_on = [
-  #   module.vpc
-  # ]
 }
 
 module "agentless_gw_group" {
@@ -97,9 +92,7 @@ module "agentless_gw_group" {
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
-  # depends_on = [
-  #   module.vpc
-  # ]
+
   providers = {
     aws = aws.gw 
    }
@@ -119,7 +112,6 @@ module "gw_attachments" {
   ]
 }
 
-# module "statistics" {
-#   source = "../../modules/statistics"
-# }
-
+module "statistics" {
+  source = "../../modules/statistics"
+}
