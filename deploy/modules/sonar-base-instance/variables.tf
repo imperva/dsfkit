@@ -97,10 +97,6 @@ variable "proxy_address" {
   default     = null
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b77caff6dbd1f97c21a5c1191508bb7681b8d161
 variable "proxy_private_key" {
   type        = string
   description = "Proxy private ssh key"
