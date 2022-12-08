@@ -32,6 +32,12 @@ variable "ebs_details" {
   description = "Compute instance volume attributes"
 }
 
+variable "public_ip" {
+  type        = bool
+  default     = true
+  description = "Create public IP for the instance"
+}
+
 variable "web_console_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the DSF hub instance for web console access"
