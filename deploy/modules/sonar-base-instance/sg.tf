@@ -2,6 +2,10 @@ data "aws_subnet" "subnet" {
   id = var.subnet_id
 }
 
+data "aws_vpc" "selected" {
+  id = data.aws_subnet.selected_subnet.vpc_id
+}
+
 locals {
   cidr_blocks       = concat(var.sg_ingress_cidr, var.public_ip ? try(["${aws_eip.dsf_instance_eip[0].public_ip}/32"], []) : [])
   ingress_ports     = [22, 8080, 8443, 3030, 27117]
@@ -80,5 +84,14 @@ resource "aws_security_group_rule" "sg_web_console_access" {
   to_port           = 8443
   protocol          = "tcp"
   cidr_blocks       = var.web_console_cidr
+  security_group_id = aws_security_group.dsf_base_sg.id
+}
+
+resource "aws_security_group_rule" "sg_web_console_access" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = data.aws_vpc.selected.cidr_block
   security_group_id = aws_security_group.dsf_base_sg.id
 }
