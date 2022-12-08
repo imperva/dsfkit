@@ -25,7 +25,7 @@ locals {
     ssh_key_path                        = var.ssh_key_path
     sonarw_public_key                   = var.sonarw_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
-    public_fqdn                         = var.proxy_address != null ? "" : "True"
+    public_fqdn                         = var.public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result
     additional_install_parameters       = var.additional_install_parameters
     sonar_secret_region                 = local.sonar_secret_region
