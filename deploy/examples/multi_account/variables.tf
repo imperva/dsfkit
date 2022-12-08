@@ -120,3 +120,15 @@ variable "gw_group_ebs_details" {
     throughput       = 125
   }
 }
+
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF hub"
+}
+
+variable "gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF gw"
+}
