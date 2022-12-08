@@ -1,30 +1,30 @@
 variable "aws_profile_hub" {
-  type    = string
+  type        = string
   description = "Aws profile name for the DSF hub account"
 }
 
 variable "aws_region_hub" {
-  type    = string
+  type        = string
   description = "Aws region for the DSF hub (e.g us-east-2)"
 }
 
 variable "subnet_hub" {
-  type    = string
+  type        = string
   description = "Aws subnet id for the DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "aws_profile_gw" {
-  type    = string
+  type        = string
   description = "Aws profile name for the DSF agentless gw account"
 }
 
 variable "aws_region_gw" {
-  type    = string
+  type        = string
   description = "Aws region for the DSF agentless gw (e.g us-east-1)"
 }
 
 variable "subnet_gw" {
-  type    = string
+  type        = string
   description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
@@ -60,7 +60,7 @@ variable "admin_password" {
 
 variable "web_console_cidr" {
   type        = list(string)
-  default = ["0.0.0.0/0"]
+  default     = ["0.0.0.0/0"]
   description = "CIDR blocks allowing DSF hub web console access"
 }
 
