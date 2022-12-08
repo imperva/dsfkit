@@ -75,6 +75,7 @@ module "hub" {
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   public_ip                     = false
+  instance_type                 = var.hub_instance_type
 }
 
 module "agentless_gw_group" {
@@ -92,6 +93,7 @@ module "agentless_gw_group" {
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.private_address
   ebs_details                   = var.gw_group_ebs_details
+  instance_type                 = var.gw_instance_type
 
   providers = {
     aws = aws.gw
