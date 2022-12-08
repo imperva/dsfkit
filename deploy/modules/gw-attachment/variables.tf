@@ -18,8 +18,8 @@ variable "hub_ssh_key_path" {
 
 variable "gw_ssh_key_path" {
   type        = string
-  default     = null
-  description = "Path of local ssh key file for DSF gw. Leave empty if same key is used for the hub"
+  description = "Path of local ssh key file for DSF GW"
+  nullable    = false
 }
 
 variable "installation_source" {
