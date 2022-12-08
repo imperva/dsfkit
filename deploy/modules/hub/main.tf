@@ -13,7 +13,7 @@ module "hub_instance" {
   ami_name_tag                  = var.ami_name_tag
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = var.sg_ingress_cidr
-  public_ip                     = true
+  public_ip                     = var.public_ip
   iam_instance_profile_id       = aws_iam_instance_profile.dsf_hub_instance_iam_profile.id
   additional_install_parameters = var.additional_install_parameters
   admin_password                = var.admin_password
