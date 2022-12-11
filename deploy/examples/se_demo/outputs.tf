@@ -6,6 +6,7 @@ output "dsf_agentless_gw_group" {
       jsonar_uid      = try(val.jsonar_uid, null)
       display_name    = try(val.display_name, null)
       role_arn        = try(val.iam_role, null)
+      ssh_command     = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${val.private_address}", null)
     }
   }
 }
@@ -18,6 +19,7 @@ output "dsf_hubs" {
       jsonar_uid      = try(module.hub.jsonar_uid, null)
       display_name    = try(module.hub.display_name, null)
       role_arn        = try(module.hub.iam_role, null)
+      ssh_command     = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}", null)
     }
   }
 }
@@ -37,12 +39,4 @@ output "dsf_private_ssh_key" {
 
 output "dsf_hub_web_console_url" {
   value = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
-}
-
-output "ssh_command_hub" {
-  value = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}", null)
-}
-
-output "ssh_command_gw" {
-  value = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.agentless_gw_group[0].private_address}", null)
 }
