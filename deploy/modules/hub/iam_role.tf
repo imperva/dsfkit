@@ -60,7 +60,7 @@ resource "aws_iam_instance_profile" "dsf_hub_instance_iam_profile" {
 resource "aws_iam_role" "dsf_hub_role" {
   count               = var.role_arn != null ? 0 : 1
   name_prefix         = "imperva-dsf-hub-role"
-  description         = "imperva-dsf-hub-role-${var.name}"
+  description         = "imperva-dsf-hub-role-${var.friendly_name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {

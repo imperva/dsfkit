@@ -61,7 +61,7 @@ module "key_pair_hub" {
 
 module "hub" {
   source                        = "../../modules/hub"
-  name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = var.subnet_hub
   key_pair                      = module.key_pair_hub.key_pair.key_pair_name
   web_console_cidr              = var.web_console_cidr
@@ -75,6 +75,7 @@ module "hub" {
   instance_type                 = var.hub_instance_type
 }
 
+<<<<<<< HEAD
 # module "agentless_gw_group" {
 #   count                         = var.gw_count
 #   source                        = "../../modules/agentless-gw"
@@ -91,6 +92,24 @@ module "hub" {
 #   proxy_address                 = module.hub.private_address
 #   ebs_details                   = var.gw_group_ebs_details
 #   instance_type                 = var.gw_instance_type
+=======
+module "agentless_gw_group" {
+  count                         = var.gw_count
+  source                        = "../../modules/agentless-gw"
+  friendly_name                 = join("-", [local.deployment_name_salted, "gw", count.index])
+  subnet_id                     = var.subnet_gw
+  key_pair                      = module.key_pair_gw.key_pair.key_pair_name
+  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  installation_location         = local.tarball_location
+  admin_password                = local.admin_password
+  ssh_key_path                  = module.key_pair_gw.key_pair_private_pem.filename
+  proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
+  additional_install_parameters = var.additional_install_parameters
+  sonarw_public_key             = module.hub.sonarw_public_key
+  proxy_address                 = module.hub.private_address
+  ebs_details                   = var.gw_group_ebs_details
+  instance_type                 = var.gw_instance_type
+>>>>>>> change hub and gw 'name' to 'friendly_name'
 
 #   providers = {
 #     aws = aws.gw

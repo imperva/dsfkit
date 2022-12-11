@@ -7,7 +7,7 @@ resource "random_string" "gw_id" {
 module "gw_instance" {
   source                        = "../../modules/sonar-base-instance"
   resource_type                 = "gw"
-  name                          = var.name
+  name                 = var.friendly_name
   subnet_id                     = var.subnet_id
   key_pair                      = var.key_pair
   ec2_instance_type             = var.instance_type
