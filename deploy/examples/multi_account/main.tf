@@ -2,18 +2,18 @@ provider "aws" {
   default_tags {
     tags = local.tags
   }
-  # profile = var.aws_profile_hub
-  region = var.aws_region_hub
+  profile = var.aws_profile_hub
+  region  = var.aws_region_hub
 }
 
-# provider "aws" {
-#   default_tags {
-#     tags = local.tags
-#   }
-#   profile = var.aws_profile_gw
-#   region  = var.aws_region_gw
-#   alias   = "gw"
-# }
+provider "aws" {
+  default_tags {
+    tags = local.tags
+  }
+  profile = var.aws_profile_gw
+  region  = var.aws_region_gw
+  alias   = "gw"
+}
 
 module "globals" {
   source = "../../modules/core/globals"
@@ -75,7 +75,7 @@ module "hub" {
     full_access_cidr_list = local.workstation_cidr
     use_public_ip = true
   }
-} 
+}
 
 # module "agentless_gw_group" {
 #   count                             = var.gw_count
@@ -122,6 +122,6 @@ module "hub" {
 #   ]
 # }
 
-# module "statistics" { 
+# module "statistics" {
 #   source = "../../modules/statistics"
 # }
