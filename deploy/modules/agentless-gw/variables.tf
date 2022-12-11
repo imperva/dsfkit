@@ -43,9 +43,14 @@ variable "sg_ingress_cidr" {
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
 }
 
-variable "key_pair" {
-  type        = string
-  description = "aws key pair for DSF hub instance"
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name        = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
+  nullable    = false
 }
 
 variable "installation_location" {
@@ -84,12 +89,6 @@ variable "admin_password" {
     error_message = "Admin password must be at least 8 characters"
   }
   nullable = false
-}
-
-variable "ssh_key_path" {
-  type        = string
-  description = "SSH key path for key_pair variable"
-  nullable    = false
 }
 
 variable "proxy_private_key" {

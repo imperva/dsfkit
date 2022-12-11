@@ -20,7 +20,7 @@ variable "subnet_id" {
 variable "instance_type" {
   type        = string
   default     = "r6i.xlarge"
-  description = "Ec2 instance type for the DSF hub"
+  description = "EC2 instance type for the DSF hub"
 }
 
 variable "ebs_details" {
@@ -47,11 +47,6 @@ variable "web_console_cidr" {
 variable "sg_ingress_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the DSF hub instance for ssh and internal protocols"
-}
-
-variable "key_pair" {
-  type        = string
-  description = "aws key pair for DSF hub instance"
 }
 
 variable "installation_location" {
@@ -101,9 +96,13 @@ variable "admin_password" {
   nullable = false
 }
 
-variable "ssh_key_path" {
-  type        = string
-  description = "SSH key path for key_pair variable"
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name        = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
   nullable    = false
 }
 

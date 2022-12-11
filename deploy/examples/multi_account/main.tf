@@ -63,17 +63,19 @@ module "hub" {
   source                        = "../../modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = var.subnet_hub
-  key_pair                      = module.key_pair_hub.key_pair.key_pair_name
+  ssh_key_pair = {
+    ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
+    ssh_public_key_name         = module.key_pair_hub.key_pair.key_pair_name
+  }
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   public_ip                     = false
   instance_type                 = var.hub_instance_type
-}
+} 
 
 <<<<<<< HEAD
 # module "agentless_gw_group" {
@@ -98,11 +100,14 @@ module "agentless_gw_group" {
   source                        = "../../modules/agentless-gw"
   friendly_name                 = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                     = var.subnet_gw
-  key_pair                      = module.key_pair_gw.key_pair.key_pair_name
+  ssh_key_pair = {
+    ssh_private_key_file_path   = module.key_pair_gw.key_pair_private_pem.filename
+    ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
+  }
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.key_pair_gw.key_pair_private_pem.filename
+
   proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
