@@ -71,7 +71,6 @@ module "hub" {
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   public_ip                     = false
   instance_type                 = var.hub_instance_type
@@ -109,7 +108,6 @@ module "agentless_gw_group" {
   admin_password                = local.admin_password
 
   proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
-  additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.private_address
   ebs_details                   = var.gw_group_ebs_details
