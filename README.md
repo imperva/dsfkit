@@ -100,9 +100,6 @@ The following table lists the most recent document revisions, dates of publicati
   <tr>
    <td><strong>Publication Date</strong>
    </td>
-   <td><strong>Doc  \
-Version</strong>
-   </td>
    <td><strong>DSF Version</strong>
    </td>
    <td><strong>Summarized Description of Updates</strong>
@@ -111,8 +108,6 @@ Version</strong>
   <tr>
    <td>3 Nov 2022
    </td>
-   <td>20221103
-   </td>
    <td>1.0.0
    </td>
    <td>First release for SEs. Beta.
@@ -120,8 +115,6 @@ Version</strong>
   </tr>
   <tr>
    <td>20 Nov 2022
-   </td>
-   <td>20221120
    </td>
    <td>1.1.0
    </td>
@@ -309,15 +302,11 @@ Follow these instructions to install DSFKit via the local CLI mode.
 NOTE: Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 ```
 
-{ver, ver=1.1.0}
-
 1. Git clone dfskit:
     ```bash
     git clone https://github.com/imperva/dsfkit.git
     git -C dsfkit checkout tags/${version}
     ```
-
-git -C dsfkit checkout tags/`ver`
 
 2. Navigate to the directory "examples":
     ```bash
