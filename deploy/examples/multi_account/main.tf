@@ -108,10 +108,10 @@ module "agentless_gw_group" {
     ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list         = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    full_access_cidr_list       = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   }
-  binaries_location         = local.tarball_location
-  web_console_admin_password                = local.web_console_admin_password
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
   hub_federation_public_key     = module.hub.federation_public_key
 
   proxy_address                 = module.hub.public_address
@@ -131,6 +131,7 @@ module "agentless_gw_group" {
 # }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # module "gw_attachments" {
 #   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
 #   source              = "../../modules/gw-attachment"
@@ -146,13 +147,20 @@ module "agentless_gw_group" {
 # }
 =======
 module "gw_attachments" {
+=======
+module "federation" {
+>>>>>>> refactor federation
   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
-  source              = "../../modules/gw-attachment"
-  gw                  = each.value.private_address
-  hub                 = module.hub.public_address
-  hub_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
-  gw_ssh_key_path     = module.key_pair_gw.key_pair_private_pem.filename
-  installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
+  source              = "../../modules/federation"
+  gws_info  = {
+    gw_ip_address   = each.value.private_address
+    gw_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
+  }
+  hub_info = {
+    hub_ip_address = module.hub.public_address
+    hub_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+  }
+  binaries_location   = local.tarball_location
   depends_on = [
     module.hub,
     module.agentless_gw_group,
