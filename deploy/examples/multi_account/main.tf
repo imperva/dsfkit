@@ -67,8 +67,10 @@ module "hub" {
     ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_hub.key_pair.key_pair_name
   }
-  web_console_cidr              = var.web_console_cidr
-  sg_ingress_cidr               = local.workstation_cidr
+  ingress_communication = {
+    additional_web_console_access_cidr_list = var.web_console_cidr
+    full_access_cidr_list = local.workstation_cidr
+  }
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
   ebs                           = var.hub_ebs_details
@@ -105,7 +107,9 @@ module "agentless_gw_group" {
     ssh_private_key_file_path   = module.key_pair_gw.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
   }
-  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  ingress_communication = {
+    full_access_cidr_list         = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  }
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
   hub_federation_public_key     = module.hub.federation_public_key

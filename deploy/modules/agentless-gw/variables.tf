@@ -38,9 +38,13 @@ variable "ebs" {
   description = "Compute instance volume attributes"
 }
 
-variable "sg_ingress_cidr" {
-  type        = list(any)
+
+variable "ingress_communication" {
+  type = object({
+    full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
+  })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
+  nullable    = false
 }
 
 variable "ssh_key_pair" {

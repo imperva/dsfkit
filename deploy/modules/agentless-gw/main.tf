@@ -13,7 +13,7 @@ module "gw_instance" {
   ec2_instance_type             = var.instance_type
   ebs_details                   = var.ebs
   ami_name_tag                  = var.ami_name_tag
-  sg_ingress_cidr               = var.sg_ingress_cidr
+  sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
   public_ip                     = var.public_ip
   iam_instance_profile_id       = aws_iam_instance_profile.dsf_gw_instance_iam_profile.name
   additional_install_parameters = var.additional_install_parameters

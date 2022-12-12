@@ -38,22 +38,15 @@ variable "public_ip" {
   description = "Create public IP for the instance"
 }
 
-# variable "" {
-#   type        = list(any)
-#   description = "List of allowed ingress cidr patterns for the DSF hub instance for web console access"
-#   default     = []
-# }
-
-variable "web_console_cidr" {
-  type        = list(any)
-  description = "List of allowed ingress cidr patterns for the DSF hub instance for web console access"
-  default     = []
+variable "ingress_communication" {
+  type = object({
+    full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
+    additional_web_console_access_cidr_list = list(any) #8443
+  })
+  description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
+  nullable    = false
 }
 
-variable "sg_ingress_cidr" {
-  type        = list(any)
-  description = "List of allowed ingress cidr patterns for the DSF hub instance for ssh and internal protocols"
-}
 
 variable "installation_location" {
   type = object({
