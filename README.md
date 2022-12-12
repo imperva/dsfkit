@@ -109,13 +109,23 @@ Version</strong>
    </td>
   </tr>
   <tr>
-   <td>Nov 2022
+   <td>3 Nov 2022
    </td>
-   <td>1-220311
+   <td>20221103
    </td>
    <td>1.0.0
    </td>
-   <td>Initial creation and publication of DSF Installation guide.
+   <td>First release for SEs. Beta.
+   </td>
+  </tr>
+  <tr>
+   <td>20 Nov 2022
+   </td>
+   <td>20221120
+   </td>
+   <td>1.1.0
+   </td>
+   <td>Second Release for SEs. Beta.
    </td>
   </tr>
 </table>
@@ -299,10 +309,16 @@ Follow these instructions to install DSFKit via the local CLI mode.
 NOTE: Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 ```
 
+{ver, ver=1.1.0}
+
 1. Git clone dfskit:
     ```bash
     git clone https://github.com/imperva/dsfkit.git
+    git -C dsfkit checkout tags/${version}
     ```
+
+git -C dsfkit checkout tags/`ver`
+
 2. Navigate to the directory "examples":
     ```bash
     cd dsfkit/deploy/examples/${example_name}
@@ -399,6 +415,7 @@ To use the Terraform installer example follow the following step:
 
 1. ```bash
     git clone https://github.com/imperva/dsfkit.git
+    git -C dsfkit checkout tags/${version}
     ```
 2. ```bash
     cd dsfkit/deploy/installer_machine
