@@ -103,7 +103,7 @@ variable "proxy_private_key" {
   default     = null
 }
 
-variable "sonarw_public_key" {
+variable "hub_federation_public_key" {
   type        = string
   description = "SSH public key for sonarw user"
   nullable    = false

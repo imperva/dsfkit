@@ -45,7 +45,7 @@ module "sonarg1" {
   admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
   ssh_key_pair_path             = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
   additional_install_parameters = var.additional_parameters
-  sonarw_public_key             = module.sonarw.sonarw_public_key
+  hub_federation_public_key             = module.sonarw.hub_federation_public_key
   sonarw_secret_name            = module.sonarw.sonarw_secret.name
   public_ip                     = true
 }

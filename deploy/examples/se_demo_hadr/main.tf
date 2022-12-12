@@ -81,7 +81,7 @@ module "hub_secondary" {
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   hadr_secondary_node           = true
   hadr_main_hub_sonarw_secret   = module.hub.sonarw_secret
-  hadr_main_sonarw_public_key   = module.hub.sonarw_public_key
+  hadr_main_hub_federation_public_key      = module.hub.federation_public_key
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
   ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
@@ -103,10 +103,10 @@ module "agentless_gw_group" {
   admin_password                = local.admin_password
   ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
-  sonarw_public_key             = module.hub.sonarw_public_key
+  hub_federation_public_key             = module.hub.federation_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
-  proxy_private_key             = module.hub.sonarw_public_key
+  proxy_private_key             = module.hub.federation_public_key
   depends_on = [
     module.vpc
   ]

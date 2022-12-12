@@ -23,7 +23,7 @@ variable "instance_type" {
   description = "EC2 instance type for the DSF hub"
 }
 
-variable "ebs_details" {
+variable "ebs" {
   type = object({
     disk_size        = number
     provisioned_iops = number
@@ -37,6 +37,12 @@ variable "public_ip" {
   default     = true
   description = "Create public IP for the instance"
 }
+
+# variable "" {
+#   type        = list(any)
+#   description = "List of allowed ingress cidr patterns for the DSF hub instance for web console access"
+#   default     = []
+# }
 
 variable "web_console_cidr" {
   type        = list(any)
@@ -79,7 +85,7 @@ variable "hadr_main_hub_region" {
   default     = null
 }
 
-variable "hadr_main_sonarw_public_key" {
+variable "hadr_main_hub_federation_public_key" {
   type        = string
   description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
   default     = null

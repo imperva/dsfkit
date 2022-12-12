@@ -29,7 +29,7 @@ variable "instance_type" {
   description = "Ec2 instance type for the DSF agentless gw"
 }
 
-variable "ebs_details" {
+variable "ebs" {
   type = object({
     disk_size        = number
     provisioned_iops = number
@@ -62,7 +62,7 @@ variable "installation_location" {
   nullable    = false
 }
 
-variable "sonarw_public_key" {
+variable "hub_federation_public_key" {
   type        = string
   description = "Public key of sonarw taken from the main hub output"
   nullable    = false

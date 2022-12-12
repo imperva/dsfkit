@@ -14,7 +14,7 @@ output "iam_role" {
   value = local.role_arn
 }
 
-output "sonarw_public_key" {
+output "federation_public_key" {
   value = !var.hadr_secondary_node ? local.dsf_hub_ssh_federation_key : null
 }
 

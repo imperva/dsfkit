@@ -23,7 +23,7 @@ locals {
     dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
     dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
     ssh_key_path                        = var.ssh_key_path
-    sonarw_public_key                   = var.sonarw_public_key
+    hub_federation_public_key                   = var.hub_federation_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
     public_fqdn                         = var.public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result

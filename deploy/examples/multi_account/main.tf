@@ -71,8 +71,8 @@ module "hub" {
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ebs_details                   = var.hub_ebs_details
-  public_ip                     = false
+  ebs                           = var.hub_ebs_details
+  public_ip                     = true
   instance_type                 = var.hub_instance_type
 } 
 
@@ -98,7 +98,9 @@ module "agentless_gw_group" {
   count                         = var.gw_count
   source                        = "../../modules/agentless-gw"
   friendly_name                 = join("-", [local.deployment_name_salted, "gw", count.index])
+  instance_type                 = var.gw_instance_type
   subnet_id                     = var.subnet_gw
+  ebs                           = var.gw_group_ebs_details
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_gw.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
@@ -106,19 +108,25 @@ module "agentless_gw_group" {
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
+  hub_federation_public_key     = module.hub.federation_public_key
 
+  proxy_address                 = module.hub.public_address
   proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
+<<<<<<< HEAD
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.private_address
   ebs_details                   = var.gw_group_ebs_details
   instance_type                 = var.gw_instance_type
 >>>>>>> change hub and gw 'name' to 'friendly_name'
+=======
+>>>>>>> intermediate working
 
 #   providers = {
 #     aws = aws.gw
 #   }
 # }
 
+<<<<<<< HEAD
 # module "gw_attachments" {
 #   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
 #   source              = "../../modules/gw-attachment"
@@ -132,6 +140,21 @@ module "agentless_gw_group" {
 #     module.agentless_gw_group,
 #   ]
 # }
+=======
+module "gw_attachments" {
+  for_each            = { for idx, val in module.agentless_gw_group : idx => val }
+  source              = "../../modules/gw-attachment"
+  gw                  = each.value.private_address
+  hub                 = module.hub.public_address
+  hub_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
+  gw_ssh_key_path     = module.key_pair_gw.key_pair_private_pem.filename
+  installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
+  depends_on = [
+    module.hub,
+    module.agentless_gw_group,
+  ]
+}
+>>>>>>> intermediate working
 
 # module "statistics" {
 #   source = "../../modules/statistics"
