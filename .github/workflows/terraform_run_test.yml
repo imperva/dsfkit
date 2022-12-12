@@ -75,6 +75,6 @@ jobs:
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output
 
-    # - name: Terraform Destroy
+    - name: Terraform Destroy
     #   if: always()
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
