@@ -23,11 +23,11 @@ module "sonarw" {
   subnet_id       = var.subnet_id
   key_pair        = data.terraform_remote_state.init.outputs.key_pair
   sg_ingress_cidr = var.security_group_ingress_cidrs
-  installation_location = {
+  binaries_location = {
     s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
     s3_key    = var.dsf_install_tarball_path
   }
-  admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
+  web_console_admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["web_console_admin_password"]
   ssh_key_pair_path             = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
   additional_install_parameters = var.additional_parameters
 }
@@ -38,11 +38,11 @@ module "sonarg1" {
   subnet_id       = var.subnet_id
   key_pair        = data.terraform_remote_state.init.outputs.key_pair
   sg_ingress_cidr = concat(var.security_group_ingress_cidrs, ["${module.sonarw.public_address}/32"])
-  installation_location = {
+  binaries_location = {
     s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
     s3_key    = var.dsf_install_tarball_path
   }
-  admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["admin_password"]
+  web_console_admin_password                = jsondecode(data.aws_secretsmanager_secret_version.dsf_passwords.secret_string)["web_console_admin_password"]
   ssh_key_pair_path             = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
   additional_install_parameters = var.additional_parameters
   hub_federation_public_key             = module.sonarw.hub_federation_public_key

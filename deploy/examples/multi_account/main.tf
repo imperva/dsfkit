@@ -28,7 +28,7 @@ locals {
 }
 
 locals {
-  admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
+  web_console_admin_password   = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location = module.globals.tarball_location
   tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
@@ -71,8 +71,8 @@ module "hub" {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list = local.workstation_cidr
   }
-  installation_location         = local.tarball_location
-  admin_password                = local.admin_password
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
   ebs                           = var.hub_ebs_details
   public_ip                     = true
   instance_type                 = var.hub_instance_type
@@ -110,8 +110,8 @@ module "agentless_gw_group" {
   ingress_communication = {
     full_access_cidr_list         = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   }
-  installation_location         = local.tarball_location
-  admin_password                = local.admin_password
+  binaries_location         = local.tarball_location
+  web_console_admin_password                = local.web_console_admin_password
   hub_federation_public_key     = module.hub.federation_public_key
 
   proxy_address                 = module.hub.public_address

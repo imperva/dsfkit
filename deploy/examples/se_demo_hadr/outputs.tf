@@ -32,8 +32,8 @@ output "dsf_hubs" {
   }
 }
 
-output "admin_password" {
-  value = nonsensitive(local.admin_password)
+output "web_console_admin_password" {
+  value = nonsensitive(local.web_console_admin_password)
 }
 
 output "deployment_name" {

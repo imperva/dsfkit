@@ -12,14 +12,14 @@ provider "aws" {
 
 # Uncomment this section to use randomly generated passwords
 # /* Populate AWS secrets */
-# resource "random_password" "admin_password" {
+# resource "random_password" "web_console_admin_password" {
 #   length = 13
 #   special = true
 #   override_special = "#"
 # }
 
 # /* Populate AWS secrets */
-# resource "random_password" "secadmin_password" {
+# resource "random_password" "secweb_console_admin_password" {
 #   length = 13
 #   special = true
 #   override_special = "#"
@@ -42,14 +42,14 @@ provider "aws" {
 locals {
   # Uncomment this section to use randomly generated passwords instead of the pre-defined passwords listedbelow
   # dsf_passwords_obj  = {
-  #   admin_password = random_password.admin_password.result
-  #   secadmin_password = random_password.secadmin_password.result
+  #   web_console_admin_password = random_password.web_console_admin_password.result
+  #   secweb_console_admin_password = random_password.secweb_console_admin_password.result
   #   sonarg_pasword = random_password.sonarg_pasword.result
   #   sonargd_pasword = random_password.sonargd_pasword.result
   # }
   dsf_passwords_obj = {
-    admin_password    = var.default_password
-    secadmin_password = var.default_password
+    web_console_admin_password    = var.default_password
+    secweb_console_admin_password = var.default_password
     sonarg_pasword    = var.default_password
     sonargd_pasword   = var.default_password
   }

@@ -26,7 +26,7 @@ locals {
 }
 
 locals {
-  admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
+  web_console_admin_password   = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr    = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location = module.globals.tarball_location
@@ -62,8 +62,8 @@ module "hub" {
   key_pair                      = module.key_pair.key_pair.key_pair_name
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
-  installation_location         = local.tarball_location
-  admin_password                = local.admin_password
+  binaries_location         = local.tarball_location
+  web_console_admin_password                = local.web_console_admin_password
   ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
@@ -82,8 +82,8 @@ module "hub_secondary" {
   hadr_secondary_node           = true
   hadr_main_hub_sonarw_secret   = module.hub.sonarw_secret
   hadr_main_hub_federation_public_key      = module.hub.federation_public_key
-  installation_location         = local.tarball_location
-  admin_password                = local.admin_password
+  binaries_location         = local.tarball_location
+  web_console_admin_password                = local.web_console_admin_password
   ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
@@ -99,8 +99,8 @@ module "agentless_gw_group" {
   subnet_id                     = module.vpc.private_subnets[0]
   key_pair                      = module.key_pair.key_pair.key_pair_name
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
-  installation_location         = local.tarball_location
-  admin_password                = local.admin_password
+  binaries_location         = local.tarball_location
+  web_console_admin_password                = local.web_console_admin_password
   ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   hub_federation_public_key             = module.hub.federation_public_key

@@ -17,9 +17,9 @@ module "gw_instance" {
   public_ip                     = var.public_ip
   iam_instance_profile_id       = aws_iam_instance_profile.dsf_gw_instance_iam_profile.name
   additional_install_parameters = var.additional_install_parameters
-  admin_password                = var.admin_password
+  web_console_admin_password                = var.web_console_admin_password
   ssh_key_path                  = var.ssh_key_pair.ssh_private_key_file_path
-  installation_location         = var.installation_location
+  binaries_location         = var.binaries_location
   hub_federation_public_key     = var.hub_federation_public_key
   proxy_address                 = var.proxy_address
   proxy_private_key             = var.proxy_private_key

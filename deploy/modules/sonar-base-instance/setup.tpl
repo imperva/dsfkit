@@ -126,10 +126,10 @@ function setup() {
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
         --product "$PRODUCT" \
-        --newadmin-pass="${admin_password}" \
-        --secadmin-pass="${admin_password}" \
-        --sonarg-pass="${admin_password}" \
-        --sonargd-pass="${admin_password}" \
+        --newadmin-pass="${web_console_admin_password}" \
+        --secadmin-pass="${web_console_admin_password}" \
+        --sonarg-pass="${web_console_admin_password}" \
+        --sonargd-pass="${web_console_admin_password}" \
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \

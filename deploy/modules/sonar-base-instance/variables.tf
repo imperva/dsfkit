@@ -61,12 +61,12 @@ variable "resource_type" {
   nullable = false
 }
 
-variable "admin_password" {
+variable "web_console_admin_password" {
   type        = string
   sensitive   = true
   description = "Admin password"
   validation {
-    condition     = length(var.admin_password) > 8
+    condition     = length(var.web_console_admin_password) > 8
     error_message = "Admin password must be at least 8 characters"
   }
   nullable = false
@@ -82,7 +82,7 @@ variable "additional_install_parameters" {
   default = ""
 }
 
-variable "installation_location" {
+variable "binaries_location" {
   type = object({
     s3_bucket = string
     s3_key    = string

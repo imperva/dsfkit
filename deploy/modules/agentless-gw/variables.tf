@@ -57,7 +57,7 @@ variable "ssh_key_pair" {
   nullable    = false
 }
 
-variable "installation_location" {
+variable "binaries_location" {
   type = object({
     s3_bucket = string
     s3_key    = string
@@ -84,12 +84,12 @@ variable "proxy_ssh_key_path" {
   description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
 }
 
-variable "admin_password" {
+variable "web_console_admin_password" {
   type        = string
   sensitive   = true
   description = "Admin password"
   validation {
-    condition     = length(var.admin_password) > 8
+    condition     = length(var.web_console_admin_password) > 8
     error_message = "Admin password must be at least 8 characters"
   }
   nullable = false

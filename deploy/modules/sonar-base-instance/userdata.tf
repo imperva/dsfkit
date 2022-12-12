@@ -13,13 +13,13 @@ locals {
 
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                       = var.resource_type
-    installation_s3_bucket              = var.installation_location.s3_bucket
-    installation_s3_key                 = var.installation_location.s3_key
+    installation_s3_bucket              = var.binaries_location.s3_bucket
+    installation_s3_key                 = var.binaries_location.s3_key
     display-name                        = local.display_name
-    admin_password                      = var.admin_password
-    secadmin_password                   = var.admin_password
-    sonarg_pasword                      = var.admin_password
-    sonargd_pasword                     = var.admin_password
+    web_console_admin_password                      = var.web_console_admin_password
+    secweb_console_admin_password                   = var.web_console_admin_password
+    sonarg_pasword                      = var.web_console_admin_password
+    sonargd_pasword                     = var.web_console_admin_password
     dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
     dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
     ssh_key_path                        = var.ssh_key_path
