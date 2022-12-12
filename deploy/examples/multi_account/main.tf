@@ -41,10 +41,10 @@ locals {
 module "key_pair_hub" {
   source                   = "../../modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-hub"
-  create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
+<<<<<<< HEAD
 # module "key_pair_gw" {
 #   source                   = "../../modules/core/key_pair"
 #   key_name_prefix          = "imperva-dsf-gw"
@@ -54,6 +54,16 @@ module "key_pair_hub" {
 #     aws = aws.gw
 #   }
 # }
+=======
+module "key_pair_gw" {
+  source                   = "../../modules/core/key_pair"
+  key_name_prefix          = "imperva-dsf-gw"
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
+  providers = {
+    aws = aws.gw
+  }
+}
+>>>>>>> make   create_private_key       = true by default
 
 ##############################
 # Generating deployment
