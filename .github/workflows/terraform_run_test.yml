@@ -67,6 +67,9 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+
+    - name: Cleaning envrionment
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
