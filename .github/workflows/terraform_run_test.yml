@@ -70,8 +70,8 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    # - name: Cleaning envrionment
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -88,14 +88,14 @@ jobs:
     - name: Get Environment Variables
       run: |
         echo ${{ env.hub_ip }}
-        echo ${{ env.hub_key_pair_filename }}
+        echo $(EXAMPLE_DIR)/${{ env.hub_key_pair_filename }}
 
     - name: Check SSH Connectivity
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ env.hub_ip }}
         username: ec2-user
-        key: ${{ env.hub_key_pair_filename }}
+        key: $(EXAMPLE_DIR)/${{ env.hub_key_pair_filename }}
         port: 22
         script: whoami
 
