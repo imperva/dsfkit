@@ -73,9 +73,9 @@ jobs:
     # - name: Cleaning envrionment
     #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    - name: Terraform Apply
+    # - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+      # run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
     - name: Terraform Output
       run: |
