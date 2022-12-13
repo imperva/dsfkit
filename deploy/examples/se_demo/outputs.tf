@@ -22,6 +22,14 @@ output "dsf_hubs" {
   }
 }
 
+output "dsf_hubs_public_ip" {
+  value = module.hub.public_address
+}
+
+output "dsf_hubs_key_pair_filename" {
+  value = module.globals.key_pair_private_pem.filename
+}
+
 output "admin_password" {
   value = nonsensitive(local.admin_password)
 }
