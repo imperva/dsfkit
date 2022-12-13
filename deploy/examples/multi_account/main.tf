@@ -73,6 +73,11 @@ module "hub" {
   source                        = "../../modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = var.subnet_hub
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
+  ebs                           = var.hub_ebs_details
+  public_ip                     = true
+  instance_type                 = var.hub_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_hub.key_pair.key_pair_name
@@ -81,11 +86,6 @@ module "hub" {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list = local.workstation_cidr
   }
-  binaries_location             = local.tarball_location
-  web_console_admin_password    = local.web_console_admin_password
-  ebs                           = var.hub_ebs_details
-  public_ip                     = true
-  instance_type                 = var.hub_instance_type
 } 
 
 <<<<<<< HEAD
@@ -113,6 +113,9 @@ module "agentless_gw_group" {
   instance_type                 = var.gw_instance_type
   subnet_id                     = var.subnet_gw
   ebs                           = var.gw_group_ebs_details
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
+  hub_federation_public_key     = module.hub.federation_public_key
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_gw.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
@@ -120,6 +123,7 @@ module "agentless_gw_group" {
   ingress_communication = {
     full_access_cidr_list       = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   }
+<<<<<<< HEAD
   binaries_location             = local.tarball_location
   web_console_admin_password    = local.web_console_admin_password
   hub_federation_public_key     = module.hub.federation_public_key
@@ -139,6 +143,16 @@ module "agentless_gw_group" {
 #     aws = aws.gw
 #   }
 # }
+=======
+  ingress_communication_via_proxy = {
+      proxy_address                 = module.hub.public_address
+      proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
+  }
+  providers = {
+    aws = aws.gw
+  }
+}
+>>>>>>> naming
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -164,13 +178,12 @@ module "federation" {
   source              = "../../modules/federation"
   gws_info  = {
     gw_ip_address   = each.value.private_address
-    gw_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
+    gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
   }
   hub_info = {
     hub_ip_address = module.hub.public_address
-    hub_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+    hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
   }
-  binaries_location   = local.tarball_location
   depends_on = [
     module.hub,
     module.agentless_gw_group,
@@ -178,6 +191,6 @@ module "federation" {
 }
 >>>>>>> intermediate working
 
-# module "statistics" {
+# module "statistics" { 
 #   source = "../../modules/statistics"
 # }

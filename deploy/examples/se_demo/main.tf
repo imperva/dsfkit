@@ -86,7 +86,7 @@ module "agentless_gw_group" {
   hub_federation_public_key             = module.hub.federation_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
-  proxy_private_key             = module.hub.federation_public_key
+  proxy_ssh_key_path             = module.hub.federation_public_key
   depends_on = [
     module.vpc
   ]

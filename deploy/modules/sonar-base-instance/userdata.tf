@@ -1,7 +1,7 @@
 locals {
   ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_address
-  bastion_private_key = try(file(var.proxy_private_key), "")
+  bastion_private_key = try(file(var.proxy_ssh_key_path), "")
   bastion_user        = "ec2-user"
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
@@ -16,14 +16,14 @@ locals {
     installation_s3_bucket              = var.binaries_location.s3_bucket
     installation_s3_key                 = var.binaries_location.s3_key
     display-name                        = local.display_name
-    web_console_admin_password                      = var.web_console_admin_password
-    secweb_console_admin_password                   = var.web_console_admin_password
+    web_console_admin_password          = var.web_console_admin_password
+    secweb_console_admin_password       = var.web_console_admin_password
     sonarg_pasword                      = var.web_console_admin_password
     sonargd_pasword                     = var.web_console_admin_password
     dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
     dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
     ssh_key_path                        = var.ssh_key_path
-    hub_federation_public_key                   = var.hub_federation_public_key
+    hub_federation_public_key           = var.hub_federation_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
     public_fqdn                         = var.public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result

@@ -38,6 +38,33 @@ variable "ebs" {
   description = "Compute instance volume attributes"
 }
 
+variable "ingress_communication_via_proxy" {
+  type = object({
+    proxy_address     = string
+    proxy_private_ssh_key_path = string
+  })
+  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
+  nullable    = true
+}
+
+# variable "proxy_address" {
+#   type        = string
+#   description = "Proxy address used for ssh for private gw (Usually hub address)"
+#   default     = null
+# }
+
+# variable "proxy_ssh_key_path" {
+#   type        = string
+#   default     = null
+#   description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
+# }
+
+# variable "proxy_ssh_key_path" {
+#   type        = string
+#   description = "proxy_ssh_key_path"
+#   nullable    = false
+# }
+
 
 variable "ingress_communication" {
   type = object({
@@ -72,34 +99,18 @@ variable "hub_federation_public_key" {
   nullable    = false
 }
 
-variable "proxy_address" {
-  type        = string
-  description = "Proxy address used for ssh for private gw (Usually hub address)"
-  default     = null
-}
-
-variable "proxy_ssh_key_path" {
-  type        = string
-  default     = null
-  description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-}
-
 variable "web_console_admin_password" {
   type        = string
   sensitive   = true
   description = "Admin password"
   validation {
     condition     = length(var.web_console_admin_password) > 8
-    error_message = "Admin password must be at least 8 characters"
+    error_message = "Admin password must be at least 8 characters" # todo explain why we have here admin console
   }
   nullable = false
 }
 
-variable "proxy_private_key" {
-  type        = string
-  description = "proxy_private_key"
-  nullable    = false
-}
+
 
 variable "ami_name_tag" {
   type        = string

@@ -97,7 +97,7 @@ variable "proxy_address" {
   default     = null
 }
 
-variable "proxy_private_key" {
+variable "proxy_ssh_key_path" {
   type        = string
   description = "Proxy private ssh key"
   default     = null
