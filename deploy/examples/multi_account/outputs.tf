@@ -41,6 +41,10 @@ output "dsf_hub_ssh_key" {
 #   value     = module.key_pair_gw.key_pair_private_pem
 # }
 
-output "dsf_hub_web_console_url" {
+output "dsf_hub_web_console_public_url" {
+  value = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
+}
+
+output "dsf_hub_web_console_private_url" {
   value = try(join("", ["https://", module.hub.private_address, ":8443/"]), null)
 }

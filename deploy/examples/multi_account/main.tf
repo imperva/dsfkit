@@ -76,7 +76,7 @@ module "hub" {
   binaries_location             = local.tarball_location
   web_console_admin_password    = local.web_console_admin_password
   ebs                           = var.hub_ebs_details
-  public_ip                     = true
+  create_and_attach_public_elastic_ip = true
   instance_type                 = var.hub_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
@@ -85,6 +85,7 @@ module "hub" {
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list = local.workstation_cidr
+    use_public_ip = true
   }
 } 
 
@@ -107,21 +108,23 @@ module "hub" {
 #   instance_type                 = var.gw_instance_type
 =======
 module "agentless_gw_group" {
-  count                         = var.gw_count
-  source                        = "../../modules/agentless-gw"
-  friendly_name                 = join("-", [local.deployment_name_salted, "gw", count.index])
-  instance_type                 = var.gw_instance_type
-  subnet_id                     = var.subnet_gw
-  ebs                           = var.gw_group_ebs_details
-  binaries_location             = local.tarball_location
-  web_console_admin_password    = local.web_console_admin_password
-  hub_federation_public_key     = module.hub.federation_public_key
+  count                             = var.gw_count
+  source                            = "../../modules/agentless-gw"
+  friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
+  instance_type                     = var.gw_instance_type
+  subnet_id                         = var.subnet_gw
+  ebs                               = var.gw_group_ebs_details
+  binaries_location                 = local.tarball_location
+  web_console_admin_password        = local.web_console_admin_password
+  hub_federation_public_key         = module.hub.federation_public_key
+  create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
-    ssh_private_key_file_path   = module.key_pair_gw.key_pair_private_pem.filename
-    ssh_public_key_name         = module.key_pair_gw.key_pair.key_pair_name
+    ssh_private_key_file_path       = module.key_pair_gw.key_pair_private_pem.filename
+    ssh_public_key_name             = module.key_pair_gw.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list       = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    use_public_ip = false
   }
 <<<<<<< HEAD
   binaries_location             = local.tarball_location

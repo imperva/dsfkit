@@ -10,7 +10,7 @@ locals {
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count    = var.public_ip ? 1 : 0
+  count    = var.create_and_attach_public_elastic_ip ? 1 : 0
   instance = aws_instance.dsf_base_instance.id
   vpc      = true
 }

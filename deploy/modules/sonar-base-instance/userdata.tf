@@ -6,7 +6,7 @@ locals {
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
   private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
-  instance_address = var.public_ip ? local.public_ip : local.private_ip
+  instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
   sonar_secret_region = var.sonarw_secret_region != null ? var.sonarw_secret_region : data.aws_region.current.name
@@ -25,7 +25,7 @@ locals {
     ssh_key_path                        = var.ssh_key_path
     hub_federation_public_key           = var.hub_federation_public_key
     sonarw_secret_name                  = var.sonarw_secret_name
-    public_fqdn                         = var.public_ip ? "True" : ""
+    public_fqdn                         = var.use_public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result
     additional_install_parameters       = var.additional_install_parameters
     sonar_secret_region                 = local.sonar_secret_region

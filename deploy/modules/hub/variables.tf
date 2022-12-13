@@ -32,16 +32,17 @@ variable "ebs" {
   description = "Compute instance volume attributes"
 }
 
-variable "public_ip" {
+variable "create_and_attach_public_elastic_ip" {
   type        = bool
   default     = true
-  description = "Create public IP for the instance"
+  description = "Create public elastic IP for the instance"
 }
 
 variable "ingress_communication" {
   type = object({
     full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
     additional_web_console_access_cidr_list = list(any) #8443
+    use_public_ip = bool
   })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
   nullable    = false

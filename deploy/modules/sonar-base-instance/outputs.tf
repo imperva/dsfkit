@@ -1,6 +1,6 @@
 output "public_address" {
   description = "Public Elastic IP address of the DSF base instance"
-  value       = var.public_ip && can(aws_eip.dsf_instance_eip[0].public_ip) ? aws_eip.dsf_instance_eip[0].public_ip : null
+  value       = can(aws_eip.dsf_instance_eip[0].public_ip) ? aws_eip.dsf_instance_eip[0].public_ip : null
 }
 
 output "private_address" {
