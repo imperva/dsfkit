@@ -98,7 +98,7 @@ jobs:
       with:
         host: ${{ env.hub_ip }}
         username: ec2-user
-        key: ${{ env.hub_key_pair_filename }}
+        key: ${{ env.hub_key_pair }}
         port: 22
         script: whoami
 
