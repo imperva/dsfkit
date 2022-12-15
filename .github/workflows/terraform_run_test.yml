@@ -89,6 +89,7 @@ jobs:
       run: |
         echo ${{ env.hub_ip }}
         echo ${{ env.hub_key_pair_filename }}
+        ls -a $EXAMPLE_DIR/ssh_keys
 
     - name: Check SSH Connectivity
       uses: appleboy/ssh-action@v0.1.6
