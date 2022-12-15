@@ -70,12 +70,11 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    - name: Cleaning envrionment
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    # - name: Terraform Apply
-      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      # run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
     - name: Terraform Output
       run: |
@@ -84,11 +83,13 @@ jobs:
         terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_public_ip) >> $GITHUB_ENV
         echo hub_key_pair_filename=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename) >> $GITHUB_ENV
+        echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key) >> $GITHUB_ENV
 
     - name: Get Environment Variables
       run: |
-        echo ${{ env.hub_ip }}
-        echo ${{ env.hub_key_pair_filename }}
+        echo hub_ip: ${{ env.hub_ip }}
+        echo hub_key_pair_filename: ${{ env.hub_key_pair_filename }}
+        echo hub_key_pair: ${{ hub_key_pair }}
         ls -a $EXAMPLE_DIR/ssh_keys
 
     - name: Check SSH Connectivity
