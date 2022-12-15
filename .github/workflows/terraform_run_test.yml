@@ -91,8 +91,12 @@ jobs:
         echo hub_key_pair_filename: ${{ env.hub_key_pair_filename }}
         echo hub_key_pair: ${{ env.hub_key_pair }}
         ll ./deploy/examples/se_demo/ssh_keys
+    
+    - name: Check SSH Connectivity 1
+      if: always()
+      run: eval "$(terraform -chdir=$EXAMPLE_DIR output ssh_command_hub)"
 
-    - name: Check SSH Connectivity
+    - name: Check SSH Connectivity 2
       if: always()
       uses: appleboy/ssh-action@v0.1.6
       with:
