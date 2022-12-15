@@ -83,19 +83,19 @@ jobs:
         terraform -chdir=$EXAMPLE_DIR output dsf_hubs_public_ip
         terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_public_ip) >> $GITHUB_ENV
-        echo hub_key_pair_filename=$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename) >> $GITHUB_ENV
+        echo hub_key_pair_filename=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename) >> $GITHUB_ENV
 
     - name: Get Environment Variables
       run: |
         echo ${{ env.hub_ip }}
-        echo $(EXAMPLE_DIR)/${{ env.hub_key_pair_filename }}
+        echo ${{ env.hub_key_pair_filename }}
 
     - name: Check SSH Connectivity
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ env.hub_ip }}
         username: ec2-user
-        key: $(EXAMPLE_DIR)/${{ env.hub_key_pair_filename }}
+        key: ${{ env.hub_key_pair_filename }}
         port: 22
         script: whoami
 
