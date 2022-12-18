@@ -1,15 +1,15 @@
-output "dsf_agentless_gw_group" {
-  value = {
-    for idx, val in module.agentless_gw_group : "gw-${idx}" =>
-    {
-      private_address = try(val.private_address, null)
-      jsonar_uid      = try(val.jsonar_uid, null)
-      display_name    = try(val.display_name, null)
-      role_arn        = try(val.iam_role, null)
-      ssh_command     = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${val.private_address}", null)
-    }
-  }
-}
+#output "dsf_agentless_gw_group" {
+#  value = {
+#    for idx, val in module.agentless_gw_group : "gw-${idx}" =>
+#    {
+#      private_address = try(val.private_address, null)
+#      jsonar_uid      = try(val.jsonar_uid, null)
+#      display_name    = try(val.display_name, null)
+#      role_arn        = try(val.iam_role, null)
+#      ssh_command     = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.key_pair_private_pem.filename} -W %h:%p ec2-user@${module.hub.public_address}' -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${val.private_address}", null)
+#    }
+#  }
+#}
 
 output "dsf_hubs" {
   value = {
@@ -45,6 +45,10 @@ output "dsf_private_ssh_key" {
   value     = try(module.key_pair.key_pair_private_pem, null)
 }
 
-output "dsf_hub_web_console_url" {
+output "dsf_hub_web_console_public_url" {
   value = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
+}
+
+output "dsf_hub_web_console_private_url" {
+  value = try(join("", ["https://", module.hub.private_address, ":8443/"]), null)
 }

@@ -11,7 +11,6 @@ module "globals" {
 module "key_pair" {
   source                   = "../../modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-"
-  create_private_key       = true
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
 
@@ -54,19 +53,23 @@ module "vpc" {
 ##############################
 # Generating deployment
 ##############################
-
 module "hub" {
   source                        = "../../modules/hub"
-  name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = module.vpc.public_subnets[0]
-  key_pair                      = module.key_pair.key_pair.key_pair_name
-  web_console_cidr              = var.web_console_cidr
-  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
-  binaries_location         = local.tarball_location
-  web_console_admin_password                = local.web_console_admin_password
-  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
-  additional_install_parameters = var.additional_install_parameters
-  ebs_details                   = var.hub_ebs_details
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
+  ebs                           = var.hub_ebs_details
+  create_and_attach_public_elastic_ip = true
+  ssh_key_pair = {
+    ssh_private_key_file_path   = module.key_pair.key_pair_private_pem.filename
+    ssh_public_key_name         = module.key_pair.key_pair.key_pair_name
+  }
+  ingress_communication = {
+    additional_web_console_access_cidr_list = var.web_console_cidr
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
+    use_public_ip = true
+  }
   depends_on = [
     module.vpc
   ]
@@ -74,39 +77,51 @@ module "hub" {
 
 module "hub_secondary" {
   source                        = "../../modules/hub"
-  name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  friendly_name                 = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                     = module.vpc.public_subnets[1]
-  key_pair                      = module.key_pair.key_pair.key_pair_name
-  web_console_cidr              = var.web_console_cidr
-  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+  binaries_location             = local.tarball_location
+  web_console_admin_password    = local.web_console_admin_password
+  ebs                           = var.hub_ebs_details
+  create_and_attach_public_elastic_ip = true
   hadr_secondary_node           = true
   hadr_main_hub_sonarw_secret   = module.hub.sonarw_secret
-  hadr_main_hub_federation_public_key      = module.hub.federation_public_key
-  binaries_location         = local.tarball_location
-  web_console_admin_password                = local.web_console_admin_password
-  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
-  additional_install_parameters = var.additional_install_parameters
-  ebs_details                   = var.hub_ebs_details
+  hadr_main_hub_federation_public_key = module.hub.federation_public_key
+  ssh_key_pair = {
+    ssh_private_key_file_path   = module.key_pair.key_pair_private_pem.filename
+    ssh_public_key_name         = module.key_pair.key_pair.key_pair_name
+  }
+  ingress_communication = {
+    additional_web_console_access_cidr_list = var.web_console_cidr
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    use_public_ip = true
+  }
   depends_on = [
     module.vpc
   ]
 }
 
 module "agentless_gw_group" {
-  count                         = var.gw_count
-  source                        = "../../modules/agentless-gw"
-  name                          = join("-", [local.deployment_name_salted, "gw", count.index])
-  subnet_id                     = module.vpc.private_subnets[0]
-  key_pair                      = module.key_pair.key_pair.key_pair_name
-  sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
-  binaries_location         = local.tarball_location
-  web_console_admin_password                = local.web_console_admin_password
-  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
-  additional_install_parameters = var.additional_install_parameters
-  hub_federation_public_key             = module.hub.federation_public_key
-  proxy_address                 = module.hub.public_address
-  ebs_details                   = var.gw_group_ebs_details
-  proxy_ssh_key_path             = module.hub.federation_public_key
+  count                             = var.gw_count
+  source                            = "../../modules/agentless-gw"
+  friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
+  subnet_id                         = module.vpc.private_subnets[0]
+  ebs                               = var.gw_group_ebs_details
+  binaries_location                 = local.tarball_location
+  web_console_admin_password        = local.web_console_admin_password
+  hub_federation_public_key         = module.hub.federation_public_key
+  create_and_attach_public_elastic_ip = false
+  ssh_key_pair = {
+    ssh_private_key_file_path       = module.key_pair.key_pair_private_pem.filename
+    ssh_public_key_name             = module.key_pair.key_pair.key_pair_name
+  }
+  ingress_communication = {
+    full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
+    use_public_ip = false
+  }
+  ingress_communication_via_proxy = {
+    proxy_address                   = module.hub.public_address
+    proxy_private_ssh_key_path      = module.hub.federation_public_key
+  }
   depends_on = [
     module.vpc
   ]
@@ -121,14 +136,17 @@ locals {
   )
 }
 
-module "gw_attachments" {
+module "federation" {
   count               = length(local.hub_gw_combinations)
-  source              = "../../modules/gw-attachment"
-  gw                  = local.hub_gw_combinations[count.index][1]
-  hub                 = local.hub_gw_combinations[count.index][0]
-  hub_ssh_key_path    = module.key_pair.key_pair_private_pem.filename
-  installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
-  gw_ssh_key_path     = module.key_pair.key_pair_private_pem.filename
+  source              = "../../modules/federation"
+  gws_info  = {
+    gw_ip_address   = local.hub_gw_combinations[count.index][1]
+    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  }
+  hub_info = {
+    hub_ip_address = local.hub_gw_combinations[count.index][0]
+    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  }
   depends_on = [
     module.hub,
     module.hub_secondary,
@@ -144,7 +162,7 @@ module "hadr" {
   dsf_hub_secondary_private_ip = module.hub_secondary.private_address
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   depends_on = [
-    module.gw_attachments,
+    module.federation,
     module.hub,
     module.hub_secondary
   ]
@@ -175,7 +193,7 @@ module "db_onboarding" {
     db_engine     = each.value.db_engine
   }
   depends_on = [
-    module.gw_attachments,
+    module.federation,
     module.hadr,
     module.rds_mysql
   ]
