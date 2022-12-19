@@ -86,6 +86,7 @@ jobs:
         echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key) >> $GITHUB_ENV
 
     - name: Get Environment Variables
+      if: always()
       run: |
         echo hub_ip: ${{ env.hub_ip }}
         echo hub_key_pair_filename: ${{ env.hub_key_pair_filename }}
@@ -107,5 +108,5 @@ jobs:
         script: whoami
 
     - name: Terraform Destroy
-      # if: always()
+      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
