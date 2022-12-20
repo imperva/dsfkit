@@ -80,9 +80,7 @@ jobs:
       run: |
         terraform -chdir=$EXAMPLE_DIR output
         terraform -chdir=$EXAMPLE_DIR output dsf_hubs_public_ip
-        terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_public_ip) >> $GITHUB_ENV
-        echo hub_key_pair_filename=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_hubs_key_pair_filename) >> $GITHUB_ENV
         echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key_content) >> $GITHUB_ENV
 
     - name: Get Environment Variables
@@ -92,12 +90,8 @@ jobs:
         echo hub_key_pair_filename: ${{ env.hub_key_pair_filename }}
         echo hub_key_pair: ${{ env.hub_key_pair }}
         ls -a ./deploy/examples/se_demo/ssh_keys
-    
-    - name: Check SSH Connectivity 1
-      if: always()
-      run: eval "$(terraform -chdir=$EXAMPLE_DIR output ssh_command_hub)"
 
-    - name: Check SSH Connectivity 2
+    - name: Check SSH Connectivity
       if: always()
       uses: appleboy/ssh-action@v0.1.6
       with:
