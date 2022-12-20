@@ -38,9 +38,9 @@ output "deployment_name" {
   value = local.deployment_name_salted
 }
 
-output "dsf_private_ssh_key" {
+output "dsf_private_ssh_key_content" {
   sensitive = true
-  value     = module.globals.key_pair_private_pem
+  value     = module.globals.key_pair_private_pem["content"]
 }
 
 output "dsf_hub_web_console_url" {
