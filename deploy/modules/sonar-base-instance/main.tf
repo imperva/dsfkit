@@ -76,7 +76,9 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   tags = {
     Name = join("-", [var.name, "data", "volume", "ebs"])
   }
-
+  lifecycle {
+    ignore_changes = [iops]
+  }
   # lifecycle {
   #   prevent_destroy = true
   # }

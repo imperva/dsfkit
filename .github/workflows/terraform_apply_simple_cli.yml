@@ -77,7 +77,12 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
     - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+      run: |
+        mv $EXAMPLE_DIR/main.tf{,_}
+        mv $EXAMPLE_DIR/outputs.tf{,_}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+        mv $EXAMPLE_DIR/main.tf{_,}
+        mv $EXAMPLE_DIR/outputs.tf{_,}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks

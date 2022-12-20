@@ -1,6 +1,5 @@
 module "globals" {
-  source         = "../../modules/core/globals"
-  create_ssh_key = false
+  source = "../../modules/core/globals"
 }
 
 data "aws_caller_identity" "current" {}
@@ -11,7 +10,6 @@ data "aws_caller_identity" "current" {}
 locals {
   statistics_cmds = templatefile("${path.module}/statistics.tpl", {
     statistics_bucket_name = "04274532-55f0-11ed-bdc3-0242ac120002"
-    salt                   = module.globals.salt
     ip                     = module.globals.my_ip
     account_id             = data.aws_caller_identity.current.account_id
     user_id                = data.aws_caller_identity.current.user_id

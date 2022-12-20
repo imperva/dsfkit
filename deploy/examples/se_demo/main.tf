@@ -8,6 +8,13 @@ module "globals" {
   source = "../../modules/core/globals"
 }
 
+module "key_pair" {
+  source                   = "../../modules/core/key_pair"
+  key_name_prefix          = "imperva-dsf-"
+  create_private_key       = true
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+}
+
 data "aws_availability_zones" "available" { state = "available" }
 
 locals {
@@ -24,7 +31,7 @@ locals {
   database_cidr    = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location = {
     "s3_bucket" : var.tarball_s3_bucket
-    "s3_key" : var.tarball_s3_key
+    "s3_key" : var.tarball_s3_key_map[var.sonar_version]
   }
   tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
@@ -55,12 +62,12 @@ module "hub" {
   source                        = "../../modules/hub"
   name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = module.vpc.public_subnets[0]
-  key_pair                      = module.globals.key_pair.key_pair_name
+  key_pair                      = module.key_pair.key_pair.key_pair_name
   web_console_cidr              = var.web_console_cidr
   sg_ingress_cidr               = local.workstation_cidr
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   ebs_details                   = var.hub_ebs_details
   depends_on = [
@@ -73,15 +80,16 @@ module "agentless_gw_group" {
   source                        = "../../modules/agentless-gw"
   name                          = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                     = module.vpc.private_subnets[0]
-  key_pair                      = module.globals.key_pair.key_pair_name
+  key_pair                      = module.key_pair.key_pair.key_pair_name
   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
   installation_location         = local.tarball_location
   admin_password                = local.admin_password
-  ssh_key_path                  = module.globals.key_pair_private_pem.filename
+  ssh_key_path                  = module.key_pair.key_pair_private_pem.filename
   additional_install_parameters = var.additional_install_parameters
   sonarw_public_key             = module.hub.sonarw_public_key
   proxy_address                 = module.hub.public_address
   ebs_details                   = var.gw_group_ebs_details
+  proxy_private_key             = module.hub.sonarw_public_key
   depends_on = [
     module.vpc
   ]
@@ -92,8 +100,9 @@ module "gw_attachments" {
   source              = "../../modules/gw-attachment"
   gw                  = each.value.private_address
   hub                 = module.hub.public_address
-  hub_ssh_key_path    = module.globals.key_pair_private_pem.filename
+  hub_ssh_key_path    = module.key_pair.key_pair_private_pem.filename
   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
+  gw_ssh_key_path     = module.key_pair.key_pair_private_pem.filename
   depends_on = [
     module.hub,
     module.agentless_gw_group,
@@ -110,10 +119,11 @@ module "rds_mysql" {
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
+  sonar_version    = var.sonar_version
   hub_address      = module.hub.public_address
-  hub_ssh_key_path = module.globals.key_pair_private_pem.filename
-  assignee_gw      = module.hub.jsonar_uid
-  assignee_role    = module.hub.iam_role
+  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  assignee_gw      = module.agentless_gw_group[0].jsonar_uid
+  assignee_role    = module.agentless_gw_group[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password
@@ -124,7 +134,7 @@ module "db_onboarding" {
     db_engine     = each.value.db_engine
   }
   depends_on = [
-    module.hub,
+    module.gw_attachments,
     module.rds_mysql
   ]
 }
