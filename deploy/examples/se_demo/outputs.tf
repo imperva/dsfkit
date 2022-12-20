@@ -28,10 +28,6 @@ output "dsf_hubs_public_ip" {
   value = module.hub.public_address
 }
 
-output "dsf_hubs_key_pair_filename" {
-  value = module.globals.key_pair_private_pem.filename
-}
-
 output "dsf_private_ssh_key_content" {
   sensitive = true
   value     = try(module.key_pair.key_pair_private_pem["content"], null)
