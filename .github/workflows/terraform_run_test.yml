@@ -87,7 +87,6 @@ jobs:
       if: always()
       run: |
         echo hub_ip: ${{ env.hub_ip }}
-        echo hub_key_pair_filename: ${{ env.hub_key_pair_filename }}
         echo hub_key_pair: ${{ env.hub_key_pair }}
         ls -a ./deploy/examples/se_demo/ssh_keys
 
