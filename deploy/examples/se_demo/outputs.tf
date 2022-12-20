@@ -34,7 +34,7 @@ output "dsf_hubs_key_pair_filename" {
 
 output "dsf_private_ssh_key_content" {
   sensitive = true
-  value     = module.globals.key_pair_private_pem["content"]
+  value     = try(module.key_pair.key_pair_private_pem["content"], null)
 }
 
 output "admin_password" {
@@ -45,7 +45,7 @@ output "deployment_name" {
   value = local.deployment_name_salted
 }
 
-output "dsf_private_ssh_key_content" {
+output "dsf_private_ssh_key" {
   sensitive = true
   value     = try(module.key_pair.key_pair_private_pem, null)
 }
