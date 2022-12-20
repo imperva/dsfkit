@@ -44,26 +44,14 @@ module "key_pair_hub" {
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
-<<<<<<< HEAD
 # module "key_pair_gw" {
 #   source                   = "../../modules/core/key_pair"
 #   key_name_prefix          = "imperva-dsf-gw"
-#   create_private_key       = true
 #   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
 #   providers = {
 #     aws = aws.gw
 #   }
 # }
-=======
-module "key_pair_gw" {
-  source                   = "../../modules/core/key_pair"
-  key_name_prefix          = "imperva-dsf-gw"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
-  providers = {
-    aws = aws.gw
-  }
-}
->>>>>>> make   create_private_key       = true by default
 
 ##############################
 # Generating deployment
@@ -89,110 +77,50 @@ module "hub" {
   }
 } 
 
-<<<<<<< HEAD
 # module "agentless_gw_group" {
-#   count                         = var.gw_count
-#   source                        = "../../modules/agentless-gw"
-#   name                          = join("-", [local.deployment_name_salted, "gw", count.index])
-#   subnet_id                     = var.subnet_gw
-#   key_pair                      = module.key_pair_gw.key_pair.key_pair_name
-#   sg_ingress_cidr               = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
-#   installation_location         = local.tarball_location
-#   admin_password                = local.admin_password
-#   ssh_key_path                  = module.key_pair_gw.key_pair_private_pem.filename
-#   proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
-#   additional_install_parameters = var.additional_install_parameters
-#   sonarw_public_key             = module.hub.sonarw_public_key
-#   proxy_address                 = module.hub.private_address
-#   ebs_details                   = var.gw_group_ebs_details
-#   instance_type                 = var.gw_instance_type
-=======
-module "agentless_gw_group" {
-  count                             = var.gw_count
-  source                            = "../../modules/agentless-gw"
-  friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
-  instance_type                     = var.gw_instance_type
-  subnet_id                         = var.subnet_gw
-  ebs                               = var.gw_group_ebs_details
-  binaries_location                 = local.tarball_location
-  web_console_admin_password        = local.web_console_admin_password
-  hub_federation_public_key         = module.hub.federation_public_key
-  create_and_attach_public_elastic_ip = false
-  ssh_key_pair = {
-    ssh_private_key_file_path       = module.key_pair_gw.key_pair_private_pem.filename
-    ssh_public_key_name             = module.key_pair_gw.key_pair.key_pair_name
-  }
-  ingress_communication = {
-    full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
-    use_public_ip = false
-  }
-<<<<<<< HEAD
-  binaries_location             = local.tarball_location
-  web_console_admin_password    = local.web_console_admin_password
-  hub_federation_public_key     = module.hub.federation_public_key
-
-  proxy_address                 = module.hub.public_address
-  proxy_private_key             = module.key_pair_hub.key_pair_private_pem.filename
-<<<<<<< HEAD
-  sonarw_public_key             = module.hub.sonarw_public_key
-  proxy_address                 = module.hub.private_address
-  ebs_details                   = var.gw_group_ebs_details
-  instance_type                 = var.gw_instance_type
->>>>>>> change hub and gw 'name' to 'friendly_name'
-=======
->>>>>>> intermediate working
-
+#   count                             = var.gw_count
+#   source                            = "../../modules/agentless-gw"
+#   friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
+#   instance_type                     = var.gw_instance_type
+#   subnet_id                         = var.subnet_gw
+#   ebs                               = var.gw_group_ebs_details
+#   binaries_location                 = local.tarball_location
+#   web_console_admin_password        = local.web_console_admin_password
+#   hub_federation_public_key         = module.hub.federation_public_key
+#   create_and_attach_public_elastic_ip = false
+#   ssh_key_pair = {
+#     ssh_private_key_file_path       = module.key_pair_gw.key_pair_private_pem.filename
+#     ssh_public_key_name             = module.key_pair_gw.key_pair.key_pair_name
+#   }
+#   ingress_communication = {
+#     full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+#     use_public_ip = false
+#   }
+#   ingress_communication_via_proxy = {
+#       proxy_address                 = module.hub.public_address
+#       proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
+#   }
 #   providers = {
 #     aws = aws.gw
 #   }
 # }
-=======
-  ingress_communication_via_proxy = {
-      proxy_address                 = module.hub.public_address
-      proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
-  }
-  providers = {
-    aws = aws.gw
-  }
-}
->>>>>>> naming
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-# module "gw_attachments" {
+# module "federation" {
 #   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
-#   source              = "../../modules/gw-attachment"
-#   gw                  = each.value.private_address
-#   hub                 = module.hub.private_address
-#   hub_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
-#   gw_ssh_key_path     = module.key_pair_gw.key_pair_private_pem.filename
-#   installation_source = "${local.tarball_location.s3_bucket}/${local.tarball_location.s3_key}"
+#   source              = "../../modules/federation"
+#   gws_info  = {
+#     gw_ip_address   = each.value.private_address
+#     gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
+#   }
+#   hub_info = {
+#     hub_ip_address = module.hub.public_address
+#     hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+#   }
 #   depends_on = [
 #     module.hub,
 #     module.agentless_gw_group,
 #   ]
 # }
-=======
-module "gw_attachments" {
-=======
-module "federation" {
->>>>>>> refactor federation
-  for_each            = { for idx, val in module.agentless_gw_group : idx => val }
-  source              = "../../modules/federation"
-  gws_info  = {
-    gw_ip_address   = each.value.private_address
-    gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
-  }
-  hub_info = {
-    hub_ip_address = module.hub.public_address
-    hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
-  }
-  depends_on = [
-    module.hub,
-    module.agentless_gw_group,
-  ]
-}
->>>>>>> intermediate working
 
 # module "statistics" { 
 #   source = "../../modules/statistics"
