@@ -32,6 +32,11 @@ output "dsf_hubs_key_pair_filename" {
   value = module.globals.key_pair_private_pem.filename
 }
 
+output "dsf_private_ssh_key_content" {
+  sensitive = true
+  value     = module.globals.key_pair_private_pem["content"]
+}
+
 output "admin_password" {
   value = nonsensitive(local.admin_password)
 }
