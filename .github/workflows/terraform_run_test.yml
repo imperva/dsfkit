@@ -64,51 +64,45 @@ jobs:
       with:
         cmd: jq -n env
 
-    - name: Validate jq
-      run: | 
-        echo '{ "with space": "hello" }' | jq '."with space"'
-
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    # - name: Terraform Init
-    #   run: terraform -chdir=$EXAMPLE_DIR init
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
 
-    # - name: Terraform Validate
-    #   run: terraform -chdir=$EXAMPLE_DIR validate
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
 
-    # # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    - name: Cleaning envrionment
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    # - name: Terraform Apply
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
-    # - name: Terraform Output
-    #   run: |
-    #     terraform -chdir=$EXAMPLE_DIR output -json
-    #     terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address
-    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-    #     echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
+    - name: Terraform Output
+      run: |
+        terraform -chdir=$EXAMPLE_DIR output -json
+        terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
+        echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
 
-    # - name: Get Environment Variables
-    #   if: always()
-    #   run: |
-    #     echo hub_ip: ${{ env.hub_ip }}
-    #     echo hub_key_pair: ${{ env.hub_key_pair }}
-    #     ls -a ./deploy/examples/se_demo/ssh_keys
+    - name: Get Environment Variables
+      run: |
+        echo hub_ip: ${{ env.hub_ip }}
+        echo hub_key_pair: ${{ env.hub_key_pair }}
+        ls -a ./deploy/examples/se_demo/ssh_keys
 
-    # - name: Check SSH Connectivity
-    #   if: always()
-    #   uses: appleboy/ssh-action@v0.1.6
-    #   with:
-    #     host: ${{ env.hub_ip }}
-    #     username: ec2-user
-    #     key: ${{ env.hub_key_pair }}
-    #     port: 22
-    #     script: whoami
+    - name: Check SSH Connectivity
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ env.hub_ip }}
+        username: ec2-user
+        key: ${{ env.hub_key_pair }}
+        port: 22
+        script: whoami
 
-    # - name: Terraform Destroy
-    #   if: always()
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    - name: Terraform Destroy
+      # if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
