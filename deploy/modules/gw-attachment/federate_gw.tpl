@@ -1,4 +1,4 @@
-test_cmd='if ! nz -z ${dsf_gw_ip} 22 &>/dev/null; then
+test_cmd='if ! nc -z ${dsf_gw_ip} 22 &>/dev/null; then
     echo "Encountered network issues. Can\t approach ${dsf_hub_ip}:22"
     exit 1
 fi'
