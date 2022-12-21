@@ -57,6 +57,10 @@ variable "ami_name_tag" {
   type = string
 }
 
+variable "ami_user" {
+  type = string
+}
+
 variable "resource_type" {
   type = string
   validation {
@@ -105,6 +109,12 @@ variable "proxy_address" {
 variable "proxy_ssh_key_path" {
   type        = string
   description = "Proxy private ssh key"
+  default     = null
+}
+
+variable "proxy_ssh_user" {
+  type        = string
+  description = "Proxy ssh user"
   default     = null
 }
 

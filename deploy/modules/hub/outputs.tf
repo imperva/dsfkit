@@ -32,3 +32,7 @@ output "jsonar_uid" {
 output "display_name" {
   value = module.hub_instance.display_name
 }
+
+output "ssh_user" {
+  value = module.hub_instance.ssh_user
+}

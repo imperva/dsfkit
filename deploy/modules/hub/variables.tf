@@ -112,6 +112,12 @@ variable "ami_name_tag" {
   description = "Ami name to use as base image for the compute instance"
 }
 
+variable "ami_user" {
+  type        = string
+  default     = null
+  description = "Ami user to use for SSH to the compute instance"
+}
+
 variable "role_arn" {
   type        = string
   default     = null

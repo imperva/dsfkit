@@ -8,11 +8,14 @@ locals {
     ssh_key_path    = var.hub_info.hub_private_ssh_key_path
     dsf_gw_ip       = var.gws_info.gw_ip_address
     dsf_hub_ip      = var.hub_info.hub_ip_address
+    hub_ssh_user    = var.hub_info.hub_ssh_user
   })
   federate_gw_cmds    = templatefile("${path.module}/federate_gw.tpl", {
     ssh_key_path      = var.gws_info.gw_private_ssh_key_path
     dsf_gw_ip         = var.gws_info.gw_ip_address
     dsf_hub_ip        = var.hub_info.hub_ip_address
+    hub_ssh_user      = var.hub_info.hub_ssh_user
+    gw_ssh_user       = var.hub_info.hub_ssh_user
     proxy_ssh_key_path = var.hub_info.hub_private_ssh_key_path
   })
   sleep_value = "40s"

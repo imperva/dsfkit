@@ -20,3 +20,7 @@ output "jsonar_uid" {
 output "display_name" {
   value = local.display_name
 }
+
+output "ssh_user" {
+  value = local.ami_user
+}

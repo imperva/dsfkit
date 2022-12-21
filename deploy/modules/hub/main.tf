@@ -11,6 +11,7 @@ module "hub_instance" {
   ec2_instance_type             = var.instance_type
   ebs_details                   = var.ebs
   ami_name_tag                  = var.ami_name_tag
+  ami_user                      = var.ami_user
   web_console_cidr              = var.ingress_communication.additional_web_console_access_cidr_list
   sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
   create_and_attach_public_elastic_ip                     = var.create_and_attach_public_elastic_ip

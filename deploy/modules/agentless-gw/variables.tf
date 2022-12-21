@@ -42,6 +42,7 @@ variable "ingress_communication_via_proxy" {
   type = object({
     proxy_address     = string
     proxy_private_ssh_key_path = string
+    proxy_ssh_user    = string
   })
   description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
   nullable    = true
@@ -123,6 +124,12 @@ variable "ami_name_tag" {
   type        = string
   default     = null
   description = "Ami name to use as base image for the compute instance"
+}
+
+variable "ami_user" {
+  type        = string
+  default     = null
+  description = "Ami user to use for SSH to the compute instance"
 }
 
 variable "role_arn" {

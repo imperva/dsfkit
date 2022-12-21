@@ -91,9 +91,9 @@ locals {
 resource "null_resource" "connect_dsf_to_db" {
   connection {
     type        = "ssh"
-    user        = "ec2-user"
-    private_key = file(var.hub_ssh_key_path)
-    host        = var.hub_address
+    user        = var.hub_info.hub_ssh_user
+    private_key = file(var.hub_info.hub_private_ssh_key_path)
+    host        = var.hub_info.hub_ip_address
   }
 
   provisioner "remote-exec" {

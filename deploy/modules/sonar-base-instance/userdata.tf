@@ -2,7 +2,7 @@ locals {
   ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_address
   bastion_private_key = try(file(var.proxy_ssh_key_path), "")
-  bastion_user        = "ec2-user"
+  bastion_user        = var.proxy_ssh_user
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
   private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
@@ -39,7 +39,7 @@ resource "random_uuid" "uuid" {}
 resource "null_resource" "wait_for_installation_completion" {
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = local.ami_user
     private_key = file(var.ssh_key_path)
     host        = local.instance_address
 
@@ -53,7 +53,7 @@ resource "null_resource" "wait_for_installation_completion" {
 
   #   connection {
   #   type        = "ssh"
-  #   user        = "ec2-user"
+  #   user        = local.ami_user
   #   private_key = file(local.private_key)
   #   host        = "10.0.2.49"
 
@@ -61,7 +61,7 @@ resource "null_resource" "wait_for_installation_completion" {
 
   #   bastion_host        = "13.42.107.150"
   #   bastion_private_key = file(local.bastion_private_key)
-  #   bastion_user        = "ec2-user"
+  #   bastion_user        = local.bastion_user
   # }
 
   provisioner "remote-exec" {

@@ -64,7 +64,7 @@ module "hub" {
   binaries_location             = local.tarball_location
   web_console_admin_password    = local.web_console_admin_password
   ebs                           = var.hub_ebs_details
-  create_and_attach_public_elastic_ip = true
+  create_and_attach_public_elastic_ip = false
   instance_type                 = var.hub_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
@@ -99,6 +99,7 @@ module "hub" {
 #   ingress_communication_via_proxy = {
 #       proxy_address                 = module.hub.public_address
 #       proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
+#       proxy_ssh_user                = module.hub.ssh_user
 #   }
 #   providers = {
 #     aws = aws.gw
@@ -111,10 +112,12 @@ module "hub" {
 #   gws_info  = {
 #     gw_ip_address   = each.value.private_address
 #     gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
+#     gw_ssh_user       = each.value.ssh_user
 #   }
 #   hub_info = {
 #     hub_ip_address = module.hub.public_address
 #     hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+#     hub_ssh_user       = module.hub.ssh_user
 #   }
 #   depends_on = [
 #     module.hub,

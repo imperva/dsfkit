@@ -13,6 +13,7 @@ module "gw_instance" {
   ec2_instance_type             = var.instance_type
   ebs_details                   = var.ebs
   ami_name_tag                  = var.ami_name_tag
+  ami_user                      = var.ami_user
   sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
   create_and_attach_public_elastic_ip                     = var.create_and_attach_public_elastic_ip
   use_public_ip = var.ingress_communication.use_public_ip
@@ -24,4 +25,5 @@ module "gw_instance" {
   hub_federation_public_key     = var.hub_federation_public_key
   proxy_address                 = var.ingress_communication_via_proxy.proxy_address
   proxy_ssh_key_path            = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
+  proxy_ssh_user                = var.ingress_communication_via_proxy.proxy_ssh_user
 }
