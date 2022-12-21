@@ -283,7 +283,7 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
     ```
     ![warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
 
-    * Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “web_console_admin_password” output. Click **Sign In**.
+    * Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “admin_password” output. Click **Sign In**.
 
 **The UI Installation is now complete and a functioning version of DSF is now available.**
 
@@ -342,9 +342,9 @@ For simplicity, in this example we will use environment variables:
 
 6. Extract the web console admin password and DSF URL using:
     ```bash
-    terraform output "web_console_admin_password" && terraform output "dsf_hub_web_console_url"
+    terraform output "dsf_hub_web_console"
     ```
-7. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the web_console_admin_password as the password outputted in the previous step. 
+7. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
 **The CLI Installation is now complete and a functioning version of DSF is now available.**
 
@@ -392,9 +392,9 @@ NOTES:
         cd /dsfkit/deploy/examples/&lt;example-name>
         ```
     2. ```bash
-        terraform output "web_console_admin_password" && terraform output "dsf_hub_web_console_url"
+        terraform output "dsf_hub_web_console"
         ```
-8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the web_console_admin_password as the password generated in the previous step.  \
+8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.  \
 
 ### Automated Installer Machine
 
@@ -442,9 +442,9 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
-    terraform output "web_console_admin_password" && terraform output "dsf_hub_web_console_url"
+    terraform output "dsf_hub_web_console"
     ```
-11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the web_console_admin_password as the password outputted in the previous step. 
+11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
 ```
 NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
