@@ -30,10 +30,7 @@ locals {
 locals {
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tarball_location = {
-    "s3_bucket" : var.tarball_s3_bucket
-    "s3_key" : var.tarball_s3_key
-  }
+  tarball_location = module.globals.tarball_location
   tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 

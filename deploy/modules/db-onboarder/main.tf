@@ -103,7 +103,6 @@ resource "null_resource" "connect_dsf_to_db" {
         database_asset_data = jsonencode(local.database_asset_data)
         db_arn              = var.database_details.db_arn
         account_arn         = local.cloud_account_data.data.id
-        sonar_version       = var.sonar_version
       })
     ]
   }

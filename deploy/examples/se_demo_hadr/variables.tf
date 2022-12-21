@@ -3,29 +3,6 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "tarball_s3_bucket" {
-  type        = string
-  default     = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-  description = "S3 bucket containing installation tarball"
-}
-
-variable "sonar_version" {
-  type    = string
-  default = "4.10"
-  validation {
-    condition     = contains(["4.10"], var.sonar_version)
-    error_message = "The sonar_version value must be '4.10'."
-  }
-}
-
-variable "tarball_s3_key_map" {
-  type = map(string)
-  default = {
-    "4.10" = "jsonar-4.10.0.0.0.tar.gz"
-  }
-  description = "S3 object key for installation tarball"
-}
-
 variable "gw_count" {
   type        = number
   default     = 1

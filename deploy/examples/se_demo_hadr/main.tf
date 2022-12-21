@@ -29,10 +29,7 @@ locals {
   admin_password   = var.admin_password != null ? var.admin_password : module.globals.random_password
   workstation_cidr = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr    = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
-  tarball_location = {
-    "s3_bucket" : var.tarball_s3_bucket
-    "s3_key" : var.tarball_s3_key_map[var.sonar_version]
-  }
+  tarball_location = module.globals.tarball_location
   tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
@@ -163,7 +160,7 @@ module "rds_mysql" {
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
-  sonar_version    = var.sonar_version
+  sonar_version    = module.globals.tarball_location.version
   hub_address      = module.hub.public_address
   hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
   assignee_gw      = module.agentless_gw_group[0].jsonar_uid

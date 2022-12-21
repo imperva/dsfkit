@@ -56,7 +56,8 @@ if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}' -
 fi
 
 # Syncing cloud account and db with the gateway (relevant only to 4.10 version)
-if [ "${sonar_version}" = "4.10" ]; then
+sonar_major_version=$${JSONAR_VERSION:0:4}
+if [ "$${sonar_major_version}" = "4.10" ]; then
   echo ********Syncing cloud account asset with gateway********
   curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts/${account_arn}/operations/sync-with-gateway' \
       --header "Authorization: Bearer $hub_token" \

@@ -40,3 +40,11 @@ output "tags" {
     creation_timestamp  = resource.time_static.current_time.id
   }
 }
+
+output "tarball_location" {
+  value = {
+    s3_bucket = var.tarball_s3_bucket
+    s3_key = local.s3_object
+    version = local.s3_object_version
+  }
+}

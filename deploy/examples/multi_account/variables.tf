@@ -33,18 +33,6 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "tarball_s3_bucket" {
-  type        = string
-  default     = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-  description = "S3 bucket containing installation tarball"
-}
-
-variable "tarball_s3_key" {
-  type        = string
-  default     = "jsonar-4.10.0.0.0.tar.gz"
-  description = "S3 object key for installation tarball"
-}
-
 # variable "gw_count" {
 #   type        = number
 #   default     = 1

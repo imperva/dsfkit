@@ -2,6 +2,10 @@ variable "sonar_version" {
   type        = string
   description = "jsonar installation version"
   nullable    = false
+  validation {
+    condition     = var.sonar_version == "4.10"
+    error_message = "This module supports only 4.10 version"
+  }
 }
 
 variable "hub_address" {

@@ -103,14 +103,29 @@ function set_instance_fqdn() {
     fi
 }
 
+verlte() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
+
+verlt() {
+    [ "$1" = "$2" ] && return 1 || verlte $1 $2
+}
+
 function setup() {
     set_instance_fqdn
     VERSION=$(ls /opt/sonar-dsf/jsonar/apps/ -Art | tail -1)
     echo Setup sonar $VERSION
+
+    if verlt $VERSION 4.10; then
+        PRODUCT="imperva-data-security"
+    else
+        PRODUCT="data-security-fabric"
+    fi
+
     sudo /opt/sonar-dsf/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
-        --product "data-security-fabric" \
+        --product "$PRODUCT" \
         --newadmin-pass="${admin_password}" \
         --secadmin-pass="${admin_password}" \
         --sonarg-pass="${admin_password}" \
