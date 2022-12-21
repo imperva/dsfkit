@@ -86,7 +86,7 @@ jobs:
         terraform -chdir=$EXAMPLE_DIR output -json
         terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-        echo hub_key_pair=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
+        echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
 
     - name: Get Environment Variables
       run: |
