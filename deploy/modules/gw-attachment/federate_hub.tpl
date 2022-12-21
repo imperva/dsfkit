@@ -6,6 +6,8 @@ verlt() {
     [ "$1" = "$2" ] && return 1 || verlte $1 $2
 }
 
+set -x 
+
 echo 'Running federation hub[${dsf_hub_ip}]->gw[${dsf_gw_ip}]'
 if ! nc -z ${dsf_hub_ip} 22 &>/dev/null; then
     echo "Encountered network issues. Can't approach ${dsf_hub_ip}:22"
