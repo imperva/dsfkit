@@ -2,18 +2,18 @@ provider "aws" {
   default_tags {
     tags = local.tags
   }
-  profile = var.aws_profile_hub
+#  profile = var.aws_profile_hub
   region  = var.aws_region_hub
 }
 
-provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-  profile = var.aws_profile_gw
-  region  = var.aws_region_gw
-  alias   = "gw"
-}
+#provider "aws" {
+#  default_tags {
+#    tags = local.tags
+#  }
+#  profile = var.aws_profile_gw
+#  region  = var.aws_region_gw
+#  alias   = "gw"
+#}
 
 module "globals" {
   source = "../../modules/core/globals"
