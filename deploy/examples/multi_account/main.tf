@@ -3,7 +3,7 @@ provider "aws" {
     tags = local.tags
   }
 #  profile = var.aws_profile_hub
-  region  = var.aws_region_hub
+  region = var.aws_region_hub
 }
 
 #provider "aws" {
@@ -97,7 +97,7 @@ module "hub" {
 #     use_public_ip = false
 #   }
 #   ingress_communication_via_proxy = {
-#       proxy_address                 = module.hub.public_address
+#       proxy_address                 = module.hub.private_address
 #       proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
 #       proxy_ssh_user                = module.hub.ssh_user
 #   }
@@ -115,7 +115,7 @@ module "hub" {
 #     gw_ssh_user       = each.value.ssh_user
 #   }
 #   hub_info = {
-#     hub_ip_address = module.hub.public_address
+#     hub_ip_address = module.hub.private_address
 #     hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
 #     hub_ssh_user       = module.hub.ssh_user
 #   }
