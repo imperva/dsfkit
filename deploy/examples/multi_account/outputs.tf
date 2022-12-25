@@ -25,7 +25,6 @@ output "dsf_hubs" {
 
 output "dsf_hub_web_console" {
   value = {
-    public_url = try(join("", ["https://", module.hub.public_address, ":8443/"]), null)
     private_url = try(join("", ["https://", module.hub.private_address, ":8443/"]), null)
     admin_password = nonsensitive(local.web_console_admin_password)
   }

@@ -121,6 +121,7 @@ module "agentless_gw_group" {
   ingress_communication_via_proxy = {
     proxy_address                   = module.hub.public_address
     proxy_private_ssh_key_path      = module.hub.federation_public_key
+    proxy_ssh_user                  = module.hub.ssh_user
   }
   depends_on = [
     module.vpc
@@ -129,9 +130,9 @@ module "agentless_gw_group" {
 
 locals {
   hub_gw_combinations = setproduct(
-    [module.hub.public_address, module.hub_secondary.public_address],
+    [module.hub, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group : val.private_address]
+      [for idx, val in module.agentless_gw_group : val]
     )
   )
 }
@@ -140,12 +141,14 @@ module "federation" {
   count               = length(local.hub_gw_combinations)
   source              = "../../modules/federation"
   gws_info  = {
-    gw_ip_address   = local.hub_gw_combinations[count.index][1]
+    gw_ip_address   = local.hub_gw_combinations[count.index][1].private_address
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    gw_ssh_user       = local.hub_gw_combinations[count.index][1].ssh_user
   }
   hub_info = {
-    hub_ip_address = local.hub_gw_combinations[count.index][0]
+    hub_ip_address = local.hub_gw_combinations[count.index][0].public_address
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_ssh_user   = local.hub_gw_combinations[count.index][0].ssh_user
   }
   depends_on = [
     module.hub,
@@ -161,6 +164,7 @@ module "hadr" {
   dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
   dsf_hub_secondary_private_ip = module.hub_secondary.private_address
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
+  ssh_user                     = module.hub.ssh_user
   depends_on = [
     module.federation,
     module.hub,
@@ -179,8 +183,11 @@ module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
   sonar_version    = module.globals.tarball_location.version
-  hub_address      = module.hub.public_address
-  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  hub_info = {
+    hub_ip_address    = module.hub.public_address
+    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_ssh_user       = module.hub.ssh_user
+  }
   assignee_gw      = module.agentless_gw_group[0].jsonar_uid
   assignee_role    = module.agentless_gw_group[0].iam_role
   database_details = {

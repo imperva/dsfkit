@@ -73,7 +73,7 @@ module "hub" {
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list = local.workstation_cidr
-    use_public_ip = true
+    use_public_ip = false
   }
 }
 

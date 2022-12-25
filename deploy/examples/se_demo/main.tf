@@ -97,6 +97,7 @@ module "agentless_gw_group" {
   ingress_communication_via_proxy = {
     proxy_address                   = module.hub.public_address
     proxy_private_ssh_key_path      = module.hub.federation_public_key
+    proxy_ssh_user                  = module.hub.ssh_user
   }
   depends_on = [
     module.vpc
@@ -109,10 +110,12 @@ module "federation" {
   gws_info  = {
     gw_ip_address     = each.value.private_address
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    gw_ssh_user       = each.value.ssh_user
   }
   hub_info = {
     hub_ip_address    = module.hub.public_address
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_ssh_user       = module.hub.ssh_user
   }
   depends_on = [
     module.hub,
@@ -131,8 +134,11 @@ module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
   source           = "../../modules/db-onboarder"
   sonar_version    = module.globals.tarball_location.version
-  hub_address      = module.hub.public_address
-  hub_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+  hub_info = {
+    hub_ip_address    = module.hub.public_address
+    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_ssh_user       = module.hub.ssh_user
+  }
   assignee_gw      = module.agentless_gw_group[0].jsonar_uid
   assignee_role    = module.agentless_gw_group[0].iam_role
   database_details = {
