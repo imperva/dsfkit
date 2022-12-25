@@ -7,10 +7,12 @@ locals {
 
   ami_name_default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
   ami_name         = var.ami_name_tag != null ? var.ami_name_tag : local.ami_name_default
+  ami_user_default = "ec2-user"
+  ami_user         = var.ami_user != null ? var.ami_user : local.ami_user_default
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count    = var.public_ip ? 1 : 0
+  count    = var.create_and_attach_public_elastic_ip ? 1 : 0
   instance = aws_instance.dsf_base_instance.id
   vpc      = true
 }

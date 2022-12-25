@@ -39,7 +39,7 @@ variable "deployment_name" {
 #   description = "Number of agentless gateways"
 # }
 
-variable "admin_password" {
+variable "web_console_admin_password" {
   sensitive   = true
   type        = string
   default     = null # Random

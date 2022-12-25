@@ -126,10 +126,10 @@ function setup() {
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
         --product "$PRODUCT" \
-        --newadmin-pass="${admin_password}" \
-        --secadmin-pass="${admin_password}" \
-        --sonarg-pass="${admin_password}" \
-        --sonargd-pass="${admin_password}" \
+        --newadmin-pass="${web_console_admin_password}" \
+        --secadmin-pass="${web_console_admin_password}" \
+        --sonarg-pass="${web_console_admin_password}" \
+        --sonargd-pass="${web_console_admin_password}" \
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
@@ -151,16 +151,16 @@ function install_ssh_keys() {
     if [ "${resource_type}" == "hub" ]; then
         mkdir -p /home/sonarw/.ssh/
         /usr/local/bin/aws --region ${sonar_secret_region} secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-        echo "${sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
         touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
+        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
         chown -R sonarw:sonar /home/sonarw/.ssh
         chmod -R 600 /home/sonarw/.ssh
         chmod 700 /home/sonarw/.ssh
     else
         mkdir -p /home/sonarw/.ssh
         touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
         chown -R sonarw:sonar /home/sonarw
     fi
 }

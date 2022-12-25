@@ -1,6 +1,8 @@
 locals {
   primary_ssh_key_path   = var.ssh_key_path
   ssh_key_path_secondary = var.ssh_key_path_secondary != null ? var.ssh_key_path_secondary : var.ssh_key_path
+  primary_ssh_user = var.ssh_user
+  secondary_ssh_user = var.ssh_user_secondary != null ? var.ssh_user_secondary : var.ssh_user
 }
 
 #################################
@@ -9,7 +11,7 @@ locals {
 resource "null_resource" "exec_hadr_primary" {
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = local.primary_ssh_user
     private_key = file(local.primary_ssh_key_path)
     host        = var.dsf_hub_primary_public_ip
 
@@ -24,7 +26,7 @@ resource "null_resource" "exec_hadr_primary" {
 resource "null_resource" "exec_hadr_secondary" {
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = local.secondary_ssh_user
     private_key = file(local.ssh_key_path_secondary)
     host        = var.dsf_hub_secondary_public_ip
 
@@ -50,7 +52,7 @@ resource "time_sleep" "sleep" {
 resource "null_resource" "hadr_verify" {
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = local.primary_ssh_user
     private_key = file(local.primary_ssh_key_path)
     host        = var.dsf_hub_primary_public_ip
 

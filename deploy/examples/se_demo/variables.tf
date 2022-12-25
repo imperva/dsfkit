@@ -13,7 +13,7 @@ variable "gw_count" {
   }
 }
 
-variable "admin_password" {
+variable "web_console_admin_password" {
   sensitive   = true
   type        = string
   default     = null # Random

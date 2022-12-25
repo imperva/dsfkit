@@ -8,7 +8,7 @@ resource "tls_private_key" "dsf_hub_ssh_federation_key" {
 }
 
 locals {
-  dsf_hub_ssh_federation_key = !var.hadr_secondary_node ? "${chomp(resource.tls_private_key.dsf_hub_ssh_federation_key.public_key_openssh)} produced-by-terraform" : var.hadr_main_sonarw_public_key
+  dsf_hub_ssh_federation_key = !var.hadr_secondary_node ? "${chomp(resource.tls_private_key.dsf_hub_ssh_federation_key.public_key_openssh)} produced-by-terraform" : var.hadr_main_hub_federation_public_key
   created_secret_aws_arn     = length(resource.aws_secretsmanager_secret.dsf_hub_federation_private_key) > 0 ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].arn : ""
   created_secret_aws_name    = length(resource.aws_secretsmanager_secret.dsf_hub_federation_private_key) > 0 ? resource.aws_secretsmanager_secret.dsf_hub_federation_private_key[0].name : ""
   secret_aws_arn             = !var.hadr_secondary_node ? local.created_secret_aws_arn : var.hadr_main_hub_sonarw_secret.arn
