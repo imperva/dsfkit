@@ -83,10 +83,10 @@ jobs:
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-        echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
-        echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key_file_name) >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
+        echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
+        echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
 
     - name: Get Environment Variables
       if: always()
@@ -103,23 +103,18 @@ jobs:
       with:
         host: ${{ env.hub_ip }}
         username: ec2-user
-        key: ${{ env.dsf_ssh_key_file_name }}
+        key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
         script: whoami
 
     - name: ssh-scp-ssh-pipelines cross-the-world
       if: always()
-      # You may pin to the exact commit or the version.
       uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
       with:
-        # ssh remote host
         host: ${{ env.hub_ip }}
-        # ssh remote port
         port: 22
-        # ssh remote user
         user: ec2-user
-        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
-        key: ${{ env.dsf_ssh_key_file_name }}
+        key: ${{ env.hub_key_pair }}
         last_ssh: whoami
 
     - name: Check SSH Connectivity
@@ -127,7 +122,8 @@ jobs:
       run: | 
         cd $EXAMPLE_DIR
         pwd
-        ${{ env.ssh_command }}
+        eval ${{ env.ssh_command }}
+        find .
 
     - name: Terraform Destroy
       # if: always()
