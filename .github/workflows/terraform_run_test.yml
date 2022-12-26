@@ -86,7 +86,7 @@ jobs:
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
         echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
         echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key_file_name >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key_file_name) >> $GITHUB_ENV
 
     - name: Get Environment Variables
       if: always()
@@ -99,7 +99,10 @@ jobs:
 
     - name: Check SSH Connectivity
       if: always()
-      run: ${{ env.ssh_command }}
+      run: | 
+        cd $EXAMPLE_DIR
+        pwd
+        ${{ env.ssh_command }}
 
     - name: Check SSH Connectivity appleboy
       if: always()
