@@ -100,6 +100,7 @@ jobs:
       run: ${{ env.ssh_command }}
 
     - name: Check SSH Connectivity appleboy
+      if: always()
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ env.hub_ip }}
@@ -109,19 +110,19 @@ jobs:
         script: whoami
 
     - name: ssh-scp-ssh-pipelines cross-the-world
-        if: always()
-        # You may pin to the exact commit or the version.
-        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-        with:
-          # ssh remote host
-          host: ${{ env.hub_ip }}
-          # ssh remote port
-          port: 22
-          # ssh remote user
-          user: ec2-user
-          # content of ssh private key. ex raw content of ~/.ssh/id_rsa
-          key: ${{ env.dsf_ssh_key_file_name }}
-          last_ssh: whoami
+      if: always()
+      # You may pin to the exact commit or the version.
+      uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+      with:
+        # ssh remote host
+        host: ${{ env.hub_ip }}
+        # ssh remote port
+        port: 22
+        # ssh remote user
+        user: ec2-user
+        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
+        key: ${{ env.dsf_ssh_key_file_name }}
+        last_ssh: whoami
 
     - name: Terraform Destroy
       # if: always()
