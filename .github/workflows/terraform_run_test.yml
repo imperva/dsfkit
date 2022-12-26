@@ -122,8 +122,8 @@ jobs:
       run: | 
         cd $EXAMPLE_DIR
         pwd
-        eval ${{ env.ssh_command }}
         find .
+        ${{ env.ssh_command }}
 
     - name: Terraform Destroy
       # if: always()
