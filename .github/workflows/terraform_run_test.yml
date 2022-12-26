@@ -10,7 +10,7 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  TF_VAR_gw_count: 2
+  TF_VAR_gw_count: 1
   EXAMPLE_DIR: ./deploy/examples/se_demo
   TF_WORKSPACE: run_test
   AWS_REGION: ap-southeast-2
@@ -75,28 +75,30 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    # - name: Cleaning envrionment
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    # - name: Terraform Apply
+    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
-    - name: Terraform Output
+    - name: Set Environment Variables
       run: |
-        terraform -chdir=$EXAMPLE_DIR output
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
         echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
         echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key_file_name >> $GITHUB_ENV
 
     - name: Get Environment Variables
+      if: always()
       run: |
+        terraform -chdir=$EXAMPLE_DIR output
         echo hub_ip: ${{ env.hub_ip }}
         echo hub_key_pair: ${{ env.hub_key_pair }}
         echo dsf_ssh_key_file_name: ${{ env.dsf_ssh_key_file_name }}
         echo ssh_command: ${{ env.ssh_command }}
 
     - name: Check SSH Connectivity
+      if: always()
       run: ${{ env.ssh_command }}
 
     - name: Check SSH Connectivity appleboy

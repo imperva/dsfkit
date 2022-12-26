@@ -42,7 +42,6 @@ output "dsf_private_ssh_key" {
 }
 
 output "dsf_private_ssh_key_file_name" {
-  sensitive = true
   value     = try(module.key_pair.key_pair_private_pem.filename, null)
 }
 
