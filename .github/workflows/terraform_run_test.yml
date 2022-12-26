@@ -75,11 +75,11 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    - name: Cleaning envrionment
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    # - name: Terraform Apply
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
     - name: Set Environment Variables
       run: |
@@ -96,13 +96,6 @@ jobs:
         echo hub_key_pair: ${{ env.hub_key_pair }}
         echo dsf_ssh_key_file_name: ${{ env.dsf_ssh_key_file_name }}
         echo ssh_command: ${{ env.ssh_command }}
-
-    - name: Check SSH Connectivity
-      if: always()
-      run: | 
-        cd $EXAMPLE_DIR
-        pwd
-        ${{ env.ssh_command }}
 
     - name: Check SSH Connectivity appleboy
       if: always()
@@ -128,6 +121,13 @@ jobs:
         # content of ssh private key. ex raw content of ~/.ssh/id_rsa
         key: ${{ env.dsf_ssh_key_file_name }}
         last_ssh: whoami
+
+    - name: Check SSH Connectivity
+      if: always()
+      run: | 
+        cd $EXAMPLE_DIR
+        pwd
+        ${{ env.ssh_command }}
 
     - name: Terraform Destroy
       # if: always()
