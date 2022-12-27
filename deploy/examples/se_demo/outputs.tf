@@ -19,7 +19,7 @@ output "dsf_hubs" {
       jsonar_uid      = try(module.hub.jsonar_uid, null)
       display_name    = try(module.hub.display_name, null)
       role_arn        = try(module.hub.iam_role, null)
-      ssh_command     = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}", null)
+      ssh_command     = try("ssh -o StrictHostKeyChecking=no -i ${module.key_pair.key_pair_private_pem.filename} ec2-user@${module.hub.public_address}", null)
     }
   }
 }
