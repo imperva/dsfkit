@@ -81,24 +81,15 @@ jobs:
     - name: Terraform Apply
       run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output
+
     - name: Set Environment Variables
       run: |
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-        echo hub_key_pair=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key.value.content) >> $GITHUB_ENV
-        echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
 
-    - name: Get Environment Variables
-      if: always()
-      run: |
-        terraform -chdir=$EXAMPLE_DIR output
-        echo hub_ip: ${{ env.hub_ip }}
-        echo hub_key_pair: ${{ env.hub_key_pair }}
-        echo dsf_ssh_key_file_name: ${{ env.dsf_ssh_key_file_name }}
-        echo ssh_command: ${{ env.ssh_command }}
-
     - name: Check SSH Connectivity appleboy
-      if: always()
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ env.hub_ip }}
@@ -107,24 +98,6 @@ jobs:
         port: 22
         script: whoami
 
-    - name: ssh-scp-ssh-pipelines cross-the-world
-      if: always()
-      uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-      with:
-        host: ${{ env.hub_ip }}
-        port: 22
-        user: ec2-user
-        key: ${{ env.hub_key_pair }}
-        last_ssh: whoami
-
-    - name: Check SSH Connectivity
-      if: always()
-      run: | 
-        cd $EXAMPLE_DIR
-        pwd
-        find .
-        ${{ env.ssh_command }}
-
     - name: Terraform Destroy
-      # if: always()
+      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
