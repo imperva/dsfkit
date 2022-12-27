@@ -65,6 +65,30 @@ jobs:
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform apply -auto-approve
 
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output
+
+    - name: Set Environment Variables
+      run: |
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
+        echo ssh_command=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.ssh_command) >> $GITHUB_ENV
+
+    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
+    - name: Check SSH Connectivity
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        proxy_host: ${{ env.hub_ip }}
+        proxy_username: ec2-user
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_port: 22
+        host: ${{ env.gw_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
     - name: Terraform Destroy
       if: always()
       run: terraform destroy -auto-approve
