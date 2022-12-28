@@ -39,7 +39,7 @@ output "dsf_hub_ssh_key" {
   value     = module.key_pair_hub.key_pair_private_pem
 }
 
-# output "dsf_gws_ssh_key" {
-#   sensitive = true
-#   value     = module.key_pair_gw.key_pair_private_pem
-# }
+output "dsf_gws_ssh_key" {
+  sensitive = true
+  value     = module.key_pair_gw.key_pair_private_pem
+}
