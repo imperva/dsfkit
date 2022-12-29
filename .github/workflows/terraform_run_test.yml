@@ -35,75 +35,76 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Sets env vars for environment
-      run: |
-        echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-      if: github.ref != 'refs/heads/"master"'
+    # - name: Sets env vars for environment
+    #   run: |
+    #     echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+    #   if: github.ref != 'refs/heads/"master"'
 
-    - name: Create terraform backend file
-      run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
-        terraform {
-          backend "s3" {
-            bucket         = "tf-state-dsfkit-github-tests"
-            key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
-            region         = "ap-southeast-2"
-          }
-        }
-        EOF
+    # - name: Create terraform backend file
+    #   run: |
+    #     cat << EOF > $EXAMPLE_DIR/backend.tf
+    #     terraform {
+    #       backend "s3" {
+    #         bucket         = "tf-state-dsfkit-github-tests"
+    #         key            = "states/terraform.tfstate"
+    #         dynamodb_table = "terraform-state-lock"
+    #         region         = "ap-southeast-2"
+    #       }
+    #     }
+    #     EOF
+
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_wrapper: false
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     terraform_wrapper: false
 
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq -n env
+    # - name: Setup jq
+    #   uses: sergeysova/jq-action@v2
+    #   with:
+    #     cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
+    # - name: Terraform Init
+    #   run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Terraform Validate
-      run: terraform -chdir=$EXAMPLE_DIR validate
+    # - name: Terraform Validate
+    #   run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+    # - name: Terraform Plan
+    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
 
-    - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    # - name: Cleaning envrionment
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
       
-    - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    # - name: Terraform Apply
+    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
 
-    - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output
+    # - name: Terraform Output
+    #   run: terraform -chdir=$EXAMPLE_DIR output
 
-    - name: Set Environment Variables
-      run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
+    # - name: Set Environment Variables
+    #   run: |
+    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
+    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
+    #     echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    - name: Check SSH Connectivity
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        proxy_host: ${{ env.hub_ip }}
-        proxy_username: ec2-user
-        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-        proxy_port: 22
-        host: ${{ env.gw_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+    # - name: Check SSH Connectivity
+    #   uses: appleboy/ssh-action@v0.1.6
+    #   with:
+    #     proxy_host: ${{ env.hub_ip }}
+    #     proxy_username: ec2-user
+    #     proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+    #     proxy_port: 22
+    #     host: ${{ env.gw_ip }}
+    #     username: ec2-user
+    #     key_path: ${{ env.dsf_ssh_key_file_name }}
+    #     port: 22
+    #     script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
-    - name: Terraform Destroy
-      if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    # - name: Terraform Destroy
+    #   if: always()
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
