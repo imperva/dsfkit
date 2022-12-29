@@ -105,14 +105,6 @@ jobs:
         port: 22
         script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
-    - name: Check SSH Connectivity
-      if: always()
-      run: | 
-        cd $EXAMPLE_DIR
-        pwd
-        find ssh_keys
-        ${{ env.ssh_command }} ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-
     - name: Terraform Destroy
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
