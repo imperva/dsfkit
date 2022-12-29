@@ -2,12 +2,21 @@ variable "sonar_version" {
   type        = string
   description = "jsonar installation version"
   nullable    = false
+  validation {
+    condition     = var.sonar_version == "4.10"
+    error_message = "This module supports only 4.10 version"
+  }
 }
 
-variable "hub_address" {
-  type        = string
-  description = "Hub address"
+variable "hub_info" {
+  type = object({
+    hub_ip_address   = string
+    hub_private_ssh_key_path = string
+    hub_ssh_user = string
+  })
+
   nullable    = false
+  description = "Hub info"
 }
 
 variable "assignee_gw" {
@@ -23,12 +32,6 @@ variable "assignee_gw" {
 variable "assignee_role" {
   type        = string
   description = "IAM role of the asset assignee"
-  nullable    = false
-}
-
-variable "hub_ssh_key_path" {
-  type        = string
-  description = "Hub ssh key path"
   nullable    = false
 }
 

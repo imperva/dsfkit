@@ -17,3 +17,7 @@ output "jsonar_uid" {
 output "display_name" {
   value = module.gw_instance.display_name
 }
+
+output "ssh_user" {
+  value = module.gw_instance.ssh_user
+}

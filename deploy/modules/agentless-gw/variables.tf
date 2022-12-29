@@ -1,9 +1,9 @@
-variable "name" {
+variable "friendly_name" {
   type        = string
   default     = "imperva-dsf-agentless-gw"
-  description = "Deployment name"
+  description = "Friendly name, EC2 Instace Name"
   validation {
-    condition     = length(var.name) > 3
+    condition     = length(var.friendly_name) > 3
     error_message = "Deployment name must be at least 3 characters"
   }
 }
@@ -29,7 +29,7 @@ variable "instance_type" {
   description = "Ec2 instance type for the DSF agentless gw"
 }
 
-variable "ebs_details" {
+variable "ebs" {
   type = object({
     disk_size        = number
     provisioned_iops = number
@@ -38,17 +38,61 @@ variable "ebs_details" {
   description = "Compute instance volume attributes"
 }
 
-variable "sg_ingress_cidr" {
-  type        = list(any)
+variable "ingress_communication_via_proxy" {
+  type = object({
+    proxy_address     = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user    = string
+  })
+  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
+  nullable    = true
+}
+
+# variable "proxy_address" {
+#   type        = string
+#   description = "Proxy address used for ssh for private gw (Usually hub address)"
+#   default     = null
+# }
+
+# variable "proxy_ssh_key_path" {
+#   type        = string
+#   default     = null
+#   description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
+# }
+
+# variable "proxy_ssh_key_path" {
+#   type        = string
+#   description = "proxy_ssh_key_path"
+#   nullable    = false
+# }
+
+
+variable "create_and_attach_public_elastic_ip" {
+  type        = bool
+  default     = true
+  description = "Create public elastic IP for the instance"
+}
+
+variable "ingress_communication" {
+  type = object({
+    full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
+    use_public_ip = bool
+  })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
+  nullable    = false
 }
 
-variable "key_pair" {
-  type        = string
-  description = "aws key pair for DSF hub instance"
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name        = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
+  nullable    = false
 }
 
-variable "installation_location" {
+variable "binaries_location" {
   type = object({
     s3_bucket = string
     s3_key    = string
@@ -57,51 +101,35 @@ variable "installation_location" {
   nullable    = false
 }
 
-variable "sonarw_public_key" {
+variable "hub_federation_public_key" {
   type        = string
   description = "Public key of sonarw taken from the main hub output"
   nullable    = false
 }
 
-variable "proxy_address" {
-  type        = string
-  description = "Proxy address used for ssh for private gw (Usually hub address)"
-  default     = null
-}
-
-variable "proxy_ssh_key_path" {
-  type        = string
-  default     = null
-  description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-}
-
-variable "admin_password" {
+variable "web_console_admin_password" {
   type        = string
   sensitive   = true
   description = "Admin password"
   validation {
-    condition     = length(var.admin_password) > 8
-    error_message = "Admin password must be at least 8 characters"
+    condition     = length(var.web_console_admin_password) > 8
+    error_message = "Admin password must be at least 8 characters" # todo explain why we have here admin console
   }
   nullable = false
 }
 
-variable "ssh_key_path" {
-  type        = string
-  description = "SSH key path for key_pair variable"
-  nullable    = false
-}
 
-variable "proxy_private_key" {
-  type        = string
-  description = "proxy_private_key"
-  nullable    = false
-}
 
 variable "ami_name_tag" {
   type        = string
   default     = null
   description = "Ami name to use as base image for the compute instance"
+}
+
+variable "ami_user" {
+  type        = string
+  default     = null
+  description = "Ami user to use for SSH to the compute instance"
 }
 
 variable "role_arn" {
