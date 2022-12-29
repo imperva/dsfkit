@@ -274,9 +274,9 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
 
     * Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step.<br>![Outputs](https://user-images.githubusercontent.com/87799317/203822561-250f5ffe-1d02-4b3d-9fbd-263c9d59dc5b.png)
 
-    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console_url**.<br>![dsf_hub_web_console_url](https://user-images.githubusercontent.com/87799317/203822608-2de059a5-e3af-49a7-944b-2ba390517d16.png)
+    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console**.<br>![dsf_hub_web_console_url](https://user-images.githubusercontent.com/87799317/203822608-2de059a5-e3af-49a7-944b-2ba390517d16.png)
 
-    * Copy the **dsf_hub_web_console_url** into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
+    * Copy the **dsf_hub_web_console** URL into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
     ```
     NOTE: Sonar is installed with a self-signed certificate, as result when opening the web page you may see a warning notification. Please click "Proceed to domain.com (unsafe)".
@@ -342,7 +342,7 @@ For simplicity, in this example we will use environment variables:
 
 6. Extract the web console admin password and DSF URL using:
     ```bash
-    terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+    terraform output "dsf_hub_web_console"
     ```
 7. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
@@ -392,7 +392,7 @@ NOTES:
         cd /dsfkit/deploy/examples/&lt;example-name>
         ```
     2. ```bash
-        terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+        terraform output "dsf_hub_web_console"
         ```
 8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.  \
 
@@ -442,7 +442,7 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
-    terraform output "admin_password" && terraform output "dsf_hub_web_console_url"
+    terraform output "dsf_hub_web_console"
     ```
 11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
