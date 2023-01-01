@@ -91,7 +91,7 @@ jobs:
         chmod 700 $EXAMPLE_DIR/ssh_keys
         find .
         terraform output dsf_private_ssh_key >> $EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value')
-        find ssh_keys
+        find $EXAMPLE_DIR/ssh_keys
         echo hub_ip=$(terraform output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
         echo gw_ip=$(terraform output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
@@ -115,3 +115,13 @@ jobs:
     - name: Terraform Destroy
       if: always()
       run: terraform destroy -auto-approve
+
+    # Send job failure to Slack
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }} 

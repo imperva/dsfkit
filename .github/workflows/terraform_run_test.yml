@@ -35,7 +35,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Send job status to Slack
+    # Send job failure to Slack
     - name: Send Slack by action-slack
       uses: 8398a7/action-slack@v3
       with:
