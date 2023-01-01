@@ -72,7 +72,7 @@ jobs:
       run: terraform apply -auto-approve
 
     - name: Terraform Output
-      run: terraform output
+      run: terraform output -json
 
     - name: Set Environment Variables
       run: |
