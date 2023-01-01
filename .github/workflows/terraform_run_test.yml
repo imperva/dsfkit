@@ -35,6 +35,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # Send job status to Slack
+    - name: 
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: always() 
+
     # - name: Sets env vars for environment
     #   run: |
     #     echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
