@@ -88,15 +88,12 @@ jobs:
       run: |
         pwd
         mkdir $EXAMPLE_DIR/ssh_keys
-        chmod 700 $EXAMPLE_DIR/ssh_keys
-        find .
         terraform output dsf_private_ssh_key >> $EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value')
         find $EXAMPLE_DIR/ssh_keys
         echo hub_ip=$(terraform output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
         echo gw_ip=$(terraform output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
-        chmod -R 600 ${{ env.dsf_ssh_key_file_name }}
-        perl -e 'printf "%04o %s\n", (stat)[2] & 07777, $_ for @ARGV' ${{ env.dsf_ssh_key_file_name }}
+        chmod -R 600 $EXAMPLE_DIR/ssh_keys
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity
