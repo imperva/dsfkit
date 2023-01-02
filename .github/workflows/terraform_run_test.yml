@@ -39,14 +39,11 @@ jobs:
       if: always()
       run: | 
         echo new_var=segev1 >> $GITHUB_ENV
-        echo example dir is $EXAMPLE_DIR
-        echo 0. new_var is ${{ env.new_var }}
 
     - name: Validate Environment Variables
       if: always()
       run: | 
         echo 1. new_var is ${{ env.new_var }}
-        echo 2. new_var is $env.new_var
 
     # Send job failure to Slack
     - name: Send Slack by action-slack

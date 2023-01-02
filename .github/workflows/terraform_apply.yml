@@ -89,11 +89,17 @@ jobs:
         pwd
         mkdir $EXAMPLE_DIR/ssh_keys
         terraform output dsf_private_ssh_key >> $EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value')
+        sudo chmod -R 700 $EXAMPLE_DIR/ssh_keys
         find $EXAMPLE_DIR/ssh_keys
         echo hub_ip=$(terraform output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
         echo gw_ip=$(terraform output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
-        sudo chmod -R 700 $EXAMPLE_DIR/ssh_keys
+
+    - name: Set file permission
+      run: | 
+        sudo chmod -R 600 ${{ env.dsf_ssh_key_file_name }}
+        whoami
+        perl -e 'printf "%04o %s\n", (stat)[2] & 07777, $_ for @ARGV' ${{ env.dsf_ssh_key_file_name }}
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity
@@ -111,7 +117,9 @@ jobs:
 
     - name: Terraform Destroy
       if: always()
-      run: terraform destroy -auto-approve
+      run: | 
+        sudo rm -f ${{ env.dsf_ssh_key_file_name }}
+        terraform destroy -auto-approve
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
