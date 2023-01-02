@@ -41,31 +41,16 @@ variable "ebs" {
 variable "ingress_communication_via_proxy" {
   type = object({
     proxy_address     = string
-    proxy_private_ssh_key_path = string
+    proxy_private_ssh_key = string
     proxy_ssh_user    = string
   })
-  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-  nullable    = true
+  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key. Keep empty if no proxy is in use"
+  default     = {
+    proxy_address     = null
+    proxy_private_ssh_key = null
+    proxy_ssh_user    = null
+  }
 }
-
-# variable "proxy_address" {
-#   type        = string
-#   description = "Proxy address used for ssh for private gw (Usually hub address)"
-#   default     = null
-# }
-
-# variable "proxy_ssh_key_path" {
-#   type        = string
-#   default     = null
-#   description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-# }
-
-# variable "proxy_ssh_key_path" {
-#   type        = string
-#   description = "proxy_ssh_key_path"
-#   nullable    = false
-# }
-
 
 variable "create_and_attach_public_elastic_ip" {
   type        = bool
