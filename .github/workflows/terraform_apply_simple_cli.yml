@@ -123,3 +123,13 @@ jobs:
     - name: Terraform Destroy
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+
+    # Send job failure to Slack
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }} 
