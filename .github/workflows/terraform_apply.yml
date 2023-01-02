@@ -18,7 +18,6 @@ on:
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
-  EXAMPLE_DIR: ./deploy/examples/se_demo
   TF_WORKSPACE: dsfkit-ci-cd
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
@@ -52,12 +51,6 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-        terraform_wrapper: false
-
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -84,42 +77,9 @@ jobs:
     - name: Terraform Output
       run: terraform output -json
 
-    - name: Set Environment Variables
-      run: |
-        pwd
-        mkdir $EXAMPLE_DIR/ssh_keys
-        terraform output dsf_private_ssh_key >> $EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value')
-        sudo chmod -R 700 $EXAMPLE_DIR/ssh_keys
-        find $EXAMPLE_DIR/ssh_keys
-        echo hub_ip=$(terraform output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
-        echo gw_ip=$(terraform output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
-
-    - name: Set file permission
-      run: | 
-        sudo chmod -R 600 ${{ env.dsf_ssh_key_file_name }}
-        whoami
-        perl -e 'printf "%04o %s\n", (stat)[2] & 07777, $_ for @ARGV' ${{ env.dsf_ssh_key_file_name }}
-
-    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    - name: Check SSH Connectivity
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        proxy_host: ${{ env.hub_ip }}
-        proxy_username: ec2-user
-        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-        proxy_port: 22
-        host: ${{ env.gw_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-
     - name: Terraform Destroy
       if: always()
-      run: | 
-        sudo rm -f ${{ env.dsf_ssh_key_file_name }}
-        terraform destroy -auto-approve
+      run: terraform destroy -auto-approve
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
