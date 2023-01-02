@@ -200,7 +200,7 @@ module "db_onboarding" {
     db_engine     = each.value.db_engine
   }
   depends_on = [
-    module.hub,
+    module.federation,
     module.hadr,
     module.rds_mysql
   ]
