@@ -124,7 +124,3 @@ module "hub" {
      module.agentless_gw_group,
    ]
  }
-
- module "statistics" {
-   source = "../../modules/statistics"
- }
