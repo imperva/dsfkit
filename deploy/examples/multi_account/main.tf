@@ -17,7 +17,6 @@ provider "aws" {
 
 module "globals" {
   source = "github.com/imperva/dsfkit//deploy/modules/core/globals"
-  # source = "../../modules/core/globals"
 }
 
 locals {
@@ -41,7 +40,6 @@ locals {
 
 module "key_pair_hub" {
   source                   = "github.com/imperva/dsfkit//deploy/modules/core/key_pair"
-  # source                   = "../../modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
@@ -62,7 +60,6 @@ module "key_pair_hub" {
 
 module "hub" {
   source                        = "github.com/imperva/dsfkit//deploy/modules/hub"
-  # source                        = "../../modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = var.subnet_hub
   binaries_location             = local.tarball_location
