@@ -52,11 +52,11 @@ jobs:
         status: custom
         custom_payload: |
           {
-            text: "Custom Field Check",
+            text: "Failed GitHub on branch: ${process.env.AS_REPO}",
             attachments: [{
               "author_name": "8398a7@action-slack", // json
               fallback: 'fallback',
-              color: 'good',
+              color: 'failure',
               title: 'CI Result',
               text: 'Succeeded',
               fields: [{
