@@ -1,0 +1,234 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ec2NoCondition",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeVpcs",
+                "ec2:DescribeVpcAttribute",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeInstances",
+                "ec2:DescribeVolumes",
+                "ec2:DescribeAccountAttributes",
+                "ec2:DescribeKeyPairs",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeAddresses",
+                "ec2:DescribeInstanceAttribute",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeTags",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeImages",
+                "ec2:AllocateAddress",
+                "ec2:AssociateAddress",
+                "ec2:CreateNetworkInterface",
+                "ec2:DeleteKeyPair",
+                "ec2:DeleteNetworkInterface",
+                "ec2:DetachNetworkInterface",
+                "ec2:DisassociateAddress",
+                "ec2:ModifyInstanceAttribute",
+                "ec2:ReleaseAddress",
+                "ec2:CreateSecurityGroup"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "ec2CreateTagsPermissions",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:aws:ec2:*:*:*/*",
+            "Condition": {
+                "ForAnyValue:StringEquals": {
+                    "ec2:CreateAction": [
+                        "AllocateAddress",
+                        "CreateKeyPair",
+                        "CreateNetworkInterface",
+                        "CreateSecurityGroup",
+                        "CreateVolume",
+                        "ImportKeyPair",
+                        "RunInstances"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "ec2UseResourcesInRunInstancesTagRestriction",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:RunInstances"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:instance/*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "RemainingRunInstancePermissionsNonResriction",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:RunInstances"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:image/*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:ec2:*:*:key-pair/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:volume/*"
+            ]
+        },
+        {
+            "Sid": "ec2StopInstances",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:StopInstances",
+                "ec2:TerminateInstances"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:volume/*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "ec2SecurityGroupsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AuthorizeSecurityGroupEgress",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:DeleteSecurityGroup",
+                "ec2:RevokeSecurityGroupEgress",
+                "ec2:RevokeSecurityGroupIngress"
+            ],
+            "Resource": "arn:aws:ec2:*:*:security-group/*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "ec2VolumesPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AttachVolume",
+                "ec2:DeleteVolume",
+                "ec2:DetachVolume",
+                "ec2:ModifyVolume"
+            ],
+            "Resource": [
+                "*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "ec2RequestTagPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateKeyPair",
+                "ec2:CreateVolume",
+                "ec2:ImportKeyPair"
+            ],
+            "Resource": [
+                "*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "s3StatisticsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002",
+                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002/*"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "s3:ResourceAccount": "112114489393"
+                }
+            }
+        },
+        {
+            "Sid": "secretsManagerPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetResourcePolicy",
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:PutSecretValue",
+                "secretsmanager:CreateSecret",
+                "secretsmanager:DeleteSecret",
+                "secretsmanager:TagResource"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "secretsmanager:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "iamNoConditions",
+            "Effect": "Allow",
+            "Action": [
+                "iam:AddRoleToInstanceProfile",
+                "iam:AttachRolePolicy",
+                "iam:DeleteInstanceProfile",
+                "iam:DeletePolicy",
+                "iam:DeleteRole",
+                "iam:DeleteRolePolicy",
+                "iam:DetachRolePolicy",
+                "iam:GetInstanceProfile",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
+                "iam:GetRole",
+                "iam:GetRolePolicy",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListEntitiesForPolicy",
+                "iam:ListInstanceProfilesForRole",
+                "iam:ListPolicyVersions",
+                "iam:ListRolePolicies",
+                "iam:PassRole",
+                "iam:PutRolePolicy",
+                "iam:RemoveRoleFromInstanceProfile"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "iamRequestTagCondition",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateInstanceProfile",
+                "iam:CreatePolicy",
+                "iam:CreateRole",
+                "iam:TagInstanceProfile",
+                "iam:TagPolicy",
+                "iam:TagRole"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        }
+    ]
+}
