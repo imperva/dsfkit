@@ -121,6 +121,14 @@ The following table lists the most recent document revisions, dates of publicati
    <td>Second Release for SEs. Beta.
    </td>
   </tr>
+  <tr>
+   <td>3 Jan 2023
+   </td>
+   <td>1.2.0
+   </td>
+   <td>1. Added multi accounts example. <br>2. Changed modules interface.
+   </td>
+  </tr>
 </table>
 
 
@@ -154,7 +162,7 @@ When using DSFKit there is no need to manually download the DSF binaries, DSFKit
 ```
 
 ```
-NOTE: DSFKit version 1.0.0 is available and supports Sonar version 4.10.
+NOTE: DSFKit version 1.2.0 is available and supports Sonar version 4.10.
 ```
 
 # DSFKit Installation 
