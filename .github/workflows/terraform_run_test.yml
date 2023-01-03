@@ -58,7 +58,7 @@ jobs:
         fields: message,author,action,eventName,ref,workflow,job,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-      # if: ${{ failure() }} 
+      if: ${{ failure() }} 
 
     - name: Slack Notification - Slack Notify
       uses: rtCamp/action-slack-notify@v2
