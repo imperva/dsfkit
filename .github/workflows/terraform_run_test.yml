@@ -53,7 +53,7 @@ jobs:
         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
         custom_payload: |
           {
-            text: "Failed GitHub on branch: ${process.env.AS_REPO}",
+            text: "Failed GitHub on branch: ${AS_REPO}",
             attachments: [{
               "author_name": "8398a7@action-slack", // json
               fallback: 'fallback',
