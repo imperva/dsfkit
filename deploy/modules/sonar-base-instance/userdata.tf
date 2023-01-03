@@ -50,20 +50,6 @@ resource "null_resource" "wait_for_installation_completion" {
     bastion_user        = local.bastion_user
   }
 
-
-  #   connection {
-  #   type        = "ssh"
-  #   user        = local.ami_user
-  #   private_key = file(local.private_key)
-  #   host        = "10.0.2.49"
-
-  #   timeout = "15m"
-
-  #   bastion_host        = "13.42.107.150"
-  #   bastion_private_key = file(local.bastion_private_key)
-  #   bastion_user        = local.bastion_user
-  # }
-
   provisioner "remote-exec" {
     inline = [
       # "sleep 60",
