@@ -49,7 +49,7 @@ jobs:
     - name: Send Slack by action-slack
       uses: 8398a7/action-slack@v3
       with:
-        # status: custom
+        status: custom
         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
         icon_emoji: ':no_entry:'
         custom_payload: |
