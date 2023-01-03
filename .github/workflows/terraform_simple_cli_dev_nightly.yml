@@ -1,4 +1,4 @@
-name: 'Terraform Apply Cli (simple) Nightly Dev'
+name: 'Cli (simple) Nightly Dev'
 
 on:
   workflow_dispatch: {}
@@ -35,6 +35,11 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: 'dev'
+
+    - name: Change the modules source to local
+      run: | 
+        find . -type f -exec sed -i 's/source = \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
+        grep -rnw '.' -e 'github.com/imperva/dsfkit//deploy/modules/core/globals'
 
     - name: Sets env vars for environment
       run: |
