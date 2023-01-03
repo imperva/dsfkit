@@ -50,6 +50,7 @@ jobs:
       uses: 8398a7/action-slack@v3
       with:
         status: custom
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
         custom_payload: |
           {
             text: "Failed GitHub on branch: ${process.env.AS_REPO}",
