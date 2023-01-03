@@ -43,6 +43,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Change the modules source to local
+      run: | 
+        find . -type f -exec sed -i 's/source = \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
+        grep -rnw '.' -e 'github.com/imperva/dsfkit//deploy/modules/core/globals'
+
     - name: Sets env vars for environment
       run: |
         echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
