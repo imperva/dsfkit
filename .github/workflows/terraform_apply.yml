@@ -74,6 +74,19 @@ jobs:
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform apply -auto-approve
 
+    - name: Terraform Output
+      run: terraform output -json
+
     - name: Terraform Destroy
       if: always()
       run: terraform destroy -auto-approve
+
+    # Send job failure to Slack
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }} 

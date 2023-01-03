@@ -51,8 +51,8 @@ if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}' -
         --header "Authorization: Bearer $hub_token" \
         --header 'Content-Type: application/json' \
         --data-raw '${database_asset_data}'
-    echo ********Sleeping 30 seconds before enabling audit logs********
-    sleep 30
+    echo ********Sleeping 60 seconds before enabling audit logs********
+    sleep 60
 fi
 
 # Syncing cloud account and db with the gateway (relevant only to 4.10 version)
