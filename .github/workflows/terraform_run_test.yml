@@ -49,40 +49,16 @@ jobs:
     - name: Send Slack by action-slack
       uses: 8398a7/action-slack@v3
       with:
-        status: custom
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
-        icon_emoji: ':no_entry:'
-        custom_payload: |
-          {
-            text: "Failed GitHub on branch: ${AS_REPO}",
-            attachments: [{
-              "author_name": "8398a7@action-slack", // json
-              fallback: 'fallback',
-              color: 'failure',
-              title: 'CI Result',
-              text: 'Succeeded',
-              fields: [{
-                title: 'lower case',
-                value: 'LOWER CASE CHECK'.toLowerCase(),
-                short: true
-              },
-              {
-                title: 'reverse',
-                value: 'gnirts esrever'.split('').reverse().join(''),
-                short: true
-              },
-              {
-                title: 'long title1',
-                value: 'long value1',
-                short: false
-              }],
-              actions: [{
-              }]
-            }]
-          }  
+        status: ${{ job.status }}
+        fields: message,author,action,eventName,ref,workflow,job,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
       # if: ${{ failure() }} 
+
+    - name: Slack Notification - Slack Notify
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
 
     # - name: Sets env vars for environment
     #   run: |
