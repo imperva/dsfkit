@@ -1,7 +1,7 @@
 locals {
   ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_address
-  bastion_private_key = try(file(var.proxy_ssh_key_path), "")
+  bastion_private_key = var.proxy_ssh_key
   bastion_user        = var.proxy_ssh_user
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
