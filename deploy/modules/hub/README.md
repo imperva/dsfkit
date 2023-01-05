@@ -32,11 +32,11 @@ The following input variables are required. :
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 
-Please refer to variables.tf for additional variables with default values and additional info
+Please refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 
 ## Outputs
 
-The following outputs are exported:
+The following [outputs](outputs.tf) are exported:
 
 * `public_address`: public address
 * `private_address`: private address
@@ -71,8 +71,8 @@ module "dsf_hub" {
 
   ingress_communication = {
     additional_web_console_access_cidr_list = ["${var.web_console_cidr}"] # ["0.0.0.0/0"]
-    full_access_cidr_list                   = ["${var.full_access}"]      # [terraform-runner-ip-address] to allow ssh
-    use_public_ip                           = false
+    full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
+    use_public_ip                           = true
   }
 
   web_console_admin_password    = random_password.pass.result
