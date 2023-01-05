@@ -497,9 +497,9 @@ It is also possible to accommodate varying system requirements and deployments. 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User with the required permissions in order to run DSFKit Terraform.
 The permissions are separated to 3 different policies. Use the relevant policies according to your needs:
 
-1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/GeneralRequiredPermissions.txt).
-2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create Network resources permissions](/permissions_samples/CreateNetworkResourcesPermissions.txt).
-3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
+1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/deploy/permissions_samples/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create Network resources permissions](/deploy/permissions_samples/CreateNetworkResourcesPermissions.txt).
+3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/deploy/permissions_samples/OnboardMysqlRdsPermissions.txt).
 
 ```
 NOTE: The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
