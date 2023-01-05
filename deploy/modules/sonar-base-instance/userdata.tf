@@ -52,7 +52,6 @@ resource "null_resource" "wait_for_installation_completion" {
 
   provisioner "remote-exec" {
     inline = [
-      # "sleep 60",
       "if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then",
       "  cat /var/log/user-data.log;",
       "  echo;",
