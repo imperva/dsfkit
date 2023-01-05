@@ -103,8 +103,6 @@ variable "web_console_admin_password" {
   nullable = false
 }
 
-
-
 variable "ami_name_tag" {
   type        = string
   default     = null
