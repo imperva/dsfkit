@@ -15,6 +15,7 @@ function wait_for_network() {
 function install_deps() {
     # yum fails sporadically. So we try 3 times :(
     yum install unzip -y || yum install unzip -y || yum install unzip -y
+    yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     yum install net-tools jq vim nc lsof -y
 
     if [ ! -f /usr/local/bin/aws ]; then
