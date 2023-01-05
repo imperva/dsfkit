@@ -26,4 +26,5 @@ module "gw_instance" {
   proxy_address                 = var.ingress_communication_via_proxy.proxy_address
   proxy_ssh_key                 = var.ingress_communication_via_proxy.proxy_private_ssh_key
   proxy_ssh_user                = var.ingress_communication_via_proxy.proxy_ssh_user
+  skip_instance_health_verification = var.skip_instance_health_verification
 }

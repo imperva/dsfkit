@@ -37,6 +37,7 @@ data "aws_region" "current" {}
 resource "random_uuid" "uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
+  count = var.skip_instance_health_verification == true ? 0 : 1
   connection {
     type        = "ssh"
     user        = local.ami_user
