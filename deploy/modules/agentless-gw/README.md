@@ -10,14 +10,14 @@ This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instan
 ## Requirements
 * Terraform v1.3.1
 * An AWS account
-* SSH access - key and network path to the DSF Hub instance
+* SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
 
 ## Resources Provisioned
-This Terraform module provisions several resources on AWS to create the DSF Hub. These resources include:
-* An EC2 instance for running the DSF Hub software
+This Terraform module provisions several resources on AWS to create the DSF agentless gateway. These resources include:
+* An EC2 instance for running the DSF agentless gateway software
 * An EBS volume for storage
-* A security group to allow the required network access to and from the DSF Hub instance
+* A security group to allow the required network access to and from the DSF agentless gateway instance
 * An IAM role with relevant policies
 * An AWS Elastic Network Interface (ENI)
 
@@ -27,7 +27,7 @@ The EC2 instance and EBS volume provide the computing and storage resources need
 
 The following input variables are **required**:
 
-* `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
+* `subnet_id`: The ID of the subnet in which to launch the DSF agentless gateway instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
 * `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
@@ -96,7 +96,7 @@ module "dsf_gw" {
 ```
 
 ## SSH Access
-SSH access is required to provision this module. To SSH into the DSF agentless gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF Hub instance is not possible, you can use a bastion host as a proxy.
+SSH access is required to provision this module. To SSH into the DSF agentless gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF agentless gateway instance is not possible, you can use a bastion host as a proxy.
 
 ## Additional Information
 
