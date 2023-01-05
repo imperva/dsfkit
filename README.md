@@ -397,7 +397,7 @@ NOTES:
 
 7. When installation is done extract the web console password and DSF URL using:
     1. ```bash
-        cd /dsfkit/deploy/examples/&lt;example-name>
+        cd /dsfkit/deploy/examples/<example-name>
         ```
     2. ```bash
         terraform output "dsf_hub_web_console"
@@ -446,7 +446,7 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
 9. ```bash
-    cd /dsfkit/deploy/examples/&lt;example-name>
+    cd /dsfkit/deploy/examples/<example-name>
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
@@ -580,7 +580,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. ssh into the “Installer Machine”.
 2. cd into the installed “example”: ```bash
-    cd /dsfkit/deploy/examples/&lt;example-name>
+    cd /dsfkit/deploy/examples/<example-name>
     ```
 3. Run:
     ```bash
