@@ -48,7 +48,6 @@ variable "ingress_communication" {
   nullable    = false
 }
 
-
 variable "binaries_location" {
   type = object({
     s3_bucket = string
