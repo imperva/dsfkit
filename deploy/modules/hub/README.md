@@ -5,28 +5,32 @@ This Terraform module provisions an all-in-one data security and compliance plat
 
 This module supports Sonar versions 4.9 and 4.10.
 
+## Sonar versions
+  - 4.10 (recommended)
+  - 4.9
+
 ## Requirements
 * Terraform v1.3.1
 * An AWS account
 * SSH access - key and network path to the DSF Hub instance
-* Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform).
+* Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform)
 
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create the DSF Hub. These resources include:
-* An EC2 instance for running the DSF Hub software.
-* An EBS volume for storage.
-* A security group to allow the required network access to and from the DSF Hub instance.
-* An IAM role with relevant policies.
-* An AWS secret containing the secret required for attaching new agentless gateways.
-* An AWS Elastic Network Interface (ENI).
+* An EC2 instance for running the DSF Hub software
+* An EBS volume for storage
+* A security group to allow the required network access to and from the DSF Hub instance
+* An IAM role with relevant policies
+* An AWS secret containing the secret required for attaching new agentless gateways
+* An AWS Elastic Network Interface (ENI)
 
 The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Hub software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The AWS secret is used in the process of attaching new agentless gateways to the DSF Hub.
 
 ## Inputs
 
-The following input variables are required. :
+The following input variables are **required**:
 
-* `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance.
+* `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
 * `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
@@ -83,6 +87,15 @@ module "dsf_hub" {
     throughput       = 125
   }
   binaries_location             =  module.globals.tarball_location
+}
+```
+
+To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../examples/) directory.
+If you want to use a specific version of the module, you can specify the version by adding the ref parameter to the source URL. For example:
+
+```
+module "hub" {
+  source = "github.com/imperva/dsfkit//deploy/modules/hub?ref=1.2.0"
 }
 ```
 
