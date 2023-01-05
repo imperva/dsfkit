@@ -53,6 +53,9 @@ The following outputs are exported:
 To use this module, add the following to your Terraform configuration:
 
 ```
+provider "aws" {
+}
+
 module "globals" {
   source = "github.com/imperva/dsfkit//deploy/modules/core/globals"
 }
@@ -67,9 +70,9 @@ module "dsf_hub" {
   }
 
   ingress_communication = {
-    additional_web_console_access_cidr_list = "${var.web_console_cidr}" # "0.0.0.0"
-    full_access_cidr_list                   = "${var.full_access}"      # terraform runner ip address to allow ssh
-    use_public_ip = false
+    additional_web_console_access_cidr_list = ["${var.web_console_cidr}"] # ["0.0.0.0/0"]
+    full_access_cidr_list                   = ["${var.full_access}"]      # [terraform-runner-ip-address] to allow ssh
+    use_public_ip                           = false
   }
 
   web_console_admin_password    = random_password.pass.result
