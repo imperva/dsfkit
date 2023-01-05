@@ -1,4 +1,5 @@
 # DSF Hub
+[![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 This Terraform module provisions an all-in-one data security and compliance platform, known as the DSF Hub, on AWS as an EC2 instance.
 
