@@ -37,7 +37,7 @@ module "sonarg1" {
   name            = "${data.terraform_remote_state.init.outputs.environment}-imperva-dsf-agentless-gw1"
   subnet_id       = var.subnet_id
   key_pair        = data.terraform_remote_state.init.outputs.key_pair
-  sg_ingress_cidr = concat(var.security_group_ingress_cidrs, ["${module.sonarw.public_address}/32"])
+  sg_ingress_cidr = concat(var.security_group_ingress_cidrs, ["${module.sonarw.public_ip}/32"])
   binaries_location = {
     s3_bucket = data.terraform_remote_state.init.outputs.s3_bucket
     s3_key    = var.dsf_install_tarball_path
@@ -52,8 +52,8 @@ module "sonarg1" {
 
 module "gw_attachments" {
   source              = "../../../modules/gw-attachment"
-  gw                  = module.sonarg1.public_address
-  hub                 = module.sonarw.public_address
+  gw                  = module.sonarg1.public_ip
+  hub                 = module.sonarw.public_ip
   hub_ssh_key_path    = data.terraform_remote_state.init.outputs.key_pair_pem_local_path
   installation_source = "${data.terraform_remote_state.init.outputs.s3_bucket}/${var.dsf_install_tarball_path}"
   depends_on = [

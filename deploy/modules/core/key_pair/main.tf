@@ -9,3 +9,4 @@ resource "local_sensitive_file" "dsf_ssh_key_file" {
   file_permission = 600
   filename        = var.private_key_pem_filename
 }
+

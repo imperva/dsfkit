@@ -1,9 +1,17 @@
-output "public_address" {
-  value = module.hub_instance.public_address
+output "public_ip" {
+  value = module.hub_instance.public_ip
 }
 
-output "private_address" {
-  value = module.hub_instance.private_address
+output "private_ip" {
+  value = module.hub_instance.private_ip
+}
+
+output "public_dns" {
+  value = module.hub_instance.public_dns
+}
+
+output "private_dns" {
+  value = module.hub_instance.private_dns
 }
 
 output "sg_id" {

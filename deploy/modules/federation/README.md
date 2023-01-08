@@ -1,7 +1,7 @@
-# DSF agentless gateway
+# DSF Federation
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instance.
+This Terraform module federates a DSF agentless gateway with DSF hub.
 
 ## Sonar versions
   - 4.10 (recommended)
@@ -9,19 +9,7 @@ This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instan
 
 ## Requirements
 * Terraform v1.3.1
-* An AWS account
 * SSH access - key and network path to the instance
-* Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
-
-## Resources Provisioned
-This Terraform module provisions several resources on AWS to create the DSF agentless gateway. These resources include:
-* An EC2 instance for running the DSF agentless gateway software
-* An EBS volume for storage
-* A security group to allow the required network access to and from the DSF agentless gateway instance
-* An IAM role with relevant policies
-* An AWS Elastic Network Interface (ENI)
-
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF agentless gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
 
 ## Inputs
 

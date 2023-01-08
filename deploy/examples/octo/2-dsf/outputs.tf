@@ -1,5 +1,5 @@
 
-output "hub_ip" { value = module.sonarw.public_address }
+output "hub_ip" { value = module.sonarw.public_ip }
 output "hub_uuid" { value = module.sonarw.jsonar_uid }
 output "hub_display_name" { value = module.sonarw.display_name }
 output "hub_iam_role" { value = module.sonarw.iam_role }

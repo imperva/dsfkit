@@ -4,12 +4,20 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  default_tags {
+    tags = local.tags
+  }
+  region = "us-east-2"
+  alias = 
+}
+
 module "globals" {
-  source = "github.com/imperva/dsfkit//deploy/modules/core/globals"
+  source = "../../../deploy/modules/core/globals"
 }
 
 module "key_pair" {
-  source                   = "github.com/imperva/dsfkit//deploy/modules/core/key_pair"
+  source = "../../../deploy/modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -54,7 +62,7 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "hub" {
-  source                        = "github.com/imperva/dsfkit//deploy/modules/hub"
+  source = "../../../deploy/modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = module.vpc.public_subnets[0]
   binaries_location             = local.tarball_location
@@ -67,7 +75,7 @@ module "hub" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_secondary.private_address}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"])
     use_public_ip = true
   }
   depends_on = [
@@ -76,7 +84,7 @@ module "hub" {
 }
 
 module "hub_secondary" {
-  source                        = "github.com/imperva/dsfkit//deploy/modules/hub"
+  source = "../../../deploy/modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                     = module.vpc.public_subnets[1]
   binaries_location             = local.tarball_location
@@ -92,7 +100,7 @@ module "hub_secondary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
     use_public_ip = true
   }
   depends_on = [
@@ -102,7 +110,7 @@ module "hub_secondary" {
 
 module "agentless_gw_group" {
   count                             = var.gw_count
-  source                            = "github.com/imperva/dsfkit//deploy/modules/agentless-gw"
+  source = "../../../deploy/modules/agentless-gw"
   friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                         = module.vpc.private_subnets[0]
   ebs                               = var.gw_group_ebs_details
@@ -115,11 +123,11 @@ module "agentless_gw_group" {
     ssh_public_key_name             = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_address}/32", "${module.hub_secondary.private_address}/32"])
+    full_access_cidr_list           = concat(local.workstation_cidr, ["${module.hub.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
     use_public_ip = false
   }
   ingress_communication_via_proxy = {
-    proxy_address                   = module.hub.public_address
+    proxy_address                   = module.hub.public_ip
     proxy_private_ssh_key           = try(file(module.key_pair.key_pair_private_pem.filename), "")
     proxy_ssh_user                  = module.hub.ssh_user
   }
@@ -139,14 +147,14 @@ locals {
 
 module "federation" {
   count               = length(local.hub_gw_combinations)
-  source              = "github.com/imperva/dsfkit//deploy/modules/federation"
+  source = "../../../deploy/modules/federation"
   gws_info  = {
-    gw_ip_address   = local.hub_gw_combinations[count.index][1].private_address
+    gw_ip_address   = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     gw_ssh_user       = local.hub_gw_combinations[count.index][1].ssh_user
   }
   hub_info = {
-    hub_ip_address = local.hub_gw_combinations[count.index][0].public_address
+    hub_ip_address = local.hub_gw_combinations[count.index][0].public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user   = local.hub_gw_combinations[count.index][0].ssh_user
   }
@@ -158,11 +166,11 @@ module "federation" {
 }
 
 module "hadr" {
-  source                       = "github.com/imperva/dsfkit//deploy/modules/hadr"
-  dsf_hub_primary_public_ip    = module.hub.public_address
-  dsf_hub_primary_private_ip   = module.hub.private_address
-  dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
-  dsf_hub_secondary_private_ip = module.hub_secondary.private_address
+  source = "../../../deploy/modules/hadr"
+  dsf_hub_primary_public_ip    = module.hub.public_ip
+  dsf_hub_primary_private_ip   = module.hub.private_ip
+  dsf_hub_secondary_public_ip  = module.hub_secondary.public_ip
+  dsf_hub_secondary_private_ip = module.hub_secondary.private_ip
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   ssh_user                     = module.hub.ssh_user
   depends_on = [
@@ -174,17 +182,17 @@ module "hadr" {
 
 module "rds_mysql" {
   count                        = 1
-  source                       = "github.com/imperva/dsfkit//deploy/modules/rds-mysql-db"
+  source = "../../../deploy/modules/rds-mysql-db"
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
-  source           = "github.com/imperva/dsfkit//deploy/modules/db-onboarder"
+  source = "../../../deploy/modules/db-onboarder"
   sonar_version    = module.globals.tarball_location.version
   hub_info = {
-    hub_ip_address    = module.hub.public_address
+    hub_ip_address    = module.hub.public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user       = module.hub.ssh_user
   }
@@ -207,7 +215,7 @@ module "db_onboarding" {
 }
 
 module "statistics" {
-  source = "github.com/imperva/dsfkit//deploy/modules/statistics"
+  source = "../../../deploy/modules/statistics"
 }
 
 output "db_details" {
