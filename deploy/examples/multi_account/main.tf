@@ -16,7 +16,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "../../modules/core/globals"
+  source = "github.com/imperva/dsfkit//deploy/modules/core/globals"
 }
 
 locals {
@@ -39,13 +39,13 @@ locals {
 ##############################
 
 module "key_pair_hub" {
-  source                   = "../../modules/core/key_pair"
+  source                   = "github.com/imperva/dsfkit//deploy/modules/core/key_pair"
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
  module "key_pair_gw" {
-   source                   = "../../modules/core/key_pair"
+   source                   = "github.com/imperva/dsfkit//deploy/modules/core/key_pair"
    key_name_prefix          = "imperva-dsf-gw"
    private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
    providers = {
@@ -58,7 +58,7 @@ module "key_pair_hub" {
 ##############################
 
 module "hub" {
-  source                        = "../../modules/hub"
+  source                        = "github.com/imperva/dsfkit//deploy/modules/hub"
   friendly_name                 = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                     = var.subnet_hub
   binaries_location             = local.tarball_location
@@ -66,6 +66,7 @@ module "hub" {
   ebs                           = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
   instance_type                 = var.hub_instance_type
+  ami_name_tag                  = var.hub_ami_name
   ssh_key_pair = {
     ssh_private_key_file_path   = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name         = module.key_pair_hub.key_pair.key_pair_name
@@ -75,13 +76,15 @@ module "hub" {
     full_access_cidr_list = local.workstation_cidr
     use_public_ip = false
   }
+  skip_instance_health_verification = var.hub_skip_instance_health_verification
 }
 
  module "agentless_gw_group" {
    count                             = var.gw_count
-   source                            = "../../modules/agentless-gw"
+   source                            = "github.com/imperva/dsfkit//deploy/modules/agentless-gw"
    friendly_name                     = join("-", [local.deployment_name_salted, "gw", count.index])
    instance_type                     = var.gw_instance_type
+   ami_name_tag                      = var.gw_ami_name
    subnet_id                         = var.subnet_gw
    ebs                               = var.gw_group_ebs_details
    binaries_location                 = local.tarball_location
@@ -101,6 +104,7 @@ module "hub" {
        proxy_private_ssh_key_path    = module.key_pair_hub.key_pair_private_pem.filename
        proxy_ssh_user                = module.hub.ssh_user
    }
+   skip_instance_health_verification = var.gw_skip_instance_health_verification
    providers = {
      aws = aws.gw
    }
@@ -108,7 +112,7 @@ module "hub" {
 
  module "federation" {
    for_each            = { for idx, val in module.agentless_gw_group : idx => val }
-   source              = "../../modules/federation"
+   source              = "github.com/imperva/dsfkit//deploy/modules/federation"
    gws_info  = {
      gw_ip_address   = each.value.private_address
      gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename

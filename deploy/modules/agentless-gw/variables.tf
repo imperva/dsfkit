@@ -41,31 +41,16 @@ variable "ebs" {
 variable "ingress_communication_via_proxy" {
   type = object({
     proxy_address     = string
-    proxy_private_ssh_key_path = string
+    proxy_private_ssh_key = string
     proxy_ssh_user    = string
   })
-  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-  nullable    = true
+  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key. Keep empty if no proxy is in use"
+  default     = {
+    proxy_address     = null
+    proxy_private_ssh_key = null
+    proxy_ssh_user    = null
+  }
 }
-
-# variable "proxy_address" {
-#   type        = string
-#   description = "Proxy address used for ssh for private gw (Usually hub address)"
-#   default     = null
-# }
-
-# variable "proxy_ssh_key_path" {
-#   type        = string
-#   default     = null
-#   description = "Proxy ssh key path. Keep empty if no proxy is in use or in case the proxy's key is similar to gw's"
-# }
-
-# variable "proxy_ssh_key_path" {
-#   type        = string
-#   description = "proxy_ssh_key_path"
-#   nullable    = false
-# }
-
 
 variable "create_and_attach_public_elastic_ip" {
   type        = bool
@@ -118,8 +103,6 @@ variable "web_console_admin_password" {
   nullable = false
 }
 
-
-
 variable "ami_name_tag" {
   type        = string
   default     = null
@@ -141,4 +124,9 @@ variable "role_arn" {
 variable "additional_install_parameters" {
   default     = ""
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+}
+
+variable "skip_instance_health_verification" {
+  default     = false
+  description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }

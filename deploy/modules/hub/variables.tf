@@ -48,7 +48,6 @@ variable "ingress_communication" {
   nullable    = false
 }
 
-
 variable "binaries_location" {
   type = object({
     s3_bucket = string
@@ -127,4 +126,9 @@ variable "role_arn" {
 variable "additional_install_parameters" {
   default     = ""
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+}
+
+variable "skip_instance_health_verification" {
+  default     = false
+  description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
