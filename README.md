@@ -1,10 +1,11 @@
 # Data Security Fabric (DSF) Kit Installation Guide
+[![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 # About This Guide
 
 This guide is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations that deploy the Imperva Data Security Fabric (DSF) Kit solution.
 ```
-NOTE: This guide is for INTERNAL USE ONLY, to be used by in-house staff for POCs and demos of the new DSF installation.  The current focus is on Sonar parts only.
+NOTE: This guide is for INTERNAL USE ONLY, to be used by in-house staff for POCs and demos of the new DSF installation. The current focus is on Sonar parts only.
 ```
 
 **Typographical Conventions**
@@ -397,7 +398,7 @@ NOTES:
 
 7. When installation is done extract the web console password and DSF URL using:
     1. ```bash
-        cd /dsfkit/deploy/examples/&lt;example-name>
+        cd /dsfkit/deploy/examples/<example-name>
         ```
     2. ```bash
         terraform output "dsf_hub_web_console"
@@ -446,7 +447,7 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
 9. ```bash
-    cd /dsfkit/deploy/examples/&lt;example-name>
+    cd /dsfkit/deploy/examples/<example-name>
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
@@ -493,54 +494,15 @@ It is also possible to accommodate varying system requirements and deployments. 
 
 # IAM Roles
 
-To be able to create AWS resources inside any AWS Account you need to provide an AWS User with the required permissions needed in order to run DSFKit Terraform.
+To be able to create AWS resources inside any AWS Account, you need to provide an AWS User with the required permissions in order to run DSFKit Terraform.
+The permissions are separated to 3 different policies. Use the relevant policies according to your needs:
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "secretsmanager:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "sts:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "ec2:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "iam:*",
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "rds:*",
-            "Resource": "*"
-        },
-
-        {
-            "Effect": "Allow",
-            "Action": "kms:*",
-            "Resource": "*"
-        }
-    ]
-}
-```
+1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/deploy/permissions_samples/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/deploy/permissions_samples/CreateNetworkResourcesPermissions.txt).
+3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/deploy/permissions_samples/OnboardMysqlRdsPermissions.txt).
 
 ```
-NOTE: Currently the IAM Role is too broad and we are working on restricting it to the minimum.
+NOTE: The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 ```
 
 # DSFKit Uninstallation
@@ -580,7 +542,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. ssh into the “Installer Machine”.
 2. cd into the installed “example”: ```bash
-    cd /dsfkit/deploy/examples/&lt;example-name>
+    cd /dsfkit/deploy/examples/<example-name>
     ```
 3. Run:
     ```bash

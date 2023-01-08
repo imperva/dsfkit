@@ -1,0 +1,97 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "rdsOptionGroupPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:CreateDBInstance",
+                "rds:CreateOptionGroup",
+                "rds:CreateDBSubnetGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:req-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteInstancePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteDBInstance"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:db-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteOGPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteOptionGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:og-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteSGPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteDBSubnetGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:subgrp-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsNoConditions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:AddTagsToResource",
+                "rds:DescribeDBSubnetGroups",
+                "rds:ListTagsForResource",
+                "rds:DescribeDBInstances",
+                "rds:DescribeOptionGroups",
+                "rds:ModifyOptionGroup"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "cloudWatchLogsNoPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups",
+                "logs:ListTagsLogGroup",
+                "logs:PutRetentionPolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "cloudWatchLogsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:DeleteLogGroup",
+                "logs:TagLogGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        }
+    ]
+}

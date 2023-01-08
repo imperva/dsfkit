@@ -38,8 +38,8 @@ jobs:
 
     - name: Change the modules source to local
       run: | 
-        find . -type f -exec sed -i 's/source = \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
-        grep -rnw '.' -e 'github.com/imperva/dsfkit//deploy/modules/core/globals'
+        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
+        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
 
     - name: Sets env vars for environment
       run: |

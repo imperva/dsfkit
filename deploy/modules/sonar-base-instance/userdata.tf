@@ -1,7 +1,7 @@
 locals {
   ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_address
-  bastion_private_key = try(file(var.proxy_ssh_key_path), "")
+  bastion_private_key = var.proxy_ssh_key
   bastion_user        = var.proxy_ssh_user
 
   public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
@@ -37,6 +37,7 @@ data "aws_region" "current" {}
 resource "random_uuid" "uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
+  count = var.skip_instance_health_verification == true ? 0 : 1
   connection {
     type        = "ssh"
     user        = local.ami_user
@@ -52,11 +53,10 @@ resource "null_resource" "wait_for_installation_completion" {
 
   provisioner "remote-exec" {
     inline = [
-      # "sleep 60",
-      "if ! timeout 600 cloud-init status --wait | grep done &>/dev/null; then",
+      "if ! timeout 600 sudo cloud-init status --wait | grep done &>/dev/null; then",
       "  cat /var/log/user-data.log;",
       "  echo;",
-      "  cloud-init status;",
+      "  sudo cloud-init status;",
       "  exit 1;",
       "fi"
     ]
