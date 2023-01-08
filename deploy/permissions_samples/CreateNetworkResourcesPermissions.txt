@@ -1,0 +1,97 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ec2NoCondition",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInternetGateways",
+                "ec2:DescribeNetworkAcls",
+                "ec2:DescribeRouteTables",
+                "ec2:DescribeVpcClassicLinkDnsSupport",
+                "ec2:DescribeVpcClassicLink",
+                "ec2:DescribeNatGateways",
+                "ec2:CreateVpc",
+                "ec2:AttachInternetGateway",
+                "ec2:AssociateRouteTable",
+                "ec2:CreateNatGateway",
+                "ec2:DeleteNatGateway",
+                "ec2:DeleteSubnet",
+                "ec2:DeleteVpc",
+                "ec2:DetachInternetGateway",
+                "ec2:DisassociateRouteTable",
+                "ec2:ModifySubnetAttribute",
+                "ec2:ModifyVpcAttribute",
+                "ec2:CreateRouteTable",
+                "ec2:CreateSubnet"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "ec2CreateTagsPermissions",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:aws:ec2:*:*:*/*",
+            "Condition": {
+                "ForAnyValue:StringEquals": {
+                    "ec2:CreateAction": [
+                        "CreateInternetGateway",
+                        "CreateNatGateway",
+                        "CreateRouteTable",
+                        "CreateSubnet",
+                        "CreateVpc"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "RunInstancePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:RunInstances"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:subnet/*"
+            ]
+        },
+        {
+            "Sid": "ec2RequestTagPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateInternetGateway"
+            ],
+            "Resource": [
+                "*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": "ec2:DeleteInternetGateway",
+            "Resource": "arn:aws:ec2:*:*:internet-gateway/*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateRoute",
+                "ec2:DeleteRoute",
+                "ec2:DeleteRouteTable"
+            ],
+            "Resource": "arn:aws:ec2:*:*:route-table/*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        }
+    ]
+}
