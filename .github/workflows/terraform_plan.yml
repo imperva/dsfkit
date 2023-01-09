@@ -12,7 +12,7 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  EXAMPLE_DIR: ./deploy/examples/basic_deployment
+  EXAMPLE_DIR: ./deploy/examples/poc/basic_deployment
   AWS_REGION: us-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

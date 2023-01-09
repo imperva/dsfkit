@@ -154,7 +154,7 @@ NOTE: Note: It may take several hours for access to be granted to AWS and Terraf
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
-**File**: deploy/examples/basic_deployment/variables.tf
+**File**: deploy/examples/poc/basic_deployment/variables.tf
 ```bash
  variable "sonar_version" {
     type    = string
@@ -210,7 +210,7 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
 
-    * Enter “deploy/examples/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
+    * Enter “deploy/examples/poc/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
     
     * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
@@ -325,7 +325,7 @@ NOTE: Update the values for the required parameters to complete the installation
 
     DSFKit arrives with a built-in example “basic_deployment” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “basic_deployment” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
     ```bash
-    cd dsfkit/deploy/examples/basic_deployment
+    cd dsfkit/deploy/examples/poc/basic_deployment
     ```
 
 3. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \

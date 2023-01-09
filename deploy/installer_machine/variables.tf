@@ -19,7 +19,7 @@ variable "_3_aws_region" {
 
 variable "example_name" {
   type    = string
-  default = "basic_deployment"
+  default = "poc/basic_deployment"
 }
 
 variable "web_console_cidr" {
