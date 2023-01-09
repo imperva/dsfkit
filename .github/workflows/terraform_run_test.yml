@@ -40,16 +40,6 @@ jobs:
         find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
         ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
 
-    - name: Set Environment Variables
-      if: always()
-      run: | 
-        echo new_var=segev1 >> $GITHUB_ENV
-
-    - name: Validate Environment Variables
-      if: always()
-      run: | 
-        echo 1. new_var is ${{ env.new_var }}
-
     # Send job failure to Slack
     - name: Send Slack by action-slack
       uses: 8398a7/action-slack@v3
@@ -66,18 +56,18 @@ jobs:
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
       if: ${{ failure() }}
 
-    - name: Send GitHub Action trigger data to Slack workflow
-      id: slack
-      uses: slackapi/slack-github-action@v1.23.0
-      with:
-        payload: |
-          {
-            "key": "value",
-            "foo": "bar"
-          }
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-      if: ${{ always() }}
+    # - name: Send GitHub Action trigger data to Slack workflow
+    #   id: slack
+    #   uses: slackapi/slack-github-action@v1.23.0
+    #   with:
+    #     payload: |
+    #       {
+    #         "key": "value",
+    #         "foo": "bar"
+    #       }
+    #   env:
+    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
+    #   if: ${{ always() }}
 
     # - name: Sets env vars for environment
     #   run: |

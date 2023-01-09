@@ -11,7 +11,7 @@ env:
   TF_INPUT: 0
   TF_VAR_gw_count: 2
   EXAMPLE_DIR: ./deploy/examples/se_demo
-  TF_WORKSPACE: simple_cli
+  TF_WORKSPACE: simple_cli_nightly
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
