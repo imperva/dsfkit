@@ -12,6 +12,9 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
+  # TODO run all examples, not just these two in a generic manner
+  EXAMPLE_DIR1: ./deploy/examples/poc/basic_deployment
+  EXAMPLE_DIR2: ./deploy/examples/poc/hadr_deployment
   AWS_REGION: us-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -30,44 +33,43 @@ jobs:
       run:
         shell: bash
 
-    strategy:
-      matrix:
-        example: ['./deploy/examples/poc/basic_deployment', './deploy/examples/poc/hadr_deployment']
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Change the modules source to local
-      run: | 
-        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
-        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
+      - name: Change the modules source to local
+        run: |
+          find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
+          ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      with:
-        example: ${{ matrix.example }}
-      run: terraform -chdir=${{ example }} init
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform -chdir=$EXAMPLE_DIR1 init
 
-    - name: Terraform Validate
-      with:
-        example: ${{ matrix.example }}
-      run: terraform -chdir=${{ example }} validate
+      - name: Terraform Init
+        run: terraform -chdir=$EXAMPLE_DIR2 init
 
-    # Checks that all Terraform configuration files adhere to a canonical format
-    - name: Terraform Format
-      run: terraform fmt -check
-      continue-on-error: true
+      - name: Terraform Validate
+        run: terraform -chdir=$EXAMPLE_DIR1 validate
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan (simple)
-      with:
-        example: ${{ matrix.example }}
-      run: terraform -chdir=${{ example }} plan
+      - name: Terraform Validate
+        run: terraform -chdir=$EXAMPLE_DIR2 validate
 
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
+        continue-on-error: true
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan (simple)
+        run: terraform -chdir=$EXAMPLE_DIR1 plan
+
+    - name: Terraform Plan (hadr)
+      run: terraform -chdir=$EXAMPLE_DIR2 plan
