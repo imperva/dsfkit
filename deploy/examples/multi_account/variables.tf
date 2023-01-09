@@ -120,3 +120,25 @@ variable "hub_instance_type" {
    default     = "r6i.xlarge"
    description = "Ec2 instance type for the DSF gw"
  }
+
+ variable "hub_ami_name" {
+   type        = string
+   default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+   description = "Ec2 AMI name for the DSF hub"
+ }
+
+ variable "gw_ami_name" {
+   type        = string
+   default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+   description = "Ec2 AMI name for the DSF gw"
+ }
+
+ variable "hub_skip_instance_health_verification" {
+   default     = false
+   description = "This variable allows the user to skip the verification step that checks the health of the hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+ }
+
+ variable "gw_skip_instance_health_verification" {
+   default     = false
+   description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+ }
