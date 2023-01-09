@@ -10,9 +10,12 @@ on:
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
-  TF_WORKSPACE: dsfkit-ci-cd
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
+  EXAMPLE_DIR: ./deploy/examples/basic_deployment
+  AWS_REGION: us-west-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
   contents: read
@@ -46,10 +49,10 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init
+      run: terraform -chdir=$EXAMPLE_DIR init
 
     - name: Terraform Validate
-      run: terraform validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -58,7 +61,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan (simple)
-      run: terraform plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
 
-    - name: Terraform Plan (hadr)
-      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan
+#    - name: Terraform Plan (hadr)
+#      run: TF_WORKSPACE=dsfkit-ci-cd-hadr terraform plan
