@@ -11,7 +11,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 1
-  EXAMPLE_DIR: ./deploy/examples/se_demo
+  EXAMPLE_DIR: ./deploy/examples/basic_deployment
   TF_WORKSPACE: run_test
   AWS_REGION: ap-southeast-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
