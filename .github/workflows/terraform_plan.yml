@@ -12,7 +12,6 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  # TODO run all examples, not just these two in a generic manner
   EXAMPLE_DIR1: ./deploy/examples/poc/basic_deployment
   EXAMPLE_DIR2: ./deploy/examples/poc/hadr_deployment
   AWS_REGION: us-west-2
