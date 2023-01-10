@@ -37,10 +37,10 @@ jobs:
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
-      env:
-        EXAMPLE_DIR: ${{ matrix.example_dir }}
-        TF_WORKSPACE: ${{ matrix.workspace }}
-        AWS_REGION: ${{ matrix.aws_region }}
+    env:
+      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
+      AWS_REGION: ${{ matrix.aws_region }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
