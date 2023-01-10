@@ -3,7 +3,7 @@
 #################################
 
 module "hub_instance" {
-  source                        = "../../modules/sonar-base-instance"
+  source                        = "../../../modules/aws/sonar-base-instance"
   resource_type                 = "hub"
   name                          = var.friendly_name
   subnet_id                     = var.subnet_id
