@@ -1,4 +1,4 @@
-name: 'Terraform Apply Cli (simple)'
+name: 'Terraform Apply Cli'
 
 on:
   workflow_dispatch: {}
@@ -30,8 +30,25 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+
+    matrix:
+      workspace: [simple_cli, hadr_cli]
+      example_dir: []
+      aws_region: []
+      include:
+        - workspace: simple_cli
+          example_dir: ./deploy/examples/se_demo
+          aws_region: eu-west-2
+        - workspace: hadr_cli
+          example_dir: ./deploy/examples/se_demo_hadr
+          aws_region: eu-west-1
+
+    name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
+      env:
+        EXAMPLE_DIR: ${{ matrix.example_dir }}
+        TF_WORKSPACE: ${{ matrix.workspace }}
+        AWS_REGION: ${{ matrix.aws_region }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -107,7 +124,7 @@ jobs:
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_address') >> $GITHUB_ENV
         echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 

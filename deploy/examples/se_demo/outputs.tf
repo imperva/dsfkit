@@ -13,7 +13,7 @@ output "dsf_agentless_gw_group" {
 
 output "dsf_hubs" {
   value = {
-    primary_hub = {
+    primary = {
       public_address  = try(module.hub.public_address, null)
       private_address = try(module.hub.private_address, null)
       jsonar_uid      = try(module.hub.jsonar_uid, null)
