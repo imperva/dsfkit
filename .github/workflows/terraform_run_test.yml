@@ -28,10 +28,10 @@ jobs:
         workspace: [simple_cli]
         include:
           - workspace: simple_cli
-            example_dir: ./deploy/examples/se_demo
+            example_dir: ./deploy/examples/poc/basic_deployment
             aws_region: eu-west-2
           - workspace: hadr_cli
-            example_dir: ./deploy/examples/se_demo_hadr
+            example_dir: ./deploy/examples/poc/hadr_deployment
             aws_region: eu-west-1
 
     name: 'Terraform ${{ matrix.workspace }}'
