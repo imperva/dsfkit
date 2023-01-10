@@ -26,8 +26,6 @@ jobs:
     strategy:
       matrix:
         workspace: [simple_cli]
-        # example_dir: [./deploy/examples/se_demo]
-        # aws_region: [eu-west-2]
         include:
           - workspace: simple_cli
             example_dir: ./deploy/examples/se_demo

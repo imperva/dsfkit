@@ -33,9 +33,7 @@ jobs:
 
     strategy:
       matrix:
-        workspace: [simple_cli, hadr_cli]
-        example_dir: [./deploy/examples/se_demo, ./deploy/examples/se_demo_hadr]
-        aws_region: [eu-west-1, eu-west-2]
+        workspace: [simple_cli]
         include:
           - workspace: simple_cli
             example_dir: ./deploy/examples/se_demo
