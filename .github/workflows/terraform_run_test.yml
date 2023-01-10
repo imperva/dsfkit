@@ -23,17 +23,18 @@ permissions:
 jobs:
   terraform:
 
-    matrix:
-      workspace: [simple_cli, hadr_cli]
-      example_dir: []
-      aws_region: []
-      include:
-        - workspace: simple_cli
-          example_dir: ./deploy/examples/se_demo
-          aws_region: eu-west-2
-        - workspace: hadr_cli
-          example_dir: ./deploy/examples/se_demo_hadr
-          aws_region: eu-west-1
+    strategy:
+      matrix:
+        workspace: [simple_cli, hadr_cli]
+        example_dir: []
+        aws_region: []
+        include:
+          - workspace: simple_cli
+            example_dir: ./deploy/examples/se_demo
+            aws_region: eu-west-2
+          - workspace: hadr_cli
+            example_dir: ./deploy/examples/se_demo_hadr
+            aws_region: eu-west-1
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
