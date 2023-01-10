@@ -41,7 +41,7 @@ jobs:
 
       - name: Change the modules source to local
         run: |
-          find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\/\/deploy/source = \"..\/..\/../' {} \;
+          find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\/\/deploy\/modules/source = \"..\/..\/../aws/' {} \;
           ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//modules'
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
