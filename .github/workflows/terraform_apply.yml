@@ -1,4 +1,4 @@
-name: 'Terraform Apply (simple)'
+name: 'Terraform Apply'
 
 on:
   schedule:
@@ -27,8 +27,17 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    strategy:
+      matrix:
+        workspace: [dsfkit-ci-cd]
+        include:
+          - workspace: dsfkit-ci-cd
+          - workspace: dsfkit-ci-cd-hadr
+
+    name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
+    env:
+      TF_WORKSPACE: ${{ matrix.workspace }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
