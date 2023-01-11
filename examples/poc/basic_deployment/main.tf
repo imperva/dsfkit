@@ -132,7 +132,7 @@ module "rds_mysql" {
 
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
-  source           = "github.com/imperva/dsfkit//modules/aws/db-onboarder"
+  source           = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
   sonar_version    = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address    = module.hub.public_address
