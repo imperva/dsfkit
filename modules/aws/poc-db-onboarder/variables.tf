@@ -10,9 +10,9 @@ variable "sonar_version" {
 
 variable "hub_info" {
   type = object({
-    hub_ip_address   = string
+    hub_ip_address           = string
     hub_private_ssh_key_path = string
-    hub_ssh_user = string
+    hub_ssh_user             = string
   })
 
   nullable    = false

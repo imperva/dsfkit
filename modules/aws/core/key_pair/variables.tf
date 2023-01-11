@@ -3,7 +3,7 @@ variable "key_name_prefix" {
 }
 
 variable "create_private_key" {
-  type = bool
+  type    = bool
   default = true
 }
 

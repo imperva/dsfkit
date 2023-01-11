@@ -40,9 +40,9 @@ variable "create_and_attach_public_elastic_ip" {
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
+    full_access_cidr_list                   = list(any) #22, 8080, 8443, 3030, 27117
     additional_web_console_access_cidr_list = list(any) #8443
-    use_public_ip = bool
+    use_public_ip                           = bool
   })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
   nullable    = false
@@ -97,12 +97,12 @@ variable "web_console_admin_password" {
 
 variable "ssh_key_pair" {
   type = object({
-    ssh_public_key_name        = string
+    ssh_public_key_name       = string
     ssh_private_key_file_path = string
   })
   description = "SSH materials to access machine"
 
-  nullable    = false
+  nullable = false
 }
 
 variable "ami_name_tag" {
