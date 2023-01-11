@@ -35,6 +35,9 @@ jobs:
 
       - name: Filter branch
         run: |
+          pwd
+          ls -la
+          git branch
           git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/hub/main.tf; mkdir -p deploy/modules/hub/modules; mv deploy/modules/sonar-base-instance deploy/modules/hub/modules/; true;' HEAD
           git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/hub/ HEAD
 
