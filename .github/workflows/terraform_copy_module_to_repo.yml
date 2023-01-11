@@ -7,9 +7,9 @@ on:
       - 'workflow-to-create-hub-dedicate-repo'
 
 env:
-  source_module: {{ matrix.source_module }}
-  destination_repo: {{ matrix.destination_repo }}
-  hidden_submodule: {{ matrix.hidden_submodule }}
+  source_module: ${{ matrix.source_module }}
+  destination_repo: ${{ matrix.destination_repo }}
+  hidden_submodule: ${{ matrix.hidden_submodule }}
 
 permissions:
   contents: write
