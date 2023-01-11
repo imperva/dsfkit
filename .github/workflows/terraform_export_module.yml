@@ -23,17 +23,17 @@ jobs:
     strategy:
       matrix:
         include:
-          - source_module: "hub"
+          - source_module: "aws/hub"
             destination_repo: "terraform-aws-dsf-hub"
-            hidden_submodule: "sonar-base-instance"
-          - source_module: "agentless-gw"
+            hidden_submodule: "aws/sonar-base-instance"
+          - source_module: "aws/agentless-gw"
             destination_repo: "terraform-aws-dsf-agentless-gw"
-            hidden_submodule: "sonar-base-instance"
-          - source_module: "hadr"
+            hidden_submodule: "aws/sonar-base-instance"
+          - source_module: "aws/hadr"
             destination_repo: "terraform-null-dsf-hadr"
-          - source_module: "federation"
+          - source_module: "aws/federation"
             destination_repo: "terraform-null-dsf-federation"
-          - source_module: "db-onboarder"
+          - source_module: "aws/db-onboarder"
             destination_repo: "terraform-aws-poc-db-onboarder"
 
     env:
