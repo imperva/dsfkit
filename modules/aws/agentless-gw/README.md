@@ -1,7 +1,7 @@
-# DSF Hub
+# DSF agentless gateway
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions an all-in-one data security and compliance platform, known as the DSF Hub, on AWS as an EC2 instance.
+This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instance.
 
 ## Sonar versions
   - 4.10 (recommended)
@@ -10,30 +10,30 @@ This Terraform module provisions an all-in-one data security and compliance plat
 ## Requirements
 * Terraform v1.3.1
 * An AWS account
-* SSH access - key and network path to the DSF Hub instance
+* SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
 
 ## Resources Provisioned
-This Terraform module provisions several resources on AWS to create the DSF Hub. These resources include:
-* An EC2 instance for running the DSF Hub software
+This Terraform module provisions several resources on AWS to create the DSF agentless gateway. These resources include:
+* An EC2 instance for running the DSF agentless gateway software
 * An EBS volume for storage
-* A security group to allow the required network access to and from the DSF Hub instance
+* A security group to allow the required network access to and from the DSF agentless gateway instance
 * An IAM role with relevant policies
-* An AWS secret containing the secret required for attaching new agentless gateways
 * An AWS Elastic Network Interface (ENI)
 
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Hub software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The AWS secret is used in the process of attaching new agentless gateways to the DSF Hub.
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF agentless gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
 
 ## Inputs
 
 The following input variables are **required**:
 
-* `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
+* `subnet_id`: The ID of the subnet in which to launch the DSF agentless gateway instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
 * `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
+* `hub_federation_public_key`: Federation public key (sonarw public ssh key). Should be taken from [hub](../hub)'s outputs
 
 Please refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 
@@ -46,10 +46,7 @@ The following [outputs](outputs.tf) are exported:
 * `display_name`: Display name of the instance under DSF portal
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
-* `sg_id`: AWS security group id of the instance
 * `ssh_user`: SSH user for the instance
-* `federation_public_key`: Federation public key (sonarw public ssh key). Should be used in agentless gateways one want to attach to DSF
-* `sonarw_secret`: AWS secret details. Should be used when deploying a second DSF hub for HADR
 
 ## Usage
 
@@ -60,11 +57,11 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "github.com/imperva/dsfkit//deploy/modules/core/globals"
+  source = "github.com/imperva/dsfkit//modules/aws/core/globals"
 }
 
-module "dsf_hub" {
-  source                        = "github.com/imperva/dsfkit//deploy/modules/hub"
+module "dsf_gw" {
+  source                        = "github.com/imperva/dsfkit//modules/aws/agentless-gw"
   subnet_id                     = "${aws_subnet.example.id}"
 
   ssh_key_pair = {
@@ -84,22 +81,23 @@ module "dsf_hub" {
     provisioned_iops = 0
     throughput       = 125
   }
-  binaries_location             =  module.globals.tarball_location
+  binaries_location             = module.globals.tarball_location
+  hub_federation_public_key     = module.hub.federation_public_key
 }
 ```
 
-To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../examples/) directory.
+To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
 If you want to use a specific version of the module, you can specify the version by adding the ref parameter to the source URL. For example:
 
 ```
-module "dsf_hub" {
-  source = "github.com/imperva/dsfkit//deploy/modules/hub?ref=1.2.0"
+module "dsf_gw" {
+  source = "github.com/imperva/dsfkit//modules/aws/agentless-gw?ref=1.3.0"
 }
 ```
 
 ## SSH Access
-SSH access is required to provision this module. To SSH into the DSF Hub instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF Hub instance is not possible, you can use a bastion host as a proxy.
+SSH access is required to provision this module. To SSH into the DSF agentless gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF agentless gateway instance is not possible, you can use a bastion host as a proxy.
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). For additional information about DSF deployment using terraform, please refer to the main repo readme [here](https://github.com/imperva/dsfkit).
+For more information about the DSF agentless gateway and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). For additional information about DSF deployment using terraform, please refer to the main repo readme [here](https://github.com/imperva/dsfkit).

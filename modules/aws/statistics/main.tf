@@ -1,5 +1,5 @@
 module "globals" {
-  source = "../../modules/core/globals"
+  source = "../../../modules/aws/core/globals"
 }
 
 data "aws_caller_identity" "current" {}
