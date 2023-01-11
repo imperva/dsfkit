@@ -47,11 +47,14 @@ jobs:
         env:
           github_token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
         run: |
+          set -x
           pwd
           ls -la 
+          echo $github_token
           git branch
           git remote -v
           git remote set-url origin https://${github_token}@github.com/imperva/terraform-aws-dsf_hub.git
+          git remote -v
           git branch -m workflow-to-create-hub-dedicate-repo main
           git push -f origin HEAD:main
 
