@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "../modules/core/globals"
+  source = "../modules/aws/core/globals"
 }
 
 data "http" "myip" {
