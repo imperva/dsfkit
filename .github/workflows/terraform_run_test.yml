@@ -134,13 +134,13 @@ jobs:
 
     # Generates an execution plan for Terraform
     # - name: Terraform Plan
-    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
 
     # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
       
     # - name: Terraform Apply
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
 
     # - name: Terraform Output
     #   run: terraform -chdir=$EXAMPLE_DIR output -json
@@ -167,4 +167,4 @@ jobs:
 
     # - name: Terraform Destroy
     #   if: always()
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
