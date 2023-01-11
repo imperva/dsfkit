@@ -7,7 +7,9 @@ on:
       - 'workflow-to-create-hub-dedicate-repo'
 
 env:
-  TF_WARN_OUTPUT_ERRORS: 1
+  source_module: {{ matrix.source_module }}
+  destination_repo: {{ matrix.destination_repo }}
+  hidden_submodule: {{ matrix.hidden_submodule }}
 
 permissions:
   contents: write
@@ -29,10 +31,6 @@ jobs:
           - source_module: "hub"
             destination_repo: "terraform-aws-dsf_hub"
             hidden_submodule: "sonar-base-instance"
-    env:
-      source_module: {{ matrix.source_module }}
-      destination_repo: {{ matrix.destination_repo }}
-      hidden_submodule: {{ matrix.hidden_submodule }}
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
