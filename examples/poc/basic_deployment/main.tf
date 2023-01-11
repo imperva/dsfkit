@@ -106,7 +106,7 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each            = { for idx, val in module.agentless_gw_group : idx => val }
-  source              = "github.com/imperva/dsfkit//modules/aws/federation"
+  source              = "github.com/imperva/dsfkit//modules/null/federation"
   gws_info  = {
     gw_ip_address     = each.value.private_address
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
@@ -132,7 +132,7 @@ module "rds_mysql" {
 
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
-  source           = "github.com/imperva/dsfkit//modules/aws/db-onboarder"
+  source           = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
   sonar_version    = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address    = module.hub.public_address

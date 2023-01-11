@@ -31,11 +31,11 @@ jobs:
           - source_module: "aws/agentless-gw"
             destination_repo: "terraform-aws-dsf-agentless-gw"
             hidden_submodule: "aws/sonar-base-instance"
-          - source_module: "aws/hadr"
+          - source_module: "null/hadr"
             destination_repo: "terraform-null-dsf-hadr"
-          - source_module: "aws/federation"
+          - source_module: "null/federation"
             destination_repo: "terraform-null-dsf-federation"
-          - source_module: "aws/db-onboarder"
+          - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-poc-db-onboarder"
 
     env:

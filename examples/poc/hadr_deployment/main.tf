@@ -139,7 +139,7 @@ locals {
 
 module "federation" {
   count               = length(local.hub_gw_combinations)
-  source              = "github.com/imperva/dsfkit//modules/aws/federation"
+  source              = "github.com/imperva/dsfkit//modules/null/federation"
   gws_info  = {
     gw_ip_address   = local.hub_gw_combinations[count.index][1].private_address
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
@@ -158,7 +158,7 @@ module "federation" {
 }
 
 module "hadr" {
-  source                       = "github.com/imperva/dsfkit//modules/aws/hadr"
+  source                       = "github.com/imperva/dsfkit//modules/null/hadr"
   dsf_hub_primary_public_ip    = module.hub.public_address
   dsf_hub_primary_private_ip   = module.hub.private_address
   dsf_hub_secondary_public_ip  = module.hub_secondary.public_address
@@ -181,7 +181,7 @@ module "rds_mysql" {
 
 module "db_onboarding" {
   for_each         = { for idx, val in module.rds_mysql : idx => val }
-  source           = "github.com/imperva/dsfkit//modules/aws/db-onboarder"
+  source           = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
   sonar_version    = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address    = module.hub.public_address
