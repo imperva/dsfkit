@@ -24,11 +24,14 @@ jobs:
       matrix:
         include:
           - source_module: "hub"
-            destination_repo: "terraform-aws-dsf_hub"
+            destination_repo: "terraform-aws-dsf-hub"
+            hidden_submodule: "sonar-base-instance"
+          - source_module: "agentless-gw"
+            destination_repo: "terraform-aws-dsf-agentless-gw"
             hidden_submodule: "sonar-base-instance"
 
     env:
-      source_module: ${{ matrix.source_module }}
+      source_module_name: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
       hidden_submodule: ${{ matrix.hidden_submodule }}
 
@@ -45,7 +48,7 @@ jobs:
           ls -la
           git branch
           if [ -n "${hidden_submodule}"]; then
-            git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/${source_module}/main.tf; mkdir -p deploy/modules/${source_module}/_modules; mv deploy/modules/${hidden_submodule} deploy/modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
+            git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/_modules/g" deploy/modules/${source_module}/main.tf; mkdir -p deploy/modules/${source_module}/_modules; mv deploy/modules/${hidden_submodule} deploy/modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
           fi
           git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/${source_module}/ --tag-name-filter cat -- --all HEAD
 
