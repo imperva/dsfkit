@@ -35,7 +35,7 @@ jobs:
             destination_repo: "terraform-null-dsf-hadr"
           - source_module: "aws/federation"
             destination_repo: "terraform-null-dsf-federation"
-          - source_module: "aws/db-onboarder"
+          - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-poc-db-onboarder"
 
     env:
