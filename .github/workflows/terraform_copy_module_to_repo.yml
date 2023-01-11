@@ -44,8 +44,7 @@ jobs:
 
       - name: Filter branch
         run: |
-          pwd
-          ls -la
+          set -x
           git branch
           if [ -n "${hidden_submodule}"]; then
             git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/_modules/g" deploy/modules/${source_module}/main.tf; mkdir -p deploy/modules/${source_module}/_modules; mv deploy/modules/${hidden_submodule} deploy/modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
