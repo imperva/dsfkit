@@ -91,11 +91,11 @@ module "agentless_gw_group" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_address}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
     use_public_ip         = false
   }
   ingress_communication_via_proxy = {
-    proxy_address         = module.hub.public_address
+    proxy_address         = module.hub.public_ips
     proxy_private_ssh_key = try(file(module.key_pair.key_pair_private_pem.filename), "")
     proxy_ssh_user        = module.hub.ssh_user
   }
@@ -108,12 +108,12 @@ module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
   source   = "github.com/imperva/dsfkit//modules/null/federation"
   gws_info = {
-    gw_ip_address           = each.value.private_address
+    gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     gw_ssh_user             = each.value.ssh_user
   }
   hub_info = {
-    hub_ip_address           = module.hub.public_address
+    hub_ip_address           = module.hub.public_ips
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = module.hub.ssh_user
   }
@@ -135,7 +135,7 @@ module "db_onboarding" {
   source        = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
   sonar_version = module.globals.tarball_location.version
   hub_info = {
-    hub_ip_address           = module.hub.public_address
+    hub_ip_address           = module.hub.public_ips
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = module.hub.ssh_user
   }
