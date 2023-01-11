@@ -26,9 +26,9 @@ jobs:
           - source_module: "hub"
             destination_repo: "terraform-aws-dsf-hub"
             hidden_submodule: "sonar-base-instance"
-          - source_module: "agentless-gw"
-            destination_repo: "terraform-aws-dsf-agentless-gw"
-            hidden_submodule: "sonar-base-instance"
+          # - source_module: "agentless-gw"
+          #   destination_repo: "terraform-aws-dsf-agentless-gw"
+          #   hidden_submodule: "sonar-base-instance"
 
     env:
       source_module_name: ${{ matrix.source_module }}
