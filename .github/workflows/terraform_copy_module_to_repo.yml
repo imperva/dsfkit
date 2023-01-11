@@ -46,5 +46,5 @@ jobs:
       - name: Push
         run: |
           git remote set-url origin git@github.com:imperva/terraform-aws-dsf_hub.git
-          git branch -m master main
+          git branch -m workflow-to-create-hub-dedicate-repo main
           git push -f origin HEAD:main
