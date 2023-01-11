@@ -7,11 +7,11 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  value = module.hub_instance.public_dns
+  value = module.gw_instance.public_dns
 }
 
 output "private_dns" {
-  value = module.hub_instance.private_dns
+  value = module.gw_instance.private_dns
 }
 
 output "iam_role" {

@@ -95,7 +95,7 @@ module "agentless_gw_group" {
     use_public_ip         = false
   }
   ingress_communication_via_proxy = {
-    proxy_address         = module.hub.public_ips
+    proxy_address         = module.hub.public_ip
     proxy_private_ssh_key = try(file(module.key_pair.key_pair_private_pem.filename), "")
     proxy_ssh_user        = module.hub.ssh_user
   }
@@ -113,7 +113,7 @@ module "federation" {
     gw_ssh_user             = each.value.ssh_user
   }
   hub_info = {
-    hub_ip_address           = module.hub.public_ips
+    hub_ip_address           = module.hub.public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = module.hub.ssh_user
   }
@@ -135,7 +135,7 @@ module "db_onboarding" {
   source        = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
   sonar_version = module.globals.tarball_location.version
   hub_info = {
-    hub_ip_address           = module.hub.public_ips
+    hub_ip_address           = module.hub.public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = module.hub.ssh_user
   }
