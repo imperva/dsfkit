@@ -1,4 +1,4 @@
-name: 'Copy module to new repo'
+name: 'Export module'
 
 on:
   workflow_dispatch: {}
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   copy_module_to_new_repo:
-    name: 'Copy module to new repo'
+    name: 'Export module'
     runs-on: ubuntu-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -33,6 +33,8 @@ jobs:
             destination_repo: "terraform-null-dsf-hadr"
           - source_module: "federation"
             destination_repo: "terraform-null-dsf-federation"
+          - source_module: "db-onboarder"
+            destination_repo: "terraform-aws-poc-db-onboarder"
 
     env:
       source_module: ${{ matrix.source_module }}
