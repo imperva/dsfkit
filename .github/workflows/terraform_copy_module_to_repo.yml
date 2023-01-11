@@ -1,0 +1,45 @@
+name: 'Copy module to new repo'
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - 'workflow-to-create-hub-dedicate-repo'
+
+env:
+  TF_WARN_OUTPUT_ERRORS: 1
+
+permissions:
+  contents: write
+  repository-projects: write
+
+jobs:
+  copy_module_to_new_repo:
+    name: 'Copy module to new repo'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        include:
+          - module: "hub"
+            destination_repo: "git@github.com:imperva/terraform-aws-dsf_hub.git"
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Filter branch
+        run: |
+          git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/hub/main.tf; mkdir -p deploy/modules/hub/modules; mv deploy/modules/sonar-base-instance deploy/modules/hub/modules/; true;' HEAD
+          git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/hub/ HEAD
+
+      - name: Push
+        run: |
+          git remote set-url origin {{ destination_repo }}
+          git branch -m master main
+          git push -f origin HEAD:main
