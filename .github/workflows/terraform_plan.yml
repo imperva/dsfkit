@@ -32,6 +32,7 @@ jobs:
 
     strategy:
       matrix:
+        fail-fast: false
         example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment']
 
     steps:
