@@ -32,6 +32,8 @@ jobs:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
 
       - name: Filter branch
         run: |
@@ -43,6 +45,6 @@ jobs:
 
       - name: Push
         run: |
-          git remote set-url origin {{ destination_repo }}
+          git remote set-url origin git@github.com:imperva/terraform-aws-dsf_hub.git
           git branch -m master main
           git push -f origin HEAD:main
