@@ -154,7 +154,7 @@ NOTE: Note: It may take several hours for access to be granted to AWS and Terraf
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
-**File**: deploy/examples/se_demo/variables.tf
+**File**: deploy/examples/poc/basic_deployment/variables.tf
 ```bash
  variable "sonar_version" {
     type    = string
@@ -210,7 +210,7 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
 
-    * Enter “deploy/examples/se_demo” into the Terraform working directory input field. To understand what the se_demo example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/se_demo](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
+    * Enter “deploy/examples/poc/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
     
     * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
@@ -323,9 +323,9 @@ NOTE: Update the values for the required parameters to complete the installation
     ```
 
 
-    DSFKit arrives with a built-in example “se_demo” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “se_demo” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
+    DSFKit arrives with a built-in example “basic_deployment” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “basic_deployment” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
     ```bash
-    cd dsfkit/deploy/examples/se_demo
+    cd dsfkit/deploy/examples/poc/basic_deployment
     ```
 
 3. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
@@ -377,7 +377,7 @@ Complete these steps to manually create an installer machine:
 4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 5. Update the following parameter values in the bash script: 
-    1. example_name (i.e se_demo)
+    1. example_name (e.g., basic_deployment)
     2. aws_access_key_id
     3. aws_secret_access_key
     4. region
@@ -398,7 +398,7 @@ NOTES:
 
 7. When installation is done extract the web console password and DSF URL using:
     1. ```bash
-        cd /dsfkit/deploy/examples/<example-name>
+        cd /dsfkit/deploy/examples/<example_name>
         ```
     2. ```bash
         terraform output "dsf_hub_web_console"
@@ -447,7 +447,7 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
 9. ```bash
-    cd /dsfkit/deploy/examples/<example-name>
+    cd /dsfkit/deploy/examples/<example_name>
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
@@ -463,7 +463,7 @@ NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
 
 DSFKit ships 2 built-in examples/recipes which are already configured to deploy a basic Sonar environment:
 
-1. “se_demo” recipe, consist of:
+1. “basic_deployment” recipe, consist of:
     1. New VPC
     2. 1 Hub
     3. 1 GW
@@ -472,13 +472,13 @@ DSFKit ships 2 built-in examples/recipes which are already configured to deploy 
     6. Auto configuration of new “Demo DB” to enable native audit
     7. Onboarding database into Sonar
 
-2. “se_demo_hadr” recipe, consist of:
+2. “hadr_deployment” recipe, consist of:
     1. New VPC
     2. 1 Primary Hub
     3. 1 Secondary Hub
     4. 1 GW
     5. Federation
-    6. HADR
+    6. Hub HADR
 
 It is also possible to accommodate varying system requirements and deployments.  To customize the demo, please complete the following steps:
 
@@ -529,7 +529,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. cd into the installed “example”:
     ```bash
-    cd deploy/examples/se_demo
+    cd deploy/examples/<example_name>
     ```
 2. Run: 
     ```bash
@@ -542,7 +542,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. ssh into the “Installer Machine”.
 2. cd into the installed “example”: ```bash
-    cd /dsfkit/deploy/examples/<example-name>
+    cd /dsfkit/deploy/examples/<example_name>
     ```
 3. Run:
     ```bash

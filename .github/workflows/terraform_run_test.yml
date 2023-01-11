@@ -11,7 +11,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 1
-  EXAMPLE_DIR: ./deploy/examples/se_demo
+  EXAMPLE_DIR: ./deploy/examples/poc/basic_deployment
   TF_WORKSPACE: run_test
   AWS_REGION: ap-southeast-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -22,8 +22,24 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+
+    strategy:
+      matrix:
+        workspace: [simple_cli]
+        include:
+          - workspace: simple_cli
+            example_dir: ./deploy/examples/poc/basic_deployment
+            aws_region: eu-west-2
+          - workspace: hadr_cli
+            example_dir: ./deploy/examples/poc/hadr_deployment
+            aws_region: eu-west-1
+
+    name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
+    env:
+      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
+      AWS_REGION: ${{ matrix.aws_region }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -37,24 +53,24 @@ jobs:
 
     - name: Change the modules source to local
       run: | 
-        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' {} \;
+        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
         ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
 
     # Send job failure to Slack
-    - name: Send Slack by action-slack
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        fields: message,author,action,eventName,ref,workflow,job,pullRequest
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-      if: ${{ failure() }} 
+    # - name: Send Slack by action-slack
+    #   uses: 8398a7/action-slack@v3
+    #   with:
+    #     status: ${{ job.status }}
+    #     fields: message,author,action,eventName,ref,workflow,job,pullRequest
+    #   env:
+    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
+    #   if: ${{ failure() }} 
 
-    - name: Slack Notification - Slack Notify
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-      if: ${{ failure() }}
+    # - name: Slack Notification - Slack Notify
+    #   uses: rtCamp/action-slack-notify@v2
+    #   env:
+    #     SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
+    #   if: ${{ failure() }}
 
     # - name: Send GitHub Action trigger data to Slack workflow
     #   id: slack
@@ -89,15 +105,15 @@ jobs:
 
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    # - name: Setup Terraform
-    #   uses: hashicorp/setup-terraform@v1
-    #   with:
-    #     terraform_wrapper: false
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: false
 
-    # - name: Setup jq
-    #   uses: sergeysova/jq-action@v2
-    #   with:
-    #     cmd: jq -n env
+    - name: Setup jq
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     # - name: Terraform Init
