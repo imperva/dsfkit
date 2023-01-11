@@ -2,9 +2,11 @@ name: 'Export module'
 
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - 'workflow-to-create-hub-dedicate-repo'
+  release:
+    types: [published]
+  # push:
+  #   branches:
+  #     - 'workflow-to-create-hub-dedicate-repo'
 
 permissions:
   contents: write
