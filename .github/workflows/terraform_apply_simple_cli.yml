@@ -32,8 +32,8 @@ jobs:
   terraform:
 
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         workspace: [simple_cli]
         include:
           - workspace: simple_cli
