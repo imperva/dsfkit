@@ -29,6 +29,10 @@ jobs:
           - source_module: "agentless-gw"
             destination_repo: "terraform-aws-dsf-agentless-gw"
             hidden_submodule: "sonar-base-instance"
+          - source_module: "hadr"
+            destination_repo: "terraform-null-dsf-hadr"
+          - source_module: "federation"
+            destination_repo: "terraform-null-dsf-federation"
 
     env:
       source_module: ${{ matrix.source_module }}
