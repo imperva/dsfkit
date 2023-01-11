@@ -44,7 +44,7 @@ jobs:
           pwd
           ls -la
           git branch
-          if [ -n "${hidden_submodule}"];
+          if [ -n "${hidden_submodule}"]; then
             git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/${source_module}/main.tf; mkdir -p deploy/modules/${source_module}/_modules; mv deploy/modules/${hidden_submodule} deploy/modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
           fi
           git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/${source_module}/ --tag-name-filter cat -- --all HEAD
