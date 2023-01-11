@@ -111,6 +111,7 @@ jobs:
         REPO_KEY_ID: ${{ secrets.REPO_KEY_ID }}
         AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
       run: | 
+        echo $dsf_ssh_key
         curl \
           -X PUT \
           -H "Accept: application/vnd.github+json" \
