@@ -16,7 +16,7 @@ unzip awscliv2.zip
 export PATH=$PATH:/usr/local/bin
 
 git clone https://github.com/imperva/dsfkit.git
-cd /dsfkit/deploy/examples/${example_name}
+cd /dsfkit/examples/${example_name}
 
 export AWS_ACCESS_KEY_ID=${access_key}
 export AWS_SECRET_ACCESS_KEY=${secret_key}
