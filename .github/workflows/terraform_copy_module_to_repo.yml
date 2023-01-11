@@ -31,7 +31,7 @@ jobs:
             hidden_submodule: "sonar-base-instance"
 
     env:
-      source_module_name: ${{ matrix.source_module }}
+      source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
       hidden_submodule: ${{ matrix.hidden_submodule }}
 
