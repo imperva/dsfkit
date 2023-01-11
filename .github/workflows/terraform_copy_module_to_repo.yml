@@ -39,6 +39,9 @@ jobs:
       destination_repo: ${{ matrix.destination_repo }}
       hidden_submodule: ${{ matrix.hidden_submodule }}
 
+    outputs:
+      module_github_repo: ${{ format('https://github.com/imperva/{0}', matrix.destination_repo) }}
+    
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
