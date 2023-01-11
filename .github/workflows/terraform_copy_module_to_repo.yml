@@ -40,8 +40,8 @@ jobs:
           pwd
           ls -la
           git branch
-          git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/hub/main.tf; mkdir -p deploy/modules/hub/_modules; mv deploy/modules/sonar-base-instance deploy/modules/hub/_modules/; true;' HEAD
-          git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/hub/ HEAD
+          git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/modules/.\/modules/g" deploy/modules/hub/main.tf; mkdir -p deploy/modules/hub/_modules; mv deploy/modules/sonar-base-instance deploy/modules/hub/_modules/; true;' --tag-name-filter cat -- --all HEAD
+          git filter-branch -f --prune-empty --subdirectory-filter deploy/modules/hub/ --tag-name-filter cat -- --all HEAD
 
       - name: Push to module repo
         env:
@@ -50,5 +50,5 @@ jobs:
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
           git remote set-url origin https://${github_token}@github.com/imperva/terraform-aws-dsf_hub.git
           git branch -m workflow-to-create-hub-dedicate-repo main
-          git push -f origin HEAD:main
+          git push -f origin HEAD:main --tags
 
