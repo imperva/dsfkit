@@ -77,6 +77,6 @@ jobs:
           find . | grep -v ".git/"
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
           git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
-          git branch -m workflow-to-create-hub-dedicate-repo main
+          git branch -m add-stats-and-globals-modules main
           git push -f origin HEAD:main --tags
 
