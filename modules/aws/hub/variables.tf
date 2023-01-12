@@ -63,24 +63,15 @@ variable "hadr_secondary_node" {
   description = "Is this node a hadr secondary one"
 }
 
-variable "hadr_main_hub_sonarw_secret" {
-  type = object({
-    name = string
-    arn  = string
-  })
-  default     = null
-  description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
-}
-
-variable "hadr_main_hub_region" {
-  type        = string
-  description = "Region for primary hub. This var must be defined for hadr seconday node"
-  default     = null
-}
-
 variable "hadr_main_hub_federation_public_key" {
   type        = string
   description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
+  default     = null
+}
+
+variable "hadr_main_hub_federation_private_key" {
+  type        = string
+  description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
   default     = null
 }
 
