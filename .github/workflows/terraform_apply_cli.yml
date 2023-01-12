@@ -19,8 +19,6 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
-  EXAMPLE_DIR: ./examples/poc/basic_deployment
-  TF_WORKSPACE: simple_cli
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -30,11 +28,9 @@ permissions:
 
 jobs:
   terraform:
-
     strategy:
       fail-fast: false
       matrix:
-        workspace: [simple_cli]
         include:
           - workspace: simple_cli
             example_dir: ./examples/poc/basic_deployment
