@@ -23,14 +23,11 @@ output "iam_role" {
 }
 
 output "federation_public_key" {
-  value = !var.hadr_secondary_node ? local.dsf_hub_ssh_federation_key : null
+  value = local.dsf_hub_ssh_public_federation_key
 }
 
-output "sonarw_secret" {
-  value = {
-    name = local.secret_aws_name
-    arn  = local.secret_aws_arn
-  }
+output "federation_private_key" {
+  value = local.dsf_hub_ssh_private_federation_key
 }
 
 output "jsonar_uid" {

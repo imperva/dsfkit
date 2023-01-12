@@ -21,8 +21,7 @@ module "hub_instance" {
   web_console_admin_password          = var.web_console_admin_password
   ssh_key_path                        = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                   = var.binaries_location
-  hub_federation_public_key           = local.dsf_hub_ssh_federation_key
+  hub_federation_public_key           = local.dsf_hub_ssh_public_federation_key
   sonarw_secret_name                  = local.secret_aws_name
-  sonarw_secret_region                = var.hadr_main_hub_region
   skip_instance_health_verification   = var.skip_instance_health_verification
 }
