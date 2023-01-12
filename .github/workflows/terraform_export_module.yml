@@ -6,7 +6,7 @@ on:
     types: [published]
   push:
     branches:
-      - 'add-stats-and-globals-modules'
+      - '*'
 
 permissions:
   contents: write
