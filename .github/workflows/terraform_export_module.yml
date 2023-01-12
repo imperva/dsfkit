@@ -47,6 +47,7 @@ jobs:
       source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
       hidden_submodule: ${{ matrix.hidden_submodule }}
+      public_submodule: ${{ matrix.public_submodule }}
 
     outputs:
       module_github_repo: ${{ format('https://github.com/imperva/{0}', matrix.destination_repo) }}
