@@ -141,9 +141,9 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
 
     - name: Terraform Delete Workspace
-      run: | 
-        terraform workspace select default
-        terraform workspace delete $TF_WORKSPACE
+      run: terraform -chdir=$EXAMPLE_DIR workspace delete $TF_WORKSPACE
+      env:
+        TF_WORKSPACE: default
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
