@@ -89,13 +89,13 @@ jobs:
       with:
         cmd: jq -n env
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
-
     - name: Terraform Create Workspace
       run: | 
         Terraform workspace new $TF_WORKSPACE
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
