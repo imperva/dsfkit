@@ -1,0 +1,84 @@
+name: 'Export module'
+
+on:
+  workflow_dispatch: {}
+  release:
+    types: [published]
+  # push:
+  #   branches:
+  #     - '*'
+
+permissions:
+  contents: write
+  repository-projects: write
+
+jobs:
+  copy_module_to_new_repo:
+    name: 'Export module'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        include:
+          - source_module: "aws/hub"
+            destination_repo: "terraform-aws-dsf-hub"
+            hidden_submodule: "aws/sonar-base-instance"
+          - source_module: "aws/agentless-gw"
+            destination_repo: "terraform-aws-dsf-agentless-gw"
+            hidden_submodule: "aws/sonar-base-instance"
+          - source_module: "null/hadr"
+            destination_repo: "terraform-null-dsf-hadr"
+          - source_module: "null/federation"
+            destination_repo: "terraform-null-dsf-federation"
+          - source_module: "aws/poc-db-onboarder"
+            destination_repo: "terraform-aws-dsf-poc-db-onboarder"
+            public_submodule: "aws/rds-mysql-db"
+          - source_module: "aws/statistics"
+            destination_repo: "terraform-aws-dsf-statistics"
+          - source_module: "aws/core/globals"
+            destination_repo: "terraform-aws-dsf-globals"
+            public_submodule: "aws/core/key_pair"
+
+    env:
+      source_module: ${{ matrix.source_module }}
+      destination_repo: ${{ matrix.destination_repo }}
+      hidden_submodule: ${{ matrix.hidden_submodule }}
+      public_submodule: ${{ matrix.public_submodule }}
+
+    outputs:
+      module_github_repo: ${{ format('https://github.com/imperva/{0}', matrix.destination_repo) }}
+    
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+
+      - name: Filter branch
+        run: |
+          set -x
+          git branch
+          if [ -n "${hidden_submodule}" ]; then
+            git filter-branch --prune-empty --tree-filter 'sed -i "s/..\/..\/..\/modules/.\/_modules/g" modules/${source_module}/main.tf; mkdir -p modules/${source_module}/_modules; mv modules/${hidden_submodule} modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
+          fi
+          if [ -n "${public_submodule}" ]; then
+            git filter-branch --prune-empty --tree-filter 'mkdir -p modules/${source_module}/modules; mv modules/${public_submodule} modules/${source_module}/modules/; true;' --tag-name-filter cat -- --all HEAD
+          fi
+          git filter-branch -f --prune-empty --subdirectory-filter modules/${source_module}/ --tag-name-filter cat -- --all HEAD
+
+      - name: Push to module repo
+        env:
+          github_token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+        run: |
+          find . | grep -v ".git/"
+          git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
+          git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
+          git branch -m main
+          git push -f origin HEAD:main --tags
+

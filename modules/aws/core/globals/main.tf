@@ -1,11 +1,11 @@
 locals {
   tarball_s3_key_map = {
     "4.10" = "jsonar-4.10.0.0.0.tar.gz"
-    "4.9" = "jsonar-4.9.c_20221129220420.tar.gz"
+    "4.9"  = "jsonar-4.9.c_20221129220420.tar.gz"
   }
   supported_versions = keys(local.tarball_s3_key_map)
-  s3_object = var.tarball_s3_key != null ? var.tarball_s3_key : local.tarball_s3_key_map[var.sonar_version]
-  s3_object_version = regex("\\d\\.\\d*", local.s3_object)
+  s3_object          = var.tarball_s3_key != null ? var.tarball_s3_key : local.tarball_s3_key_map[var.sonar_version]
+  s3_object_version  = regex("\\d\\.\\d*", local.s3_object)
 }
 
 resource "random_id" "salt" {

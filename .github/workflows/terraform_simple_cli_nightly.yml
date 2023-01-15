@@ -1,18 +1,9 @@
-name: 'Terraform Apply Cli'
+name: 'Cli (simple) Nightly Dev'
 
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
+  schedule:
+    - cron: '0 2 * * *'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -30,26 +21,13 @@ permissions:
 
 jobs:
   terraform:
-
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: test
     strategy:
       matrix:
-        workspace: [simple_cli]
-        include:
-          - workspace: simple_cli
-            example_dir: ./examples/poc/basic_deployment
-            aws_region: eu-west-2
-          - workspace: hadr_cli
-            example_dir: ./examples/poc/hadr_deployment
-            aws_region: eu-west-1
-
-    name: 'Terraform ${{ matrix.workspace }}'
-    runs-on: ubuntu-latest
-    env:
-      EXAMPLE_DIR: ${{ matrix.example_dir }}
-      TF_WORKSPACE: ${{ matrix.workspace }}
-      AWS_REGION: ${{ matrix.aws_region }}
-    environment: test
-
+        branch: [ "dev", "master"]
+  
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
@@ -58,6 +36,8 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        ref: ${{ matrix.branch }}
 
     - name: Change the modules source to local
       run: | 
@@ -102,13 +82,13 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
 
     - name: Cleaning envrionment
       run: |
         mv $EXAMPLE_DIR/main.tf{,_}
         mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
         mv $EXAMPLE_DIR/main.tf{_,}
         mv $EXAMPLE_DIR/outputs.tf{_,}
 
@@ -116,15 +96,15 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
 
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_address') >> $GITHUB_ENV
-        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary_hub.public_dns') >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
@@ -142,8 +122,8 @@ jobs:
         script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     - name: Terraform Destroy
-      if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+      # if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
 
     # Send job failure to Slack
     - name: Send Slack by action-slack

@@ -41,8 +41,10 @@ Please refer to [variables.tf](variables.tf) for additional variables with defau
 
 The following [outputs](outputs.tf) are exported:
 
-* `public_address`: public address
-* `private_address`: private address
+* `public_ip`: public address
+* `private_ip`: private address
+* `public_dns`: public dns
+* `private_dns`: private dns
 * `display_name`: Display name of the instance under DSF portal
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
