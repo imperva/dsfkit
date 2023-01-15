@@ -1,20 +1,24 @@
-name: 'Terraform Apply'
+name: 'Terraform Apply (hadr)'
 
 on:
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch: {}
   push:
     branches:
       - 'master'
+  #     - 'dev'
   pull_request:
     types:
       - 'opened'
       - 'reopened'
     branches:
       - 'master'
+      # - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
-  TF_WORKSPACE: dsfkit-ci-cd
+  TF_WORKSPACE: dsfkit-ci-cd-hadr
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
 
@@ -23,19 +27,8 @@ permissions:
 
 jobs:
   terraform:
-    strategy:
-      fail-fast: false
-      # max-parallel: 1 # TF cloud allows only a single connection at a time
-      matrix:
-        workspace: [dsfkit-ci-cd]
-        include:
-          - workspace: dsfkit-ci-cd
-          - workspace: dsfkit-ci-cd-hadr
-
-    name: 'Terraform ${{ matrix.workspace }}'
+    name: 'Terraform'
     runs-on: ubuntu-latest
-    env:
-      TF_WORKSPACE: ${{ matrix.workspace }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest

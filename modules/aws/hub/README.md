@@ -63,11 +63,11 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "github.com/imperva/dsfkit//modules/aws/core/globals"
+  source = "imperva/dsf-globals/aws"
 }
 
 module "dsf_hub" {
-  source                        = "github.com/imperva/dsfkit//modules/aws/hub"
+  source                        = "imperva/dsf-hub/aws"
   subnet_id                     = "${aws_subnet.example.id}"
 
   ssh_key_pair = {
@@ -96,7 +96,7 @@ If you want to use a specific version of the module, you can specify the version
 
 ```
 module "dsf_hub" {
-  source = "github.com/imperva/dsfkit//modules/aws/hub?ref=1.3.0"
+  source = "imperva/dsf-hub/aws?ref=1.3.0"
 }
 ```
 
