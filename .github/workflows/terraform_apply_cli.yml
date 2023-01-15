@@ -121,6 +121,7 @@ jobs:
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
         echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
+        echo current_ws=$TF_WORKSPACE >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity
@@ -141,7 +142,7 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
 
     - name: Terraform Delete Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace delete $TF_WORKSPACE
+      run: terraform -chdir=$EXAMPLE_DIR workspace delete $current_ws
       env:
         TF_WORKSPACE: default
 
