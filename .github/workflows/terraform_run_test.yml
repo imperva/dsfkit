@@ -26,10 +26,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - workspace: simple_cli-${{ github.job }}-${{ github.run_id }}-${{ github.run_attempt }}
+          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_id }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-          - workspace: hadr_cli-${{ github.job }}-${{ github.run_id }}-${{ github.run_attempt }}
+          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_id }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
 
