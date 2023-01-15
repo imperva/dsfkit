@@ -59,6 +59,8 @@ jobs:
       if: always()
       run: | 
         echo new_var=segev1 >> $GITHUB_ENV
+      env: 
+        TF_WORKSPACE: test
 
     - name: Validate Environment Variables
       if: always()
