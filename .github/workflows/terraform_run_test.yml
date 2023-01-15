@@ -60,7 +60,7 @@ jobs:
       run: | 
         echo new_var=segev1 >> $GITHUB_ENV
         echo $current_ws
-        echo {{ env.current_ws }}
+        echo ${{ env.current_ws }}
       env: 
         TF_WORKSPACE: test
 
