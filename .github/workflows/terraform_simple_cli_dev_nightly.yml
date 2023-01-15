@@ -102,23 +102,35 @@ jobs:
       run: |
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary_hub.public_address') >> $GITHUB_ENV
         echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_path=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
         echo dsf_ssh_key=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key.value.content') >> $GITHUB_ENV
 
-    - name: Add secret key
-      env: 
-        ENV_PUB_KEY: ${{ secrets.ENV_PUB_KEY }}
-        REPO_KEY_ID: ${{ secrets.REPO_KEY_ID }}
-        AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
-      run: | 
-        echo $dsf_ssh_key
-        curl \
-          -X PUT \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer $AUTOMATION_TOKEN" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repositories/$REPO_KEY_ID/environments/test/secrets/TEMP_KEY_PAIR \
-          -d '{"encrypted_value":"$dsf_ssh_key","key_id":"$ENV_PUB_KEY"}'
+    - name: Cache secret key
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.dsf_ssh_key_file_path }}
+        key: ${{ runner.os }}-${{ env.dsf_ssh_key_file_name }}
+
+    # - name: Save key
+      # run: $dsf_ssh_key_file_path -d ${{ runner.os }}-${{ env.dsf_ssh_key_file_name }}
+
+    - name: Use key
+      run: cat /dsf_ssh_key-simple_cli_nightly
+
+    # - name: Add secret key
+    #   env: 
+    #     ENV_PUB_KEY: ${{ secrets.ENV_PUB_KEY }}
+    #     REPO_KEY_ID: ${{ secrets.REPO_KEY_ID }}
+    #     AUTOMATION_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+    #   run: | 
+    #     curl \
+    #       -X PUT \
+    #       -H "Accept: application/vnd.github+json" \
+    #       -H "Authorization: Bearer $AUTOMATION_TOKEN" \
+    #       -H "X-GitHub-Api-Version: 2022-11-28" \
+    #       https://api.github.com/repositories/$REPO_KEY_ID/environments/test/secrets/TEMP_KEY_PAIR \
+    #       -d '{"encrypted_value":"$dsf_ssh_key","key_id":"$ENV_PUB_KEY"}'
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity
@@ -126,11 +138,11 @@ jobs:
       with:
         proxy_host: ${{ env.hub_ip }}
         proxy_username: ec2-user
-        proxy_key: ${{ secrets.TEMP_KEY_PAIR }}
+        proxy_key_path: ${{ secrets.TEMP_KEY_PAIR }}
         proxy_port: 22
         host: ${{ env.gw_ip }}
         username: ec2-user
-        key: ${{ secrets.TEMP_KEY_PAIR }}
+        key_path: ${{ secrets.TEMP_KEY_PAIR }}
         port: 22
         script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
