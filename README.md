@@ -154,7 +154,7 @@ NOTE: Note: It may take several hours for access to be granted to AWS and Terraf
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
-**File**: deploy/examples/poc/basic_deployment/variables.tf
+**File**: examples/poc/basic_deployment/variables.tf
 ```bash
  variable "sonar_version" {
     type    = string
@@ -210,7 +210,7 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
 
-    * Enter “deploy/examples/poc/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
+    * Enter “examples/poc/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
     
     * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
@@ -319,13 +319,13 @@ NOTE: Update the values for the required parameters to complete the installation
 
 2. Navigate to the directory "examples":
     ```bash
-    cd dsfkit/deploy/examples/${example_name}
+    cd dsfkit/examples/${example_name}
     ```
 
 
     DSFKit arrives with a built-in example “basic_deployment” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “basic_deployment” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
     ```bash
-    cd dsfkit/deploy/examples/poc/basic_deployment
+    cd dsfkit/examples/poc/basic_deployment
     ```
 
 3. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
@@ -374,7 +374,7 @@ Complete these steps to manually create an installer machine:
 
 3. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
-4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/deploy/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 5. Update the following parameter values in the bash script: 
     1. example_name (e.g., basic_deployment)
@@ -398,7 +398,7 @@ NOTES:
 
 7. When installation is done extract the web console password and DSF URL using:
     1. ```bash
-        cd /dsfkit/deploy/examples/<example_name>
+        cd /dsfkit/examples/<example_name>
         ```
     2. ```bash
         terraform output "dsf_hub_web_console"
@@ -416,7 +416,7 @@ To use the Terraform installer example follow the following step:
     git -C dsfkit checkout tags/${version}
     ```
 2. ```bash
-    cd dsfkit/deploy/installer_machine
+    cd dsfkit/installer_machine
     ```
 3. ```bash
     terraform init
@@ -447,7 +447,7 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
 9. ```bash
-    cd /dsfkit/deploy/examples/<example_name>
+    cd /dsfkit/examples/<example_name>
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
@@ -487,7 +487,7 @@ It is also possible to accommodate varying system requirements and deployments. 
 2. In the Git account assemble a new Terraform recipe that meets the necessary requirements. 
 
     ```bash
-    cd deploy/examples/<YOUR CUSTOM EXAMPLE>
+    cd examples/<YOUR CUSTOM EXAMPLE>
     terraform init
     terraform appy -auto-approve
     ```
@@ -497,9 +497,9 @@ It is also possible to accommodate varying system requirements and deployments. 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User with the required permissions in order to run DSFKit Terraform.
 The permissions are separated to 3 different policies. Use the relevant policies according to your needs:
 
-1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/deploy/permissions_samples/GeneralRequiredPermissions.txt).
-2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/deploy/permissions_samples/CreateNetworkResourcesPermissions.txt).
-3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/deploy/permissions_samples/OnboardMysqlRdsPermissions.txt).
+1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/permissions_samples/CreateNetworkResourcesPermissions.txt).
+3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
 
 ```
 NOTE: The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
@@ -529,7 +529,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. cd into the installed “example”:
     ```bash
-    cd deploy/examples/<example_name>
+    cd examples/<example_name>
     ```
 2. Run: 
     ```bash
@@ -542,7 +542,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 1. ssh into the “Installer Machine”.
 2. cd into the installed “example”: ```bash
-    cd /dsfkit/deploy/examples/<example_name>
+    cd /dsfkit/examples/<example_name>
     ```
 3. Run:
     ```bash
@@ -559,7 +559,7 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 #### Automated Installer Machine
 
 1. Exit from the “Installer Machine”.
-2. On the local machine, cd into deploy/installer_machine/.
+2. On the local machine, cd into installer_machine/.
 3. ```bash
     terraform destroy -auto-approve
     ```

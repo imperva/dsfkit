@@ -1,0 +1,105 @@
+# DSF agentless gateway
+[![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
+
+This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instance.
+
+## Sonar versions
+  - 4.10 (recommended)
+  - 4.9
+
+## Requirements
+* Terraform v1.3.1
+* An AWS account
+* SSH access - key and network path to the instance
+* Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
+
+## Resources Provisioned
+This Terraform module provisions several resources on AWS to create the DSF agentless gateway. These resources include:
+* An EC2 instance for running the DSF agentless gateway software
+* An EBS volume for storage
+* A security group to allow the required network access to and from the DSF agentless gateway instance
+* An IAM role with relevant policies
+* An AWS Elastic Network Interface (ENI)
+
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF agentless gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
+
+## Inputs
+
+The following input variables are **required**:
+
+* `subnet_id`: The ID of the subnet in which to launch the DSF agentless gateway instance
+* `ssh_key_pair`: AWS key pair name and path for ssh connectivity
+* `web_console_admin_password`: Admin password
+* `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
+* `ebs`: AWS EBS details
+* `binaries_location`: S3 DSF installation location
+* `hub_federation_public_key`: Federation public key (sonarw public ssh key). Should be taken from [hub](../hub)'s outputs
+
+Please refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+
+## Outputs
+
+The following [outputs](outputs.tf) are exported:
+
+* `public_ip`: public address
+* `private_ip`: private address
+* `public_dns`: public dns
+* `private_dns`: private dns
+* `display_name`: Display name of the instance under DSF portal
+* `jsonar_uid`: Id of the instance in DSF portal
+* `iam_role`: AWS IAM arn
+* `ssh_user`: SSH user for the instance
+
+## Usage
+
+To use this module, add the following to your Terraform configuration:
+
+```
+provider "aws" {
+}
+
+module "globals" {
+  source = "github.com/imperva/dsfkit//modules/aws/core/globals"
+}
+
+module "dsf_gw" {
+  source                        = "github.com/imperva/dsfkit//modules/aws/agentless-gw"
+  subnet_id                     = "${aws_subnet.example.id}"
+
+  ssh_key_pair = {
+    ssh_private_key_file_path   = "${var.ssh_key_path}"
+    ssh_public_key_name         = "${var.ssh_name}"
+  }
+
+  ingress_communication = {
+    additional_web_console_access_cidr_list = ["${var.web_console_cidr}"] # ["0.0.0.0/0"]
+    full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
+    use_public_ip                           = true
+  }
+
+  web_console_admin_password    = random_password.pass.result
+  ebs                           = {
+    disk_size        = 1000
+    provisioned_iops = 0
+    throughput       = 125
+  }
+  binaries_location             = module.globals.tarball_location
+  hub_federation_public_key     = module.hub.federation_public_key
+}
+```
+
+To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
+If you want to use a specific version of the module, you can specify the version by adding the ref parameter to the source URL. For example:
+
+```
+module "dsf_gw" {
+  source = "github.com/imperva/dsfkit//modules/aws/agentless-gw?ref=1.3.0"
+}
+```
+
+## SSH Access
+SSH access is required to provision this module. To SSH into the DSF agentless gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF agentless gateway instance is not possible, you can use a bastion host as a proxy.
+
+## Additional Information
+
+For more information about the DSF agentless gateway and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). For additional information about DSF deployment using terraform, please refer to the main repo readme [here](https://github.com/imperva/dsfkit).

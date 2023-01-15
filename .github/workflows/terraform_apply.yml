@@ -1,13 +1,11 @@
 name: 'Terraform Apply'
 
 on:
-  schedule:
-    - cron: '0 23 * * *'
   workflow_dispatch: {}
   push:
     branches:
       - 'master'
-      - 'dev'
+      # - 'dev'
   pull_request:
     types:
       - 'opened'
@@ -53,8 +51,8 @@ jobs:
 
     - name: Change the modules source to local
       run: | 
-        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
-        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
+        find . -type f -exec sed -i -e 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' -e 's/?ref=.*/"/' {} \;
+        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//modules'
 
     - name: Sets env vars for environment
       run: |
