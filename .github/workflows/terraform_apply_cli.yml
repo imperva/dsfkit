@@ -93,20 +93,16 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
+    - name: Terraform Create Workspace
+      run: | 
+        Terraform workspace new $TF_WORKSPACE
+        
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
-
-    - name: Cleaning envrionment
-      run: |
-        mv $EXAMPLE_DIR/main.tf{,_}
-        mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
-        mv $EXAMPLE_DIR/main.tf{_,}
-        mv $EXAMPLE_DIR/outputs.tf{_,}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
@@ -140,6 +136,11 @@ jobs:
     - name: Terraform Destroy
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+
+    - name: Terraform Delete Workspace
+      run: | 
+        terraform workspace select default
+        terraform workspace delete 
 
     # Send job failure to Slack
     - name: Send Slack by action-slack

@@ -25,7 +25,7 @@ jobs:
   terraform:
     strategy:
       fail-fast: false
-      max-parallel: 1 # TF cloud allows only a single connection at a time
+      # max-parallel: 1 # TF cloud allows only a single connection at a time
       matrix:
         workspace: [dsfkit-ci-cd]
         include:
