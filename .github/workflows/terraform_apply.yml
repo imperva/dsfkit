@@ -5,14 +5,12 @@ on:
   push:
     branches:
       - 'master'
-      # - 'dev'
   pull_request:
     types:
       - 'opened'
       - 'reopened'
     branches:
       - 'master'
-      - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -26,6 +24,7 @@ permissions:
 jobs:
   terraform:
     strategy:
+      fail-fast: false
       max-parallel: 1 # TF cloud allows only a single connection at a time
       matrix:
         workspace: [dsfkit-ci-cd]
