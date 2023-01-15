@@ -31,10 +31,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - workspace: simple_cli
+          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-          - workspace: hadr_cli
+          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
 
@@ -140,7 +140,7 @@ jobs:
     - name: Terraform Delete Workspace
       run: | 
         terraform workspace select default
-        terraform workspace delete 
+        terraform workspace delete $TF_WORKSPACE
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
