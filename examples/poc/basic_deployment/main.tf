@@ -5,11 +5,11 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "github.com/imperva/dsfkit//modules/aws/core/globals"
+  source = "imperva/dsf-globals/aws"
 }
 
 module "key_pair" {
-  source                   = "github.com/imperva/dsfkit//modules/aws/core/key_pair"
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -55,7 +55,7 @@ module "vpc" {
 ##############################
 
 module "hub" {
-  source                              = "github.com/imperva/dsfkit//modules/aws/hub"
+  source                              = "imperva/dsf-hub/aws"
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = module.vpc.public_subnets[0]
   binaries_location                   = local.tarball_location
@@ -78,7 +78,7 @@ module "hub" {
 
 module "agentless_gw_group" {
   count                               = var.gw_count
-  source                              = "github.com/imperva/dsfkit//modules/aws/agentless-gw"
+  source                              = "imperva/dsf-agentless-gw/aws"
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                           = module.vpc.private_subnets[0]
   ebs                                 = var.gw_group_ebs_details
@@ -106,7 +106,7 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  source   = "github.com/imperva/dsfkit//modules/null/federation"
+  source   = "imperva/dsf-federation/null"
   gws_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
@@ -125,14 +125,14 @@ module "federation" {
 
 module "rds_mysql" {
   count                        = 1
-  source                       = "github.com/imperva/dsfkit//modules/aws/rds-mysql-db"
+  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
 module "db_onboarding" {
   for_each      = { for idx, val in module.rds_mysql : idx => val }
-  source        = "github.com/imperva/dsfkit//modules/aws/poc-db-onboarder"
+  source        = "imperva/dsf-poc-db-onboarder/aws"
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub.public_ip
@@ -157,7 +157,7 @@ module "db_onboarding" {
 }
 
 module "statistics" {
-  source = "github.com/imperva/dsfkit//modules/aws/statistics"
+  source = "imperva/dsf-statistics/aws"
 }
 
 output "db_details" {
