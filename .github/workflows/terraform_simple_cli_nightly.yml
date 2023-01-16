@@ -11,7 +11,6 @@ env:
   TF_INPUT: 0
   TF_VAR_gw_count: 2
   EXAMPLE_DIR: ./examples/poc/basic_deployment
-  TF_WORKSPACE: simple_cli
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -21,13 +20,19 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
-    environment: test
     strategy:
       fail-fast: false
       matrix:
-        branch: [ "dev", "master"]
+        include:
+          - workspace: simple_cli_dev_nightly
+            branch: "dev"
+          - workspace: simple_cli_master_nightly
+            branch: "master"
+    name: 'Terraform ${{ matrix.branch }}'
+    runs-on: ubuntu-latest
+    env:
+      TF_WORKSPACE: ${{ matrix.workspace }}
+    environment: test
   
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
