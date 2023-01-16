@@ -142,7 +142,10 @@ jobs:
 
     - name: Terraform Delete Workspace
       run: | 
+        terraform -chdir=$EXAMPLE_DIR workspace list
         terraform -chdir=$EXAMPLE_DIR workspace select default
+        terraform -chdir=$EXAMPLE_DIR workspace list
+        terraform -chdir=$EXAMPLE_DIR init
         terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
       # env:
         # TF_WORKSPACE: default
