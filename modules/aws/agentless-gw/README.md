@@ -90,7 +90,7 @@ module "dsf_gw" {
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
 
-We recommend using a specific version of the module (and not the latest which may not be stable).
+We recommend using a specific version of the module (and not the latest).
 See available released versions in the main repo README [here](https://github.com/imperva/dsfkit#version-history).
 
 Specify the module's version by adding the version parameter. For example:
