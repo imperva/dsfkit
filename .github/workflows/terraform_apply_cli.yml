@@ -96,9 +96,6 @@ jobs:
 
     - name: Terraform Create Workspace
       run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
-
-    # - name: Terraform Init
-    #   run: terraform -chdir=$EXAMPLE_DIR init
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -152,7 +149,7 @@ jobs:
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+        fields: author,action,eventName,ref,workflow,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-      if: ${{ failure() }} 
+      # if: ${{ failure() }} 
