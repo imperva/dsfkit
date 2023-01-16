@@ -9,8 +9,7 @@ on:
   #     - '*'
 
 permissions:
-  contents: write
-  repository-projects: write
+  contents: read
 
 jobs:
   copy_module_to_new_repo:
@@ -81,5 +80,6 @@ jobs:
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
           git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
           git branch -m main
+          git push origin --delete $(git tag -l)
           git push -f origin HEAD:main --tags
 

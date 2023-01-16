@@ -93,7 +93,8 @@ If you want to use a specific version of the module, you can specify the version
 
 ```
 module "dsf_gw" {
-  source = "imperva/dsf-agentless-gw/aws?ref=1.3.0"
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.3.4" # latest release tag
 }
 ```
 
