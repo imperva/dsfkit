@@ -135,9 +135,10 @@ The following table lists the most recent document revisions, dates of publicati
    </td>
    <td>1.3.4
    </td>
-   <td>1. Refactor directory structure. <br>2. Release to terraform registry.
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for dsfkit installation
    </td>
   </tr>
+  
 </table>
 
 
