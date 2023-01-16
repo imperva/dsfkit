@@ -94,11 +94,11 @@ jobs:
       env:
         TF_WORKSPACE: default
 
-    - name: Terraform Create Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace new $TF_WORKSPACE
+    # - name: Terraform Create Workspace
+      # run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
 
-    - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
+    # - name: Terraform Init
+      # run: terraform -chdir=$EXAMPLE_DIR init
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -109,40 +109,39 @@ jobs:
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
+    # - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
+      # run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
 
-    - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output -json
+    # - name: Terraform Output
+    #   run: terraform -chdir=$EXAMPLE_DIR output -json
 
-    - name: Set Environment Variables
-      run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
-        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
-        echo current_ws=$TF_WORKSPACE >> $GITHUB_ENV
+    # - name: Set Environment Variables
+    #   run: |
+    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
+    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+    #     echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    - name: Check SSH Connectivity
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        proxy_host: ${{ env.hub_ip }}
-        proxy_username: ec2-user
-        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-        proxy_port: 22
-        host: ${{ env.gw_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+    # - name: Check SSH Connectivity
+    #   uses: appleboy/ssh-action@v0.1.6
+    #   with:
+    #     proxy_host: ${{ env.hub_ip }}
+    #     proxy_username: ec2-user
+    #     proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+    #     proxy_port: 22
+    #     host: ${{ env.gw_ip }}
+    #     username: ec2-user
+    #     key_path: ${{ env.dsf_ssh_key_file_name }}
+    #     port: 22
+    #     script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
-    - name: Terraform Destroy
-      if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+    # - name: Terraform Destroy
+    #   if: always()
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
 
     - name: Terraform Delete Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace delete $current_ws
+      run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
       env:
         TF_WORKSPACE: default
 
