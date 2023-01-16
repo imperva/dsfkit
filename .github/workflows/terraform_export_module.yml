@@ -9,8 +9,7 @@ on:
   #     - '*'
 
 permissions:
-  contents: write
-  repository-projects: write
+  contents: read
 
 jobs:
   copy_module_to_new_repo:
