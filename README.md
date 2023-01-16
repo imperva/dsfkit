@@ -130,6 +130,14 @@ The following table lists the most recent document revisions, dates of publicati
    <td>1. Added multi accounts example. <br>2. Changed modules interface.
    </td>
   </tr>
+  <tr>
+   <td>16 Jan 2023
+   </td>
+   <td>1.3.4
+   </td>
+   <td>1. Refactor directory structure. <br>2. Release to terraform registry.
+   </td>
+  </tr>
 </table>
 
 

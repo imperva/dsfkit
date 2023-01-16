@@ -97,7 +97,7 @@ If you want to use a specific version of the module, you can specify the version
 ```
 module "dsf_hub" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.3.1"
+  version = "1.3.4"
 }
 ```
 
