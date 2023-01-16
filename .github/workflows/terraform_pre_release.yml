@@ -49,8 +49,12 @@ jobs:
           for d in $(find ./examples -type d -links 2); do zip -r ${d}/$(basename ${d}).zip ${d}; done
 
       - name: commit changes to git repo
-        run: |
-          git add ./examples/
-          git status
-          git commit -m "Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]"
-          git log
+        # run: |
+        #   git add ./examples/
+        #   git status
+        #   git commit -m ""
+        #   git log
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
+          file_pattern: './examples'
