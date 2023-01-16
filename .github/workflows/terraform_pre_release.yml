@@ -35,7 +35,7 @@ jobs:
 
       - name: Fix module versions in examples
         run: |
-          find ./examples/ -type f -exec sed -i  's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}' # latest release tag ";' {} \; 
+          find ./examples/ -type f -exec sed -i 's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}'" # latest release tag;' {} \; 
 
       - name: Run terraform linter
         run: |
@@ -46,5 +46,7 @@ jobs:
           for d in $(find ./examples -type d -links 2); do zip -r ${d}/$(basename ${d}).zip ${d}; done
 
       - name: commit changes to git repo
-        run: |
-          git status
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
+          file_pattern: './examples'
