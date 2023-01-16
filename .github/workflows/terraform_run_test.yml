@@ -25,12 +25,11 @@ jobs:
 
     strategy:
       matrix:
-        workspace: [simple_cli]
         include:
-          - workspace: simple_cli
+          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-          - workspace: hadr_cli
+          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
 
@@ -54,11 +53,16 @@ jobs:
     - name: Change the modules source to local
       run: | 
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+        echo current_ws=$TF_WORKSPACE >> $GITHUB_ENV
 
     - name: Set Environment Variables
       if: always()
       run: | 
         echo new_var=segev1 >> $GITHUB_ENV
+        echo $current_ws
+        echo ${{ env.current_ws }}
+      env: 
+        TF_WORKSPACE: test
 
     - name: Validate Environment Variables
       if: always()

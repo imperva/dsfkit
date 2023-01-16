@@ -93,17 +93,17 @@ This guide references the following information and links, most of which are ava
 </table>
 
 
-**Document Revisions**
-The following table lists the most recent document revisions, dates of publication, a high-level summary, and descriptions of the updated information. 
+#### Version History
+The following table lists the released DSFKit versions, their release date and a high-level summary of each version's content. 
 
 
 <table>
   <tr>
-   <td><strong>Publication Date</strong>
+   <td><strong>Date</strong>
    </td>
-   <td><strong>DSF Version</strong>
+   <td><strong>Version</strong>
    </td>
-   <td><strong>Summarized Description of Updates</strong>
+   <td><strong>Details</strong>
    </td>
   </tr>
   <tr>
@@ -130,6 +130,15 @@ The following table lists the most recent document revisions, dates of publicati
    <td>1. Added multi accounts example. <br>2. Changed modules interface.
    </td>
   </tr>
+  <tr>
+   <td>16 Jan 2023
+   </td>
+   <td>1.3.4
+   </td>
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation.
+   </td>
+  </tr>
+  
 </table>
 
 
@@ -150,7 +159,7 @@ Before installing DSFKit, it is necessary to complete the following steps:
 NOTE: Note: It may take several hours for access to be granted to AWS and Terraform in Steps 2 and 3.
 ```
 
-## Binaries Location and Versioning
+## Sonar Binaries Location and Versioning
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
 
@@ -162,9 +171,8 @@ When using DSFKit there is no need to manually download the DSF binaries, DSFKit
 }
 ```
 
-```
-NOTE: DSFKit version 1.2.0 is available and supports Sonar version 4.10.
-```
+Make sure that the Sonar version you are using is supported by all the modules which are part of your installation.
+To see which Sonar versions are supported by each module, refer to the specific module's README.
 
 # DSFKit Installation 
 

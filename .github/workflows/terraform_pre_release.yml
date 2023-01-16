@@ -1,0 +1,52 @@
+name: 'Pre release'
+
+on:
+  workflow_dispatch:
+    inputs:
+      future_release:
+        description: 'Tag for the future release (d.d.d)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  prepare_dev_to_release:
+    name: 'Prepare dev to release'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          ref: 'dev'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Fix module versions in examples
+        run: |
+          find ./examples/ -type f -exec sed -i 's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}'" # latest release tag;' {} \; 
+
+      - name: Run terraform linter
+        run: |
+          terraform fmt -recursive
+
+      - name: Zip per examples
+        run: |
+          for d in $(find ./examples -type d -links 2); do zip -r ${d}/$(basename ${d}).zip ${d}; done
+
+      - name: commit changes to git repo
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
+          file_pattern: './examples'

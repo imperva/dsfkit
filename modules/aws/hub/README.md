@@ -92,11 +92,16 @@ module "dsf_hub" {
 ```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
-If you want to use a specific version of the module, you can specify the version by adding the ref parameter to the source URL. For example:
+
+We recommend using a specific version of the module (and not the latest).
+See available released versions in the main repo README [here](https://github.com/imperva/dsfkit#version-history).
+
+Specify the module's version by adding the version parameter. For example:
 
 ```
 module "dsf_hub" {
-  source = "imperva/dsf-hub/aws?ref=1.3.0"
+  source  = "imperva/dsf-hub/aws"
+  version = "x.y.z"
 }
 ```
 
@@ -105,4 +110,5 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). For additional information about DSF deployment using terraform, please refer to the main repo readme [here](https://github.com/imperva/dsfkit).
+For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). 
+For additional information about DSF deployment using terraform, please refer to the main repo README [here](https://github.com/imperva/dsfkit).

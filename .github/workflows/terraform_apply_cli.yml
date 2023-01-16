@@ -6,6 +6,7 @@ on:
     branches:
       - 'master'
       - 'dev'
+    
   pull_request:
     types:
       - 'opened'
@@ -19,7 +20,6 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
-  AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -32,10 +32,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - workspace: simple_cli
+          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-          - workspace: hadr_cli
+          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
 
@@ -92,27 +92,26 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
+      env:
+        TF_WORKSPACE: default
 
+    - name: Terraform Create Workspace
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+        
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
-
-    - name: Cleaning envrionment
       run: |
-        mv $EXAMPLE_DIR/main.tf{,_}
-        mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
-        mv $EXAMPLE_DIR/main.tf{_,}
-        mv $EXAMPLE_DIR/outputs.tf{_,}
+        terraform -chdir=$EXAMPLE_DIR workspace list
+        terraform -chdir=$EXAMPLE_DIR plan
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output -json
@@ -139,14 +138,19 @@ jobs:
 
     - name: Terraform Destroy
       if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+
+    - name: Terraform Delete Workspace
+      run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+      env:
+        TF_WORKSPACE: default
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+        fields: author,action,eventName,ref,workflow,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       if: ${{ failure() }} 
