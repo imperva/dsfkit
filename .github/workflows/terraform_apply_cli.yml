@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
-      TF_WORKSPACE: ${{ matrix.workspace }}
+      # TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
     environment: test
 
@@ -91,14 +91,14 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
-      env:
-        TF_WORKSPACE: default
+      # env:
+        # TF_WORKSPACE: default
 
-    # - name: Terraform Create Workspace
-      # run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+    - name: Terraform Create Workspace
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
 
-    # - name: Terraform Init
-      # run: terraform -chdir=$EXAMPLE_DIR init
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -141,9 +141,11 @@ jobs:
     #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
 
     - name: Terraform Delete Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
-      env:
-        TF_WORKSPACE: default
+      run: | 
+        terraform -chdir=$EXAMPLE_DIR workspace select default
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+      # env:
+        # TF_WORKSPACE: default
 
     # Send job failure to Slack
     - name: Send Slack by action-slack
@@ -152,5 +154,5 @@ jobs:
         status: ${{ job.status }}
         fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
       if: ${{ failure() }} 
