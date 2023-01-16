@@ -6,6 +6,9 @@ on:
       future_release:
         description: 'Tag for the future release (d.d.d)'
         required: true
+  push:
+    branches:
+      - '*'
 
 permissions:
   contents: write
