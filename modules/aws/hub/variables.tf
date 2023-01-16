@@ -1,7 +1,7 @@
 variable "friendly_name" {
   type        = string
   default     = "imperva-dsf-hub"
-  description = "Friendly name, EC2 Instace Name"
+  description = "Friendly name, EC2 Instance Name"
   validation {
     condition     = length(var.friendly_name) > 3
     error_message = "Deployment name must be at least 3 characters"
