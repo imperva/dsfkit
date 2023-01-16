@@ -130,6 +130,15 @@ The following table lists the most recent document revisions, dates of publicati
    <td>1. Added multi accounts example. <br>2. Changed modules interface.
    </td>
   </tr>
+  <tr>
+   <td>16 Jan 2023
+   </td>
+   <td>1.3.4
+   </td>
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for dsfkit installation
+   </td>
+  </tr>
+  
 </table>
 
 
