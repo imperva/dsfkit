@@ -6,7 +6,7 @@ on:
       future_release:
         description: 'Tag for the future release (d.d.d)'
         required: true
-        default: "1.3.4"
+        default: '1.3.4'
   push:
     branches:
       - '*'
