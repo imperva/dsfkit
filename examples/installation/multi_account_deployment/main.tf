@@ -17,7 +17,7 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = " # latest release tag "
+  version = "1.3.4" # latest release tag
 }
 
 locals {
@@ -41,14 +41,14 @@ locals {
 
 module "key_pair_hub" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = " # latest release tag "
+  version                  = "1.3.4" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
 module "key_pair_gw" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = " # latest release tag "
+  version                  = "1.3.4" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   providers = {
@@ -62,7 +62,7 @@ module "key_pair_gw" {
 
 module "hub" {
   source                              = "imperva/dsf-hub/aws"
-  version                             = " # latest release tag "
+  version                             = "1.3.4" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = var.subnet_hub
   binaries_location                   = local.tarball_location
@@ -86,7 +86,7 @@ module "hub" {
 module "agentless_gw_group" {
   count                               = var.gw_count
   source                              = "imperva/dsf-agentless-gw/aws"
-  version                             = " # latest release tag "
+  version                             = "1.3.4" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   instance_type                       = var.gw_instance_type
   ami_name_tag                        = var.gw_ami_name
@@ -118,7 +118,7 @@ module "agentless_gw_group" {
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
   source   = "imperva/dsf-federation/null"
-  version  = " # latest release tag "
+  version  = "1.3.4" # latest release tag
   gws_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
