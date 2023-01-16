@@ -11,8 +11,8 @@ permissions:
   contents: write
 
 jobs:
-  prepare_dev_to_release:
-    name: 'Prepare dev to release'
+  prepare_branch_to_release:
+    name: 'Prepare branch to release'
     runs-on: ubuntu-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -26,7 +26,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: '0'
-          ref: 'dev'
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
