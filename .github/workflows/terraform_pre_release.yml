@@ -50,4 +50,7 @@ jobs:
 
       - name: commit changes to git repo
         run: |
+          git add *.zip
+          git add *.tf
           git status
+
