@@ -137,10 +137,12 @@ jobs:
         script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     - name: Terraform Destroy
+      id: destroy
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Terraform Delete Workspace
+      if: steps.destroy.outcome == 'success'
       run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
       env:
         TF_WORKSPACE: default
