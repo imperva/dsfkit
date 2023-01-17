@@ -67,7 +67,7 @@ jobs:
     - name: Validate Environment Variables
       if: always()
       run: | 
-        sleep 30
+        sleep 1m
         echo 1. new_var is ${{ env.new_var }}
 
     # Send job failure to Slack
