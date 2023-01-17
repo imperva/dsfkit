@@ -31,8 +31,9 @@ jobs:
         shell: bash
 
     strategy:
+      fail-fast: false
       matrix:
-        example: ['./deploy/examples/poc/basic_deployment', './deploy/examples/poc/hadr_deployment']
+        example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment']
 
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -41,8 +42,7 @@ jobs:
 
       - name: Change the modules source to local
         run: |
-          find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
-          ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
+          find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform

@@ -1,20 +1,16 @@
-name: 'Terraform Apply (simple)'
+name: 'Terraform Apply'
 
 on:
-  schedule:
-    - cron: '0 23 * * *'
   workflow_dispatch: {}
   push:
     branches:
       - 'master'
-      - 'dev'
   pull_request:
     types:
       - 'opened'
       - 'reopened'
     branches:
       - 'master'
-      - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -27,8 +23,17 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - workspace: dsfkit-ci-cd
+          - workspace: dsfkit-ci-cd-hadr
+
+    name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
+    env:
+      TF_WORKSPACE: ${{ matrix.workspace }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -43,8 +48,7 @@ jobs:
 
     - name: Change the modules source to local
       run: | 
-        find . -type f -exec sed -i 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/..\/../' {} \;
-        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//deploy/modules'
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     - name: Sets env vars for environment
       run: |
@@ -91,7 +95,7 @@ jobs:
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+        fields: author,action,eventName,ref,workflow,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       if: ${{ failure() }} 
