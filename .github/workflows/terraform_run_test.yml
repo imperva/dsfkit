@@ -25,12 +25,11 @@ jobs:
 
     strategy:
       matrix:
-        workspace: [simple_cli]
         include:
-          - workspace: simple_cli
+          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-          - workspace: hadr_cli
+          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
 
@@ -53,8 +52,22 @@ jobs:
 
     - name: Change the modules source to local
       run: | 
-        find . -type f -exec sed -i -e 's/source *= \"github.com\/imperva\/dsfkit\//source = \"..\/..\/../' -e 's/?ref=.*/"/' {} \;
-        ! grep -rnw '.' -e 'github\.com/imperva/dsfkit//modules'
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+        echo current_ws=$TF_WORKSPACE >> $GITHUB_ENV
+
+    - name: Set Environment Variables
+      if: always()
+      run: | 
+        echo new_var=segev1 >> $GITHUB_ENV
+        echo $current_ws
+        echo ${{ env.current_ws }}
+      env: 
+        TF_WORKSPACE: test
+
+    - name: Validate Environment Variables
+      if: always()
+      run: | 
+        echo 1. new_var is ${{ env.new_var }}
 
     # Send job failure to Slack
     # - name: Send Slack by action-slack
@@ -124,21 +137,21 @@ jobs:
 
     # Generates an execution plan for Terraform
     # - name: Terraform Plan
-    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
 
     # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
       
     # - name: Terraform Apply
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
 
     # - name: Terraform Output
     #   run: terraform -chdir=$EXAMPLE_DIR output -json
 
     # - name: Set Environment Variables
     #   run: |
-    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_address) >> $GITHUB_ENV
-    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_address') >> $GITHUB_ENV
+    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_dns) >> $GITHUB_ENV
+    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
     #     echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
@@ -157,4 +170,4 @@ jobs:
 
     # - name: Terraform Destroy
     #   if: always()
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=1800s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s

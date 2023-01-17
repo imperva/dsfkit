@@ -9,8 +9,6 @@ locals {
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
-  sonar_secret_region = var.sonarw_secret_region != null ? var.sonarw_secret_region : data.aws_region.current.name
-
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                       = var.resource_type
     installation_s3_bucket              = var.binaries_location.s3_bucket
@@ -28,7 +26,6 @@ locals {
     public_fqdn                         = var.use_public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result
     additional_install_parameters       = var.additional_install_parameters
-    sonar_secret_region                 = local.sonar_secret_region
   })
 }
 

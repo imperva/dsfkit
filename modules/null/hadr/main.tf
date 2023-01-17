@@ -1,8 +1,8 @@
 locals {
   primary_ssh_key_path   = var.ssh_key_path
   ssh_key_path_secondary = var.ssh_key_path_secondary != null ? var.ssh_key_path_secondary : var.ssh_key_path
-  primary_ssh_user = var.ssh_user
-  secondary_ssh_user = var.ssh_user_secondary != null ? var.ssh_user_secondary : var.ssh_user
+  primary_ssh_user       = var.ssh_user
+  secondary_ssh_user     = var.ssh_user_secondary != null ? var.ssh_user_secondary : var.ssh_user
 }
 
 #################################

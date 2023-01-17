@@ -40,15 +40,15 @@ variable "ebs" {
 
 variable "ingress_communication_via_proxy" {
   type = object({
-    proxy_address     = string
+    proxy_address         = string
     proxy_private_ssh_key = string
-    proxy_ssh_user    = string
+    proxy_ssh_user        = string
   })
   description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key. Keep empty if no proxy is in use"
-  default     = {
-    proxy_address     = null
+  default = {
+    proxy_address         = null
     proxy_private_ssh_key = null
-    proxy_ssh_user    = null
+    proxy_ssh_user        = null
   }
 }
 
@@ -60,8 +60,8 @@ variable "create_and_attach_public_elastic_ip" {
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list     = list(any) #22, 8080, 8443, 3030, 27117
-    use_public_ip = bool
+    full_access_cidr_list = list(any) #22, 8080, 8443, 3030, 27117
+    use_public_ip         = bool
   })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
   nullable    = false
@@ -69,12 +69,12 @@ variable "ingress_communication" {
 
 variable "ssh_key_pair" {
   type = object({
-    ssh_public_key_name        = string
+    ssh_public_key_name       = string
     ssh_private_key_file_path = string
   })
   description = "SSH materials to access machine"
 
-  nullable    = false
+  nullable = false
 }
 
 variable "binaries_location" {

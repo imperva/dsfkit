@@ -41,14 +41,17 @@ Please refer to [variables.tf](variables.tf) for additional variables with defau
 
 The following [outputs](outputs.tf) are exported:
 
-* `public_address`: public address
-* `private_address`: private address
+* `public_ip`: public address
+* `private_ip`: private address
+* `public_dns`: public dns
+* `private_dns`: private dns
 * `display_name`: Display name of the instance under DSF portal
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
 * `sg_id`: AWS security group id of the instance
 * `ssh_user`: SSH user for the instance
-* `federation_public_key`: Federation public key (sonarw public ssh key). Should be used in agentless gateways one want to attach to DSF
+* `federation_public_key`: The Federation public key (also known as the sonarw public SSH key) should be used when connecting an agentless gateway
+* `federation_private_key`: The Federation private key (also known as the sonarw private SSH key) should be used when connecting secondary hadr hub
 * `sonarw_secret`: AWS secret details. Should be used when deploying a second DSF hub for HADR
 
 ## Usage
@@ -60,11 +63,11 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "github.com/imperva/dsfkit//modules/aws/core/globals"
+  source = "imperva/dsf-globals/aws"
 }
 
 module "dsf_hub" {
-  source                        = "github.com/imperva/dsfkit//modules/aws/hub"
+  source                        = "imperva/dsf-hub/aws"
   subnet_id                     = "${aws_subnet.example.id}"
 
   ssh_key_pair = {
@@ -89,11 +92,16 @@ module "dsf_hub" {
 ```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
-If you want to use a specific version of the module, you can specify the version by adding the ref parameter to the source URL. For example:
+
+We recommend using a specific version of the module (and not the latest).
+See available released versions in the main repo README [here](https://github.com/imperva/dsfkit#version-history).
+
+Specify the module's version by adding the version parameter. For example:
 
 ```
 module "dsf_hub" {
-  source = "github.com/imperva/dsfkit//modules/aws/hub?ref=1.3.0"
+  source  = "imperva/dsf-hub/aws"
+  version = "x.y.z"
 }
 ```
 
@@ -102,4 +110,5 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). For additional information about DSF deployment using terraform, please refer to the main repo readme [here](https://github.com/imperva/dsfkit).
+For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). 
+For additional information about DSF deployment using terraform, please refer to the main repo README [here](https://github.com/imperva/dsfkit).

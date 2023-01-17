@@ -1,9 +1,17 @@
-output "public_address" {
-  value = module.hub_instance.public_address
+output "public_ip" {
+  value = module.hub_instance.public_ip
 }
 
-output "private_address" {
-  value = module.hub_instance.private_address
+output "private_ip" {
+  value = module.hub_instance.private_ip
+}
+
+output "public_dns" {
+  value = module.hub_instance.public_dns
+}
+
+output "private_dns" {
+  value = module.hub_instance.private_dns
 }
 
 output "sg_id" {
@@ -15,14 +23,11 @@ output "iam_role" {
 }
 
 output "federation_public_key" {
-  value = !var.hadr_secondary_node ? local.dsf_hub_ssh_federation_key : null
+  value = local.dsf_hub_ssh_public_federation_key
 }
 
-output "sonarw_secret" {
-  value = {
-    name = local.secret_aws_name
-    arn  = local.secret_aws_arn
-  }
+output "federation_private_key" {
+  value = local.dsf_hub_ssh_private_federation_key
 }
 
 output "jsonar_uid" {
