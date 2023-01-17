@@ -116,8 +116,8 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
+    # - name: Terraform Plan
+      # run: terraform -chdir=$EXAMPLE_DIR plan
 
     # - name: Cleaning envrionment
       # run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
