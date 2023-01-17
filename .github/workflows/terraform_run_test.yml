@@ -11,9 +11,6 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 1
-  EXAMPLE_DIR: ./examples/poc/basic_deployment
-  TF_WORKSPACE: run_test
-  AWS_REGION: ap-southeast-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -26,9 +23,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - workspace: run_test
             example_dir: ./examples/poc/basic_deployment
-            aws_region: eu-west-2
+            aws_region: ap-southeast-2
           # - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
           #   example_dir: ./examples/poc/hadr_deployment
           #   aws_region: eu-west-1
@@ -51,24 +48,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Change the modules source to local
-      run: | 
-        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
-        echo current_ws=$TF_WORKSPACE >> $GITHUB_ENV
-
-    - name: Set Environment Variables
-      if: always()
-      run: | 
-        echo new_var=segev1 >> $GITHUB_ENV
-        echo $current_ws
-        echo ${{ env.current_ws }}
-      env: 
-        TF_WORKSPACE: test
-
-    - name: Validate Environment Variables
-      if: always()
-      run: | 
-        sleep 1m
-        echo 1. new_var is ${{ env.new_var }}
+      run: find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     # Send job failure to Slack
     # - name: Send Slack by action-slack
@@ -99,25 +79,24 @@ jobs:
     #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
     #   if: ${{ always() }}
 
-    # - name: Sets env vars for environment
-    #   run: |
-    #     echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-    #   if: github.ref != 'refs/heads/"master"'
+    - name: Sets env vars for environment
+      run: |
+        echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/"master"'
 
-    # - name: Create terraform backend file
-    #   run: |
-    #     cat << EOF > $EXAMPLE_DIR/backend.tf
-    #     terraform {
-    #       backend "s3" {
-    #         bucket         = "tf-state-dsfkit-github-tests"
-    #         key            = "states/terraform.tfstate"
-    #         dynamodb_table = "terraform-state-lock"
-    #         region         = "ap-southeast-2"
-    #       }
-    #     }
-    #     EOF
-
-
+    - name: Create terraform backend file
+      run: |
+        cat << EOF > $EXAMPLE_DIR/backend.tf
+        terraform {
+          backend "s3" {
+            bucket         = "tf-state-dsfkit-github-tests"
+            key            = "states/terraform.tfstate"
+            dynamodb_table = "terraform-state-lock"
+            region         = "ap-southeast-2"
+          }
+        }
+        EOF
+    
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
@@ -130,45 +109,45 @@ jobs:
         cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    # - name: Terraform Init
-    #   run: terraform -chdir=$EXAMPLE_DIR init
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
 
-    # - name: Terraform Validate
-    #   run: terraform -chdir=$EXAMPLE_DIR validate
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-    #   run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
 
     # - name: Cleaning envrionment
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
       
-    # - name: Terraform Apply
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
-    # - name: Terraform Output
-    #   run: terraform -chdir=$EXAMPLE_DIR output -json
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output -json
 
-    # - name: Set Environment Variables
-    #   run: |
-    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_hubs.value.primary_hub.public_dns) >> $GITHUB_ENV
-    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
-    #     echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r .dsf_private_ssh_key_file_name.value) >> $GITHUB_ENV
+    - name: Set Environment Variables
+      run: |
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    # - name: Check SSH Connectivity
-    #   uses: appleboy/ssh-action@v0.1.6
-    #   with:
-    #     proxy_host: ${{ env.hub_ip }}
-    #     proxy_username: ec2-user
-    #     proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-    #     proxy_port: 22
-    #     host: ${{ env.gw_ip }}
-    #     username: ec2-user
-    #     key_path: ${{ env.dsf_ssh_key_file_name }}
-    #     port: 22
-    #     script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+    - name: Check SSH Connectivity
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        proxy_host: ${{ env.hub_ip }}
+        proxy_username: ec2-user
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_port: 22
+        host: ${{ env.gw_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     # - name: Terraform Destroy
     #   if: always()
-    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
