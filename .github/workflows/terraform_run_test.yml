@@ -148,7 +148,7 @@ jobs:
         # key_path: ${{ env.dsf_ssh_key_file_name }}
         key: ${{ secrets.HUB_KEY }}
         port: 22
-        timeout: 60
+        timeout: 60s
         script: | 
           ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
     
@@ -161,7 +161,7 @@ jobs:
         # key_path: ${{ env.dsf_ssh_key_file_name }}
         key: ${{ secrets.HUB_KEY }}
         port: 22
-        timeout: 60
+        timeout: 60s
         script: | 
           ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
           sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
