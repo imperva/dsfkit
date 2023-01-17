@@ -2,9 +2,8 @@ name: 'Terraform Apply'
 
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - 'master'
+  schedule:
+    - cron: '0 1 * * *'
   pull_request:
     types:
       - 'opened'
