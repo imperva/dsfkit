@@ -2,6 +2,7 @@ data "aws_iam_role" "assignee_role" {
   name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
+# TODO sivan - need to restrict S3 permissions for operations (and tags?)
 resource "aws_iam_policy" "db_policy" {
   description = "IAM policy for collecting audit"
   policy      = <<EOF
@@ -24,8 +25,8 @@ resource "aws_iam_policy" "db_policy" {
         "logs:DescribeLogStreams",
         "logs:GetLogEvents",
         "rds:DescribeDBClusters",
-        "rds:DescribeOptionGroups"
-
+        "rds:DescribeOptionGroups",
+        "s3:*"
       ],
       "Resource": "*"
     }
@@ -66,11 +67,12 @@ locals {
     data : {
       applianceType : "DSF_HUB",
       applianceId : 1,
-      serverType : "AWS RDS MYSQL",
+      # TODO sivan - implement in better way (map?, need to validate the key)
+      serverType : var.database_details.db_engine == "mysql"? "AWS RDS MYSQL" : "AWS RDS MS SQL SERVER",
       gatewayId : var.assignee_gw,
       parentAssetId : local.cloud_account_data.data.id,
       assetData : {
-        "Server Port" : 3306,
+        "Server Port" : var.database_details.db_port,
         database_name : var.database_details.db_identifier,
         db_engine : var.database_details.db_engine,
         auth_mechanism : "password",

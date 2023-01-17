@@ -17,16 +17,53 @@ locals {
   db_password                  = length(var.password) > 0 ? var.password : random_password.db_password.result
   db_identifier                = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
   db_name                      = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
-  cloudwatch_stream_names      = ["error"]
   mssql_connect_db_name        = "rdsadmin"
   lambda_salt                  = random_id.salt.hex
-}
+  db_audit_bucket_name         = replace("${local.db_identifier}-audit-bucket", "_", "-")
 
-
-resource "aws_cloudwatch_log_group" "cloudwatch_streams" {
-  for_each          = { for name in local.cloudwatch_stream_names : name => name }
-  name              = "/aws/rds/instance/${local.db_identifier}/${each.value}"
-  retention_in_days = 30
+  rds_db_og_role_assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "rds.amazonaws.com"
+        }
+      },
+    ]
+  })
+  rds_db_og_role_inline_policy_s3 = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "VisualEditor0",
+        "Effect" : "Allow",
+        "Action" : "s3:ListAllMyBuckets",
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "VisualEditor1",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:ListBucket",
+          "s3:GetBucketACL",
+          "s3:GetBucketLocation"
+        ],
+        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}"
+      },
+      {
+        "Sid" : "VisualEditor2",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:PutObject",
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload"
+        ],
+        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}/*"
+      }
+    ]
+  })
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
@@ -34,28 +71,60 @@ resource "aws_db_subnet_group" "rds_db_sg" {
   subnet_ids = var.rds_subnet_ids
 }
 
-#resource "aws_db_option_group" "impv_rds_db_og" {
-#  name                     = replace("${local.db_identifier}-pg", "_", "-")
-#  option_group_description = "RDS DB option group"
-#  engine_name              = "mysql"
-#  major_engine_version     = "5.7"
-#
-#  option {
-#    option_name = "MARIADB_AUDIT_PLUGIN"
-#    option_settings {
-#      name  = "SERVER_AUDIT_EVENTS"
-#      value = "CONNECT,QUERY,QUERY_DDL,QUERY_DML,QUERY_DCL,QUERY_DML_NO_SELECT"
-#    }
-#    option_settings {
-#      name  = "SERVER_AUDIT_EXCL_USERS"
-#      value = "rdsadmin"
-#    }
-#  }
-#}
+resource "aws_s3_bucket" "rds_db_audit_bucket" {
+  bucket        = local.db_audit_bucket_name
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "rds_db_audit_bucket_public_access_block" {
+  bucket = aws_s3_bucket.rds_db_audit_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_iam_role" "rds_db_og_role" {
+  name_prefix         = replace("${local.db_identifier}-og-role", "_", "-")
+  description         = replace("${local.db_identifier}-og-role-${var.friendly_name}", "_", "-")
+  managed_policy_arns = null
+  assume_role_policy  = local.rds_db_og_role_assume_role_policy
+  inline_policy {
+    name   = "imperva-dsf-s3-access"
+    policy = local.rds_db_og_role_inline_policy_s3
+  }
+}
+
+resource "aws_db_option_group" "impv_rds_db_og" {
+  name                     = replace("${local.db_identifier}-og", "_", "-")
+  option_group_description = "RDS MSSQL DB option group"
+  engine_name              = "sqlserver-ex"
+  major_engine_version     = "15.00"
+
+  option {
+    option_name = "SQLSERVER_AUDIT"
+    option_settings {
+      name  = "ENABLE_COMPRESSION"
+      value = "false"
+    }
+    option_settings {
+      name  = "S3_BUCKET_ARN"
+      value = aws_s3_bucket.rds_db_audit_bucket.arn
+    }
+    option_settings {
+      name  = "IAM_ROLE_ARN"
+      value = aws_iam_role.rds_db_og_role.arn
+    }
+    option_settings {
+      name  = "RETENTION_TIME"
+      value = "48"
+    }
+  }
+}
 
 # todo - should configure the audit by options groups / parameter groups for the MsSQL
 
-/*
 resource "aws_db_instance" "rds_db" {
   allocated_storage       = 20
 #  db_name                 = local.db_name
@@ -64,19 +133,14 @@ resource "aws_db_instance" "rds_db" {
   instance_class          = "db.t3.small"
   username                = local.db_username
   password                = local.db_password
-#  option_group_name       = aws_db_option_group.impv_rds_db_og.name
+  option_group_name       = aws_db_option_group.impv_rds_db_og.name
   skip_final_snapshot     = true
   vpc_security_group_ids  = [aws_security_group.rds_mssql_access.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_db_sg.name
   identifier              = local.db_identifier
   publicly_accessible     = true
   backup_retention_period = 0
-
-  enabled_cloudwatch_logs_exports = local.cloudwatch_stream_names
-  depends_on = [
-    aws_cloudwatch_log_group.cloudwatch_streams
-  ]
-}*/
+}
 
 data "aws_subnet" "subnet" {
   id = var.rds_subnet_ids[0]
@@ -88,33 +152,33 @@ resource "aws_security_group" "rds_mssql_access" {
 }
 
 
-#resource "aws_security_group_rule" "rds_mssql_access_rule" {
-#  type              = "ingress"
-#  from_port         = 1433
-#  to_port           = 1433
-#  protocol          = "tcp"
-#  cidr_blocks       = var.security_group_ingress_cidrs
-#  security_group_id = aws_security_group.rds_mssql_access.id
-#}
-#
-#resource "aws_security_group_rule" "rds_mssql_sg_self" {
-#  type              = "ingress"
-#  from_port         = 0
-#  to_port           = 0
-#  protocol          = "-1"
-#  self              = true
-#  security_group_id = aws_security_group.rds_mssql_access.id
-#}
-#
-#resource "aws_security_group_rule" "rds_mssql_all_out" {
-#  type              = "egress"
-#  from_port         = 0
-#  to_port           = 0
-#  protocol          = "-1"
-#  cidr_blocks       = ["0.0.0.0/0"]
-#  security_group_id = aws_security_group.rds_mssql_access.id
-#}
-#
+resource "aws_security_group_rule" "rds_mssql_access_rule" {
+  type              = "ingress"
+  from_port         = 1433
+  to_port           = 1433
+  protocol          = "tcp"
+  cidr_blocks       = var.security_group_ingress_cidrs
+  security_group_id = aws_security_group.rds_mssql_access.id
+}
+
+resource "aws_security_group_rule" "rds_mssql_sg_self" {
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  self              = true
+  security_group_id = aws_security_group.rds_mssql_access.id
+}
+
+resource "aws_security_group_rule" "rds_mssql_all_out" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.rds_mssql_access.id
+}
+
 ## create the IS lambda and run it to create the DBs inside the MsSQL instance
 #
 #data "aws_iam_role" "lambda_mssql_assignee_role" {
