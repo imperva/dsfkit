@@ -1,4 +1,4 @@
-name: 'Cli (simple) Nightly Dev'
+name: 'Cli (simple) Nightly'
 
 on:
   workflow_dispatch: {}
