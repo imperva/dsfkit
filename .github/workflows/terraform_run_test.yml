@@ -116,17 +116,19 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
-    # - name: Terraform Plan
-      # run: terraform -chdir=$EXAMPLE_DIR plan
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
 
-    # - name: Cleaning envrionment
-      # run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+    - name: Cleaning envrionment
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
       
-    # - name: Terraform Apply
-      # run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output -json
+      run: | 
+        terraform -chdir=$EXAMPLE_DIR output -json
+        terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key
 
     - name: Set Environment Variables
       run: |
@@ -140,13 +142,11 @@ jobs:
       with:
         proxy_host: ${{ env.hub_ip }}
         proxy_username: ec2-user
-        # proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-        proxy_key: ${{ secrets.HUB_KEY }}
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
         proxy_port: 22
         host: ${{ env.gw_ip }}
         username: ec2-user
-        # key_path: ${{ env.dsf_ssh_key_file_name }}
-        key: ${{ secrets.HUB_KEY }}
+        key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
         script: | 
           ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
@@ -157,8 +157,7 @@ jobs:
       with:
         host: ${{ env.hub_ip }}
         username: ec2-user
-        # key_path: ${{ env.dsf_ssh_key_file_name }}
-        key: ${{ secrets.HUB_KEY }}
+        key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
         script: | 
           ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
