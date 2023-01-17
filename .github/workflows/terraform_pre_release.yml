@@ -81,13 +81,18 @@ jobs:
           file_pattern: './examples'
 
       - name: Merge
-        uses: devmasx/merge-branch@master
-        with:
-          type: now
-          label_name: 'merged ${{ env.src_branch }} to ${{ env.dst_branch }}'
-          from_branch: ${{ env.src_branch }}
-          target_branch: ${{ env.dst_branch }}
-          github_token: ${{ github.token }}
+        run: |
+          git checkout ${dst_branch}
+          git merge ${src_branch}
+          git push
+      # - name: Merge
+      #   uses: devmasx/merge-branch@master
+      #   with:
+      #     type: now
+      #     label_name: 'merged ${{ env.src_branch }} to ${{ env.dst_branch }}'
+      #     from_branch: ${{ env.src_branch }}
+      #     target_branch: ${{ env.dst_branch }}
+      #     github_token: ${{ github.token }}
       
       - name: Deploy modules
         run: |
