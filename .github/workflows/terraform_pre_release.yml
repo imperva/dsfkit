@@ -82,9 +82,9 @@ jobs:
           git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote" || true; done
           git fetch --all
           git pull --all
-          cat 1
           git checkout ${dst_branch}
           git log --all --decorate --graph --oneline > 1
+          cat 1
           git merge ${src_branch} --ff-only
           git push
       
