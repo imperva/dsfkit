@@ -41,9 +41,9 @@ jobs:
           fi
 
       - name: Checkout
-          run: |
-            git clone https://github.com/imperva/dsfkit.git
-            git checkout ${src_branch}
+        run: |
+          git clone https://github.com/imperva/dsfkit.git
+          git checkout ${src_branch}
         # uses: actions/checkout@v3
         # with:
         #   fetch-depth: '0'
