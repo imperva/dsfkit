@@ -76,6 +76,8 @@ jobs:
       - name: Merge
         run: |
           git checkout ${dst_branch}
+          git log -n 10 --pretty=format:"%H" ${dst_branch}
+          git log -n 10 --pretty=format:"%H" ${src_branch}
           git merge ${src_branch} --ff-only
           git push
       
