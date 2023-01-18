@@ -20,7 +20,7 @@ variable "password" {
 
 variable "identifier" {
   type        = string
-  description = "Name of your MySQL DB from 3 to 63 alphanumeric characters or hyphens, first character must be a letter, must not end with a hyphen or contain two consecutive hyphens."
+  description = "Name of your MsSQL DB from 3 to 63 alphanumeric characters or hyphens, first character must be a letter, must not end with a hyphen or contain two consecutive hyphens."
   default     = ""
   validation {
     condition     = length(var.identifier) == 0 || length(var.identifier) > 3
@@ -32,12 +32,6 @@ variable "name" {
   type        = string
   description = "Name of your rds instance"
   default     = ""
-}
-
-variable "db_audit_scripts_bucket_name" {
-  type        = string
-  description = "S3 bucket containing the DB audit scripts"
-  default     = "ae309159-115c-4504-b0c2-03dd022f3368"
 }
 
 variable "init_sql_file_path" {
@@ -71,9 +65,3 @@ variable "friendly_name" {
     error_message = "Deployment name must be at least 3 characters"
   }
 }
-
-#variable "assignee_role" {
-#  type        = string
-#  description = "IAM role of the MsSQL"
-#  nullable    = false
-#}

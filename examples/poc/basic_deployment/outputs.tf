@@ -59,3 +59,10 @@ output "dsf_vpc_subnet" {
   }
 }
 
+output "mysql_db_details" {
+  value = try(module.rds_mysql, null)
+}
+
+output "mssql_db_details" {
+  value = try(module.rds_mssql, null)
+}
