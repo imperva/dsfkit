@@ -83,6 +83,7 @@ jobs:
           git fetch --all
           git pull --all
           git checkout ${dst_branch}
+          rm .git/info/grafts 
           git log --all --decorate --graph --oneline > 1
           cat 1
           git merge ${src_branch} --ff-only
