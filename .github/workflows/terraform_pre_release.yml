@@ -76,7 +76,7 @@ jobs:
       - name: Merge
         run: |
           set -x
-          git log -n 1 --decorate --graph --oneline
+          git log -n 10 --decorate --graph --oneline
           git pull
           git checkout ${dst_branch}
           git merge ${src_branch} --ff-only
