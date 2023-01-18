@@ -1,16 +1,32 @@
-# Data Security Fabric (DSF) Kit Installation Guide
+# Data Security Fabric (DSF) Kit Deployment Guide
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
+
+# DSFKit
+
+Imperva DSFKit is the official Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric (DSF Hub & Agentless Gateway) (formerly Sonar).
+The DSF Hub can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
+
+In the near future, DSFKit will enable you to deploy the full suite of DSF products, including DAM and DRA, and will support the other major public clouds.
 
 # About This Guide
 
-This guide is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations that deploy the Imperva Data Security Fabric (DSF) Kit solution.
-```
-NOTE: This guide is for INTERNAL USE ONLY, to be used by in-house staff for POCs and demos of the new DSF installation. The current focus is on Sonar parts only.
-```
+#### Audience
 
-**Typographical Conventions**
+Currently, this guide is for internal use only.
 
-This guide uses several text styles for an enhanced readability and several call-out features. Learn about their aspect and meaning from the table below.
+It is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations.
+
+#### Purpose and Scope
+
+This guide covers the following main topics. Additional guides are referenced throughout, as listed in the Quick Links section below.
+
+* How to deploy Imperva’s Data Security Fabric (DSF) with step-by-step instructions.
+* How to verify that the deployment was successful using the DSFKit output.
+* How to undeploy DSF with step-by-step instructions.
+
+#### Typographical Conventions
+
+This guide uses several text styles for an enhanced readability and several call-out features. Learn about their meaning from the table below.
 
 <table>
   <tr>
@@ -20,12 +36,12 @@ This guide uses several text styles for an enhanced readability and several call
    </td>
   </tr>
   <tr>
-   <td>Code Input
+   <td>Code
    </td>
    <td>
    
    ```
-   Code will be called out using this font for easy identification of required user input. 
+   Code will be called out using this font. 
    ```
 
    </td>
@@ -33,69 +49,74 @@ This guide uses several text styles for an enhanced readability and several call
   <tr>
    <td>Hyperlinks
    </td>
-   <td>Clickable urls embedded within the guide are blue and underlined. E.g. <a href="http://www.imperva.com">www.imperva.com</a>
+   <td>Clickable URLs embedded within the guide are blue and underlined. E.g., <a href="http://www.imperva.com">www.imperva.com</a>
    </td>
   </tr>
 </table>
 
+#### Quick Links
 
-**Document Scope**
-
-This document covers the following main topics. Additional guides are referenced throughout this document, as listed in the Quick Links reference section below, and are available for more information on each respective topic. 
-
-* How to install Imperva’s Data Security Fabric (DSF) Kit with step-by-step instructions. 
-* Verification of a successful installation via logging output. 
-* How to uninstall DSFKit with step-by-step instructions.
-
-**Quick Links**
-
-This guide references the following information and links, most of which are available via the Document Portal on the Imperva website: [https://docs.imperva.com](https://docs.imperva.com). For a quick reference, the name and link for each URL is listed below. (Login required)
-
+This guide references the following information and links, some of which are available via the Documention Portal on the Imperva website: [https://docs.imperva.com](https://docs.imperva.com).  (Login required)
 
 <table>
   <tr>
-   <td><strong>Document Name</strong>
+   <td><strong>Link</strong>
+   </td>
+   <td><strong>Details</strong>
+   </td>
+  </tr>
+   <tr>
+      <td><a href="https://docs.imperva.com/bundle/v1-data-security-overview-and-integration-guide/page/78571.htm">Data Security Fabric v1.0</a>
+      </td>
+      <td>DSF Overview
+      </td>
+   </tr>
+  <tr>
+   <td>
+   <a href="https://docs.imperva.com/howto/ed55ac24">Sonar v4.10</a>
+
+   <a href="https://docs.imperva.com/howto/66707580">DAM v14.10</a>
+
+   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.10</a>
+   </td>
+   <td>DSF Components Overview
    </td>
   </tr>
   <tr>
-   <td>DSF Components Overview:
-<ul>
-
-<li><a href="https://docs.imperva.com/howto/d27b25ee/">Sonar</a>
-
-<li><a href="https://docs.imperva.com/howto/1cc28a13">DAM</a>
-
-<li><a href="https://docs.imperva.com/howto/fc0e6cc8">DRA</a>
-</li>
-</ul>
+   <td><a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a> 
+   </td>
+   <td>
    </td>
   </tr>
   <tr>
-   <td><a href="https://git-scm.com/downloads">Download Git</a>
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a> 
+   </td>
+   <td>
    </td>
   </tr>
   <tr>
    <td><a href="https://www.terraform.io/downloads">Download Terraform</a>
    </td>
-  </tr>
-  <tr>
-   <td><a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repo </a> 
+   <td>
    </td>
   </tr>
   <tr>
    <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Open Terraform Cloud Account - Request Form</a>
    </td>
+   <td>Grants access for a specific e-mail address to Imperva's Terraform Cloud account.
+       Required for <a href="https://github.com/imperva/dsfkit/tree/dev#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
+   </td>
   </tr>
   <tr>
    <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform">Open TAR AWS S3 Bucket - Request Form</a>
    </td>
+   <td> Grants access for a specific AWS account to Imperva's AWS S3 bucket where Sonar's installation tarball can be downloaded
+   </td>
   </tr>
 </table>
 
-
 #### Version History
-The following table lists the released DSFKit versions, their release date and a high-level summary of each version's content. 
-
+The following table lists the released DSFKit versions, their release date and a high-level summary of each version's content.
 
 <table>
   <tr>
@@ -131,39 +152,35 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
   </tr>
   <tr>
-   <td>16 Jan 2023
+   <td>18 Jan 2023
    </td>
    <td>1.3.4
    </td>
-   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation.
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation. <br>5. Added the module's version to the examples.
    </td>
   </tr>
   
 </table>
 
+# Getting Ready to Deploy
 
-
-# Getting Ready to Deploy  
-
-The Imperva DSFKit enables you to easily install a working instance of the DSF Portal, providing access to the full suite of DSF products including Sonar, DAM, and DRA. The DSFKit can be easily installed by following the steps in this guide and is currently available for POC scenarios on AWS only. 
-
-Before installing DSFKit, it is necessary to complete the following steps:
+Before using DSFKit to deploy DSF, it is necessary to complete the following steps:
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
-2. Deployment requires access to the tarball containing Sonar binaries. The tarball is located in a dedicated AWS Bucket owned by Imperva. Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
-3. UI Installation Mode requires access to a Terraform Cloud Platform account. Any  account may be used, whether the account is owned by Imperva or the customer. Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Account.
-4. [Download Git](https://git-scm.com/downloads).
-5. [Download Terraform](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "PACKAGE MANAGER" option during installation.
+2. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva. 
+   Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
+3. [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode) requires access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
+   Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Cloud account.
+4. [Download Terraform](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 
-```
-NOTE: Note: It may take several hours for access to be granted to AWS and Terraform in Steps 2 and 3.
-```
+
+**NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
 
 ## Sonar Binaries Location and Versioning
 
-When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform recipe.
+When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example recipe.
 
-**File**: examples/poc/basic_deployment/variables.tf
+**For example**: examples/poc/basic_deployment/variables.tf
 ```bash
  variable "sonar_version" {
     type    = string
@@ -171,38 +188,108 @@ When using DSFKit there is no need to manually download the DSF binaries, DSFKit
 }
 ```
 
-Make sure that the Sonar version you are using is supported by all the modules which are part of your installation.
-To see which Sonar versions are supported by each module, refer to the specific module's README.
+Make sure that the Sonar version you are using is supported by all the modules which are part of your deployment.
+To see which Sonar versions are supported by each module, refer to the specific module's README. 
+(For example, [Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
-# DSFKit Installation 
+## Choosing the Example/Recipe that Fits Your Use Case
 
-DSFKit is the official Terraform toolkit designed to automate the deployment and maintenance of Imperva's Data Security Fabric (DSF). DSFKit offers two installation methods:
+An important thing to understand about the deployment, is that it begins with choosing a Terraform recipe that we call "example" and using it to deploy DSF, with or without customizations to fit your specific use case.
+To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).   
 
-* **UI Installation Mode:** This method makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.** **This method is used in cases where we don't want to install any software on the client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).  \
+Assuming you are familiar with Terraform, you can go over the example code and see what it consists of.
+The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
 
-* **CLI Installation Mode:** This method offers a straightforward installation option that relies on entering and running a Terraform script. This method is recommended when the customer wants to install the demo environment on their own machine, or when using the Terraform Cloud is not possible.
+You can use the example as is, or customize it to accommodate varying system requirements and deployments. 
+You can also start from scratch, but the recommendation is to start from an example and make changes to it if necessary.
 
-Please select the most appropriate method and follow the step-by-step instructions to ensure a successful installation. If you have any questions or issues during the installation process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+# Deployment 
 
-## UI Installation Mode
+DSFKit offers several deployment modes:
 
-The User Interface (UI) installation mode uses the Terraform Cloud (TF Cloud) service, which allows installing and managing deployments via a dedicated UI. Deploying the environment is easily triggered by clicking a button within the Terraform interface, which then pulls the required code from the Imperva GitHub repository and automatically runs the scripts remotely. 
+* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
 
+  For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
+* **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform. 
+    This mode is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
+
+  For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
+* **Installer Machine Deployment Mode:** This mode can be used if a client machine is not available or DSFKit cannot be run on it. In this mode, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This mode has two options:
+  * Manual: The user manually creates the EC2 machine.
+  * Automated: The user runs a Terraform script which automatically creates the EC2 machine.
+
+  For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
+
+Choose the most appropriate mode to you and follow the step-by-step instructions to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+
+## CLI Deployment Mode
+
+This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
+Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
+
+The first thing to do in this deployment mode is to [download Terraform ](https://www.terraform.io/downloads).
+
+### CLI Deployment Steps
+
+**NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
+
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+
+2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
+   For example:
+   ```
+   cd examples/poc/basic_deployment
+   ```
+
+3. Optionally make changes to the example's Terraform code to fit your use case.
+
+
+4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
+   For simplicity, in this example we will use environment variables:
+
+    ```bash
+    export AWS_ACCESS_KEY_ID=${access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
+    export AWS_REGION=${region}
+    ```
+
+5. Run:
+    ```bash
+    terraform init
+    ```
+6. Run:
+    ```bash
+    terraform apply -auto-approve
+    ```
+
+   This should take about 30 minutes.
+
+
+7. Extract the web console admin password and DSF URL using:
+    ```bash
+    terraform output "dsf_hub_web_console"
+    ```
+8. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step.
+
+**The CLI Deployment is now complete and a functioning version of DSF is now available.**
+
+## Terraform Cloud Deployment Mode
+
+This deployment mode uses the Terraform Cloud service, which allows deploying and managing deployments via a dedicated UI. Deploying the environment is easily triggered by clicking a button within the Terraform interface, which then pulls the required code from the Imperva GitHub repository and automatically runs the scripts remotely. 
+
+This deployment mode can be used to demonstrate DSF in a customer's Terraform Cloud account or the Imperva Terraform Cloud account, which is accessible for internal use (SEs, QA, Research, etc.), and can be used to deploy/undeploy POC environments on AWS accounts owned by Imperva.
+
+If you want to use Imperva's Terraform Cloud account, the first thing to do is to request access here:
 [Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform)
 
-```
-NOTE: The UI Installation Mode can be used to demo DSF in a customer's Terraform account or the Imperva Terraform account, which is accessible for internal use (SEs, QA, Research, etc') and can be used to deploy/destroy demo environments on AWS accounts owned by Imperva.
-```
+**NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 
-Please complete the following step-by-step installation instructions provided below and contact [Imperva Technical Support](https://support.imperva.com/s/) with any issues or questions.
+### Terraform Cloud Deployment Steps
 
-### UI Installation Steps
+1. **Connect to Terraform Cloud:** Connect to the desired Terraform Cloud account, either the internal Imperva account or a customer account if one is available.
+2. **Create a new workspace:** Complete these steps to create a new workspace in Terraform Cloud that will be used for the DSF deployment. 
+    * Click the **+ New workspace** button in the top navigation bar to open the **Create a new Workspace** page.<br>![New Workspace](https://user-images.githubusercontent.com/52969528/212976777-f3095813-baa6-4ece-aba2-29b39001aa48.png)
 
-Follow these instructions to install DSFKit via the UI Installation Mode:
-
-1. **Connect to Terraform Cloud:** Connect to the desired Terraform cloud account, either the internal Imperva account or a customer account if one is available.
-2. **Create a New Workspace:** Complete these steps to create a new workspace in Terraform cloud that will be used for the DSFKit deployment. 
-    * Click the **+ New Workspace** button in the top navigation bar to open the Create a new Workspace page.<br>![New Workspace](https://user-images.githubusercontent.com/87799317/203771096-f79f6621-9d29-41e8-a05c-a0d09cf319b4.png)
     * Choose **Version Control Workflow** from the workflow type options.<br>![Version Control Workflow](https://user-images.githubusercontent.com/87799317/203772173-888eeb65-adc4-4e0b-94ec-daad24532282.png)
 
     * Choose **github.com/dsfkit** as the version control provider.<br>![github.com/dsfkit](https://user-images.githubusercontent.com/87799317/203773848-9bdae743-2e56-4a5a-9c4c-aaa4812b4d78.png)
@@ -211,28 +298,27 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
     If this option is not displayed, type imperva/dsfkit in the “Filter” textbox.<br>![imperva/dsfkit](https://user-images.githubusercontent.com/87799317/203773953-69c615db-68d3-4703-a3ef-a7cfab6e3149.png)
 
     * Name the workspace in the following format: <br>
-    Example:  
     ```bash
         dsfkit-[NAME_OF_CUSTOMER]-[NAME_OF_ENVIRONMENT]
     ```
 
-    * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/87799317/203774205-54db54e9-9e16-481b-8225-3ecee32fb148.png)
+    * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/52969528/212977394-60f79882-008b-44ef-bb05-9af629b1a88a.png)
 
-    * Enter “examples/poc/basic_deployment” into the Terraform working directory input field. To understand what the basic_deployment example consists of or the create a custom demo, please see more details in the [Customizing Demos - Examples/Recipes](#customizing-demos---examplesrecipes) section.<br>![deploy/examples/basic_deployment](https://user-images.githubusercontent.com/87799317/203820129-39804a8a-eb90-451c-bc66-b5adb4cb90f3.png)
-    
+    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://user-images.githubusercontent.com/52969528/212981545-31063817-e9ef-43e4-bb9c-b4a8e5391568.png)
+
     * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
-    * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run triggers](https://user-images.githubusercontent.com/87799317/203820430-573edeb8-4698-4a03-bcc6-1f560963aeff.png)<br>
-    As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
+    * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run Triggers](https://user-images.githubusercontent.com/52969528/212982564-e12f9b4a-ca3e-480b-9714-76ef69291ee4.png)
+      <br>As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
 
-    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/87799317/203820500-ec61fec1-8f8a-47b5-bd6f-10261ba60f51.png)
+    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/52969528/212977895-ad9cdc4c-bf44-4a83-b67e-57e7f7e6e6f7.png)
 
-3. **Add the AWS Variables:** The next few steps will configure the required AWS variables.
-    * Once Terraform has finished creating the DSFKit workspace, click the Workspace Overview button to continue.<br>![Workspace Overview](https://user-images.githubusercontent.com/87799317/203820579-c3ede713-4536-4d49-aae3-e148bd6030c1.png)
+3. **Add the AWS variables:** The next few steps will configure the required AWS variables.
+    * Once the DSFKit workspace is created, click the "Go to workspace overview" button.<br>![Go to Workspace Overview](https://user-images.githubusercontent.com/52969528/212978246-42ce66c1-ffbc-4932-8c0a-4d13188065eb.png)
 
-    * Click on the Configure Variables button.<br>![Configure Variables](https://user-images.githubusercontent.com/87799317/203820695-330bd204-4b57-470d-b321-901c71fe0785.png)
+    * Click on the "Configure Variables" button.<br>![Configure Variables](https://user-images.githubusercontent.com/52969528/212978735-afcbfee8-d524-4b08-8e4f-42a12530f490.png)
 
-    * Add the following workspace variables by entering the name, value, and category as listed below. 
+    * Add the following workspace variables by entering the name, value, category and sensitivity as listed below. 
 
         <table>
         <tr>
@@ -249,9 +335,9 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
         <tr>
         <td>AWS_ACCESS_KEY_ID
         </td>
-        <td>The AWS access key
+        <td>Your AWS credentials access key
         </td>
-        <td>env
+        <td>Environment variable
         </td>
         <td>True
         </td>
@@ -259,9 +345,9 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
         <tr>
         <td>AWS_SECRET_ACCESS_KEY
         </td>
-        <td>The AWS access key
+        <td>Your AWS credentials secret key
         </td>
-        <td>env
+        <td>Environment variable
         </td>
         <td>True
         </td>
@@ -269,9 +355,9 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
         <tr>
         <td>AWS_REGION
         </td>
-        <td>The region you wish to deploy into
+        <td>The AWS region you wish to deploy into
         </td>
-        <td>env
+        <td>Environment variable
         </td>
         <td>False
         </td>
@@ -279,100 +365,40 @@ Follow these instructions to install DSFKit via the UI Installation Mode:
         </table>
         <br>
 
-        ![Workspace Variables](https://user-images.githubusercontent.com/87799317/203822280-1d6f4f62-b8f6-46f2-99a4-265daba8744a.png)
+        ![Workspace Variables](https://user-images.githubusercontent.com/52969528/212979637-4f36652d-a18d-40bc-b8ae-bebfe5e8f874.png)
 
-4. **Run the Imperva GitHub Code:** The following steps complete setting up the DSFKit workspace and run the Imperva GitHub code. 
-    * Click on the **Actions** dropdown button from the top navigation bar, and select the Start **New Run** option from the list.![alt_text](https://user-images.githubusercontent.com/87799317/203822365-6fb16b0e-e37a-401e-91da-37d4be5866a8.png)
+4. **Run the Terraform:** The following steps complete setting up the DSFKit workspace and running the example's Terraform code. 
+    * Click on the **Actions** dropdown button from the top navigation bar, and select the "Start new run" option from the list.</br>![Start New Run](https://user-images.githubusercontent.com/52969528/212980571-9071c3e5-400a-42e7-a7d9-5848b8b9fad7.png)
 
-    * Enter a unique alphanumeric name for the run, and click on the **Start Run** button. As the run completes, Terraform will show what resources it has created and what resources are currently provisioned.<br>![Start Run](https://user-images.githubusercontent.com/87799317/203822418-f3be0996-aab9-48eb-ace2-14c4d4aadee1.png)
+    * Enter a unique, alphanumeric name for the run, and click on the "Start run" button.<br>![Start Run](https://user-images.githubusercontent.com/52969528/212982996-2010be16-79f7-497d-a9c9-13ebc29fa052.png)
+   
+    * Wait for the run to complete. This is indicated by "Apply finished".<br>![Apply Finished](https://user-images.githubusercontent.com/52969528/212989107-46bdd44c-e328-47c0-a478-33d69b3b7c34.png)
 
-5. **Complete the Workspace Deployment:** These steps provide the necessary information to view and access the newly created workspace, and a fully functioning instance of Imperva’s DSF. 
-    * Once the run has completed, click to expand the **Apply Finished** section.<br>![Apply Finished](https://user-images.githubusercontent.com/87799317/203822491-5713a8ec-1e9e-4025-a47c-94325dfe0e76.png)
+5. **Inspect the run result:** These steps provide the necessary information to view the run output, and access the deployed DSF. 
+    * Scroll down the "Apply Finished" area to see which resources were created.
 
-    * Scroll to the bottom and expand the **Outputs** section to find the State Versions Created link and the auto-generated password under “admin-password” which will be  used to log into the DSF Portal in a future step.<br>![Outputs](https://user-images.githubusercontent.com/87799317/203822561-250f5ffe-1d02-4b3d-9fbd-263c9d59dc5b.png)
+    * Scroll to the bottom to find the "State versions created" link which can be helpful to investigate issues.<br>![State Version Created](https://user-images.githubusercontent.com/52969528/212992756-dfd183ac-640e-4891-8875-c1b8683d8d8d.png)
 
-    * Expand outputs to view the environment settings and locate the **dsf_hub_web_console**.<br>![dsf_hub_web_console_url](https://user-images.githubusercontent.com/87799317/203822608-2de059a5-e3af-49a7-944b-2ba390517d16.png)
+    * Scroll up to view the "Outputs" of the run which should be expanded already, and locate the "dsf_hub_web_console" JSON object. Copy the "public_url" and "admin_password" fields' values for later use.<br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
+   
+    * Enter the "public_url" value you copied into a web browser to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
-    * Copy the **dsf_hub_web_console** URL into a web browser to open the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
+    * Sonar is installed with a self-signed certificate, as a result, when opening the web page you may see a warning notification. For example, in Google Chrome, click "Proceed to domain.com (unsafe)".
+    ![Warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
 
-    ```
-    NOTE: Sonar is installed with a self-signed certificate, as result when opening the web page you may see a warning notification. Please click "Proceed to domain.com (unsafe)".
-    ```
-    ![warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
+    * Enter “admin” into the Username field and the "admin_password" value you copied into the Password field. Click "Sign In".
 
-    * Enter “admin” into the username field and the auto-generated password from the previous step to find the unmasked “admin_password” output. Click **Sign In**.
+**The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
-**The UI Installation is now complete and a functioning version of DSF is now available.**
-
-## Local CLI Installation Mode
-
-This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments. Terraform CLI uses a bash script and therefore requires a Linux/Mac machine. To deploy DSFKit using the CLI installation mode, please complete the following steps:
-
-1. [Download Git ](https://git-scm.com/downloads)
-2. [Download Terraform ](https://www.terraform.io/downloads)
-
-### Local CLI Installation Steps
-
-Follow these instructions to install DSFKit via the local CLI mode.
-
-```
-NOTE: Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
-```
-
-1. Git clone dfskit:
-    ```bash
-    git clone https://github.com/imperva/dsfkit.git
-    git -C dsfkit checkout tags/${version}
-    ```
-
-2. Navigate to the directory "examples":
-    ```bash
-    cd dsfkit/examples/${example_name}
-    ```
-
-
-    DSFKit arrives with a built-in example “basic_deployment” which should meet most POC requirements. See “[Customizing Demos](#customizing-demos---examplesrecipes)” to understand the environment created with the “basic_deployment” example and to learn how to create specific requirements if needed.<br>For simplicity we will use the following:
-    ```bash
-    cd dsfkit/examples/poc/basic_deployment
-    ```
-
-3. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-For simplicity, in this example we will use environment variables:
-
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
-    ```
-
-
-4. Run:
-    ```bash
-    terraform init
-    ```
-5. Run:
-    ```bash
-    terraform apply -auto-approve
-    ```
-
-    This should take about 30 minutes.
-
-6. Extract the web console admin password and DSF URL using:
-    ```bash
-    terraform output "dsf_hub_web_console"
-    ```
-7. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
-
-**The CLI Installation is now complete and a functioning version of DSF is now available.**
-
-## Installer Machine Mode
+## Installer Machine Deployment Mode
 
 If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
 
-This can be done either manually or via an automated process. Select a method below and follow the instructions:
+This can be done either manually or via an automated process. Select your preferred method and follow the instructions below.
 
+**NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 
-### Manual Installer Machine
+### Manual Installer Machine Deployment Mode
 
 Complete these steps to manually create an installer machine:
 
@@ -404,16 +430,16 @@ NOTES:
 3. DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND HAVE DESTROYED ALL OTHER RESOURCES. OTHERWISE THERE WILL BE UNDELETABLE RESOURCES. For more information see Uninstalling Installer Machine Mode section.
 ```
 
-7. When installation is done extract the web console password and DSF URL using:
+7. When the deployment is done extract the web console password and DSF URL using:
     1. ```bash
         cd /dsfkit/examples/<example_name>
         ```
     2. ```bash
         terraform output "dsf_hub_web_console"
         ```
-8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.  \
+8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
 
-### Automated Installer Machine
+### Automated Installer Machine Deployment Mode
 
 In case you don’t want to manually create the Installer Machine, you can automate the creation of the Installer Machine. DSFKit exposes a dedicated Terraform example that automatically creates the installer machine with the “user-data”.  Complete these steps to automate the creation of an installer machine:
 <br><br>
@@ -467,11 +493,16 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
 NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
 ```
 
-# Customizing Demos - Examples/Recipes 
+# Out-of-the-box Examples
 
-DSFKit ships 2 built-in examples/recipes which are already configured to deploy a basic Sonar environment:
+DSFKit provides a number of out-of-the-box examples which are already configured to deploy a basic Sonar environment.
 
-1. “basic_deployment” recipe, consist of:
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples">examples</a> directory.
+Some examples are intended for POC and others for actual DSF deployments by Professional Services and customers.
+
+For POC:
+
+1. “basic_deployment” example, consist of:
     1. New VPC
     2. 1 Hub
     3. 1 GW
@@ -480,25 +511,29 @@ DSFKit ships 2 built-in examples/recipes which are already configured to deploy 
     6. Auto configuration of new “Demo DB” to enable native audit
     7. Onboarding database into Sonar
 
-2. “hadr_deployment” recipe, consist of:
+2. “hadr_deployment” example, consist of:
     1. New VPC
     2. 1 Primary Hub
     3. 1 Secondary Hub
     4. 1 GW
     5. Federation
-    6. Hub HADR
+    6. Hub HADR     
+    7. Creation of a new “Demo DB”
+    8. Auto configuration of new “Demo DB” to enable native audit
+    9. Onboarding database into Sonar
 
-It is also possible to accommodate varying system requirements and deployments.  To customize the demo, please complete the following steps:
+For Professional Services and customers:
 
-1. Fork dsfkit from git. 
+3. "multi_account_deployment" example, consist of:
+    1. 1 Hub
+    2. 1 GW
+    3. Federation
 
-2. In the Git account assemble a new Terraform recipe that meets the necessary requirements. 
+Download a zip file of the example code using these links:
 
-    ```bash
-    cd examples/<YOUR CUSTOM EXAMPLE>
-    terraform init
-    terraform appy -auto-approve
-    ```
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">Basic Deployment</a>
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/hadr_deployment/hadr_deployment.zip">HADR Deployment</a>
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/installation/multi_account_deployment/multi_account_deployment.zip">Multi Account Deployment</a>
 
 # IAM Roles
 
@@ -513,43 +548,40 @@ The permissions are separated to 3 different policies. Use the relevant policies
 NOTE: The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 ```
 
-# DSFKit Uninstallation
+# Undeployment
 
-Please select the most appropriate method to uninstall and destroy the workspace.
+Depending on the deployment mode you chose, follow the undeployment instructions of the same mode to completely remove Imperva DSF from AWS.
 
-## UI Mode
+## CLI Undeployment Mode
 
-Please complete the following steps to completely uninstall the Imperva DSFKit and remove it from the application and system.
+1. cd to the example directory.
+   For example:
+   ```
+   cd examples/poc/basic_deployment
+   ```
 
-
-
-1. To destroy the environment, click on Settings and find Destruction and Deletion from the navigation menu to open the Destroy Infrastructure page. Ensure that the Allow Destroy Plans toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
-
-2. The installed environment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
-
-    ```
-    NOTE: Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
-    ```
-
-## Local CLI Mode 
-
-Please complete the following steps to completely uninstall the Imperva DSFKit and remove it from the application and system.
-
-1. cd into the installed “example”:
-    ```bash
-    cd examples/<example_name>
-    ```
-2. Run: 
+2. Run:
     ```bash
     terraform destroy -auto-approve
     ```
 
-## Installer Machine Mode 
+## Terraform Cloud Undeployment Mode
 
-Please complete the following steps to completely uninstall the Imperva DSFKit and remove it from the application and system.
+1. To undeploy the DSF deployment, click on Settings and find "Destruction and Deletion" from the navigation menu to open the "Destroy infrastructure" page. Ensure that the "Allow destroy plans" toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
+
+2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
+
+**NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
+
+## Installer Machine Undeployment Mode
+
+### Manual Installer Machine Undeployment Mode
 
 1. ssh into the “Installer Machine”.
-2. cd into the installed “example”: ```bash
+
+
+2. cd to the installed “example”: 
+    ```bash
     cd /dsfkit/examples/<example_name>
     ```
 3. Run:
@@ -563,23 +595,23 @@ Please complete the following steps to completely uninstall the Imperva DSFKit a
 
 4. Wait for the environment to be destroyed.
 
+5. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS UI Console.
 
-#### Automated Installer Machine
+### Automated Installer Machine Undeployment Mode
 
 1. Exit from the “Installer Machine”.
+
+
 2. On the local machine, cd into installer_machine/.
-3. ```bash
+
+3. Run:
+    ```bash
     terraform destroy -auto-approve
     ```
 
-#### Manual Installer Machine
-
-1. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS UI Console.
-
-
 # Troubleshooting 
 
-Please review the following issues and troubleshooting remediations. 
+Review the following issues and troubleshooting remediations. 
 
 
 <table>

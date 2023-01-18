@@ -1,9 +1,9 @@
 name: 'Export module'
 
 on:
-  workflow_dispatch: {}
-  release:
-    types: [published]
+  workflow_call:
+  workflow_dispatch:
+  # release:? [published]
   # push:
   #   branches:
   #     - '*'
