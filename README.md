@@ -36,12 +36,36 @@ This guide uses several text styles for an enhanced readability and several call
    </td>
   </tr>
   <tr>
-   <td>Code
+   <td>Code, commands or user input
    </td>
    <td>
    
    ```
-   Code will be called out using this font. 
+   This fond will be used to denote code blocks, commands or user input. 
+   ```
+
+   </td>
+  </tr>
+  <tr>
+   <td>Instruction to change code, commands or user input
+   </td>
+   <td>
+
+   ```
+   >>>> This font along with the >>>> prefix will be used to instruct the user 
+        to change the code, command or the user input rather than copy the exact
+        text as it appears in this guide. 
+   ```
+
+   </td>
+  </tr>
+  <tr>
+   <td>Placeholder
+   </td>
+   <td>
+
+   ```bash
+   ${placeholder}: Used within commands to indicate that the user should replace the placehodler with a value, including the $, { and }. 
    ```
 
    </td>
@@ -181,12 +205,14 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example recipe.
 
 **For example**: examples/poc/basic_deployment/variables.tf
-```bash
- variable "sonar_version" {
-    type    = string
-    default = "4.10"
-}
-```
+   ```terraform
+   variable "sonar_version" {
+       type    = string
+       default = "4.10"
+   }
+
+   >>>> Change the Sonar version to the one you want to install
+   ```
 
 Make sure that the Sonar version you are using is supported by all the modules which are part of your deployment.
 To see which Sonar versions are supported by each module, refer to the specific module's README. 
@@ -237,8 +263,10 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
    For example:
-   ```
+   ```bash
    cd examples/poc/basic_deployment
+   
+   >>>> Change this command depending on the example you chose
    ```
 
 3. Optionally make changes to the example's Terraform code to fit your use case.
@@ -251,6 +279,8 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}
     export AWS_REGION=${region}
+
+    >>>> Fill the values of the access_key, secret_key and region placeholders
     ```
 
 5. Run:
@@ -298,13 +328,18 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
     If this option is not displayed, type imperva/dsfkit in the “Filter” textbox.<br>![imperva/dsfkit](https://user-images.githubusercontent.com/87799317/203773953-69c615db-68d3-4703-a3ef-a7cfab6e3149.png)
 
     * Name the workspace in the following format: <br>
-    ```bash
-        dsfkit-[NAME_OF_CUSTOMER]-[NAME_OF_ENVIRONMENT]
-    ```
+      ```bash
+      dsfkit-${customer_name}-${environment_name}
+      
+      >>>> Fill the values of the customer_name and environment_name placeholders, e.g., dsfkit-customer1-poc1
+      ```
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/52969528/212977394-60f79882-008b-44ef-bb05-9af629b1a88a.png)
 
     * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://user-images.githubusercontent.com/52969528/212981545-31063817-e9ef-43e4-bb9c-b4a8e5391568.png)
+      ```
+      >>>> Change the directory in the above screenshot depending on the example you chose  
+      ```
 
     * Select the “Auto apply” option as the Apply Method.<br>![Auto apply](https://user-images.githubusercontent.com/87799317/203820284-ea8479f7-b486-4040-8ce1-72c36fd22515.png)
 
@@ -366,11 +401,17 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
         <br>
 
         ![Workspace Variables](https://user-images.githubusercontent.com/52969528/212979637-4f36652d-a18d-40bc-b8ae-bebfe5e8f874.png)
+      ```
+      >>>> Change the AWS_REGION value in the above screenshot to the AWS region you want to deploy in
+      ```
 
 4. **Run the Terraform:** The following steps complete setting up the DSFKit workspace and running the example's Terraform code. 
     * Click on the **Actions** dropdown button from the top navigation bar, and select the "Start new run" option from the list.</br>![Start New Run](https://user-images.githubusercontent.com/52969528/212980571-9071c3e5-400a-42e7-a7d9-5848b8b9fad7.png)
 
     * Enter a unique, alphanumeric name for the run, and click on the "Start run" button.<br>![Start Run](https://user-images.githubusercontent.com/52969528/212982996-2010be16-79f7-497d-a9c9-13ebc29fa052.png)
+      ```
+      >>>> Change the "Reason for starting run" value in the above screenshot to a run name of your choosing
+      ```
    
     * Wait for the run to complete. This is indicated by "Apply finished".<br>![Apply Finished](https://user-images.githubusercontent.com/52969528/212989107-46bdd44c-e328-47c0-a478-33d69b3b7c34.png)
 
@@ -422,22 +463,24 @@ Complete these steps to manually create an installer machine:
     tail -f /var/logs/user-data.log
     ```
 
-```
-NOTES: 
+   **NOTES:**
 
-1. In this example 'web_console_cidr' was set to 0.0.0.0/0. This configuration opens the Hub web console as a public web site. If needed, specify a more restricted IP and CIDR range.
-2. The link to the GitHub repo can be updated and supplied by you, in the case of custom demos and examples. See Customizing Demos section for more information.
-3. DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND HAVE DESTROYED ALL OTHER RESOURCES. OTHERWISE THERE WILL BE UNDELETABLE RESOURCES. For more information see Uninstalling Installer Machine Mode section.
-```
+   * In this example, 'web_console_cidr' was set to 0.0.0.0/0. This configuration opens the Hub web console as a public web site. It is recommended to specify a more restricted IP and CIDR range.
+   * IMPORTANT: Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Manual Installer Machine Undeployment Mode](#manual-installer-machine-undeployment-mode) section.
+
 
 7. When the deployment is done extract the web console password and DSF URL using:
     1. ```bash
-        cd /dsfkit/examples/<example_name>
-        ```
+       cd dsfkit/examples/${example_name}
+       
+       >>>> Use the name of the example you chose
+       ```
     2. ```bash
         terraform output "dsf_hub_web_console"
         ```
 8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
+
+**The Manual Installer Machine Deployment is now complete and a functioning version of DSF is now available.**
 
 ### Automated Installer Machine Deployment Mode
 
@@ -460,28 +503,28 @@ To use the Terraform installer example follow the following step:
     ```
 5. This script will prompt you to input the aws_access_key, aws_secret_key and aws_region parameters.
 
-```
-NOTE: At this stage the Installer Machine is initializing. At its initialization it will automatically create all the other resources (Hub, GWs etc).
+   **NOTES:**
 
-DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OTHER RESOURCES. OTHERWISE YOU WILL LEAVE UNDELETABLE RESOURCES for more information see  Uninstalling Installer Machine Mode section
-```
-
+   * At this stage the Installer Machine is initializing. During its initialization, it will automatically create all the other resources (Hub, GWs etc).
+   * IMPORTANT: Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Automated Installer Machine Undeployment Mode](#automated-installer-machine-undeployment-mode) section.
+   
 6. After the first phase of the installation is completed, it outputs the following ssh commands, for example:
 
-    ```
+    ```bash
     installer_machine_ssh_command = "ssh -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17"
     logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17 -C 'sudo tail -f /var/log/user-data.log'"
     ```
 
-
-7. The second and last phase of the installation runs in the background. To follow it and know when it is completed, run 
-    ```
+7. The second and last phase of the installation runs in the background. To follow it and know when it is completed, run:
+    ```bash
     logs_tail_ssh_command
     ```
     which appears in the first phase output.
 8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
 9. ```bash
-    cd /dsfkit/examples/<example_name>
+    cd dsfkit/examples/${example_name}
+    
+    >>>> Use the name of the example you chose
     ```
 10. Extract the web console admin password and DSF URL using:
     ```bash
@@ -489,9 +532,9 @@ DO NOT DESTROY THE INSTALLER MACHINE UNTIL YOU ARE DONE AND DESTROYED ALL THE OT
     ```
 11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
-```
-NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
-```
+   **NOTE:** The Terraform script is OS-Safe, as it doesn't run any bash script.
+
+**The Automated Installer Machine Deployment is now complete and a functioning version of DSF is now available.**
 
 # Out-of-the-box Examples
 
@@ -544,9 +587,7 @@ The permissions are separated to 3 different policies. Use the relevant policies
 2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/permissions_samples/CreateNetworkResourcesPermissions.txt).
 3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
 
-```
-NOTE: The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
-```
+**NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
 # Undeployment
 
@@ -554,10 +595,10 @@ Depending on the deployment mode you chose, follow the undeployment instructions
 
 ## CLI Undeployment Mode
 
-1. cd to the example directory.
-   For example:
-   ```
-   cd examples/poc/basic_deployment
+1. ```bash
+   cd dsfkit/examples/${example_name}
+   
+   >>>> Use the name of the example you chose
    ```
 
 2. Run:
@@ -577,13 +618,14 @@ Depending on the deployment mode you chose, follow the undeployment instructions
 
 ### Manual Installer Machine Undeployment Mode
 
-1. ssh into the “Installer Machine”.
+1. ssh into the Installer Machine.
 
 
-2. cd to the installed “example”: 
-    ```bash
-    cd /dsfkit/examples/<example_name>
-    ```
+2. ```bash
+   cd dsfkit/examples/${example_name}
+   
+   >>>> Use the name of the example you chose
+   ```
 3. Run:
     ```bash
     sudo su
@@ -591,19 +633,23 @@ Depending on the deployment mode you chose, follow the undeployment instructions
     export AWS_SECRET_ACCESS_KEY=${secret_key}
     export AWS_REGION=${region}
     terraform destroy -auto-approve
+   
+    >>>> Fill the values of the access_key, secret_key and region variables
     ```
 
 4. Wait for the environment to be destroyed.
 
-5. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS UI Console.
+5. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS Console.
 
 ### Automated Installer Machine Undeployment Mode
 
-1. Exit from the “Installer Machine”.
+1. Exit from the Installer Machine.
 
 
-2. On the local machine, cd into installer_machine/.
-
+2. On the local machine:
+   ```bash
+   cd installer_machine
+   ```
 3. Run:
     ```bash
     terraform destroy -auto-approve
