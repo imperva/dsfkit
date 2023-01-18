@@ -92,7 +92,7 @@ jobs:
           # rm .git/info/grafts 
           # git log --all --decorate --graph --oneline > 1
           # cat 1
-          git merge ${src_branch} --ff-only
+          git merge origin/${src_branch} --ff-only
           git push
       
       - name: Deploy modules
