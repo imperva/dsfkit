@@ -96,6 +96,7 @@ jobs:
       with:
         status: ${{ job.status }}
         fields: author,action,eventName,ref,workflow,pullRequest
+      environment: test
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       if: ${{ failure() }} 
