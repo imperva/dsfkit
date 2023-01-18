@@ -11,8 +11,10 @@ permissions:
   contents: write
 
 env:
-  src_branch: "dev"
-  dst_branch: "master"
+  src_branch: "d2"
+  dst_branch: "d1"
+  # src_branch: "dev"
+  # dst_branch: "master"
 
 jobs:
   validate_arguments:
