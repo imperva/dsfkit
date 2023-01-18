@@ -46,16 +46,9 @@ jobs:
           fetch-depth: '0'
           ref: ${{ env.src_branch }}
 
-      - name: Check source branch is mergable
+      - name: Check source branch is "fast-forward" mergale
         run: |
-          for remote in $(git branch -r | grep -v /HEAD); do git checkout --track $remote || true; done
-          git checkout ${{ env.src_branch }}
-          git branch
-          hash=$(git log -n 1 --pretty=format:"%H" ${dst_branch})
-          if ! git branch --contains ${hash} | grep ${src_branch}; then
-            echo "Can't merge ${src_branch} to ${dst_branch}. ${dst_branch} is ahead of ${src_branch}. Please fix this and re-run this workflow"
-            exit 1
-          fi
+          git merge-base --is-ancestor origin/${dst_branch} ${src_branch}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -83,16 +76,8 @@ jobs:
       - name: Merge
         run: |
           git checkout ${dst_branch}
-          git merge ${src_branch}
+          git merge ${src_branch} --ff-only
           git push
-      # - name: Merge
-      #   uses: devmasx/merge-branch@master
-      #   with:
-      #     type: now
-      #     label_name: 'merged ${{ env.src_branch }} to ${{ env.dst_branch }}'
-      #     from_branch: ${{ env.src_branch }}
-      #     target_branch: ${{ env.dst_branch }}
-      #     github_token: ${{ github.token }}
       
       - name: Deploy modules
         run: |
