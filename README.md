@@ -203,7 +203,7 @@ To see which Sonar versions are supported by each module, refer to the specific 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
 An important thing to understand about the deployment, is that it begins with choosing a Terraform recipe that we call "example" and using it to deploy DSF, with or without customizations to fit your specific use case.
-To see the available examples, refer to [Out-of-the-box Examples](out---of---the---box-examples).   
+To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).   
 
 Assuming you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
