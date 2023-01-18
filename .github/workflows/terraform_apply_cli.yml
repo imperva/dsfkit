@@ -65,7 +65,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Change the modules source to local
+    - name: Change the modules source to local # maybe change this to some input parameter- whether it exists
+      if: github.event_name != 'workflow_call'
       run: | 
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
