@@ -114,12 +114,11 @@ jobs:
   deploy_modules:
     needs: merge
     uses: ./.github/workflows/terraform_export_module.yml
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-      
-      # - name: Deploy modules
-      #   run: |
-      #     echo "Deploy modules"
-      
-      # - name: Run tests without sed
-      #   run: |
-      #     echo "Run test"
+
+  test_plan:
+    needs: deploy_modules
+    uses: ./.github/workflows/terraform_plan.yml
+
+  test_apply:
+    needs: deploy_modules
+    uses: ./.github/workflows/terraform_plan.yml
