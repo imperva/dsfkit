@@ -110,11 +110,16 @@ jobs:
         run: |
           git merge origin/${src_branch} --ff-only
           git push
+
+  deploy_modules:
+    needs: merge
+    uses: ./.github/workflows/terraform_export_module.yml
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
       
-      - name: Deploy modules
-        run: |
-          echo "Deploy modules"
+      # - name: Deploy modules
+      #   run: |
+      #     echo "Deploy modules"
       
-      - name: Run tests without sed
-        run: |
-          echo "Run test"
+      # - name: Run tests without sed
+      #   run: |
+      #     echo "Run test"
