@@ -136,8 +136,8 @@ jobs:
   deploy_modules:
     needs: tag_release
     uses: ./.github/workflows/terraform_export_module.yml
-      secrets:
-        PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+    secrets:
+      PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
 
   test_plan:
     needs: deploy_modules
