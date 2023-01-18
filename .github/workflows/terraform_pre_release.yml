@@ -11,10 +11,8 @@ permissions:
   contents: write
 
 env:
-  src_branch: "d2"
-  dst_branch: "d1"
-  # src_branch: "dev"
-  # dst_branch: "master"
+  src_branch: "dev"
+  dst_branch: "master"
 
 jobs:
   validate_arguments:
@@ -54,7 +52,6 @@ jobs:
     needs: validate_arguments
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -67,7 +64,7 @@ jobs:
           ref: ${{ env.src_branch }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
 
@@ -83,7 +80,7 @@ jobs:
         run: |
           for d in $(find ./examples -type d -links 2); do zip -r ${d}/$(basename ${d}).zip ${d}; done
 
-      - name: commit changes to git repo
+      - name: Commit changes to git repo
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
@@ -94,7 +91,6 @@ jobs:
     needs: update_versions
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -116,7 +112,6 @@ jobs:
     name: 'Tag release'
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
@@ -146,7 +141,6 @@ jobs:
 
   test_apply:
     needs: deploy_modules
-    if: false
     uses: ./.github/workflows/terraform_apply_cli.yml
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
