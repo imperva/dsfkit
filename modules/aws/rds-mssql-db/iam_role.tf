@@ -45,8 +45,8 @@ locals {
           "s3:ListBucket"
         ]
         "Resource" : [
-          "arn:aws:s3:::hadar-mssql",
-          "arn:aws:s3:::hadar-mssql/*"
+          "arn:aws:s3:::dsf-sql-scripts-bucket*",
+          "arn:aws:s3:::dsf-sql-scripts-bucket*/*",
         ]
       }
     ]
@@ -84,6 +84,24 @@ locals {
     ]
   }
   )
+  inline_policy_vpc_endpoint = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "vpcEndpointPermissions",
+        "Effect" : "Allow",
+        "Action" : [
+#          "ec2:CreateVpcEndpoint",
+#          "ec2:DeleteVpcEndpoint",
+#          "ec2:ModifyVpcEndpoint",
+#          "ec2:DescribeVpcEndpoints"
+          "ec2:*"
+        ]
+        "Resource" : "*"
+      }
+    ]
+  }
+  )
 }
 
 resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
@@ -112,5 +130,9 @@ resource "aws_iam_role" "lambda_mssql_infra_role" {
   inline_policy {
     name   = "imperva-dsf-mssql-ec2-access"
     policy = local.inline_policy_ec2
+  }
+  inline_policy {
+    name = "imperva-dsf-mssql-vpc-endpoint-access"
+    policy = local.inline_policy_vpc_endpoint
   }
 }

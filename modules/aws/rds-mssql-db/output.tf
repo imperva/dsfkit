@@ -1,4 +1,3 @@
-/*
 output "mssql_db_details" {
   value = {
     db_arn            = try(aws_db_instance.rds_db.arn, null)
@@ -17,15 +16,24 @@ output "mssql_db_details" {
 #    public_subnets  = try(module.vpc.public_subnets, null)
 #    private_subnets = try(module.vpc.private_subnets, null)
   }
-}*/
+}
 
 output "iam_role" {
   value = local.role_arn
 }
 
-output "sql_scripts_s3_bucket" {
-  value = aws_s3_bucket.mssql_lambda_bucket.bucket
+output "vpc_route_table" {
+  value = data.aws_route_tables.vpc_route_tables
 }
+
+output "region_for_vpc_endpoint" {
+#  value = data.aws_region.current.name
+  value = "com.amazonaws.${data.aws_region.current.name}.s3"
+}
+
+#output "sql_scripts_s3_bucket" {
+#  value = aws_s3_bucket.mssql_lambda_bucket.bucket
+#}
 
 /*
 output "mssql_iam_role_arn" {
@@ -43,42 +51,4 @@ output "rds_subnet_ids" {
 
 #output "lambda_result_entry" {
 #  value = jsondecode(aws_lambda_invocation.mssql_infra_invocation.result)
-#}
-
-
-
-output "db_username" {
-  value = local.db_username
-}
-
-output "db_password" {
-  value = nonsensitive(local.db_password)
-}
-
-output "db_name" {
-  value = local.db_name
-}
-
-output "db_identifier" {
-  value = local.db_identifier
-}
-
-output "db_endpoint" {
-  value = aws_db_instance.rds_db.endpoint
-}
-
-output "db_arn" {
-  value = aws_db_instance.rds_db.arn
-}
-
-output "db_engine" {
-  value = aws_db_instance.rds_db.engine
-}
-
-output "db_port" {
-  value = aws_db_instance.rds_db.port
-}
-
-#output "sql_cmd" {
-#  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${nonsensitive(local.db_password)}"
 #}

@@ -19,6 +19,8 @@ locals {
   db_name                      = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
   mssql_connect_db_name        = "rdsadmin"
   lambda_salt                  = random_id.salt.hex
+  lambda_package               = "${path.module}/installation_resources/mssqlLambdaPackage.zip"
+
   db_audit_bucket_name         = replace("${local.db_identifier}-audit-bucket", "_", "-")
 
   rds_db_og_role_assume_role_policy = jsonencode({
@@ -123,8 +125,6 @@ resource "aws_db_option_group" "impv_rds_db_og" {
   }
 }
 
-# todo - should configure the audit by options groups / parameter groups for the MsSQL
-
 resource "aws_db_instance" "rds_db" {
   allocated_storage       = 20
 #  db_name                 = local.db_name
@@ -150,7 +150,6 @@ resource "aws_security_group" "rds_mssql_access" {
   description = "RDS SQL Server Access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
 }
-
 
 resource "aws_security_group_rule" "rds_mssql_access_rule" {
   type              = "ingress"
@@ -179,65 +178,16 @@ resource "aws_security_group_rule" "rds_mssql_all_out" {
   security_group_id = aws_security_group.rds_mssql_access.id
 }
 
-## create the IS lambda and run it to create the DBs inside the MsSQL instance
-#
-#data "aws_iam_role" "lambda_mssql_assignee_role" {
-#  name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
-##  name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
-#}
-
-# get the zip for lambda from s3
-
-
-resource "aws_s3_bucket" "mssql_lambda_bucket" {
-  bucket        = join("-", ["dsf-sql-scripts-bucket", local.lambda_salt])
-  force_destroy = true
+# create the IS lambda and run it to create the DBs inside the MsSQL instance
+data "aws_iam_role" "lambda_mssql_assignee_role" {
+  name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
-resource "null_resource" "mssql_s3_objects" {
-  provisioner "local-exec" {
-    // ae309159-115c-4504-b0c2-03dd022f3368
-    command = "aws s3 cp s3://${var.db_audit_scripts_bucket_name} s3://${aws_s3_bucket.mssql_lambda_bucket.bucket} --recursive"
-  }
-
-  depends_on = [
-    aws_s3_bucket.mssql_lambda_bucket
-  ]
-}
-
-data "aws_route_tables" "vpc_route_tables" {
-  vpc_id = data.aws_subnet.subnet.vpc_id
-}
-
-# verify it is ok and really needed
-#resource "aws_vpc_endpoint" "s3_vpc_endpoint" {
-#  service_name = "com.amazonaws.${data.aws_region.current}.s3"
-#  vpc_id       = data.aws_subnet.subnet.vpc_id
-#  vpc_endpoint_type = "Gateway"
-#  route_table_ids = [data.aws_route_tables.vpc_route_tables.ids]
-#}
-
-
-#data "aws_s3_object" "mssql_lambda_package" {
-#  provider = aws.prod_s3_region
-##  region = "us-east-1"
-##  bucket = "arn:aws:s3:us-east-1:112114489393:ae309159-115c-4504-b0c2-03dd022f3368"
-#  bucket = "hadar-mssql-us-east-1"
-##  bucket = var.db_audit_scripts_bucket_name
-##  bucket = "hadar-mssql"
-#  key    = "task.zip"
-#}
-
-/*
 resource "aws_lambda_function" "lambda_mssql_infra" {
-#  function_name     = "dsf-mssql-infra"
   function_name     = join("-", ["dsf-mssql-infra", local.lambda_salt])
-  s3_bucket         = data.aws_s3_object.mssql_lambda_package.bucket
-  s3_key            = data.aws_s3_object.mssql_lambda_package.key
-  s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
+  filename          = local.lambda_package
   role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
-#  role              = aws_iam_role.lambda_mssql_infra_role.arn
-  handler           = "main.lambda_handler"
+  handler           = "createDBsAndEnableAudit.lambda_handler"
   runtime           = "python3.7"
   timeout           = 900
 
@@ -261,12 +211,57 @@ resource "aws_lambda_function" "lambda_mssql_infra" {
   ]
 }
 
-
 # invoke the infra lambda once, to create the initial DBs
 resource "aws_lambda_invocation" "mssql_infra_invocation" {
   function_name = aws_lambda_function.lambda_mssql_infra.function_name
 
   input = jsonencode({})
+}
+
+# create a s3 bucket and upload the mssql files to it , and then update the role to take a look to it.
+resource "aws_s3_bucket" "mssql_lambda_bucket" {
+  bucket        = join("-", ["dsf-sql-scripts-bucket", local.lambda_salt])
+  force_destroy = true
+}
+
+resource "aws_s3_bucket_public_access_block" "block_public_access" {
+  bucket = aws_s3_bucket.mssql_lambda_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# create a vpc endpoint so that the lambda can access to s3. lambda is with the vpc of the installation deployment,
+# so it is necessary to use this
+data "aws_route_tables" "vpc_route_tables" {
+  vpc_id = data.aws_subnet.subnet.vpc_id
+}
+
+resource "aws_vpc_endpoint" "s3_vpc_endpoint" {
+  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
+  vpc_id       = data.aws_subnet.subnet.vpc_id
+  vpc_endpoint_type = "Gateway"
+  route_table_ids = data.aws_route_tables.vpc_route_tables.ids
+}
+
+resource "aws_s3_object" "mssql_lambda_objects" {
+  for_each      = fileset("${path.module}/installation_resources/", "**")
+  bucket        = aws_s3_bucket.mssql_lambda_bucket.id
+  key           = each.value
+  source        = "${path.module}/installation_resources/${each.value}"
+  etag          = filemd5("${path.module}/installation_resources/${each.value}")
+  force_destroy = true
+}
+
+data "aws_s3_object" "mssql_lambda_package" {
+  bucket = aws_s3_bucket.mssql_lambda_bucket.bucket
+  key    = "mssqlLambdaPackage.zip"
+
+  depends_on = [
+    aws_s3_object.mssql_lambda_objects
+  ]
 }
 
 resource "aws_lambda_function" "lambda_mssql_scheduled" {
@@ -275,8 +270,7 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
   s3_key            = data.aws_s3_object.mssql_lambda_package.key
   s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
   role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
-  #  role              = aws_iam_role.lambda_mssql_infra_role.arn
-  handler           = "appWorked.lambda_handler"
+  handler           = "trafficAndSuspiciousQueries.lambda_handler"
   runtime           = "python3.7"
   timeout           = 900
 
@@ -292,7 +286,7 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
       DB_NAME   = local.mssql_connect_db_name
       DB_USER   = aws_db_instance.rds_db.username
       DB_PWD    = nonsensitive(aws_db_instance.rds_db.password)
-      S3_BUCKET = data.aws_s3_object.mssql_lambda_package.bucket
+      S3_BUCKET = aws_s3_bucket.mssql_lambda_bucket.bucket
     }
   }
 
@@ -301,11 +295,11 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
   ]
 }
 
+# todo - verify there is no need to add a wait of 1 minute before the schedule lambda so that the DBs will be exist for sure
 # add scheduled events each 1 minute for the traffic queries
 resource "aws_cloudwatch_event_rule" "trafficEachMinute" {
   name                = join("-", ["dsf-mssql-lambda-traffic-every-minute", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run traffic each 1 minute"
-#  schedule_expression = "cron(0/1 * 1/1 * ? *)"
   schedule_expression = "rate(1 minute)"
 }
 
@@ -327,7 +321,6 @@ resource "aws_lambda_permission" "allow_cloudwatchTraffic" {
 resource "aws_cloudwatch_event_rule" "suspiciousActivityEach10Minutes" {
   name                = join("-", ["dsf-mssql-lambda-suspicious-activity-every-10-minutes", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run suspicious activity each 10 minutes"
-  #  schedule_expression = "cron(0/1 * 1/1 * ? *)"
   schedule_expression = "rate(10 minutes)"
 }
 
@@ -345,6 +338,3 @@ resource "aws_lambda_permission" "allow_cloudwatchSuspicious" {
   source_arn = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.arn
 }
 
-# todo - maybe we have to add a wait of 1 minute before the schedule lambda so that the DBs will be exist for sure
-#  or add depends on the end of the running
-*/
