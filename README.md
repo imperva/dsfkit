@@ -215,21 +215,71 @@ You can also start from scratch, but the recommendation is to start from an exam
 
 DSFKit offers several deployment modes:
 
+* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
+
+  For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
 * **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform. 
     This mode is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
 
   For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
-
-* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
-
-  For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
 * **Installer Machine Deployment Mode:** This mode can be used if a client machine is not available or DSFKit cannot be run on it. In this mode, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This mode has two options:
-  * Manual: The user manually creates the EC2 machine
+  * Manual: The user manually creates the EC2 machine.
   * Automated: The user runs a Terraform script which automatically creates the EC2 machine.
 
   For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 
 Choose the most appropriate mode to you and follow the step-by-step instructions to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+
+## CLI Deployment Mode
+
+This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
+Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
+
+The first thing to do in this deployment mode is to [download Terraform ](https://www.terraform.io/downloads).
+
+### CLI Deployment Steps
+
+**NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
+
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/blob/master/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+
+2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
+   For example:
+   ```
+   cd examples/poc/basic_deployment
+   ```
+
+3. Optionally make changes to the example's Terraform code to fit your use case. Refer to the [Customizing Examples](#customizing-examples) section
+
+
+4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
+   For simplicity, in this example we will use environment variables:
+
+    ```bash
+    export AWS_ACCESS_KEY_ID=${access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
+    export AWS_REGION=${region}
+    ```
+
+5. Run:
+    ```bash
+    terraform init
+    ```
+6. Run:
+    ```bash
+    terraform apply -auto-approve
+    ```
+
+   This should take about 30 minutes.
+
+
+7. Extract the web console admin password and DSF URL using:
+    ```bash
+    terraform output "dsf_hub_web_console"
+    ```
+8. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step.
+
+**The CLI Deployment is now complete and a functioning version of DSF is now available.**
 
 ## Terraform Cloud Deployment Mode
 
@@ -348,58 +398,6 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
 **The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
-## CLI Deployment Mode
-
-This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments. 
-Terraform CLI uses a bash script and therefore requires a Linux/Mac machine. 
-
-The first thing to do in this deployment mode is to [download Terraform ](https://www.terraform.io/downloads).
-
-### CLI Deployment Steps
-
-**NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
-
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/blob/master/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
-
-
-2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
-   For example:
-   ```
-   cd examples/poc/basic_deployment
-   ```
-
-3. Optionally make changes to the example's Terraform code to fit your use case. Refer to the [Customizing Examples](#customizing-examples) section
-
-
-4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-For simplicity, in this example we will use environment variables:
-
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
-    ```
-
-5. Run:
-    ```bash
-    terraform init
-    ```
-6. Run:
-    ```bash
-    terraform apply -auto-approve
-    ```
-
-    This should take about 30 minutes.
-
-
-7. Extract the web console admin password and DSF URL using:
-    ```bash
-    terraform output "dsf_hub_web_console"
-    ```
-8. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
-
-**The CLI Deployment is now complete and a functioning version of DSF is now available.**
-
 ## Installer Machine Deployment Mode
 
 If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
@@ -408,7 +406,7 @@ This can be done either manually or via an automated process. Select your prefer
 
 **NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 
-### Manual Installer Machine
+### Manual Installer Machine Deployment Mode
 
 Complete these steps to manually create an installer machine:
 
@@ -449,7 +447,7 @@ NOTES:
         ```
 8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
 
-### Automated Installer Machine
+### Automated Installer Machine Deployment Mode
 
 In case you don’t want to manually create the Installer Machine, you can automate the creation of the Installer Machine. DSFKit exposes a dedicated Terraform example that automatically creates the installer machine with the “user-data”.  Complete these steps to automate the creation of an installer machine:
 <br><br>
@@ -556,14 +554,6 @@ NOTE: The permissions specified in option 2 are irrelevant for customers who pre
 
 Depending on the deployment mode you chose, follow the undeployment instructions of the same mode to completely remove Imperva DSF from AWS.
 
-## Terraform Cloud Undeployment Mode
-
-1. To undeploy the DSF deployment, click on Settings and find "Destruction and Deletion" from the navigation menu to open the "Destroy infrastructure" page. Ensure that the "Allow destroy plans" toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
-
-2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
-
-**NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
-
 ## CLI Undeployment Mode
 
 1. cd to the example directory.
@@ -572,12 +562,22 @@ Depending on the deployment mode you chose, follow the undeployment instructions
    cd examples/poc/basic_deployment
    ```
 
-2. Run: 
+2. Run:
     ```bash
     terraform destroy -auto-approve
     ```
 
-## Manual Installer Machine Undeployment Mode
+## Terraform Cloud Undeployment Mode
+
+1. To undeploy the DSF deployment, click on Settings and find "Destruction and Deletion" from the navigation menu to open the "Destroy infrastructure" page. Ensure that the "Allow destroy plans" toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
+
+2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
+
+**NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
+
+## Installer Machine Undeployment Mode
+
+### Manual Installer Machine Undeployment Mode
 
 1. ssh into the “Installer Machine”.
 
@@ -599,7 +599,7 @@ Depending on the deployment mode you chose, follow the undeployment instructions
 
 5. Destroy the Installer Machine (dsf_installer_machine) and the security group (dsf_installer_machine-sg) via AWS UI Console.
 
-#### Automated Installer Machine Undeployment Mode
+### Automated Installer Machine Undeployment Mode
 
 1. Exit from the “Installer Machine”.
 
