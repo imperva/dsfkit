@@ -76,10 +76,12 @@ jobs:
       - name: Merge
         run: |
           set -x
-          git checkout ${dst_branch}
-          git log -n 10 ${dst_branch}
           git log -n 10 ${src_branch}
-          git merge origin/${src_branch} --ff-only
+          sleep 2
+          git log -n 10 ${dst_branch}
+          sleep 2 
+          git checkout ${dst_branch}
+          git merge ${src_branch} --ff-only
           git push
       
       - name: Deploy modules
