@@ -5,8 +5,8 @@ provider "aws" {
 }
 
 module "globals" {
-  source  = "imperva/dsf-globals/aws"
-  version = "1.3.4" # latest release tag
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.3.4" # latest release tag
   sonar_version = var.sonar_version
 }
 
