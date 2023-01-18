@@ -132,7 +132,7 @@ module "federation" {
 }
 
 module "rds_mysql" {
-  count                        = contains(var.db_type_to_onboard, "MySQL") ? 1 : 0
+  count                        = contains(var.db_types_to_onboard, "MySQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
   version                      = "1.3.5" # latest release tag
   rds_subnet_ids               = module.vpc.public_subnets
@@ -168,7 +168,7 @@ module "db_onboarding" {
 
 # create a RDS SQL Server DB
 module "rds_mssql" {
-  count                        = contains(var.db_type_to_onboard, "RDS MsSQL") ? 1 : 0
+  count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "../../../modules/aws/rds-mssql-db"
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
