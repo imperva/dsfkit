@@ -83,13 +83,13 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
-   <td><a href="https://registry.terraform.io/search/modules?namespace=imperva">Imperva Terraform Modules Registry</a> 
+   <td><a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a> 
    </td>
    <td>
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repository</a> 
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a> 
    </td>
    <td>
    </td>
@@ -152,19 +152,11 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
   </tr>
   <tr>
-   <td>16 Jan 2023
+   <td>18 Jan 2023
    </td>
    <td>1.3.4
    </td>
-   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation.
-   </td>
-  </tr>
-  <tr>
-   <td>Coming soon
-   </td>
-   <td>
-   </td>
-   <td> 1. Added the module's version to the examples.
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation. <br>5. Added the module's version to the examples.
    </td>
   </tr>
   
@@ -206,7 +198,7 @@ An important thing to understand about the deployment, is that it begins with ch
 To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).   
 
 Assuming you are familiar with Terraform, you can go over the example code and see what it consists of.
-The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
+The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
 
 You can use the example as is, or customize it to accommodate varying system requirements and deployments. 
 You can also start from scratch, but the recommendation is to start from an example and make changes to it if necessary.
@@ -241,7 +233,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/blob/master/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
 
 2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
    For example:
@@ -249,7 +241,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
    cd examples/poc/basic_deployment
    ```
 
-3. Optionally make changes to the example's Terraform code to fit your use case. Refer to the [Customizing Examples](#customizing-examples) section
+3. Optionally make changes to the example's Terraform code to fit your use case.
 
 
 4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
@@ -505,7 +497,7 @@ NOTE: The Terraform script is OS-Safe, as it doesn't run any bash script.
 
 DSFKit provides a number of out-of-the-box examples which are already configured to deploy a basic Sonar environment.
 
-These examples can be found in the <a href="https://github.com/imperva/dsfkit">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/examples">examples</a> directory.
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples">examples</a> directory.
 Some examples are intended for POC and others for actual DSF deployments by Professional Services and customers.
 
 For POC:
@@ -536,6 +528,12 @@ For Professional Services and customers:
     1. 1 Hub
     2. 1 GW
     3. Federation
+
+Download a zip file of the example code using these links:
+
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">Basic Deployment</a>
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/hadr_deployment/hadr_deployment.zip">HADR Deployment</a>
+* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/installation/multi_account_deployment/multi_account_deployment.zip">Multi Account Deployment</a>
 
 # IAM Roles
 
