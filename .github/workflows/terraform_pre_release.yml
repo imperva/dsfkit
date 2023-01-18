@@ -17,17 +17,16 @@ env:
   # dst_branch: "master"
 
 jobs:
-  prepare_branch_to_release:
-    name: 'Prepare branch to release'
+  validate_arguments:
+    name: 'Validate arguments'
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
 
     steps:
-      - name: Validate branch
+      - name: Validate source branch
         run: |
           if [ "${GITHUB_REF#refs/heads/}" != "${src_branch}" ]; then
             echo "Invalid branch. This workflow can only be ran on ${src_branch} branch. Got ${GITHUB_REF#refs/heads/}."
@@ -40,25 +39,38 @@ jobs:
             exit 1
           fi
 
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: ${{ env.src_branch }}
-        # run: |
-        #   git clone https://github.com/imperva/dsfkit.git
-        #   git checkout ${src_branch}
 
       - name: Check source branch is "fast-forward" mergale
         run: |
           git merge-base --is-ancestor origin/${dst_branch} ${src_branch}
+
+  update_versions:
+    name: 'Update versions in examples'
+    needs: validate_arguments
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.src_branch }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
 
-      - name: Fix module versions in examples
+      - name: Update modules' versions in examples
         run: |
           find ./examples/ -type f -exec sed -i 's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}'" # latest release tag;' {} \; 
 
@@ -76,6 +88,16 @@ jobs:
           commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
           file_pattern: './examples'
 
+  merge:
+    name: 'Merge'
+    needs: update_versions
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -84,14 +106,6 @@ jobs:
 
       - name: Merge
         run: |
-          set -x
-          # git branch -r | grep -v '\->' | sed "s,\x1B\[[0-9;]*[a-zA-Z],,g" | while read remote; do git branch --track "${remote#origin/}" "$remote" || true; done
-          # git fetch --all
-          # git pull --all
-          # git checkout ${dst_branch}
-          # rm .git/info/grafts 
-          # git log --all --decorate --graph --oneline > 1
-          # cat 1
           git merge origin/${src_branch} --ff-only
           git push
       
