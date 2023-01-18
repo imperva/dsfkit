@@ -76,10 +76,8 @@ jobs:
       - name: Merge
         run: |
           set -x
-          git log -n 10 ${src_branch}
-          sleep 2
-          git log -n 10 ${dst_branch}
-          sleep 2 
+          git log -n 1 --decorate --graph --oneline
+          git pull
           git checkout ${dst_branch}
           git merge ${src_branch} --ff-only
           git push
