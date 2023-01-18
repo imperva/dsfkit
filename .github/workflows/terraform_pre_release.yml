@@ -41,10 +41,13 @@ jobs:
           fi
 
       - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: '0'
-          ref: ${{ env.src_branch }}
+        # uses: actions/checkout@v3
+        # with:
+        #   fetch-depth: '0'
+        #   ref: ${{ env.src_branch }}
+          run: |
+            git clone https://github.com/imperva/dsfkit.git
+            git checkout ${src_branch}
 
       - name: Check source branch is "fast-forward" mergale
         run: |
