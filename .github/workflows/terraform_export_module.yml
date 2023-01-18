@@ -2,6 +2,10 @@ name: 'Export module'
 
 on:
   workflow_call:
+    secrets:
+      PUSH_TO_OTHER_REPOS_TOKEN:
+        required: true
+
   workflow_dispatch:
   # release:? [published]
   # push:
