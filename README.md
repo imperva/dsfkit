@@ -213,23 +213,23 @@ You can also start from scratch, but the recommendation is to start from an exam
 
 # Deployment 
 
-DSFKit offers several deployment methods:
+DSFKit offers several deployment modes:
 
-* **Terraform Cloud Deployment Mode:** This method makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform. 
-    This method is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
+* **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform. 
+    This mode is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
 
   For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
 
-* **CLI Deployment Mode:** This method offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
+* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
 
   For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
-* **Installer Machine Deployment Mode:** This method can be used if a client machine is not available or DSFKit cannot be run on it. In this method, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This method has two modes:
+* **Installer Machine Deployment Mode:** This mode can be used if a client machine is not available or DSFKit cannot be run on it. In this mode, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This mode has two options:
   * Manual: The user manually creates the EC2 machine
   * Automated: The user runs a Terraform script which automatically creates the EC2 machine.
 
   For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 
-Choose the most appropriate method to you and follow the step-by-step instructions to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+Choose the most appropriate mode to you and follow the step-by-step instructions to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
 
 ## Terraform Cloud Deployment Mode
 
@@ -404,7 +404,7 @@ For simplicity, in this example we will use environment variables:
 
 If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
 
-This can be done either manually or via an automated process. Select a method below and follow the instructions.
+This can be done either manually or via an automated process. Select your preferred method and follow the instructions below.
 
 **NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 
@@ -554,7 +554,7 @@ NOTE: The permissions specified in option 2 are irrelevant for customers who pre
 
 # Undeployment
 
-Depending on the deployment method you chose, follow the undeployment instructions of the same method to completely remove Imperva DSF from AWS.
+Depending on the deployment mode you chose, follow the undeployment instructions of the same mode to completely remove Imperva DSF from AWS.
 
 ## Terraform Cloud Undeployment Mode
 
