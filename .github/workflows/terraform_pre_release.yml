@@ -125,9 +125,7 @@ jobs:
   test_apply:
     needs: deploy_modules
     uses: ./.github/workflows/terraform_plan.yml
-    environment: test
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   
