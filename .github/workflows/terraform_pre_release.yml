@@ -43,6 +43,10 @@ jobs:
           fetch-depth: 0
           ref: ${{ env.src_branch }}
 
+      - name: Validate tag availability
+        run: |
+          ! git rev-parse ${{ github.event.inputs.future_release }}
+
       - name: Check source branch is "fast-forward" mergale
         run: |
           git merge-base --is-ancestor origin/${dst_branch} ${src_branch}
@@ -101,6 +105,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.dst_branch }}
+          token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
 
       - name: Merge
         run: |
