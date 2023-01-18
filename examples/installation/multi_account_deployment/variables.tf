@@ -1,3 +1,13 @@
+variable "deployment_name" {
+  type    = string
+  default = "imperva-dsf"
+}
+
+variable "sonar_version" {
+  type    = string
+  default = "4.10"
+}
+
 variable "aws_profile_hub" {
   type        = string
   description = "Aws profile name for the DSF hub account"
@@ -26,11 +36,6 @@ variable "aws_region_gw" {
 variable "subnet_gw" {
   type        = string
   description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
-}
-
-variable "deployment_name" {
-  type    = string
-  default = "imperva-dsf"
 }
 
 variable "gw_count" {
