@@ -3,6 +3,11 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
+variable "sonar_version" {
+  type    = string
+  default = "4.10"
+}
+
 variable "gw_count" {
   type        = number
   default     = 1
