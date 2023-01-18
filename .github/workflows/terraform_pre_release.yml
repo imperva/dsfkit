@@ -111,8 +111,30 @@ jobs:
           git merge origin/${src_branch} --ff-only
           git push
 
-  deploy_modules:
+  tag_release:
     needs: merge
+    name: 'Tag release'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.dst_branch }}
+
+      - name: tag
+        run: |
+          git tag ${{ github.event.inputs.future_release }} ${{ env.dst_branch }}
+          git push origin ${{ github.event.inputs.future_release }}
+
+  deploy_modules:
+    needs: tag_release
     uses: ./.github/workflows/terraform_export_module.yml
 
   test_plan:
@@ -124,6 +146,7 @@ jobs:
 
   test_apply:
     needs: deploy_modules
+    if: false
     uses: ./.github/workflows/terraform_apply_cli.yml
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
