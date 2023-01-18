@@ -1,7 +1,15 @@
 name: 'Terraform Apply Cli'
 
 on:
-  workflow_call: {}
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+
   workflow_dispatch: {}
   push:
     branches:
