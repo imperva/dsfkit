@@ -12,9 +12,9 @@ In the near future, DSFKit will enable you to deploy the full suite of DSF produ
 
 #### Audience
 
-Currently, this guide is for internal use only.
+This guide is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations and preparing for these demonstrations, aka, Lab.
 
-It is intended for Imperva Sales Engineers (SE) for the purpose of Proof-of-Concept (POC) demonstrations.
+It is also intended for Imperva Professional Services (PS) and customers for actual deployments of DSF.
 
 #### Purpose and Scope
 
