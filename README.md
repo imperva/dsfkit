@@ -188,17 +188,54 @@ The following table lists the released DSFKit versions, their release date and a
 
 # Getting Ready to Deploy
 
+## Choosing the Deployment Mode
+
+DSFKit offers several deployment modes:
+
+* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
+
+  For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
+* **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.
+  This mode is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
+
+  For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
+* **Installer Machine Deployment Mode:** This mode can be used if a client machine is not available or DSFKit cannot be run on it. In this mode, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This mode has two options:
+   * Manual: The user manually creates the EC2 machine.
+   * Automated: The user runs a Terraform script which automatically creates the EC2 machine.
+
+  For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
+
+The first step in the deployment is to choose the deployment mode most appropriate to you.
+If you need more information to decide on your preferred mode, refer to the detailed instructions for each mode [here](#deployment).
+
+## Prerequisites
+
 Before using DSFKit to deploy DSF, it is necessary to complete the following steps:
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
 2. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva. 
    Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
-3. [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode) requires access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
+3. Only if you chose the [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode), it is required that you have access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
    Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Cloud account.
-4. [Download Terraform](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 
 
 **NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
+
+## Choosing the Example/Recipe that Fits Your Use Case
+
+An important thing to understand about the DSF deployment, is that there are many variations on what can be deployed, 
+e.g., the number of Gateways, with or without HADR, the number of VPCs, etc.
+
+We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
+You can use the example as is, or customize it to accommodate your deployment requirements.
+
+To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).
+
+If you are familiar with Terraform, you can go over the example code and see what it consists of.
+The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
+
+If you need help choosing or customizing an example to fit your use case, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
 
 ## Sonar Binaries Location and Versioning
 
@@ -218,35 +255,9 @@ Make sure that the Sonar version you are using is supported by all the modules w
 To see which Sonar versions are supported by each module, refer to the specific module's README. 
 (For example, [Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
-## Choosing the Example/Recipe that Fits Your Use Case
-
-An important thing to understand about the deployment, is that it begins with choosing a Terraform recipe that we call "example" and using it to deploy DSF, with or without customizations to fit your specific use case.
-To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).   
-
-Assuming you are familiar with Terraform, you can go over the example code and see what it consists of.
-The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
-
-You can use the example as is, or customize it to accommodate varying system requirements and deployments. 
-You can also start from scratch, but the recommendation is to start from an example and make changes to it if necessary.
-
 # Deployment 
 
-DSFKit offers several deployment modes:
-
-* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine.
-
-  For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
-* **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform. 
-    This mode is used in cases where we don't want to install any software on the deployment client's machine. This can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
-
-  For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
-* **Installer Machine Deployment Mode:** This mode can be used if a client machine is not available or DSFKit cannot be run on it. In this mode, the deployment is done via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create an EC2 machine and run the Terraform on it. This mode has two options:
-  * Manual: The user manually creates the EC2 machine.
-  * Automated: The user runs a Terraform script which automatically creates the EC2 machine.
-
-  For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
-
-Choose the most appropriate mode to you and follow the step-by-step instructions to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+After you have [chosen the deployment mode](#choosing-the-deployment-mode), follow the step-by-step instructions below to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 ## CLI Deployment Mode
 
