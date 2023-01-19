@@ -549,45 +549,55 @@ To use the Terraform installer example follow the following step:
 
 # Out-of-the-box Examples
 
-DSFKit provides a number of out-of-the-box examples which are already configured to deploy a basic Sonar environment.
+DSFKit provides a number of out-of-the-box examples which are already configured to deploy common DSF environments.
 
 These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples">examples</a> directory.
-Some examples are intended for POC and others for actual DSF deployments by Professional Services and customers.
+Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
-For POC:
+For more details about each example, click on the example name.
 
-1. “basic_deployment” example, consist of:
-    1. New VPC
-    2. 1 Hub
-    3. 1 GW
-    4. Federation
-    5. Creation of a new “Demo DB”
-    6. Auto configuration of new “Demo DB” to enable native audit
-    7. Onboarding database into Sonar
-
-2. “hadr_deployment” example, consist of:
-    1. New VPC
-    2. 1 Primary Hub
-    3. 1 Secondary Hub
-    4. 1 GW
-    5. Federation
-    6. Hub HADR     
-    7. Creation of a new “Demo DB”
-    8. Auto configuration of new “Demo DB” to enable native audit
-    9. Onboarding database into Sonar
-
-For Professional Services and customers:
-
-3. "multi_account_deployment" example, consist of:
-    1. 1 Hub
-    2. 1 GW
-    3. Federation
-
-Download a zip file of the example code using these links:
-
-* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">Basic Deployment</a>
-* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/hadr_deployment/hadr_deployment.zip">HADR Deployment</a>
-* <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/installation/multi_account_deployment/multi_account_deployment.zip">Multi Account Deployment</a>
+<table>
+   <tr>
+      <td><strong>Example</strong>
+      </td>
+      <td><strong>Purpose</strong>
+      </td>
+      <td><strong>Description</strong>
+      </td>
+      <td><strong>Download</strong>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/README.md">Basic Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with a Hub, a GW, federation, networking and onboarding of a MySQL DB. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with a Hub HADR, a GW, federation, networking and onboarding of a MySQL DB. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
+      </td>
+      <td>PS/Customer
+      </td>
+      <td>A DSF deployment with a Hub and a GW in different AWS accounts and federation. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
+      </td>
+   </tr>
+</table>
 
 # IAM Roles
 
