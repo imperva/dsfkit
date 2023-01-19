@@ -2,6 +2,10 @@ name: 'Terraform Plan'
 
 on:
   workflow_call:
+    inputs:
+      modules_from_terraform_registry:
+        required: true
+        type: boolean
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -47,6 +51,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Change the modules source to local
+        if: ${{ inputs.modules_from_terraform_registry == false }}
         run: |
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
