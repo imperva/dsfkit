@@ -176,7 +176,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
   </tr>
   <tr>
-   <td>18 Jan 2023
+   <td>19 Jan 2023
    </td>
    <td>1.3.4
    </td>
