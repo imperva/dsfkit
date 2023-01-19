@@ -84,24 +84,24 @@ jobs:
         echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
       if: github.ref != 'refs/heads/"master"'
 
-    - name: Create terraform backend file
-      run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
-        terraform {
-          backend "s3" {
-            bucket         = "tf-state-dsfkit-github-tests"
-            key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
-            region         = "ap-southeast-2"
-          }
-        }
-        EOF
+    # - name: Create terraform backend file
+    #   run: |
+    #     cat << EOF > $EXAMPLE_DIR/backend.tf
+    #     terraform {
+    #       backend "s3" {
+    #         bucket         = "tf-state-dsfkit-github-tests"
+    #         key            = "states/terraform.tfstate"
+    #         dynamodb_table = "terraform-state-lock"
+    #         region         = "ap-southeast-2"
+    #       }
+    #     }
+    #     EOF
     
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_wrapper: false
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     terraform_wrapper: false
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
@@ -140,7 +140,7 @@ jobs:
     - name: Check SSH GW Connectivity
       uses: appleboy/ssh-action@v0.1.6
       with:
-        host: "13.55.206.38"
+        host: "52.21.167.209"
         username: ec2-user
         key: ${{ secrets.HUB_KEY }}
         port: 22
