@@ -1,4 +1,4 @@
-name: 'Pre release'
+name: 'Release'
 
 on:
   workflow_dispatch:
@@ -139,7 +139,7 @@ jobs:
 
   deploy_modules:
     needs: tag_branch
-    uses: ./.github/workflows/terraform_export_module.yml
+    uses: ./.github/workflows/terraform_deploy_module.yml
     secrets:
       PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
 
