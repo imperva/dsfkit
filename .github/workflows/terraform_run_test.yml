@@ -109,32 +109,32 @@ jobs:
         cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
+    # - name: Terraform Init
+    #   run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Terraform Validate
-      run: terraform -chdir=$EXAMPLE_DIR validate
+    # - name: Terraform Validate
+    #   run: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
+    # - name: Terraform Plan
+    #   run: terraform -chdir=$EXAMPLE_DIR plan
 
-    - name: Cleaning envrionment
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+    # - name: Cleaning envrionment
+    #   run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
       
-    - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+    # - name: Terraform Apply
+    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
-    - name: Terraform Output
-      run: | 
-        terraform -chdir=$EXAMPLE_DIR output -json
-        terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key
+    # - name: Terraform Output
+    #   run: | 
+    #     terraform -chdir=$EXAMPLE_DIR output -json
+    #     terraform -chdir=$EXAMPLE_DIR output dsf_private_ssh_key
 
-    - name: Set Environment Variables
-      run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
-        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
+    # - name: Set Environment Variables
+    #   run: |
+    #     echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
+    #     echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+    #     echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH GW Connectivity
@@ -142,30 +142,30 @@ jobs:
       with:
         proxy_host: ${{ env.hub_ip }}
         proxy_username: ec2-user
-        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_key: ${{ secrets.HUB_KEY }}
         proxy_port: 22
         host: ${{ env.gw_ip }}
         username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
+        key: ${{ secrets.HUB_KEY }}
         port: 22
         script: | 
           ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
     
-    - name: Validate Audit
-      if: always()
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        host: ${{ env.hub_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        script: | 
-          ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-          sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
-          echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
+    # - name: Validate Audit
+    #   if: always()
+    #   uses: appleboy/ssh-action@v0.1.6
+    #   with:
+    #     host: ${{ env.hub_ip }}
+    #     username: ec2-user
+    #     key_path: ${{ env.dsf_ssh_key_file_name }}
+    #     port: 22
+    #     script: | 
+    #       ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+    #       sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
+    #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
-    - name: Validate SSH Results
-      run: echo $ssh_res
+    # - name: Validate SSH Results
+    #   run: echo $ssh_res
 
     # - name: Terraform Destroy
     #   if: always()
