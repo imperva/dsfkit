@@ -116,7 +116,7 @@ jobs:
           git merge origin/${src_branch} --ff-only
           git push
 
-  tag_release:
+  tag_branch:
     needs: merge
     name: 'Tag release'
     runs-on: ubuntu-latest
@@ -138,7 +138,7 @@ jobs:
           git push origin ${{ github.event.inputs.future_release }}
 
   deploy_modules:
-    needs: tag_release
+    needs: tag_branch
     uses: ./.github/workflows/terraform_export_module.yml
     secrets:
       PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
@@ -161,3 +161,19 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  release:
+    needs: [test_plan, test_apply]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.dst_branch }}
+
+      - name: Release
+        run: |
+          gh release create ${{ github.event.inputs.future_release }} --verify-tag --latest --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          
