@@ -52,13 +52,6 @@ output "dsf_hub_web_console_url" {
   value = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
 }
 
-output "dsf_vpc_subnet" {
-  value = {
-    public_subnets  = try(module.vpc.public_subnets, null)
-    private_subnets = try(module.vpc.private_subnets, null)
-  }
-}
-
 output "mysql_db_details" {
   value = try(module.rds_mysql, null)
 }
