@@ -140,7 +140,7 @@ jobs:
     - name: Check SSH GW Connectivity
       uses: appleboy/ssh-action@v0.1.6
       with:
-        host: "52.21.167.209"
+        host: "13.55.206.38"
         username: ec2-user
         key: ${{ secrets.HUB_KEY }}
         port: 22
