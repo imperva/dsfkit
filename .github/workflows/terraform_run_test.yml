@@ -37,8 +37,6 @@ jobs:
       TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
     environment: test
-    outputs:
-      my_output: ${{ steps.test_audit.outputs }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
