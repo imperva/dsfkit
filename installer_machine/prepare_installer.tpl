@@ -4,6 +4,8 @@ set -e
 
 sudo su
 
+yum -y install git
+
 yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 yum -y install terraform
@@ -14,11 +16,13 @@ unzip awscliv2.zip
 ./aws/install
 export PATH=$PATH:/usr/local/bin
 
-Need to wget the example, not the zip
+yum -y install wget
 
-wget https://github.com/imperva/dsfkit/raw/1.3.4/installer_machine/installer_machine.zip
-unzip installer_machine.zip
-cd dsfkit/examples/${example_path}
+pwd
+
+wget https://github.com/imperva/dsfkit/raw/1.3.5/examples/${example_type}/${example_name}/${example_name}.zip
+unzip ${example_name}.zip
+cd ${example_name}
 
 export AWS_ACCESS_KEY_ID=${access_key}
 export AWS_SECRET_ACCESS_KEY=${secret_key}
