@@ -148,7 +148,18 @@ jobs:
         key: ${{ secrets.HUB_KEY }}
         port: 22
         script: | 
-          sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
+          sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count >> output.txt
+          ls -l
+
+    - name: copy file via ssh key
+      uses: appleboy/scp-action@master
+      with:
+        host: "13.55.206.38"
+        username: ec2-user
+        port: 22
+        key: ${{ secrets.HUB_KEY }}
+        source: "output.txt"
+        target: "output"
 
     
     # - name: Validate Audit
@@ -165,7 +176,7 @@ jobs:
     #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
     - name: Validate SSH Results
-      run: printf "${{ steps.test_audit.outputs.* }}"
+      run: ls -l
 
     # - name: Terraform Destroy
     #   if: always()
