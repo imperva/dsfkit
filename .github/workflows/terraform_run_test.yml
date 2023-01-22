@@ -141,6 +141,7 @@ jobs:
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH GW Connectivity
       uses: appleboy/ssh-action@v0.1.6
+      id: test_audit
       with:
         host: "13.55.206.38"
         username: ec2-user
@@ -148,8 +149,9 @@ jobs:
         port: 22
         script: | 
           sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
+        sotre: ssh_output
       env: 
-        MY_OUTPUT: ${{ steps.ssh.outputs }}
+        MY_OUTPUT: ${{ steps.test_audit.outputs }}
 
     
     # - name: Validate Audit
@@ -166,7 +168,7 @@ jobs:
     #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
     - name: Validate SSH Results
-      run: echo "${{ toJSON(github) }}"
+      run: echo "${{ toJSON(steps.test_audit.outputs) }}"
 
     # - name: Terraform Destroy
     #   if: always()
