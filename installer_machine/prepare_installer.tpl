@@ -14,11 +14,9 @@ unzip awscliv2.zip
 ./aws/install
 export PATH=$PATH:/usr/local/bin
 
-Need to wget the example, not the zip
-
-wget https://github.com/imperva/dsfkit/raw/1.3.4/installer_machine/installer_machine.zip
-unzip installer_machine.zip
-cd dsfkit/examples/${example_path}
+wget https://github.com/imperva/dsfkit/raw/1.3.5/examples/${example_type}/${example_name}.zip
+unzip ${example_name}.zip
+cd ${example_name}
 
 export AWS_ACCESS_KEY_ID=${access_key}
 export AWS_SECRET_ACCESS_KEY=${secret_key}

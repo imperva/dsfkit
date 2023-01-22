@@ -448,7 +448,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
 ## Installer Machine Deployment Mode
 
-If a Linux machine is not available or DSFKit cannot be run locally, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
+If a Linux machine is not available or DSFKit cannot be run locally for some reason, Imperva supports deployments via a DSFKit Installer Machine on AWS. This dedicated machine acts as a “bastion server”, and the user only needs to create a t2.medium EC2 machine and OS: RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2.
 
 This can be done either manually or via an automated process. Select your preferred method and follow the instructions below.
 
@@ -464,14 +464,15 @@ Complete these steps to manually create an installer machine:
 
 3. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
-4. Scroll down to find the “User data” input field. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.4/installer_machine/prepare_installer.tpl) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+4. Scroll down to find the “User data” input field. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.5/installer_machine/prepare_installer.tpl) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 5. Replace the following placeholders with their value in the bash code you pasted: 
-    1. ${example_path}: The relative path to the example's directory in the GitHub repository, under the 'examples' directory. E.g., poc/basic_deployment.
-    2. ${access_key}
-    3. ${secret_key}
-    4. ${region}
-    5. ${web_console_cidr}: CIDR blocks each surrounded by "" and separated by commas, allowing DSF hub web console access. E.g., using "0.0.0.0/0" makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
+    1. ${example_name}: E.g., basic_deployment
+    2. ${example_type}: poc or installation, according to where your example is located in the [DSFKit GitHub repository](https://github.com/imperva/dsfkit/tree/1.3.5) under the 'examples' directory.
+    3. ${access_key}: AWS access key which provides access to the AWS account where you want to deploy DSF. 
+    4. ${secret_key}: AWS secret key which provides access to the AWS account where you want to deploy DSF.
+    5. ${region}: AWS region where you want to deploy DSF.
+    6. ${web_console_cidr}: CIDR blocks each surrounded by "" and separated by commas, which will allow DSF hub web console access once it is deployed. E.g., using "0.0.0.0/0" makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
 6. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). View the progress in the logs by running SSH to the machine and tailing the “user-data” logs:
     ```bash
@@ -480,7 +481,7 @@ Complete these steps to manually create an installer machine:
 
 7. When the deployment is done extract the web console password and DSF URL using:
     1. ```bash
-       cd dsfkit/examples/${example_path}
+       cd dsfkit/examples/${example_type}/${example_name}
        
        >>>> Use the path of the example you chose, e.g., poc/basic_deployment
        ```
