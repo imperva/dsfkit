@@ -52,7 +52,7 @@ jobs:
           git merge-base --is-ancestor origin/${dst_branch} ${src_branch}
 
   update_versions:
-    name: 'Update versions in examples'
+    name: 'Update versions in examples and READMEs'
     needs: validate_arguments
     runs-on: ubuntu-latest
 
@@ -92,7 +92,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
-          file_pattern: './examples'
 
   merge:
     name: 'Merge'
