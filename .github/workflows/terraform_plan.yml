@@ -3,15 +3,24 @@ name: 'Terraform Plan'
 on:
   workflow_call:
     inputs:
-      modules_from_terraform_registry:
+      use_modules_from_terraform_registry:
         required: true
         type: boolean
+      explicit_ref:
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
-  workflow_dispatch: {}
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
   push:
     branches:
       - '*'
@@ -46,12 +55,21 @@ jobs:
         example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment']
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
+      - name: Pick ref
+        run: |
+          if [ -z "${{ inputs.explicit_ref }}" ]; then
+            echo REF=${{ github.ref }} >> $GITHUB_ENV;
+          else
+            echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+          fi
+
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ env.REF }}
 
       - name: Change the modules source to local
-        if: ${{ inputs.modules_from_terraform_registry == false }}
+        if: ${{ inputs.use_modules_from_terraform_registry == false }}
         run: |
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 

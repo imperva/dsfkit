@@ -146,23 +146,25 @@ jobs:
     needs: deploy_modules
     uses: ./.github/workflows/terraform_plan.yml
     with:
-      modules_from_terraform_registry: true
+      use_modules_from_terraform_registry: true
+      explicit_ref: ${{ env.dst_branch }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   test_apply:
-    needs: deploy_modules
+    needs: test_plan
     uses: ./.github/workflows/terraform_apply_cli.yml
     with:
-      modules_from_terraform_registry: true
+      use_modules_from_terraform_registry: true
+      explicit_ref: ${{ env.dst_branch }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   release:
-    needs: [test_plan, test_apply]
+    needs: [test_apply]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
