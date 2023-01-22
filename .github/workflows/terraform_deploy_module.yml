@@ -86,5 +86,15 @@ jobs:
           git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
           git branch -m main
           git push origin --delete  $(git ls-remote --tags 2>/dev/null | awk '{print $NF}')
+          latest_tag=$(git tag -l | sort -V | tail -n 1)
+          
+          # push all repo but latest tag
+          git tag -d ${latest_tag}
           git push -f origin HEAD:main --tags
+
+          # push latest tag (to trigger terraform registery latest release discovery)
+          git tag ${latest_tag}
+          git push -f origin HEAD:main --tags
+          
+
 
