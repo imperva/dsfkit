@@ -266,21 +266,27 @@ Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
 
 The first thing to do in this deployment mode is to [download Terraform ](https://www.terraform.io/downloads).
 
-### CLI Deployment Steps
-
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
 1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.4">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.4/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
 
-2. Unzip the zip file and navigate to the innermost directory which contains the Terraform files.
-   For example:
+2. Unzip the zip file in CLI or using your operating system's UI.
+   For example, in CLI:
    ```bash
-   cd examples/poc/basic_deployment
+   unzip basic_deployment.zip
    
    >>>> Change this command depending on the example you chose
    ```
 
-3. Optionally make changes to the example's Terraform code to fit your use case.
+3. In CLI, navigate to the directory which contains the Terraform files.
+   For example:
+   ```bash
+   cd basic_deployment
+   
+   >>>> Change this command depending on the example you chose
+   ```
+
+4. Optionally make changes to the example's Terraform code to fit your use case. If you need help doing that, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 
 4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
@@ -324,8 +330,6 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 [Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform)
 
 **NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
-
-### Terraform Cloud Deployment Steps
 
 1. **Connect to Terraform Cloud:** Connect to the desired Terraform Cloud account, either the internal Imperva account or a customer account if one is available.
 2. **Create a new workspace:** Complete these steps to create a new workspace in Terraform Cloud that will be used for the DSF deployment. 
@@ -460,90 +464,99 @@ Complete these steps to manually create an installer machine:
 
 3. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
-4. Scroll down to find the “User data” input and paste [this bash script](https://github.com/imperva/dsfkit/blob/master/installer_machine/prepare_installer.tpl) into the “User data” textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+4. Scroll down to find the “User data” input field. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.4/installer_machine/prepare_installer.tpl) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
-5. Update the following parameter values in the bash script: 
-    1. example_name (e.g., basic_deployment)
-    2. aws_access_key_id
-    3. aws_secret_access_key
-    4. region
-    5. web_console_cidr
+5. Replace the following placeholders with their value in the bash code you pasted: 
+    1. ${example_path}: The relative path to the example's directory in the GitHub repository, under the 'examples' directory. E.g., poc/basic_deployment.
+    2. ${access_key}
+    3. ${secret_key}
+    4. ${region}
+    5. ${web_console_cidr}: CIDR blocks each surrounded by "" and separated by commas, allowing DSF hub web console access. E.g., using "0.0.0.0/0" makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
-6. Click on **Launch Instance**. At this stage the Installer Machine is initializing and will automatically create all of the other necessary resources (Hub, GWs etc). View the progress logs by SSH into the machine and view the “user-data” logs:
+6. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). View the progress in the logs by running SSH to the machine and tailing the “user-data” logs:
     ```bash
     tail -f /var/logs/user-data.log
     ```
 
-   **NOTES:**
-
-   * In this example, 'web_console_cidr' was set to 0.0.0.0/0. This configuration opens the Hub web console as a public web site. It is recommended to specify a more restricted IP and CIDR range.
-   * IMPORTANT: Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Manual Installer Machine Undeployment Mode](#manual-installer-machine-undeployment-mode) section.
-
-
 7. When the deployment is done extract the web console password and DSF URL using:
     1. ```bash
-       cd dsfkit/examples/${example_name}
+       cd dsfkit/examples/${example_path}
        
-       >>>> Use the name of the example you chose
+       >>>> Use the path of the example you chose, e.g., poc/basic_deployment
        ```
     2. ```bash
         terraform output "dsf_hub_web_console"
         ```
 8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
 
+**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Manual Installer Machine Undeployment Mode](#manual-installer-machine-undeployment-mode) section.
+
 **The Manual Installer Machine Deployment is now complete and a functioning version of DSF is now available.**
 
 ### Automated Installer Machine Deployment Mode
 
-In case you don’t want to manually create the Installer Machine, you can automate the creation of the Installer Machine. DSFKit exposes a dedicated Terraform example that automatically creates the installer machine with the “user-data”.  Complete these steps to automate the creation of an installer machine:
-<br><br>
-To use the Terraform installer example follow the following step:
+In case you don’t want to manually create the Installer Machine, you can automate its creation. DSFKit provides a dedicated Terraform recipe that automatically creates the installer machine with the required [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).  Complete these steps to automate the creation of an installer machine.
 
-1. ```bash
-    git clone https://github.com/imperva/dsfkit.git
-    git -C dsfkit checkout tags/${version}
-    ```
-2. ```bash
-    cd dsfkit/installer_machine
-    ```
-3. ```bash
+1. Download the Terraform recipe zip [here](https://github.com/imperva/dsfkit/tree/1.3.5/installer_machine/installer_machine.zip).
+
+
+2. Unzip the zip file in CLI or using your operating system's UI.
+   For example, in CLI:
+   ```bash
+   unzip installer_machine.zip
+   ```
+
+3. In CLI, navigate to the directory which contains the Terraform files.
+   For example:
+   ```bash
+   cd installer_machine
+   ```
+
+4. Run:
+    ```bash
     terraform init
     ```
-4. ```bash
+
+5. Run:
+    ```bash
     terraform apply -auto-approve
     ```
-5. This script will prompt you to input the aws_access_key, aws_secret_key and aws_region parameters.
+   You will be prompted you to input the access_key, secret_key and region variables.
+   At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.).
 
-   **NOTES:**
+   This should take about 30 minutes.
 
-   * At this stage the Installer Machine is initializing. During its initialization, it will automatically create all the other resources (Hub, GWs etc).
-   * IMPORTANT: Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Automated Installer Machine Undeployment Mode](#automated-installer-machine-undeployment-mode) section.
-   
-6. After the first phase of the installation is completed, it outputs the following ssh commands, for example:
+
+7. After the first phase of the deployment is completed, it outputs the following ssh commands, for example:
 
     ```bash
     installer_machine_ssh_command = "ssh -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17"
     logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17 -C 'sudo tail -f /var/log/user-data.log'"
     ```
 
-7. The second and last phase of the installation runs in the background. To follow it and know when it is completed, run:
-    ```bash
-    logs_tail_ssh_command
-    ```
-    which appears in the first phase output.
-8. After the installation is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
-9. ```bash
-    cd dsfkit/examples/${example_name}
-    
-    >>>> Use the name of the example you chose
-    ```
-10. Extract the web console admin password and DSF URL using:
+8. The second and last phase of the deployment runs in the background. To follow it and know when it is completed run the `logs_tail_ssh_command` which appears in the first phase output.
+
+
+9. After the deployment is completed, run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output.
+
+
+10. Navigate to the directory of the example you chose.
+    For example:
+     ```bash
+     cd dsfkit/examples/poc/basic_deployment
+     
+     >>>> Change this command depending on the example you chose
+     ```
+
+12. Extract the web console admin password and DSF URL using:
     ```bash
     terraform output "dsf_hub_web_console"
     ```
-11. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
+13. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step. 
 
-   **NOTE:** The Terraform script is OS-Safe, as it doesn't run any bash script.
+**NOTE:** The Terraform script is OS-Safe, as it doesn't run any bash script.
+
+**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Automated Installer Machine Undeployment Mode](#automated-installer-machine-undeployment-mode) section.
 
 **The Automated Installer Machine Deployment is now complete and a functioning version of DSF is now available.**
 
