@@ -530,7 +530,9 @@ Complete these steps to manually create an installer machine:
 
 ### Automated Installer Machine Deployment Mode
 
-In case you don’t want to manually create the Installer Machine, you can automate its creation. DSFKit provides a dedicated Terraform recipe that automatically creates the installer machine with the required [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).  Complete these steps to automate the creation of an installer machine.
+In case you don’t want to manually create the installer machine, you can automate its creation. DSFKit provides a Terraform recipe that automatically creates the installer machine with the required [user data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html).
+
+Complete the following instructions to automate the creation of an installer machine which in turn automatically installs DSF.
 
 1. Download the Terraform recipe zip [here](https://github.com/imperva/dsfkit/tree/1.3.5/installer_machine/installer_machine.zip).
 
