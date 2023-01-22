@@ -74,7 +74,7 @@ jobs:
           if [ -n "${public_submodule}" ]; then
             git filter-branch --prune-empty --tree-filter 'mkdir -p modules/${source_module}/modules; mv modules/${public_submodule} modules/${source_module}/modules/; true;' --tag-name-filter cat -- --all HEAD
           fi
-          git filter-branch --prune-empty --tree-filter 'mv LICENSE.md modules/${source_module}/ || true' --tag-name-filter cat -- --all HEAD
+          git filter-branch -f --prune-empty --tree-filter 'mv LICENSE.md modules/${source_module}/ || true' --tag-name-filter cat -- --all HEAD
           git filter-branch -f --prune-empty --subdirectory-filter modules/${source_module}/ --tag-name-filter cat -- --all HEAD
 
       - name: Push to module repo
@@ -85,6 +85,6 @@ jobs:
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
           git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
           git branch -m main
-          git push origin --delete $(git tag -l)
+          git push origin --delete  $(git ls-remote --tags 2>/dev/null | awk '{print $NF}')
           git push -f origin HEAD:main --tags
 
