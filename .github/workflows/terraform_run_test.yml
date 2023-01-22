@@ -38,7 +38,7 @@ jobs:
       AWS_REGION: ${{ matrix.aws_region }}
     environment: test
     outputs:
-      my_output: ${{ steps.test_audit.outputs.* }}
+      my_output: ${{ steps.test_audit.outputs }}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -165,7 +165,7 @@ jobs:
     #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
     - name: Validate SSH Results
-      run: echo "${{ steps.test_audit.outputs.* }}"
+      run: printf "${{ steps.test_audit.outputs.* }}"
 
     # - name: Terraform Destroy
     #   if: always()
