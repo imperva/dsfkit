@@ -167,7 +167,7 @@ jobs:
     #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
     - name: Validate SSH Results
-      run: echo "${{ toJSON(steps.test_audit.outputs.stdout) }}"
+      run: echo "${{ steps.test_audit.outputs.stdout }}"
 
     # - name: Terraform Destroy
     #   if: always()
