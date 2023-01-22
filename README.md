@@ -460,13 +460,20 @@ Complete these steps to manually create an installer machine:
 
 1. **Launch an Instance:** Search  for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 Image and click “enter”:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
 
+
 2. Choose the “Community AMI”:<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
 
-3. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
-4. Scroll down to find the “User data” input field. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.5/installer_machine/prepare_installer.tpl) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+3. Select t2.medium Instance type.
 
-5. Replace the following placeholders with their value in the bash code you pasted: 
+
+4. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
+
+
+5. Scroll down to find the “User data” input field. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.5/installer_machine/prepare_installer.tpl) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+
+
+6. Replace the following placeholders with their value in the bash code you pasted: 
     1. ${example_name}: E.g., basic_deployment
     2. ${example_type}: poc or installation, according to where your example is located in the [DSFKit GitHub repository](https://github.com/imperva/dsfkit/tree/1.3.5) under the 'examples' directory.
     3. ${access_key}: AWS access key which provides access to the AWS account where you want to deploy DSF. 
@@ -474,12 +481,12 @@ Complete these steps to manually create an installer machine:
     5. ${region}: AWS region where you want to deploy DSF.
     6. ${web_console_cidr}: CIDR blocks each surrounded by "" and separated by commas, which will allow DSF hub web console access once it is deployed. E.g., using "0.0.0.0/0" makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
-6. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). View the progress in the logs by running SSH to the machine and tailing the “user-data” logs:
+7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). View the progress in the logs by running SSH to the machine and tailing the “user-data” logs:
     ```bash
     tail -f /var/logs/user-data.log
     ```
 
-7. When the deployment is done extract the web console password and DSF URL using:
+8. When the deployment is done extract the web console password and DSF URL using:
     1. ```bash
        cd dsfkit/examples/${example_type}/${example_name}
        
@@ -488,7 +495,7 @@ Complete these steps to manually create an installer machine:
     2. ```bash
         terraform output "dsf_hub_web_console"
         ```
-8. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
+9. Access the DSF Portal by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password generated in the previous step.
 
 **IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Manual Installer Machine Undeployment Mode](#manual-installer-machine-undeployment-mode) section.
 
