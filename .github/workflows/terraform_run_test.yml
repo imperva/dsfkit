@@ -146,7 +146,7 @@ jobs:
         key: ${{ secrets.HUB_KEY }}
         port: 22
         script: | 
-          sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count >> output.txt
+          (sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_STEP_SUMMARY
           ls -l
 
     # - name: copy file via ssh key
@@ -175,7 +175,9 @@ jobs:
 
     - name: Validate SSH Results
       if: always()
-      run: echo ${{ toJSON(github) }}
+      run: | 
+        cat $GITHUB_OUTPUT
+        cat $GITHUB_STEP_SUMMARY
 
     # - name: Terraform Destroy
     #   if: always()
