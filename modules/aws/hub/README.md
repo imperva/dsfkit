@@ -35,7 +35,7 @@ The following input variables are **required**:
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 
-Please refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 
 ## Outputs
 
@@ -110,5 +110,5 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, please refer to the official documentation [here](https://docs.imperva.com/bundle/v4.9-sonar-user-guide/page/81265.htm). 
-For additional information about DSF deployment using terraform, please refer to the main repo README [here](https://github.com/imperva/dsfkit).
+For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.3.5).

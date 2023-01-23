@@ -123,7 +123,7 @@ variable "role_arn" {
 
 variable "additional_install_parameters" {
   default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
 variable "skip_instance_health_verification" {
