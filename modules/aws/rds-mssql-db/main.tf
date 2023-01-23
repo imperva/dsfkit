@@ -20,52 +20,7 @@ locals {
   mssql_connect_db_name        = "rdsadmin"
   lambda_salt                  = random_id.salt.hex
   lambda_package               = "${path.module}/installation_resources/mssqlLambdaPackage.zip"
-
-  db_audit_bucket_name         = replace("${local.db_identifier}-audit-bucket", "_", "-")
-
-  rds_db_og_role_assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "rds.amazonaws.com"
-        }
-      },
-    ]
-  })
-  rds_db_og_role_inline_policy_s3 = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "VisualEditor0",
-        "Effect" : "Allow",
-        "Action" : "s3:ListAllMyBuckets",
-        "Resource" : "*"
-      },
-      {
-        "Sid" : "VisualEditor1",
-        "Effect" : "Allow",
-        "Action" : [
-          "s3:ListBucket",
-          "s3:GetBucketACL",
-          "s3:GetBucketLocation"
-        ],
-        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}"
-      },
-      {
-        "Sid" : "VisualEditor2",
-        "Effect" : "Allow",
-        "Action" : [
-          "s3:PutObject",
-          "s3:ListMultipartUploadParts",
-          "s3:AbortMultipartUpload"
-        ],
-        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}/*"
-      }
-    ]
-  })
+  db_audit_bucket_name         = "${local.db_identifier}-audit-bucket"
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
@@ -87,16 +42,7 @@ resource "aws_s3_bucket_public_access_block" "rds_db_audit_bucket_public_access_
   restrict_public_buckets = true
 }
 
-resource "aws_iam_role" "rds_db_og_role" {
-  name_prefix         = replace("${local.db_identifier}-og-role", "_", "-")
-  description         = replace("${local.db_identifier}-og-role-${var.friendly_name}", "_", "-")
-  managed_policy_arns = null
-  assume_role_policy  = local.rds_db_og_role_assume_role_policy
-  inline_policy {
-    name   = "imperva-dsf-s3-access"
-    policy = local.rds_db_og_role_inline_policy_s3
-  }
-}
+
 
 resource "aws_db_option_group" "impv_rds_db_og" {
   name                     = replace("${local.db_identifier}-og", "_", "-")

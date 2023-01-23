@@ -47,4 +47,9 @@ variable "database_details" {
   })
   description = "database details"
   nullable    = false
+
+  validation {
+    condition     = contains(["mysql", "sqlserver-ex"], var.database_details.db_engine)
+    error_message = "Allowed values for db engine: \"mysql\" or \"sqlserver-ex\"."
+  }
 }

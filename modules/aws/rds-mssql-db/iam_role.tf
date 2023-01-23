@@ -3,6 +3,49 @@
 #################################
 
 locals {
+  rds_db_og_role_assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "rds.amazonaws.com"
+        }
+      },
+    ]
+  })
+  rds_db_og_role_inline_policy_s3 = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "VisualEditor0",
+        "Effect" : "Allow",
+        "Action" : "s3:ListAllMyBuckets",
+        "Resource" : "*"
+      },
+      {
+        "Sid" : "VisualEditor1",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:ListBucket",
+          "s3:GetBucketACL",
+          "s3:GetBucketLocation"
+        ],
+        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}"
+      },
+      {
+        "Sid" : "VisualEditor2",
+        "Effect" : "Allow",
+        "Action" : [
+          "s3:PutObject",
+          "s3:ListMultipartUploadParts",
+          "s3:AbortMultipartUpload"
+        ],
+        "Resource" : "arn:aws:s3:::${local.db_audit_bucket_name}/*"
+      }
+    ]
+  })
   role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.lambda_mssql_infra_role[0].arn, null)
   role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
   role_assume_role_policy = jsonencode({
@@ -102,6 +145,17 @@ locals {
     ]
   }
   )
+}
+
+resource "aws_iam_role" "rds_db_og_role" {
+  name_prefix         = replace("${local.db_identifier}-og-role", "_", "-")
+  description         = replace("${local.db_identifier}-og-role-${var.friendly_name}", "_", "-")
+  managed_policy_arns = null
+  assume_role_policy  = local.rds_db_og_role_assume_role_policy
+  inline_policy {
+    name   = "imperva-dsf-s3-access"
+    policy = local.rds_db_og_role_inline_policy_s3
+  }
 }
 
 resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
