@@ -175,7 +175,7 @@ jobs:
 
     - name: Validate SSH Results
       if: always()
-      run: echo ${{ toJSON(steps.test_audit.outputs) }}
+      run: echo ${{ toJSON(github) }}
 
     # - name: Terraform Destroy
     #   if: always()
