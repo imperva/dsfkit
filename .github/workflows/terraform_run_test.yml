@@ -146,8 +146,8 @@ jobs:
         key: ${{ secrets.HUB_KEY }}
         port: 22
         script: | 
-          (sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_STEP_SUMMARY
-          ls -l
+          res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count)
+          if [ $res -gt 0 ]; then exit 0; fi
 
     # - name: copy file via ssh key
     #   uses: appleboy/scp-action@master
@@ -173,11 +173,11 @@ jobs:
     #       sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count
     #       echo ssh_res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count) >> $GITHUB_ENV
 
-    - name: Validate SSH Results
-      if: always()
-      run: | 
-        cat $GITHUB_OUTPUT
-        cat $GITHUB_STEP_SUMMARY
+    # - name: Validate SSH Results
+    #   if: always()
+    #   run: | 
+    #     cat $GITHUB_OUTPUT
+    #     cat $GITHUB_STEP_SUMMARY
 
     # - name: Terraform Destroy
     #   if: always()
