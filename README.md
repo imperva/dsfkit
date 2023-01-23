@@ -128,7 +128,7 @@ This guide references the following information and links, some of which are ava
    <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Open Terraform Cloud Account - Request Form</a>
    </td>
    <td>Grants access for a specific e-mail address to Imperva's Terraform Cloud account.
-       Required for <a href="https://github.com/imperva/dsfkit/tree/dev#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
+       Required for <a href="https://github.com/imperva/dsfkit/tree/1.3.5#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
    </td>
   </tr>
   <tr>
@@ -482,7 +482,7 @@ Complete these steps to manually create an installer machine:
     3. ${access_key}: AWS access key which provides access to the AWS account where you want to deploy DSF. 
     4. ${secret_key}: AWS secret key which provides access to the AWS account where you want to deploy DSF.
     5. ${region}: AWS region where you want to deploy DSF.
-    6. ${web_console_cidr}: CIDR blocks each surrounded by "" and separated by commas, which will allow DSF Hub web access once it is deployed. E.g., using "0.0.0.0/0" makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
+    6. ${web_console_cidr}: A list of CIDR blocks each surrounded by "" and separated by commas, which will allow DSF Hub web access once it is deployed. E.g., using ["0.0.0.0/0"] makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
 7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). 
 
@@ -558,17 +558,17 @@ Complete the following instructions to automate the creation of an installer mac
     ```bash
     terraform apply -auto-approve
     ```
-   You will be prompted you to input the access_key, secret_key and region variables.
+   You will be prompted to input the AWS access key, AWS secret key and AWS region variables.
    At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.).
 
-   This should take about 30 minutes.
+   This should take a few minutes.
 
 
-7. After the first phase of the deployment is completed, it outputs the following ssh commands, for example:
+7. After the first phase of the deployment is completed, it outputs the following SSH commands, for example:
 
     ```bash
-    installer_machine_ssh_command = "ssh -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17"
-    logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/installer_ssh_key ec2-user@3.70.181.17 -C 'sudo tail -f /var/log/user-data.log'"
+    installer_machine_ssh_command = "ssh -i ssh_keys/dsf_ssh_key-default ec2-user@3.69.20.130"
+    logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/dsf_ssh_key-default ec2-user@3.69.20.130 -C 'sudo tail -f /var/log/user-data.log'"    
     ```
 
 8. The second and last phase of the deployment runs in the background. To follow it and know when it is completed run the `logs_tail_ssh_command` which appears in the first phase output.
@@ -580,7 +580,7 @@ Complete the following instructions to automate the creation of an installer mac
 10. Navigate to the directory of the example you chose.
     For example:
      ```bash
-     cd dsfkit/examples/poc/basic_deployment
+     cd /dsfkit/examples/poc/basic_deployment
      
      >>>> Change this command depending on the example you chose
      ```
@@ -664,6 +664,9 @@ The permissions are separated to 3 different policies. Use the relevant policies
 
 Depending on the deployment mode you chose, follow the undeployment instructions of the same mode to completely remove Imperva DSF from AWS.
 
+The undeployment process should be followed whether the deployment was successful or not. 
+In case of failure, the Terraform may have deployed some resources before failing, and want these removed.
+
 ## CLI Undeployment Mode
 
 1. Navigate to the directory which contains the Terraform files.
@@ -691,8 +694,12 @@ Depending on the deployment mode you chose, follow the undeployment instructions
 
 ### Manual Installer Machine Undeployment Mode
 
-1. Run SSH to the Installer Machine.
-
+1. Run SSH to installer machine from your computer or another computer which has access to the installer machine:
+    ```bash
+    ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
+   
+   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.5#manual-installer-machine-deployment-mode">)  
+    ```
 
 2. ```bash
    cd /${example_name}
@@ -707,7 +714,8 @@ Depending on the deployment mode you chose, follow the undeployment instructions
     export AWS_REGION=${region}
     terraform destroy -auto-approve
    
-    >>>> Fill the values of the access_key, secret_key and region variables
+    >>>> Fill the values of the access_key, secret_key and region placeholders with the 
+         AWS access key, secert key and region that you used in the deployement
     ```
 
 4. Wait for the environment to be destroyed.
@@ -717,14 +725,38 @@ Depending on the deployment mode you chose, follow the undeployment instructions
 
 ### Automated Installer Machine Undeployment Mode
 
-1. Exit from the Installer Machine.
+1. Run ssh to the installer machine using the `installer_machine_ssh_command` which appears in the first phase output of the [Automated Installer Machine Deployment Mode](#automated-installer-machine-deployment-mode).
 
 
-2. On the local machine:
+2. ```bash
+   cd /${example_name}
+   
+   >>>> Use the name of the example you chose
+   ```
+   
+3. Run:
+    ```bash
+    sudo su
+    export AWS_ACCESS_KEY_ID=${access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
+    export AWS_REGION=${region}
+    terraform destroy -auto-approve
+   
+    >>>> Fill the values of the access_key, secret_key and region placeholders with the 
+         AWS access key, secert key and region that you used in the deployement
+    ```
+
+4. Wait for the environment to be destroyed.
+   
+   This should take a few minutes.
+
+6. Exit from the Installer Machine.
+
+7. On the local machine:
    ```bash
    cd installer_machine
    ```
-3. Run:
+8. Run:
     ```bash
     terraform destroy -auto-approve
     ```
