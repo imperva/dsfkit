@@ -119,6 +119,10 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
+   <td><a href="https://git-scm.com/downloads">Download Git</a>
+   </td>
+  </tr>
+  <tr>
    <td><a href="https://www.terraform.io/downloads">Download Terraform</a>
    </td>
    <td>
@@ -215,9 +219,10 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
 2. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva. 
    Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
-3. Only if you chose the [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode), it is required that you have access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
+3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
+4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+5. Only if you chose the [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode), it is required that you have access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
    Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Cloud account.
-4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 
 
 **NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
