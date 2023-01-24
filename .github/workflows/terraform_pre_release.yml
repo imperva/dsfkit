@@ -86,7 +86,7 @@ jobs:
 
       - name: Zip per examples
         run: |
-          for d in $(find ./examples -type d -links 2); do zip -FSrj ${d}/$(basename ${d}).zip ${d} -x "*.zip"; done
+          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}.zip ${_b} -x "*.zip"; popd; done
 
       - name: Commit changes to git repo
         uses: stefanzweifel/git-auto-commit-action@v4
