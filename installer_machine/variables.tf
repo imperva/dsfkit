@@ -1,3 +1,8 @@
+variable "sonar_version" {
+  type    = string
+  default = "4.10"
+}
+
 variable "ec2_instance_type" {
   type    = string
   default = "t2.small"
@@ -19,14 +24,20 @@ variable "_3_aws_region" {
 
 variable "example_name" {
   type    = string
-  default = "poc/basic_deployment"
+  default = "basic_deployment"
+}
+
+variable "example_type" {
+  type    = string
+  default = "poc"
+  description = "poc or installation, according to where your example is located in the DSFKit GitHub repository under the 'examples' directory"
 }
 
 variable "web_console_cidr" {
-  type    = string
-  default = null
+  type        = list(string)
+  default     = null
+  description = "CIDR blocks allowing DSF hub web console access"
 }
-
 
 variable "installer_ami_name_tag" {
   type    = string

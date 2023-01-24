@@ -29,4 +29,4 @@ export AWS_SECRET_ACCESS_KEY=${secret_key}
 export AWS_REGION=${region}
 
 terraform init
-terraform apply -auto-approve -var='web_console_cidr=[${web_console_cidr}]'
+terraform apply -auto-approve -var='web_console_cidr=${web_console_cidr}'

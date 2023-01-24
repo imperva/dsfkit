@@ -5,7 +5,16 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "../modules/aws/core/globals"
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.3.5" # latest release tag
+  sonar_version = var.sonar_version
+}
+
+module "key_pair" {
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.3.5" # latest release tag
+  key_name_prefix          = "imperva-dsf-"
+  private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
 
 data "http" "myip" {
@@ -82,13 +91,14 @@ resource "aws_security_group" "allow_ssh" {
 resource "aws_instance" "installer_machine" {
   ami           = data.aws_ami.installer-ami.image_id
   instance_type = var.ec2_instance_type
-  key_name      = module.globals.key_pair.key_pair_name
+  key_name      = module.key_pair.key_pair.key_pair_name
   user_data = templatefile("${path.module}/prepare_installer.tpl", {
     access_key       = var._1_aws_access_key_id
     secret_key       = var._2_aws_secret_access_key
     region           = var._3_aws_region
     example_name     = var.example_name
-    web_console_cidr = var.web_console_cidr != null ? var.web_console_cidr : local.workstation_cidr_24[0]
+    example_type     = var.example_type
+    web_console_cidr = jsonencode(var.web_console_cidr != null ? var.web_console_cidr : local.workstation_cidr_24)
   })
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.allow_ssh.id]
