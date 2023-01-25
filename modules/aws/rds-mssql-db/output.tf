@@ -35,6 +35,3 @@ output "db_port" {
 #  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${nonsensitive(local.db_password)}"
 #}
 
-output "iam_role" {
-  value = local.role_arn
-}

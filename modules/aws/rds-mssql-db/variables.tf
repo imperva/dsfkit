@@ -34,12 +34,6 @@ variable "name" {
   default     = ""
 }
 
-variable "init_sql_file_path" {
-  type        = string
-  default     = null
-  description = "Local db sql init file()."
-}
-
 variable "rds_subnet_ids" {
   type        = list(string)
   description = "List of subnet_ids to make rds available on."

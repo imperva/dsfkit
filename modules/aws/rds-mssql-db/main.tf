@@ -73,7 +73,6 @@ resource "aws_db_option_group" "impv_rds_db_og" {
 
 resource "aws_db_instance" "rds_db" {
   allocated_storage       = 20
-#  db_name                 = local.db_name
   engine                  = "sqlserver-ex"
   engine_version          = "15.00.4236.7.v1"
   instance_class          = "db.t3.small"
@@ -134,7 +133,7 @@ resource "aws_lambda_function" "lambda_mssql_infra" {
   filename          = local.lambda_package
   role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
   handler           = "createDBsAndEnableAudit.lambda_handler"
-  runtime           = "python3.7"
+  runtime           = "python3.9"
   timeout           = 900
 
   vpc_config {
@@ -217,7 +216,7 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
   s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
   role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
   handler           = "trafficAndSuspiciousQueries.lambda_handler"
-  runtime           = "python3.7"
+  runtime           = "python3.9"
   timeout           = 900
 
   vpc_config {
@@ -241,7 +240,6 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
   ]
 }
 
-# todo - verify there is no need to add a wait of 1 minute before the schedule lambda so that the DBs will be exist for sure
 # add scheduled events each 1 minute for the traffic queries
 resource "aws_cloudwatch_event_rule" "trafficEachMinute" {
   name                = join("-", ["dsf-mssql-lambda-traffic-every-minute", local.lambda_salt])
@@ -283,4 +281,3 @@ resource "aws_lambda_permission" "allow_cloudwatchSuspicious" {
   principal = "events.amazonaws.com"
   source_arn = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.arn
 }
-

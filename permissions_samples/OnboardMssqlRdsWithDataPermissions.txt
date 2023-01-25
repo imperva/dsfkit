@@ -1,0 +1,242 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "rdsOptionGroupPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:CreateDBInstance",
+                "rds:CreateOptionGroup",
+                "rds:CreateDBSubnetGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:req-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteInstancePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteDBInstance"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:db-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteOGPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteOptionGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:og-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsDeleteSGPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:DeleteDBSubnetGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "rds:subgrp-tag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "rdsNoConditions",
+            "Effect": "Allow",
+            "Action": [
+                "rds:AddTagsToResource",
+                "rds:DescribeDBSubnetGroups",
+                "rds:ListTagsForResource",
+                "rds:DescribeDBInstances",
+                "rds:DescribeOptionGroups",
+                "rds:ModifyOptionGroup"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "cloudWatchLogsNoPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "logs:DescribeLogGroups",
+                "logs:ListTagsLogGroup",
+                "logs:PutRetentionPolicy"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "cloudWatchLogsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:DeleteLogGroup",
+                "logs:TagLogGroup"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "lambdaNoRestriction",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:ListFunctions",
+                "lambda:ListFunctionsByCodeSigningConfig"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "lambdaRequestTagsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:CreateFunction",
+                "lambda:TagResource"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "lambdaResourceTagPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:GetFunction",
+                "lambda:AddPermission",
+                "lambda:RemovePermission",
+                "lambda:PublishVersion",
+                "lambda:DeleteFunction",
+                "lambda:UntagResource",
+                "lambda:GetPolicy",
+                "lambda:ListTags",
+                "lambda:ListAliases",
+                "lambda:ListVersionsByFunction",
+                "lambda:GetFunctionCodeSigningConfig",
+                "lambda:PutFunctionCodeSigningConfig"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "eventsBridgePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "events:DescribeRule",
+                "events:TagResource",
+                "events:EnableRule",
+                "events:ListRules",
+                "events:RemovePermission",
+                "events:DescribeEventSource",
+                "events:PutPermission",
+                "events:UntagResource",
+                "events:DisableRule",
+                "events:ListTargetsByRule",
+                "events:PutTargets",
+                "events:RemoveTargets",
+                "events:ListTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "eventsBridgeResourceTagPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "events:PutRule",
+                "events:DeleteRule"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateVpcEndpoint",
+                "ec2:DeleteVpcEndpoint",
+                "ec2:ModifyVpcEndpoint",
+                "ec2:DeleteVpcEndpoints",
+                "ec2:DescribeVpcEndpoints",
+                "ec2:CreateTags",
+                "ec2:DescribePrefixLists"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "s3Permissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:DeleteBucket",
+                "s3:DeleteObject",
+                "s3:CreateBucket",
+                "s3:ListBucket",
+                "s3:ListAllMyBuckets",
+                "s3:ListBucketVersions",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketLocation",
+                "s3:GetBucketCORS",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketVersioning",
+                "s3:GetAccelerateConfiguration",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketLogging",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetReplicationConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:PutBucketTagging",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:GetObject",
+                "s3:GetBucketAcl",
+                "s3:GetObjectAcl",
+                "s3:GetBucketLocation",
+                "s3:GetBucketTagging",
+                "s3:GetObjectTagging",
+                "s3:GetAccountPublicAccessBlock",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:DeleteAccessPoint",
+                "s3:DeleteObjectVersion",
+                "s3:CreateAccessPoint",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutAccountPublicAccessBlock"
+            ],
+            "Resource": [
+                "arn:aws:s3:::dsf-sql-scripts-bucket*",
+                "arn:aws:s3:::dsf-sql-scripts-bucket*/*",
+                "arn:aws:s3:::edsf-db-demo*",
+                "arn:aws:s3:::edsf-db-demo*/*"
+            ]
+        }
+    ]
+}
