@@ -125,9 +125,9 @@ module "agentless_gw_group" {
     use_public_ip         = false
   }
   ingress_communication_via_proxy = {
-    proxy_address         = module.hub.public_ip
-    proxy_private_ssh_key = try(file(module.key_pair.key_pair_private_pem.filename), "")
-    proxy_ssh_user        = module.hub.ssh_user
+    proxy_address              = module.hub.public_ip
+    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
     module.vpc
