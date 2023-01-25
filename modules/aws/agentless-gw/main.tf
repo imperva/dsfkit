@@ -24,7 +24,7 @@ module "gw_instance" {
   binaries_location                   = var.binaries_location
   hub_federation_public_key           = var.hub_federation_public_key
   proxy_address                       = var.ingress_communication_via_proxy.proxy_address
-  proxy_ssh_key                       = var.ingress_communication_via_proxy.proxy_private_ssh_key
+  proxy_ssh_key_path                  = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
   proxy_ssh_user                      = var.ingress_communication_via_proxy.proxy_ssh_user
   skip_instance_health_verification   = var.skip_instance_health_verification
 }
