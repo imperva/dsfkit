@@ -40,15 +40,15 @@ variable "ebs" {
 
 variable "ingress_communication_via_proxy" {
   type = object({
-    proxy_address         = string
-    proxy_private_ssh_key = string
-    proxy_ssh_user        = string
+    proxy_address              = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key file path. Keep empty if no proxy is in use"
   default = {
-    proxy_address         = null
-    proxy_private_ssh_key = null
-    proxy_ssh_user        = null
+    proxy_address              = null
+    proxy_private_ssh_key_path = null
+    proxy_ssh_user             = null
   }
 }
 
