@@ -1,28 +1,27 @@
 # DSF RDS MsSQL
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions an RDS MsSQL, configure audit on it using s3 bucket and insert synthetic data on it.
+This Terraform module provisions an RDS MsSQL, configure audit on it using s3 bucket and generates synthetic data on it.
 It should be used for poc / pov / lab purposes.
 
 ## Requirements
 * Terraform v1.3.1
 * An AWS account
-* Permissions to create RDS MsSQL, S3 bucket (for configuring the audit), and lambda (for inserting data to the DB and running queried on it) 
+* Permissions to create RDS MsSQL, S3 bucket (for configuring the audit), and lambda (for generating data on the DB and running queried on it). Required permissions can be found [here](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
 
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create and onboard the RDS MsSQL with synthetic data on it. These resources include:
 * A RDS MsSQL instance
 * A security group to allow the required network access to and from the RDS MsSQL instance
-* An IAM role with relevant policies
+* An IAM role with relevant policies attached to the RDS MsSQL and to the lambdas
 * Two S3 buckets for configuring the audit on the RDS MsSQL and for running queries on the DB
 * A VPC Endpoint in order that the lambda which exists in a vpc will have access to the created S3 bucket for running the queries
-* Two lambdas - 
-  * Infra lambda which configured which queries types will be audited. In addition, it creates 4 DBs - finance, health, insurance, telecom - and generates 10,000 records to each one of the DBs.
+* Two Lambdas: 
+  * Infra lambda that configuring which SQL queries types will be audited. In addition, it creates 4 DBs - finance, health, insurance, telecom - and generates 10,000 records to each one of the DBs.
   * Scheduled lambda which has 2 triggers:
-    * Each 1 minute - run queries on the DB of traffic, such as - create a table, insert into the table, select some records, create a user and grant select permissions, etc.
-    * Each 10 minutes - run queries on the DB of suspicious activities, such as - failed logins, retrieve all the users and their rights, grant extensive permissions to a user, retrieve a large amount of data, etc.    
+    * Each 1 minute - run SQL queries on the DB for simulating general traffic, such as - create a table, insert into the table, select some records, create a user and grant select permissions, etc.
+    * Each 10 minutes - run SQL queries on the DB for simulating suspicious activities, such as - failed logins, retrieve all the users and their rights, grant extensive permissions to a user, retrieve a large amount of data, etc.
 
-The security group controls the inbound and outbound traffic to the RDS instance, while the IAM role grants the necessary permissions to access AWS resources. 
 
 ## Inputs
 

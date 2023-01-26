@@ -57,3 +57,11 @@ output "dsf_private_ssh_key" {
 output "dsf_private_ssh_key_file_name" {
   value = try(module.key_pair.key_pair_private_pem.filename, null)
 }
+
+output "mysql_db_details" {
+  value = try(module.rds_mysql, null)
+}
+
+output "mssql_db_details" {
+  value = try(module.rds_mssql, null)
+}
