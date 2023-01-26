@@ -187,6 +187,14 @@ The following table lists the released DSFKit versions, their release date and a
    <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation. <br>5. Added the module's version to the examples.
    </td>
   </tr>
+  <tr>
+   <td>26 Jan 2023
+   </td>
+   <td>1.3.5
+   </td>
+   <td>1. Enable creating RDS MsSQL with synthetic data for POC purposes. <br>2. Fix manual and automatic installer machine deployments. 
+   </td>
+  </tr>
   
 </table>
 
