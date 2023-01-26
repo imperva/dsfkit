@@ -50,12 +50,3 @@ variable "role_arn" {
   description = "IAM role to assign to the RDS SQL Server DB"
 }
 
-variable "friendly_name" {
-  type        = string
-  default     = "imperva-dsf-mssql"
-  description = "Friendly name, MsSQL Instance Name"
-  validation {
-    condition     = length(var.friendly_name) > 3
-    error_message = "Deployment name must be at least 3 characters"
-  }
-}
