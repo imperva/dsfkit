@@ -28,8 +28,8 @@ variable "example_name" {
 }
 
 variable "example_type" {
-  type    = string
-  default = "poc"
+  type        = string
+  default     = "poc"
   description = "poc or installation, according to where your example is located in the DSFKit GitHub repository under the 'examples' directory"
 }
 

@@ -13,14 +13,14 @@ resource "random_id" "salt" {
 data "aws_region" "current" {}
 
 locals {
-  db_username                  = var.username
-  db_password                  = length(var.password) > 0 ? var.password : random_password.db_password.result
-  db_identifier                = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
-  db_name                      = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
-  mssql_connect_db_name        = "rdsadmin"
-  lambda_salt                  = random_id.salt.hex
-  lambda_package               = "${path.module}/installation_resources/mssqlLambdaPackage.zip"
-  db_audit_bucket_name         = "${local.db_identifier}-audit-bucket"
+  db_username           = var.username
+  db_password           = length(var.password) > 0 ? var.password : random_password.db_password.result
+  db_identifier         = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
+  db_name               = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
+  mssql_connect_db_name = "rdsadmin"
+  lambda_salt           = random_id.salt.hex
+  lambda_package        = "${path.module}/installation_resources/mssqlLambdaPackage.zip"
+  db_audit_bucket_name  = "${local.db_identifier}-audit-bucket"
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
@@ -129,12 +129,12 @@ data "aws_iam_role" "lambda_mssql_assignee_role" {
 }
 
 resource "aws_lambda_function" "lambda_mssql_infra" {
-  function_name     = join("-", ["dsf-mssql-infra", local.lambda_salt])
-  filename          = local.lambda_package
-  role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
-  handler           = "createDBsAndEnableAudit.lambda_handler"
-  runtime           = "python3.9"
-  timeout           = 900
+  function_name = join("-", ["dsf-mssql-infra", local.lambda_salt])
+  filename      = local.lambda_package
+  role          = data.aws_iam_role.lambda_mssql_assignee_role.arn
+  handler       = "createDBsAndEnableAudit.lambda_handler"
+  runtime       = "python3.9"
+  timeout       = 900
 
   vpc_config {
     security_group_ids = [aws_security_group.rds_mssql_access.id]
@@ -147,7 +147,7 @@ resource "aws_lambda_function" "lambda_mssql_infra" {
       DB_PORT = aws_db_instance.rds_db.port
       DB_NAME = local.mssql_connect_db_name
       DB_USER = aws_db_instance.rds_db.username
-      DB_PWD  =  nonsensitive(aws_db_instance.rds_db.password)
+      DB_PWD  = nonsensitive(aws_db_instance.rds_db.password)
     }
   }
 
@@ -185,10 +185,10 @@ data "aws_route_tables" "vpc_route_tables" {
 }
 
 resource "aws_vpc_endpoint" "s3_vpc_endpoint" {
-  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
-  vpc_id       = data.aws_subnet.subnet.vpc_id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  vpc_id            = data.aws_subnet.subnet.vpc_id
   vpc_endpoint_type = "Gateway"
-  route_table_ids = data.aws_route_tables.vpc_route_tables.ids
+  route_table_ids   = data.aws_route_tables.vpc_route_tables.ids
 }
 
 resource "aws_s3_object" "mssql_lambda_objects" {
@@ -254,11 +254,11 @@ resource "aws_cloudwatch_event_target" "trafficEachMinuteTarget" {
 }
 
 resource "aws_lambda_permission" "allow_cloudwatchTraffic" {
-  statement_id = "AllowTrafficExecutionFromCloudWatch"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowTrafficExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_mssql_scheduled.function_name
-  principal = "events.amazonaws.com"
-  source_arn = aws_cloudwatch_event_rule.trafficEachMinute.arn
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.trafficEachMinute.arn
 }
 
 # add scheduled events each 10 minutes for the suspicious activity queries
@@ -269,15 +269,15 @@ resource "aws_cloudwatch_event_rule" "suspiciousActivityEach10Minutes" {
 }
 
 resource "aws_cloudwatch_event_target" "suspiciousActivityEach10MinutesTarget" {
-  arn  = aws_lambda_function.lambda_mssql_scheduled.arn
-  rule = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.name
+  arn   = aws_lambda_function.lambda_mssql_scheduled.arn
+  rule  = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.name
   input = "{\"S3_FILE_PREFIX\":\"mssql_suspicious_activity\",\"SHOULD_RUN_FAILED_LOGINS\":\"true\",\"DBS_FAILED_LOGINS\":\"financedb;HealthCaredb;Insurancedb;telecomdb\",\"DB_USER2\":\"finance:Teller;health:public_health_nurse;insurance:Broker;telecom:Technician\"}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatchSuspicious" {
-  statement_id = "AllowSuspiciousExecutionFromCloudWatch"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowSuspiciousExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda_mssql_scheduled.function_name
-  principal = "events.amazonaws.com"
-  source_arn = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.arn
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.suspiciousActivityEach10Minutes.arn
 }
