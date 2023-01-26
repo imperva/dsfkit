@@ -219,7 +219,7 @@ module "db_onboarding" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  source                       = "../../../modules/aws/rds-mssql-db"
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
   friendly_name                = local.deployment_name_salted
