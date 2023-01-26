@@ -188,7 +188,7 @@ module "rds_mysql" {
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
-module "db_onboarding" {
+module "db_onboarding_mysql" {
   for_each      = { for idx, val in module.rds_mysql : idx => val }
   source        = "imperva/dsf-poc-db-onboarder/aws"
   version       = "1.3.5" # latest release tag
@@ -219,10 +219,10 @@ module "db_onboarding" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
-  source                       = "../../../modules/aws/rds-mssql-db"
+  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  version                      = "1.3.5" # latest release tag
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
-  friendly_name                = local.deployment_name_salted
 }
 
 module "db_onboarding_mssql" {
@@ -250,7 +250,7 @@ module "db_onboarding_mssql" {
   depends_on = [
     module.federation,
     module.rds_mssql,
-    module.db_onboarding
+    module.db_onboarding_mysql
   ]
 }
 

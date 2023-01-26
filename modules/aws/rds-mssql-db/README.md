@@ -61,7 +61,6 @@ module "rds_mssql" {
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
   rds_subnet_ids               = "${aws_subnet.example.id}"
   security_group_ingress_cidrs = "${aws_cidr.example}"
-  friendly_name                = "${var.db_name}"
 }
 ```
 
