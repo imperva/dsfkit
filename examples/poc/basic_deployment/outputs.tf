@@ -51,3 +51,11 @@ output "dsf_private_ssh_key_file_name" {
 output "dsf_hub_web_console_url" {
   value = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
 }
+
+output "mysql_db_details" {
+  value = try(module.rds_mysql, null)
+}
+
+output "mssql_db_details" {
+  value = try(module.rds_mssql, null)
+}

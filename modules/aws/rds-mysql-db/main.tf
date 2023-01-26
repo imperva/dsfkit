@@ -25,7 +25,7 @@ resource "aws_db_subnet_group" "rds_db_sg" {
   subnet_ids = var.rds_subnet_ids
 }
 
-resource "aws_db_option_group" "impv_rds_db_pg" {
+resource "aws_db_option_group" "impv_rds_db_og" {
   name                     = replace("${local.db_identifier}-pg", "_", "-")
   option_group_description = "RDS DB option group"
   engine_name              = "mysql"
@@ -52,7 +52,7 @@ resource "aws_db_instance" "rds_db" {
   instance_class          = "db.t3.micro"
   username                = local.db_username
   password                = local.db_password
-  option_group_name       = aws_db_option_group.impv_rds_db_pg.name
+  option_group_name       = aws_db_option_group.impv_rds_db_og.name
   skip_final_snapshot     = true
   vpc_security_group_ids  = [aws_security_group.rds_mysql_access.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_db_sg.name

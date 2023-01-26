@@ -1,37 +1,21 @@
+locals {
+  db_policy_by_engine_map = {
+    "mysql" : local.mysql_policy,
+    "sqlserver-ex" : local.mssql_policy
+  }
+  server_type_by_engine_map = {
+    "mysql" : "AWS RDS MYSQL",
+    "sqlserver-ex" : "AWS RDS MS SQL SERVER"
+  }
+}
+
 data "aws_iam_role" "assignee_role" {
   name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
 resource "aws_iam_policy" "db_policy" {
   description = "IAM policy for collecting audit"
-  policy      = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "VisualEditor0",
-      "Effect": "Allow",
-      "Action": [
-        "logs:Describe*",
-        "logs:List*",
-        "rds:DescribeDBInstances",
-        "logs:StartQuery",
-        "logs:StopQuery",
-        "logs:TestMetricFilter",
-        "logs:FilterLogEvents",
-        "logs:Get*",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams",
-        "logs:GetLogEvents",
-        "rds:DescribeDBClusters",
-        "rds:DescribeOptionGroups"
-
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy      = local.db_policy_by_engine_map[var.database_details.db_engine]
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attach" {
@@ -66,11 +50,11 @@ locals {
     data : {
       applianceType : "DSF_HUB",
       applianceId : 1,
-      serverType : "AWS RDS MYSQL",
+      serverType : local.server_type_by_engine_map[var.database_details.db_engine],
       gatewayId : var.assignee_gw,
       parentAssetId : local.cloud_account_data.data.id,
       assetData : {
-        "Server Port" : 3306,
+        "Server Port" : var.database_details.db_port,
         database_name : var.database_details.db_identifier,
         db_engine : var.database_details.db_engine,
         auth_mechanism : "password",

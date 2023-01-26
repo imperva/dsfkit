@@ -93,3 +93,15 @@ variable "gw_group_ebs_details" {
     throughput       = 125
   }
 }
+
+variable "db_types_to_onboard" {
+  type        = list(string)
+  default     = ["RDS MySQL"]
+  description = "DB types to onboard, available types are - 'RDS MySQL', 'RDS MsSQL' with data"
+  validation {
+    condition = alltrue([
+    for db_type in var.db_types_to_onboard : contains(["RDS MySQL", "RDS MsSQL"], db_type)
+    ])
+    error_message = "Valid values should contain at least one of the following: 'RDS MySQL', 'RDS MsSQL'."
+  }
+}
