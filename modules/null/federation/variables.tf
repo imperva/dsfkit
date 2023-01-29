@@ -1,4 +1,4 @@
-variable "gws_info" {
+variable "gw_info" {
   type = object({
     gw_ip_address           = string
     gw_private_ssh_key_path = string
@@ -6,7 +6,7 @@ variable "gws_info" {
   })
 
   nullable    = false
-  description = "GWs info"
+  description = "GW info"
 }
 
 variable "hub_info" {
@@ -20,14 +20,14 @@ variable "hub_info" {
   description = "Hub info"
 }
 
-variable "gws_proxy_info" {
+variable "gw_proxy_info" {
   type = object({
     proxy_address = string
     proxy_private_ssh_key_path = string
     proxy_ssh_user = string
   })
 
-  description = "GWs proxy info"
+  description = "GW proxy info"
   default     = {
     proxy_address     = null
     proxy_private_ssh_key_path = null

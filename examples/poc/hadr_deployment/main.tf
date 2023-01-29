@@ -147,7 +147,7 @@ module "federation" {
   count   = length(local.hub_gw_combinations)
   source  = "imperva/dsf-federation/null"
   version = "1.3.5" # latest release tag
-  gws_info = {
+  gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
@@ -157,7 +157,7 @@ module "federation" {
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
-  gws_proxy_info = {
+  gw_proxy_info = {
     proxy_address         = module.hub.public_ip
     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     proxy_ssh_user        = module.hub.ssh_user

@@ -120,7 +120,7 @@ module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
   source   = "imperva/dsf-federation/null"
   version  = "1.3.5" # latest release tag
-  gws_info = {
+  gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
     gw_ssh_user             = each.value.ssh_user
@@ -130,7 +130,7 @@ module "federation" {
     hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
     hub_ssh_user             = module.hub.ssh_user
   }
-  gws_proxy_info = {
+  gw_proxy_info = {
     proxy_address           = module.hub.private_ip
     proxy_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
     proxy_ssh_user          = module.hub.ssh_user
