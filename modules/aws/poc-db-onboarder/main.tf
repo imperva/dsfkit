@@ -1,4 +1,8 @@
 locals {
+  bastion_host        = var.hub_proxy_info.proxy_address
+  bastion_private_key = try(file(var.hub_proxy_info.proxy_private_ssh_key_path), "")
+  bastion_user        = var.hub_proxy_info.proxy_ssh_user
+
   db_policy_by_engine_map = {
     "mysql" : local.mysql_policy,
     "sqlserver-ex" : local.mssql_policy
@@ -78,6 +82,10 @@ resource "null_resource" "connect_dsf_to_db" {
     user        = var.hub_info.hub_ssh_user
     private_key = file(var.hub_info.hub_private_ssh_key_path)
     host        = var.hub_info.hub_ip_address
+
+    bastion_host        = local.bastion_host
+    bastion_private_key = local.bastion_private_key
+    bastion_user        = local.bastion_user
   }
 
   provisioner "remote-exec" {

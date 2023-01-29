@@ -157,6 +157,11 @@ module "federation" {
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
+  gws_proxy_info = {
+    proxy_address         = module.hub.public_ip
+    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_ssh_user        = module.hub.ssh_user
+  }
   depends_on = [
     module.hub,
     module.hub_secondary,
