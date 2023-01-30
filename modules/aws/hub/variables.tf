@@ -32,6 +32,20 @@ variable "ebs" {
   description = "Compute instance volume attributes"
 }
 
+variable "ingress_communication_via_proxy" {
+  type = object({
+    proxy_address     = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user    = string
+  })
+  description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  default     = {
+    proxy_address     = null
+    proxy_private_ssh_key_path = null
+    proxy_ssh_user    = null
+  }
+}
+
 variable "create_and_attach_public_elastic_ip" {
   type        = bool
   default     = true
