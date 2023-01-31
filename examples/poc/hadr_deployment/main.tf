@@ -4,6 +4,11 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+  alias = "poc_scripts_s3_region"
+}
+
 module "globals" {
   source        = "imperva/dsf-globals/aws"
   version       = "1.3.5" # latest release tag
@@ -228,6 +233,11 @@ module "rds_mssql" {
   version                      = "1.3.5" # latest release tag
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
+
+  providers = {
+    aws                       = aws,
+    aws.poc_scripts_s3_region = aws.poc_scripts_s3_region
+  }
 }
 
 module "db_onboarding_mssql" {

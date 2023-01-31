@@ -50,3 +50,14 @@ variable "role_arn" {
   description = "IAM role to assign to the RDS SQL Server DB"
 }
 
+variable "db_audit_scripts_bucket_name" {
+  type        = string
+  description = "S3 bucket containing the DB audit scripts for POC purposes"
+  default     = "ae309159-115c-4504-b0c2-03dd022f3368"
+}
+
+variable "db_audit_lambda_package_name" {
+  type        = string
+  description = "Lambda package name for running the DB audit scripts"
+  default     = "mssqlLambdaPackage.zip"
+}

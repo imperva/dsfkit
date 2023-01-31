@@ -35,3 +35,6 @@ output "db_port" {
 #  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${nonsensitive(local.db_password)}"
 #}
 
+output "s3_bucket_for_mssql_files" {
+  value = aws_s3_bucket.mssql_lambda_bucket.bucket
+}
