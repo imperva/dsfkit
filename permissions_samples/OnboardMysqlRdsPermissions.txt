@@ -92,6 +92,24 @@
                     "aws:ResourceTag/deployment_name": "imperva-dsf-*"
                 }
             }
+        },
+        {
+            "Sid": "s3PocSqlScriptsPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:GetObjectTagging"
+            ],
+            "Resource": [
+                "arn:aws:s3:::ae309159-115c-4504-b0c2-03dd022f3368",
+                "arn:aws:s3:::ae309159-115c-4504-b0c2-03dd022f3368/*"
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "s3:ResourceAccount": "112114489393"
+                }
+            }
         }
     ]
 }
