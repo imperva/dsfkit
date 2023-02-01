@@ -1,24 +1,24 @@
-variable "dsf_hub_primary_public_ip" {
+variable "dsf_primary_ip" {
   type        = string
-  description = "dsf_hub_primary_public_ip"
+  description = "IP of the primary Hub or Gateway, can be public or private"
   nullable    = false
 }
 
-variable "dsf_hub_primary_private_ip" {
+variable "dsf_primary_private_ip" {
   type        = string
-  description = "dsf_hub_primary_private_ip"
+  description = "Private IP of the primary Hub or Gateway"
   nullable    = false
 }
 
-variable "dsf_hub_secondary_public_ip" {
+variable "dsf_secondary_ip" {
   type        = string
-  description = "dsf_hub_secondary_public_ip"
+  description = "IP of the secondary Hub or Gateway, can be public or private"
   nullable    = false
 }
 
-variable "dsf_hub_secondary_private_ip" {
+variable "dsf_secondary_private_ip" {
   type        = string
-  description = "dsf_hub_secondary_private_ip"
+  description = "Private IP of the secondary Hub or Gateway"
   nullable    = false
 }
 
@@ -44,4 +44,22 @@ variable "ssh_user_secondary" {
   type        = string
   description = "SSH user for secondary. Keep empty if the user is identical to primary one"
   default     = null
+}
+
+variable "proxy_host" {
+  type        = string
+  default     = null
+  description = "Proxy host used for ssh"
+}
+
+variable "proxy_private_ssh_key_path" {
+  type        = string
+  default     = null
+  description = "Proxy private ssh key file path"
+}
+
+variable "proxy_ssh_user" {
+  type        = string
+  default     = null
+  description = "Proxy ssh user"
 }

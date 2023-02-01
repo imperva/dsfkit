@@ -16,7 +16,6 @@ module "hub_instance" {
   sg_ingress_cidr                     = var.ingress_communication.full_access_cidr_list
   create_and_attach_public_elastic_ip = var.create_and_attach_public_elastic_ip
   use_public_ip                       = var.ingress_communication.use_public_ip
-  iam_instance_profile_id             = aws_iam_instance_profile.dsf_hub_instance_iam_profile.id
   additional_install_parameters       = var.additional_install_parameters
   web_console_admin_password          = var.web_console_admin_password
   ssh_key_path                        = var.ssh_key_pair.ssh_private_key_file_path

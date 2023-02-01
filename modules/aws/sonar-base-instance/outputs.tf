@@ -23,6 +23,11 @@ output "sg_id" {
   value       = aws_security_group.dsf_base_sg.id
 }
 
+output "iam_role" {
+  description = "IAM Role ARN of the DSF node"
+  value = local.role_arn
+}
+
 output "jsonar_uid" {
   value = random_uuid.uuid.result
 }

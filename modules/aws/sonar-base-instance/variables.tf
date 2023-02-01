@@ -47,25 +47,27 @@ variable "sg_ingress_cidr" {
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
 }
 
-variable "iam_instance_profile_id" {
-  type        = string
-  default     = null
-  description = "DSF base ec2 IAM instance profile id"
-}
-
 variable "ami_name_tag" {
   type = string
 }
 
 variable "ami_user" {
-  type = string
+  type        = string
+  default     = null
+  description = "Ami user to use for SSH to the EC2. Keep empty to use the default user."
+}
+
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
 }
 
 variable "resource_type" {
   type = string
   validation {
     condition     = contains(["hub", "gw"], var.resource_type)
-    error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
+    error_message = "Allowed values for DSF node type: \"hub\", \"gw\""
   }
   nullable = false
 }
@@ -98,6 +100,12 @@ variable "binaries_location" {
   })
   description = "S3 DSF installation location"
   nullable    = false
+}
+
+variable "hadr_secondary_node" {
+  type        = bool
+  default     = false
+  description = "Is this node a HADR secondary one"
 }
 
 variable "proxy_info" {

@@ -19,7 +19,8 @@ output "sg_id" {
 }
 
 output "iam_role" {
-  value = local.role_arn
+  description = "IAM Role ARN of the DSF Hub node"
+  value = module.hub_instance.iam_role
 }
 
 output "federation_public_key" {

@@ -15,7 +15,8 @@ output "private_dns" {
 }
 
 output "iam_role" {
-  value = local.role_arn
+  description = "IAM Role ARN of the DSF agentless gateway node"
+  value = module.gw_instance.iam_role
 }
 
 output "jsonar_uid" {
