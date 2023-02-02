@@ -195,7 +195,15 @@ The following table lists the released DSFKit versions, their release date and a
    <td>1. Enable creating RDS MsSQL with synthetic data for POC purposes. <br>2. Fix manual and automatic installer machine deployments. 
    </td>
   </tr>
-  
+  <tr>
+   <td>5 Feb 2023
+   </td>
+   <td>1.3.6
+   </td>
+   <td>Supported SSH proxy for hub/gw in modules: hub, agentless-gw, federation, poc-db-onboarder.
+   </td>
+  </tr>
+
 </table>
 
 # Getting Ready to Deploy
