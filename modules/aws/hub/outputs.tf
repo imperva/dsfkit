@@ -23,12 +23,12 @@ output "iam_role" {
   value = module.hub_instance.iam_role
 }
 
-output "federation_public_key" {
-  value = local.dsf_hub_ssh_public_federation_key
+output "primary_hub_sonarw_public_key" {
+  value = module.hub_instance.primary_node_sonarw_public_key
 }
 
-output "federation_private_key" {
-  value = local.dsf_hub_ssh_private_federation_key
+output "primary_hub_sonarw_private_key" {
+  value = module.hub_instance.primary_node_sonarw_private_key
 }
 
 output "jsonar_uid" {

@@ -28,6 +28,14 @@ output "iam_role" {
   value = local.role_arn
 }
 
+output "primary_node_sonarw_public_key" {
+  value = local.primary_node_sonarw_public_key
+}
+
+output "primary_node_sonarw_private_key" {
+  value = local.primary_node_sonarw_private_key
+}
+
 output "jsonar_uid" {
   value = random_uuid.uuid.result
 }

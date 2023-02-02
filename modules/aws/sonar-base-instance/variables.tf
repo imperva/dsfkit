@@ -108,6 +108,18 @@ variable "hadr_secondary_node" {
   description = "Is this node a HADR secondary one"
 }
 
+variable "primary_node_sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
+variable "primary_node_sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
 variable "proxy_info" {
   type = object({
     proxy_address     = string
@@ -120,18 +132,6 @@ variable "proxy_info" {
     proxy_ssh_key_path = null
     proxy_ssh_user    = null
   }
-}
-
-variable "hub_federation_public_key" {
-  type        = string
-  description = "SSH public key for sonarw user"
-  nullable    = false
-}
-
-variable "sonarw_secret_name" {
-  type        = string
-  description = "Secret name for sonarw ssh key"
-  default     = ""
 }
 
 variable "skip_instance_health_verification" {

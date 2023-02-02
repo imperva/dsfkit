@@ -93,8 +93,8 @@ module "hub_secondary" {
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = true
   hadr_secondary_node                  = true
-  hadr_main_hub_federation_private_key = module.hub.federation_private_key
-  hadr_main_hub_federation_public_key  = module.hub.federation_public_key
+  primary_hub_sonarw_public_key        = module.hub.primary_hub_sonarw_public_key
+  primary_hub_sonarw_private_key       = module.hub.primary_hub_sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

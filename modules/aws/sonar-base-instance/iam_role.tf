@@ -52,7 +52,6 @@ locals {
   )
 }
 
-# DSF base EC2 IAM instance profile
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
   name_prefix = "dsf-${var.resource_type}-instance-iam-profile"
   role        = local.role_name

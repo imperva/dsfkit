@@ -20,8 +20,8 @@ module "hub_instance" {
   web_console_admin_password          = var.web_console_admin_password
   ssh_key_path                        = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                   = var.binaries_location
-  hub_federation_public_key           = local.dsf_hub_ssh_public_federation_key
-  sonarw_secret_name                  = local.secret_aws_name
+  primary_node_sonarw_public_key      = var.primary_hub_sonarw_public_key
+  primary_node_sonarw_private_key     = var.primary_hub_sonarw_private_key
   proxy_info = {
     proxy_address                     = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path                = var.ingress_communication_via_proxy.proxy_private_ssh_key_path

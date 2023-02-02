@@ -151,17 +151,17 @@ function install_ssh_keys() {
     echo Installing SSH keys
     if [ "${resource_type}" == "hub" ]; then
         mkdir -p /home/sonarw/.ssh/
-        /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+        /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${primary_node_sonarw_private_key_secret} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+        echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
         touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
+        grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
         chown -R sonarw:sonar /home/sonarw/.ssh
         chmod -R 600 /home/sonarw/.ssh
         chmod 700 /home/sonarw/.ssh
     else
         mkdir -p /home/sonarw/.ssh
         touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+        grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
         chown -R sonarw:sonar /home/sonarw
     fi
 }
