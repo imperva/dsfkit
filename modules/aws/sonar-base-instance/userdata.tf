@@ -18,10 +18,9 @@ locals {
     secweb_console_admin_password       = var.web_console_admin_password
     sonarg_pasword                      = var.web_console_admin_password
     sonargd_pasword                     = var.web_console_admin_password
-    dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
-    dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
     ssh_key_path                        = var.ssh_key_path
-    primary_node_sonarw_public_key      = local.primary_node_sonarw_public_key
+    hub_sonarw_public_key                  = var.hub_sonarw_public_key
+    primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.secret_aws_name
     public_fqdn                         = var.use_public_ip ? "True" : ""
     uuid                                = random_uuid.uuid.result
