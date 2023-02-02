@@ -94,7 +94,7 @@ variable "hadr_secondary_node" {
 
 variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the primary hub output"
+  description = "Public key of the sonarw user taken from the primary Hub output"
   nullable    = false
 }
 

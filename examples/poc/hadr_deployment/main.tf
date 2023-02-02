@@ -93,6 +93,7 @@ module "hub_secondary" {
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = true
   hadr_secondary_node                  = true
+  hub_sonarw_public_key                = module.hub.primary_hub_sonarw_public_key
   primary_hub_sonarw_public_key        = module.hub.primary_hub_sonarw_public_key
   primary_hub_sonarw_private_key       = module.hub.primary_hub_sonarw_private_key
   ssh_key_pair = {

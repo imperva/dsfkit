@@ -26,6 +26,7 @@ locals {
   primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.primary_node_sonarw_private_key
   secret_aws_arn                     = aws_secretsmanager_secret.sonarw_private_key_secret.arn
   secret_aws_name                    = aws_secretsmanager_secret.sonarw_private_key_secret.name
+  hub_sonarw_public_key = !var.hadr_secondary_node ? local.primary_node_sonarw_public_key : var.hub_sonarw_public_key
 }
 
 resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {

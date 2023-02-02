@@ -137,7 +137,7 @@ variable "proxy_info" {
 variable "hub_sonarw_public_key" {
   type        = string
   description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
-  nullable    = false
+  default     = null
 }
 
 variable "skip_instance_health_verification" {
