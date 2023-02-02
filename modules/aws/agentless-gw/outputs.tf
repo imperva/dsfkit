@@ -19,6 +19,14 @@ output "iam_role" {
   value = module.gw_instance.iam_role
 }
 
+output "primary_gw_sonarw_public_key" {
+  value = module.gw_instance.primary_node_sonarw_public_key
+}
+
+output "primary_gw_sonarw_private_key" {
+  value = module.gw_instance.primary_node_sonarw_private_key
+}
+
 output "jsonar_uid" {
   value = module.gw_instance.jsonar_uid
 }

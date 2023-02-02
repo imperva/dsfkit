@@ -134,6 +134,12 @@ variable "proxy_info" {
   }
 }
 
+variable "hub_sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
+  nullable    = false
+}
+
 variable "skip_instance_health_verification" {
   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }

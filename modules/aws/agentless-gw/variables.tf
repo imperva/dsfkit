@@ -92,10 +92,22 @@ variable "hadr_secondary_node" {
   description = "Is this node a HADR secondary one"
 }
 
-variable "hub_federation_public_key" {
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output"
+  description = "Public key of the sonarw user taken from the primary hub output"
   nullable    = false
+}
+
+variable "primary_gw_sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
+}
+
+variable "primary_gw_sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
 }
 
 variable "web_console_admin_password" {

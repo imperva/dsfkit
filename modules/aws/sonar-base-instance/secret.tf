@@ -17,7 +17,6 @@
 ###################################################################################
 
 resource "tls_private_key" "sonarw_private_key" {
-  count = var.hadr_secondary_node ? 0 : 1
   algorithm = "RSA"
   rsa_bits  = 4096
 }
