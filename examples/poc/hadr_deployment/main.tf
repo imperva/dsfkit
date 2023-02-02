@@ -218,7 +218,8 @@ module "hub_hadr" {
 #  source                       = "imperva/dsf-hadr/null"
 #  version                      = "1.3.5" # latest release tag
   source = "../../../modules/null/hadr"
-  dsf_primary_ip               = module.hub.public_ip
+  # null check in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
+  dsf_primary_ip               = module.hub.public_ip != null ? module.hub.public_ip : ""
   dsf_primary_private_ip       = module.hub.private_ip
   dsf_secondary_ip             = module.hub_secondary.public_ip
   dsf_secondary_private_ip     = module.hub_secondary.private_ip
