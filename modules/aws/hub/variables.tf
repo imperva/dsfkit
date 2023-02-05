@@ -17,6 +17,15 @@ variable "subnet_id" {
   }
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "Security group id for the DSF hub instance"
+  validation {
+    condition     = var.security_group_id == "" || substr(var.security_group_id, 0, 3) == "sg-"
+    error_message = "Security group id is invalid. Must be sg-********"
+  }
+}
+
 variable "instance_type" {
   type        = string
   default     = "r6i.xlarge"

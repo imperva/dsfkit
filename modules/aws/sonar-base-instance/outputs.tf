@@ -20,7 +20,7 @@ output "private_dns" {
 
 output "sg_id" {
   description = "Security group on DSF base instance"
-  value       = aws_security_group.dsf_base_sg.id
+  value       = local.security_group_id
 }
 
 output "jsonar_uid" {

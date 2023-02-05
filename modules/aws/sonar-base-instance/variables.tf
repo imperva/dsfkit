@@ -7,6 +7,11 @@ variable "subnet_id" {
   description = "Subnet id for the ec2 instance"
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "Security group id for the ec2 instance"
+}
+
 variable "ec2_instance_type" {
   type        = string
   description = "Ec2 instance type for the DSF base instance"
