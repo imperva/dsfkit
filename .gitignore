@@ -1,3 +1,4 @@
+*.pem
 dsf_hub_federation_ssh_key
 dsf_hub_federation_ssh_key.pub
 dsf_hub_ssh_key
