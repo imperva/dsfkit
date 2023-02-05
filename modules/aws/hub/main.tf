@@ -24,9 +24,9 @@ module "hub_instance" {
   hub_federation_public_key           = local.dsf_hub_ssh_public_federation_key
   sonarw_secret_name                  = local.secret_aws_name
   proxy_info = {
-    proxy_address                     = var.ingress_communication_via_proxy.proxy_address
-    proxy_ssh_key_path                = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
-    proxy_ssh_user                    = var.ingress_communication_via_proxy.proxy_ssh_user
+    proxy_address      = var.ingress_communication_via_proxy.proxy_address
+    proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
+    proxy_ssh_user     = var.ingress_communication_via_proxy.proxy_ssh_user
   }
-  skip_instance_health_verification   = var.skip_instance_health_verification
+  skip_instance_health_verification = var.skip_instance_health_verification
 }

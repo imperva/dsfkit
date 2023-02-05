@@ -21,16 +21,16 @@ variable "hub_info" {
 
 variable "hub_proxy_info" {
   type = object({
-    proxy_address = string
+    proxy_address              = string
     proxy_private_ssh_key_path = string
-    proxy_ssh_user = string
+    proxy_ssh_user             = string
   })
 
   description = "Hub proxy info"
-  default     = {
-    proxy_address     = null
+  default = {
+    proxy_address              = null
     proxy_private_ssh_key_path = null
-    proxy_ssh_user    = null
+    proxy_ssh_user             = null
   }
 }
 

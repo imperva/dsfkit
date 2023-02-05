@@ -123,7 +123,7 @@ resource "aws_security_group_rule" "rds_mssql_all_out" {
 # copy the files from our s3 prod to the customer s3
 data "aws_s3_objects" "source" {
   provider = aws.poc_scripts_s3_region
-  bucket = var.db_audit_scripts_bucket_name
+  bucket   = var.db_audit_scripts_bucket_name
 }
 
 data "aws_s3_object" "source" {

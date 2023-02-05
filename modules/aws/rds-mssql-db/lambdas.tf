@@ -4,14 +4,14 @@ data "aws_iam_role" "lambda_mssql_assignee_role" {
 }
 
 resource "aws_lambda_function" "lambda_mssql_infra" {
-  function_name = join("-", ["dsf-mssql-infra", local.lambda_salt])
+  function_name     = join("-", ["dsf-mssql-infra", local.lambda_salt])
   s3_bucket         = data.aws_s3_object.mssql_lambda_package.bucket
   s3_key            = data.aws_s3_object.mssql_lambda_package.key
   s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
-  role          = data.aws_iam_role.lambda_mssql_assignee_role.arn
-  handler       = "createDBsAndEnableAudit.lambda_handler"
-  runtime       = "python3.9"
-  timeout       = 900
+  role              = data.aws_iam_role.lambda_mssql_assignee_role.arn
+  handler           = "createDBsAndEnableAudit.lambda_handler"
+  runtime           = "python3.9"
+  timeout           = 900
 
   vpc_config {
     security_group_ids = [aws_security_group.rds_mssql_access.id]
