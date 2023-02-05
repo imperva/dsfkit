@@ -1,15 +1,12 @@
 locals {
-  # ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-  # bastion_host        = var.proxy_address
-  # bastion_private_key = var.proxy_ssh_key
-  # bastion_user        = var.proxy_ssh_user
+  bastion_host        = var.proxy_address
+  bastion_private_key = var.proxy_ssh_key
+  bastion_user        = var.proxy_ssh_user
 
-  # public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
-  # private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
-  # instance_address = var.use_public_ip ? local.public_ip : local.private_ip
+  public_ip        = try(data.azurerm_public_ip.example[0].ip_address, null)
+  private_ip       = azurerm_network_interface.example.private_ip_address
+  instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name = "DSF-${var.resource_type}-${var.name}"
-
-  # install_script = filebase64("${path.module}/setup.tpl")
 
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                 = var.resource_type
@@ -32,42 +29,40 @@ locals {
   })
 }
 
-# data "aws_region" "current" {}
-
 resource "random_uuid" "uuid" {}
 
-# resource "null_resource" "wait_for_installation_completion" {
-#   count = var.skip_instance_health_verification == true ? 0 : 1
-#   connection {
-#     type        = "ssh"
-#     user        = local.ami_user
-#     private_key = file(var.ssh_key_path)
-#     host        = local.instance_address
+resource "null_resource" "wait_for_installation_completion" {
+  count = var.skip_instance_health_verification == true ? 0 : 1
+  connection {
+    type        = "ssh"
+    user        = local.compute_instance_default_user
+    private_key = file(var.ssh_key_path)
+    host        = local.instance_address
 
-#     timeout = "15m"
+    timeout = "15m"
 
-#     bastion_host        = local.bastion_host
-#     bastion_private_key = local.bastion_private_key
-#     bastion_user        = local.bastion_user
-#   }
+    bastion_host        = local.bastion_host
+    bastion_private_key = local.bastion_private_key
+    bastion_user        = local.bastion_user
+  }
 
-#   provisioner "remote-exec" {
-#     inline = [
-#       "if ! timeout 600 sudo cloud-init status --wait | grep done &>/dev/null; then",
-#       "  cat /var/log/cloud-init-output.log;",
-#       "  echo;",
-#       "  sudo cloud-init status;",
-#       "  exit 1;",
-#       "fi"
-#     ]
-#   }
+  provisioner "remote-exec" {
+    inline = [
+      "if ! timeout 600 sudo cloud-init status --wait | grep done &>/dev/null; then",
+      "  cat /var/log/cloud-init-output.log;",
+      "  echo;",
+      "  sudo cloud-init status;",
+      "  exit 1;",
+      "fi"
+    ]
+  }
 
-#   triggers = {
-#     installation_file = aws_instance.dsf_base_instance.arn
-#   }
+  triggers = {
+    installation_file = azurerm_linux_virtual_machine.dsf_base_instance.id
+  }
 
-#   depends_on = [
-#     aws_instance.dsf_base_instance,
-#     aws_security_group_rule.sg_cidr_ingress
-#   ]
-# }
+  depends_on = [
+    azurerm_linux_virtual_machine.dsf_base_instance,
+    azurerm_network_interface_security_group_association.example
+  ]
+}

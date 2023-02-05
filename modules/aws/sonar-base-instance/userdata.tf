@@ -1,11 +1,10 @@
 locals {
-  ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_info.proxy_address
   bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
   bastion_user        = var.proxy_info.proxy_ssh_user
 
-  public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
-  private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+  public_ip        = try(aws_eip.dsf_instance_eip[0].public_ip, null)
+  private_ip       = tolist(aws_network_interface.eni.private_ips)[0]
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
@@ -27,8 +26,6 @@ locals {
     additional_install_parameters       = var.additional_install_parameters
   })
 }
-
-data "aws_region" "current" {}
 
 resource "random_uuid" "uuid" {}
 

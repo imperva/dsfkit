@@ -13,7 +13,7 @@ locals {
   #tbd: pass ami params from outside
   #   ami_name_default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
   #   ami_name         = var.ami_name_tag != null ? var.ami_name_tag : local.ami_name_default
-  admin_user_default = "adminuser"
+  compute_instance_default_user = "adminuser"
   #   ami_user         = var.ami_user != null ? var.ami_user : local.ami_user_default
 }
 
@@ -22,7 +22,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
   size                = var.instance_type
-  admin_username      = local.admin_user_default
+  admin_username      = local.compute_instance_default_user
 
   custom_data = base64encode(local.install_script)
 
@@ -31,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   ]
 
   admin_ssh_key {
-    username   = local.admin_user_default
+    username   = local.compute_instance_default_user
     public_key = var.public_ssh_key
   }
 
