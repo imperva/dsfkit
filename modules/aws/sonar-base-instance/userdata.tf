@@ -19,7 +19,7 @@ locals {
     sonarg_pasword                      = var.web_console_admin_password
     sonargd_pasword                     = var.web_console_admin_password
     ssh_key_path                        = var.ssh_key_path
-    hub_sonarw_public_key                  = local.hub_sonarw_public_key
+    hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.secret_aws_name
     public_fqdn                         = var.use_public_ip ? "True" : ""
