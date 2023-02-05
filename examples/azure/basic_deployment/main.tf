@@ -71,6 +71,7 @@ module "hub" {
   use_public_ip                       = true
   sg_ingress_cidr                     = ["82.166.106.192/27"]
   create_and_attach_public_elastic_ip = true
+  ssh_key_path = local_sensitive_file.ssh_key.filename
   # ebs                                 = var.hub_ebs_details
   # create_and_attach_public_elastic_ip = true
   # ssh_key_pair = {
