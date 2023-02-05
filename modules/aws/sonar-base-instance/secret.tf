@@ -28,8 +28,9 @@ locals {
   secret_aws_name                    = aws_secretsmanager_secret.sonarw_private_key_secret.name
 }
 
+# generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
 resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
-  name_prefix = "dsf-node-sonarw-private-key"
+  name_prefix = "${var.name}-sonarw-private-key"
   description = "Imperva DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 

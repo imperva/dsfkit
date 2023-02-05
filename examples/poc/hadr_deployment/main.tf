@@ -92,8 +92,8 @@ module "hub_secondary" {
   web_console_admin_password           = local.web_console_admin_password
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = true
-  hadr_secondary_node                  = true
   hub_sonarw_public_key                = module.hub.primary_hub_sonarw_public_key
+  hadr_secondary_node                  = true
   primary_hub_sonarw_public_key        = module.hub.primary_hub_sonarw_public_key
   primary_hub_sonarw_private_key       = module.hub.primary_hub_sonarw_private_key
   ssh_key_pair = {
@@ -153,6 +153,7 @@ module "agentless_gw_group_secondary" {
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
   hub_sonarw_public_key               = module.hub.primary_hub_sonarw_public_key
+  hadr_secondary_node                 = true
   primary_gw_sonarw_public_key        = module.agentless_gw_group[count.index].primary_gw_sonarw_public_key
   primary_gw_sonarw_private_key       = module.agentless_gw_group[count.index].primary_gw_sonarw_private_key
   create_and_attach_public_elastic_ip = false
@@ -184,151 +185,151 @@ locals {
   )
 }
 
-module "federation" {
-  count   = length(local.hub_gw_combinations)
-  # TODO uncomment before commit
-  #source  = "imperva/dsf-federation/null"
-  #version = "1.3.5" # latest release tag
-  source = "../../../modules/null/federation"
-  gw_info = {
-    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
-    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
-  }
-  hub_info = {
-    hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
-  }
-  gw_proxy_info = {
-    proxy_address         = module.hub.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    proxy_ssh_user        = module.hub.ssh_user
-  }
-  depends_on = [
-    module.hub,
-    module.hub_secondary,
-    module.agentless_gw_group,
-    module.agentless_gw_group_secondary,
-  ]
-}
-
-module "hub_hadr" {
-  # TODO uncomment before commit
-#  source                       = "imperva/dsf-hadr/null"
+#module "federation" {
+#  count   = length(local.hub_gw_combinations)
+#  # TODO uncomment before commit
+#  #source  = "imperva/dsf-federation/null"
+#  #version = "1.3.5" # latest release tag
+#  source = "../../../modules/null/federation"
+#  gw_info = {
+#    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
+#    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
+#  }
+#  hub_info = {
+#    hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
+#    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#    hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
+#  }
+#  gw_proxy_info = {
+#    proxy_address         = module.hub.public_ip
+#    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#    proxy_ssh_user        = module.hub.ssh_user
+#  }
+#  depends_on = [
+#    module.hub,
+#    module.hub_secondary,
+#    module.agentless_gw_group,
+#    module.agentless_gw_group_secondary,
+#  ]
+#}
+#
+#module "hub_hadr" {
+#  # TODO uncomment before commit
+##  source                       = "imperva/dsf-hadr/null"
+##  version                      = "1.3.5" # latest release tag
+#  source = "../../../modules/null/hadr"
+#  # null check in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
+#  dsf_primary_ip               = module.hub.public_ip != null ? module.hub.public_ip : ""
+#  dsf_primary_private_ip       = module.hub.private_ip
+#  dsf_secondary_ip             = module.hub_secondary.public_ip
+#  dsf_secondary_private_ip     = module.hub_secondary.private_ip
+#  ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
+#  ssh_user                     = module.hub.ssh_user
+#  depends_on = [
+#    module.federation,
+#    module.hub,
+#    module.hub_secondary
+#  ]
+#}
+#
+#module "agentless_gw_group_hadr" {
+#  count                        = var.gw_count
+#  # TODO uncomment before commit
+##  source                       = "imperva/dsf-hadr/null"
+##  version                      = "1.3.5" # latest release tag
+#  source = "../../../modules/null/hadr"
+#  dsf_primary_ip               = module.agentless_gw_group[count.index].private_ip
+#  dsf_primary_private_ip       = module.agentless_gw_group[count.index].private_ip
+#  dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
+#  dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
+#  ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
+#  ssh_user                     = module.agentless_gw_group[count.index].ssh_user
+#  proxy_host                   = module.hub.public_ip
+#  proxy_private_ssh_key_path   = module.key_pair.key_pair_private_pem.filename
+#  proxy_ssh_user               = module.hub.ssh_user
+#  depends_on = [
+#    module.federation,
+#    module.agentless_gw_group,
+#    module.agentless_gw_group_secondary,
+#    module.hub,
+#  ]
+#}
+#
+#module "rds_mysql" {
+#  count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
+#  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
 #  version                      = "1.3.5" # latest release tag
-  source = "../../../modules/null/hadr"
-  # null check in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
-  dsf_primary_ip               = module.hub.public_ip != null ? module.hub.public_ip : ""
-  dsf_primary_private_ip       = module.hub.private_ip
-  dsf_secondary_ip             = module.hub_secondary.public_ip
-  dsf_secondary_private_ip     = module.hub_secondary.private_ip
-  ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
-  ssh_user                     = module.hub.ssh_user
-  depends_on = [
-    module.federation,
-    module.hub,
-    module.hub_secondary
-  ]
-}
-
-module "agentless_gw_group_hadr" {
-  count                        = var.gw_count
-  # TODO uncomment before commit
-#  source                       = "imperva/dsf-hadr/null"
+#  rds_subnet_ids               = module.vpc.public_subnets
+#  security_group_ingress_cidrs = local.workstation_cidr
+#}
+#
+#module "db_onboarding_mysql" {
+#  for_each      = { for idx, val in module.rds_mysql : idx => val }
+#  source        = "imperva/dsf-poc-db-onboarder/aws"
+#  version       = "1.3.5" # latest release tag
+#  sonar_version = module.globals.tarball_location.version
+#  hub_info = {
+#    hub_ip_address           = module.hub.public_ip
+#    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#    hub_ssh_user             = module.hub.ssh_user
+#  }
+#  assignee_gw   = module.hub.jsonar_uid
+#  assignee_role = module.hub.iam_role
+#  database_details = {
+#    db_username   = each.value.db_username
+#    db_password   = each.value.db_password
+#    db_arn        = each.value.db_arn
+#    db_port       = each.value.db_port
+#    db_identifier = each.value.db_identifier
+#    db_address    = each.value.db_endpoint
+#    db_engine     = each.value.db_engine
+#  }
+#  depends_on = [
+#    module.federation,
+#    module.hub_hadr,
+#    module.agentless_gw_group_hadr, # TODO do we need this?
+#    module.rds_mysql
+#  ]
+#}
+#
+## create a RDS SQL Server DB
+#module "rds_mssql" {
+#  count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
+#  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
 #  version                      = "1.3.5" # latest release tag
-  source = "../../../modules/null/hadr"
-  dsf_primary_ip               = module.agentless_gw_group[count.index].private_ip
-  dsf_primary_private_ip       = module.agentless_gw_group[count.index].private_ip
-  dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
-  dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
-  ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
-  ssh_user                     = module.agentless_gw_group[count.index].ssh_user
-  proxy_host                   = module.hub.public_ip
-  proxy_private_ssh_key_path   = module.key_pair.key_pair_private_pem.filename
-  proxy_ssh_user               = module.hub.ssh_user
-  depends_on = [
-    module.federation,
-    module.agentless_gw_group,
-    module.agentless_gw_group_secondary,
-    module.hub,
-  ]
-}
-
-module "rds_mysql" {
-  count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.3.5" # latest release tag
-  rds_subnet_ids               = module.vpc.public_subnets
-  security_group_ingress_cidrs = local.workstation_cidr
-}
-
-module "db_onboarding_mysql" {
-  for_each      = { for idx, val in module.rds_mysql : idx => val }
-  source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.5" # latest release tag
-  sonar_version = module.globals.tarball_location.version
-  hub_info = {
-    hub_ip_address           = module.hub.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = module.hub.ssh_user
-  }
-  assignee_gw   = module.hub.jsonar_uid
-  assignee_role = module.hub.iam_role
-  database_details = {
-    db_username   = each.value.db_username
-    db_password   = each.value.db_password
-    db_arn        = each.value.db_arn
-    db_port       = each.value.db_port
-    db_identifier = each.value.db_identifier
-    db_address    = each.value.db_endpoint
-    db_engine     = each.value.db_engine
-  }
-  depends_on = [
-    module.federation,
-    module.hub_hadr,
-    module.agentless_gw_group_hadr, # TODO do we need this?
-    module.rds_mysql
-  ]
-}
-
-# create a RDS SQL Server DB
-module "rds_mssql" {
-  count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.3.5" # latest release tag
-  rds_subnet_ids               = module.vpc.public_subnets
-  security_group_ingress_cidrs = local.workstation_cidr
-}
-
-module "db_onboarding_mssql" {
-  for_each      = { for idx, val in module.rds_mssql : idx => val }
-  source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.5" # latest release tag
-  sonar_version = module.globals.tarball_location.version
-  hub_info = {
-    hub_ip_address           = module.hub.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = module.hub.ssh_user
-  }
-
-  assignee_gw   = module.hub.jsonar_uid
-  assignee_role = module.hub.iam_role
-  database_details = {
-    db_username   = each.value.db_username
-    db_password   = each.value.db_password
-    db_arn        = each.value.db_arn
-    db_port       = each.value.db_port
-    db_identifier = each.value.db_identifier
-    db_address    = each.value.db_endpoint
-    db_engine     = each.value.db_engine
-  }
-  depends_on = [
-    module.federation,
-    module.rds_mssql,
-    module.db_onboarding_mysql
-  ]
-}
+#  rds_subnet_ids               = module.vpc.public_subnets
+#  security_group_ingress_cidrs = local.workstation_cidr
+#}
+#
+#module "db_onboarding_mssql" {
+#  for_each      = { for idx, val in module.rds_mssql : idx => val }
+#  source        = "imperva/dsf-poc-db-onboarder/aws"
+#  version       = "1.3.5" # latest release tag
+#  sonar_version = module.globals.tarball_location.version
+#  hub_info = {
+#    hub_ip_address           = module.hub.public_ip
+#    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#    hub_ssh_user             = module.hub.ssh_user
+#  }
+#
+#  assignee_gw   = module.hub.jsonar_uid
+#  assignee_role = module.hub.iam_role
+#  database_details = {
+#    db_username   = each.value.db_username
+#    db_password   = each.value.db_password
+#    db_arn        = each.value.db_arn
+#    db_port       = each.value.db_port
+#    db_identifier = each.value.db_identifier
+#    db_address    = each.value.db_endpoint
+#    db_engine     = each.value.db_engine
+#  }
+#  depends_on = [
+#    module.federation,
+#    module.rds_mssql,
+#    module.db_onboarding_mysql
+#  ]
+#}
 
 module "statistics" {
   source  = "imperva/dsf-statistics/aws"
