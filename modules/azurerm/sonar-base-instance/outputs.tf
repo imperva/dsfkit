@@ -32,5 +32,5 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  value = local.admin_user_default
+  value = local.compute_instance_default_user
 }

@@ -89,11 +89,11 @@ variable "web_console_admin_password" {
   nullable = false
 }
 
-# variable "ssh_key_path" {
-#   type        = string
-#   description = "SSH key path"
-#   nullable    = false
-# }
+variable "ssh_key_path" {
+  type        = string
+  description = "SSH key path"
+  nullable    = false
+}
 
 variable "additional_install_parameters" {
   default = ""
@@ -109,23 +109,23 @@ variable "binaries_location" {
   nullable    = false
 }
 
-# variable "proxy_address" {
-#   type        = string
-#   description = "Proxy address used for ssh"
-#   default     = null
-# }
+variable "proxy_address" {
+  type        = string
+  description = "Proxy address used for ssh"
+  default     = null
+}
 
-# variable "proxy_ssh_key" {
-#   type        = string
-#   description = "Proxy private ssh key"
-#   default     = null
-# }
+variable "proxy_ssh_key" {
+  type        = string
+  description = "Proxy private ssh key"
+  default     = null
+}
 
-# variable "proxy_ssh_user" {
-#   type        = string
-#   description = "Proxy ssh user"
-#   default     = null
-# }
+variable "proxy_ssh_user" {
+  type        = string
+  description = "Proxy ssh user"
+  default     = null
+}
 
 # variable "hub_federation_public_key" {
 #   type        = string
@@ -139,6 +139,7 @@ variable "binaries_location" {
 #   default     = ""
 # }
 
-# variable "skip_instance_health_verification" {
-#   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
-# }
+variable "skip_instance_health_verification" {
+  description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  default     = false
+}
