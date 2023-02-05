@@ -589,7 +589,7 @@ Complete the following instructions to automate the creation of an installer mac
 
     ```bash
     installer_machine_ssh_command = "ssh -i ssh_keys/dsf_ssh_key-default ec2-user@3.69.20.130"
-    logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/dsf_ssh_key-default ec2-user@3.69.20.130 -C 'sudo tail -f /var/log/user-data.log'"    
+    logs_tail_ssh_command = "ssh -o StrictHostKeyChecking='no' -i ssh_keys/dsf_ssh_key-default ec2-user@3.69.20.130 -C 'sudo tail -f /var/log/cloud-init-output.log'"    
     ```
 
 8. The second and last phase of the deployment runs in the background. To follow it and know when it is completed run the `logs_tail_ssh_command` which appears in the first phase output.

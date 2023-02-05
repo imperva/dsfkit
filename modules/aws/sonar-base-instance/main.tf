@@ -1,5 +1,5 @@
 locals {
-  disk_size_app        = 100
+  disk_app_disk_size   = 100
   ebs_state_disk_type  = "gp3"
   ebs_state_disk_size  = var.ebs_details.disk_size
   ebs_state_iops       = var.ebs_details.provisioned_iops
@@ -45,7 +45,7 @@ resource "aws_instance" "dsf_base_instance" {
   key_name      = var.key_pair
   user_data     = local.install_script
   root_block_device {
-    volume_size = local.disk_size_app
+    volume_size = local.disk_app_disk_size
   }
   iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   network_interface {

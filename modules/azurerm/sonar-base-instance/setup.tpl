@@ -1,4 +1,5 @@
 #!/bin/bash -x
+
 set -e
 set -u
 set -x
@@ -11,18 +12,21 @@ function wait_for_network() {
     done
 }
 
+function install_az_cli() {
+    rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+    dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+    dnf install azure-cli -y
+    az login --identity
+}
+
 function install_deps() {
     # yum fails sporadically. So we try 3 times :(
     yum install unzip -y || yum install unzip -y || yum install unzip -y
     yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     yum install net-tools jq vim nc lsof -y
 
-    if [ ! -f /usr/local/bin/aws ]; then
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
-        aws/install
-        rm -rf aws awscliv2.zip
-    fi
+    install_az_cli
 
     id sonargd || useradd sonargd
     id sonarg  || useradd sonarg
@@ -32,29 +36,46 @@ function install_deps() {
     usermod -g sonar sonargd
 }
 
+# make this more robust
+function resize_root_disk() {
+    # this should run once
+    echo "Resizing root fs"
+    mount_device=$(findmnt --noheadings --output SOURCE /)
+    device_mapper=$(realpath $mount_device)
+    major_minor=$(dmsetup table $device_mapper  | awk '{print $4}')
+    child_block_device=$(basename $(realpath /sys/dev/block/$major_minor))
+    device=$(echo $child_block_device | grep -o [a-z]*)
+    child_device_id=$(echo $child_block_device | grep -o [0-9]*)
+    growpart /dev/$device $child_device_id
+    pvresize /dev/$child_block_device
+    vgdisplay
+    lvresize -r -L +75G $mount_device
+}
+
 # Formatting and mounting the external ebs device
 function attach_disk() {
     ## Find device name ebs external device
-    number_of_expected_disks=2
-    lsblk
-    DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
-    while [ "$(wc -w <<< $DEVICES)" -lt "$number_of_expected_disks" ]; do
-        DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
-        echo "Waiting for all external disk attachments"
-        sleep 10
-    done
+    # number_of_expected_disks=2
+    # lsblk
+    # DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+    # while [ "$(wc -w <<< $DEVICES)" -lt "$number_of_expected_disks" ]; do
+    #     DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+    #     echo "Waiting for all external disk attachments"
+    #     sleep 10
+    # done
 
-    for d in $DEVICES; do
-        if [ "$(lsblk --noheadings -o NAME| grep $d | wc -l)" -eq 1 ]; then
-            DEVICE=$d;
-            break;
-        fi;
-    done
+    # for d in $DEVICES; do
+    #     if [ "$(lsblk --noheadings -o NAME| grep $d | wc -l)" -eq 1 ]; then
+    #         DEVICE=$d;
+    #         break;
+    #     fi;
+    # done
 
-    if [ -z "$DEVICE" ]; then
-        echo "No external device is found"
-        exit 1
-    fi
+    # if [ -z "$DEVICE" ]; then
+    #     echo "No external device is found"
+    #     exit 1
+    # fi
+    DEVICE="sdc"
 
     lsblk -no FSTYPE /dev/$DEVICE
     FS=$(lsblk -no FSTYPE /dev/$DEVICE)
@@ -77,8 +98,9 @@ function attach_disk() {
 function install_tarball() {
     echo Downloading tarball..
     # Download intallation tarball
-    TARBALL_FILE=$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE >/dev/null
+    TARBALL_FILE=$(basename ${az_blob})
+    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --file ./$TARBALL_FILE --name ${az_blob} >/dev/null
+    # /usr/local/bin/aws s3 cp s3://$${installation_s3_bucket}/$${installation_s3_key} ./$TARBALL_FILE >/dev/null
 
     echo Installing tarball..
     # Installing tarball
@@ -89,13 +111,13 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .local_hostname)
+    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.imds.network.interface[0].ipv4.ipAddress[0].privateIpAddress)
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1
     fi
     if [ -n "${public_fqdn}" ]; then
-        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.public_hostname)
+        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.imds.network.interface[0].ipv4.ipAddress[0].publicIpAddress)
         if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
             echo "Failed to extract instance public FQDN"
             exit 1
@@ -146,30 +168,29 @@ function set_environment_vars() {
     fi
 }
 
-function install_ssh_keys() {
-    echo Installing SSH keys
-    mkdir -p /home/sonarw/.ssh/
-    touch /home/sonarw/.ssh/authorized_keys
-
-    # install the generated primary node public and private keys in the primary node and the secondary node
-    /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${primary_node_sonarw_private_key_secret} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-    echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
-
-    # enable communication between a pair of primary and secondary nodes
-    grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-
-    # enable communication between the the primary/secondary hub and the GW
-    if [ "${resource_type}" == "gw" ]; then
-        grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-    fi
-
-    chown -R sonarw:sonar /home/sonarw/.ssh
-    chmod -R 600 /home/sonarw/.ssh
-    chmod 700 /home/sonarw/.ssh
-}
+# function install_ssh_keys() {
+#     echo Installing SSH keys
+#     if [ "$${resource_type}" == "hub" ]; then
+#         mkdir -p /home/sonarw/.ssh/
+#         /usr/local/bin/aws secretsmanager get-secret-value --secret-id $${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+#         echo "$${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+#         touch /home/sonarw/.ssh/authorized_keys
+#         grep -q "$${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
+#         chown -R sonarw:sonar /home/sonarw/.ssh
+#         chmod -R 600 /home/sonarw/.ssh
+#         chmod 700 /home/sonarw/.ssh
+#     else
+#         mkdir -p /home/sonarw/.ssh
+#         touch /home/sonarw/.ssh/authorized_keys
+#         grep -q "$${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "$${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+#         chown -R sonarw:sonar /home/sonarw
+#     fi
+# }
 
 wait_for_network
 install_deps
+
+resize_root_disk
 attach_disk
 
 STATE_DIR=/data_vol/sonar-dsf/jsonar
@@ -177,12 +198,11 @@ LAST_INSTALLATION_SOURCE=$STATE_DIR/last_install_source.txt
 
 DIR=/opt/sonar-dsf/
 
-if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "s3://${installation_s3_bucket}/${installation_s3_key}" ]; then
+if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "blob://${az_storage_account}/${az_container}/${az_blob}" ]; then
     install_tarball
     setup
-    echo "s3://${installation_s3_bucket}/${installation_s3_key}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
+    echo "blob://${az_storage_account}/${az_container}/${az_blob}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi
 
-set_environment_vars
-install_ssh_keys
-
+# set_environment_vars
+# install_ssh_keys
