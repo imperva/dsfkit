@@ -7,6 +7,23 @@ resource "azurerm_resource_group" "rg" {
   location = "East US"
 }
 
+resource "tls_private_key" "ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_sensitive_file" "ssh_key" {
+  filename = "1.pem"
+  content  = tls_private_key.ssh_key.private_key_openssh
+}
+
+# resource "azurerm_ssh_public_key" "example" {
+#   name                = "example"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   public_key          = tls_private_key.ssh_key.public_key_openssh
+# }
+
 module "network" {
   source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.rg.name
@@ -29,12 +46,31 @@ module "network" {
   ]
 }
 
+locals {
+  tarball_location = {
+    az_storage_account = "eytanstorageaccount"
+    az_container       = "sonar"
+    az_blob            = "jsonar-4.10.0.0.0-rc1_20221019194459.tar.gz"
+  }
+}
+
 module "hub" {
-  source                              = "../../../azurerm/sonar-base-instance"
-  # friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
-  # subnet_id                           = module.vpc.public_subnets[0]
-  # binaries_location                   = local.tarball_location
-  # web_console_admin_password          = local.web_console_admin_password
+  # count = 0
+  source = "../../../modules/azurerm/sonar-base-instance"
+
+  # instance_type           = "Standard_F2"
+  instance_type                       = "Standard_F8"
+  resource_group_location             = azurerm_resource_group.rg.location
+  resource_group_name                 = azurerm_resource_group.rg.name
+  name                                = join("-", ["hub", "primary"])
+  subnet_id                           = module.network.vnet_subnets[0]
+  public_ssh_key                      = tls_private_key.ssh_key.public_key_openssh
+  binaries_location                   = local.tarball_location
+  resource_type                       = "hub"
+  web_console_admin_password          = "Imp3rva12#"
+  use_public_ip                       = true
+  sg_ingress_cidr                     = ["82.166.106.192/27"]
+  create_and_attach_public_elastic_ip = true
   # ebs                                 = var.hub_ebs_details
   # create_and_attach_public_elastic_ip = true
   # ssh_key_pair = {
@@ -49,6 +85,9 @@ module "hub" {
   # depends_on = [
   #   module.vpc
   # ]
+  depends_on = [
+    azurerm_resource_group.rg
+  ]
 }
 
 # module "globals" {
