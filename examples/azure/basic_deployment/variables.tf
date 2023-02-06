@@ -1,11 +1,16 @@
-variable "resource_group_name" {
+variable "location" {
   type    = string
-  default = "imperva-dsf"
+  default = "East US"
 }
 
 variable "deployment_name" {
   type    = string
   default = "imperva-dsf"
+}
+
+variable "sonar_version" {
+  type    = string
+  default = "4.10"
 }
 
 variable "gw_count" {
@@ -45,10 +50,10 @@ variable "workstation_cidr" {
 
 variable "additional_install_parameters" {
   default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
-variable "vpc_ip_range" {
+variable "network_ip_range" {
   type        = string
   default     = "10.0.0.0/16"
   description = "VPC cidr range"
@@ -60,23 +65,17 @@ variable "private_subnets" {
   description = "VPC private subnet cidr range"
 }
 
-variable "public_subnets" {
-  type        = list(string)
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet cidr range"
-}
-
-variable "hub_ebs_details" {
+variable "hub_managed_disk_details" {
   type = object({
-    disk_size        = number
-    provisioned_iops = number
-    throughput       = number
+    storage_account_type = string
+    disk_iops_read_write = number
+    disk_size            = number
   })
-  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
-    disk_size        = 250
-    provisioned_iops = 0
-    throughput       = 125
+    storage_account_type = "Standard_LRS"
+    disk_iops_read_write = null
+    disk_size            = 1000
   }
 }
 
@@ -86,7 +85,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 75
     provisioned_iops = 0

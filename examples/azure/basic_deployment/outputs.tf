@@ -16,38 +16,33 @@ output "dsf_hubs" {
   value = {
     primary = {
       public_ip = try(module.hub.public_ip, null)
-      #   public_dns   = try(module.hub.public_dns, null)
       private_ip = try(module.hub.private_ip, null)
-      #   private_dns  = try(module.hub.private_dns, null)
-      #   jsonar_uid   = try(module.hub.jsonar_uid, null)
-      #   display_name = try(module.hub.display_name, null)
+         jsonar_uid   = try(module.hub.jsonar_uid, null)
+         display_name = try(module.hub.display_name, null)
       #   role_arn     = try(module.hub.iam_role, null)
       ssh_command = try("ssh -i ${local_sensitive_file.ssh_key.filename} ${module.hub.ssh_user}@${module.hub.public_ip}", null)
     }
   }
 }
 
-# output "dsf_hub_web_console" {
-#   value = {
-#     public_url     = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
-#     private_url    = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
-#     admin_password = nonsensitive(local.web_console_admin_password)
-#   }
-# }
+ output "dsf_hub_web_console" {
+   value = {
+     public_url     = try(join("", ["https://", module.hub.public_ip, ":8443/"]), null)
+     private_url    = try(join("", ["https://", module.hub.private_ip, ":8443/"]), null)
+     admin_password = nonsensitive(local.web_console_admin_password)
+   }
+ }
 
-# output "deployment_name" {
-#   value = local.deployment_name_salted
-# }
+output "deployment_name" {
+  value = local.deployment_name_salted
+}
 
-# output "dsf_private_ssh_key" {
-#   sensitive = true
-#   value     = try(module.key_pair.key_pair_private_pem, null)
-# }
+output "dsf_private_ssh_key" {
+  sensitive = true
+  value     = try(tls_private_key.ssh_key.private_key_openssh, null)
+}
 
-# output "dsf_private_ssh_key_file_name" {
-#   value = try(module.key_pair.key_pair_private_pem.filename, null)
-# }
+output "dsf_private_ssh_key_file_name" {
+  value = try(local_sensitive_file.ssh_key.filename, null)
+}
 
-# output "dsf_hub_web_console_url" {
-#   value = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
-# }
