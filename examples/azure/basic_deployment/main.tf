@@ -1,10 +1,39 @@
 provider "azurerm" {
+  # tbd: verify how a customer would pass on his creds to this provider https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
   features {}
 }
 
+module "globals" {
+  # source        = "imperva/dsf-globals/aws"
+  # version       = "1.3.5" # latest release tag
+  source        = "../../../modules/azurerm/core/globals"
+  sonar_version = var.sonar_version
+}
+
+locals {
+  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+}
+
+locals {
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+}
+
+locals {
+  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
+  workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
+  # database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
+  tarball_location = module.globals.tarball_location
+  # tbd: add tags to all resources
+  tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  resource_group = {
+    location = azurerm_resource_group.rg.location
+    name     = azurerm_resource_group.rg.name
+  }
+}
+
 resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = "East US"
+  name     = var.deployment_name
+  location = var.location
 }
 
 resource "tls_private_key" "ssh_key" {
@@ -13,155 +42,60 @@ resource "tls_private_key" "ssh_key" {
 }
 
 resource "local_sensitive_file" "ssh_key" {
-  filename = "1.pem"
+  filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   content  = tls_private_key.ssh_key.private_key_openssh
 }
-
-# resource "azurerm_ssh_public_key" "example" {
-#   name                = "example"
-#   resource_group_name = azurerm_resource_group.rg.name
-#   location            = azurerm_resource_group.rg.location
-#   public_key          = tls_private_key.ssh_key.public_key_openssh
-# }
 
 module "network" {
   source              = "Azure/network/azurerm"
   resource_group_name = azurerm_resource_group.rg.name
-  address_spaces      = ["10.0.0.0/16", "10.2.0.0/16"]
-  subnet_prefixes     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
-  subnet_names        = ["subnet1", "subnet2", "subnet3"]
+  address_spaces      = [var.network_ip_range]
+  subnet_prefixes     = var.private_subnets
+  subnet_names        = formatlist("subnet-%d", range(length(var.private_subnets)))
 
-  # subnet_service_endpoints = {
-  #   "subnet1" : ["Microsoft.Sql"],
-  #   "subnet2" : ["Microsoft.Sql"],
-  #   "subnet3" : ["Microsoft.Sql"]
-  # }
   use_for_each = true
-  tags = {
-    environment = "dev"
-    costcenter  = "it"
-  }
+  tags         = local.tags
   depends_on = [
     azurerm_resource_group.rg
   ]
 }
 
-locals {
-  tarball_location = {
-    az_storage_account = "eytanstorageaccount"
-    az_container       = "sonar"
-    az_blob            = "jsonar-4.10.0.0.0-rc1_20221019194459.tar.gz"
-  }
-}
+##############################
+# Generating deployment
+##############################
 
 module "hub" {
-  # count = 0
-  source = "../../../modules/azurerm/sonar-base-instance"
+  # count  = 0
+  source = "../../../modules/azurerm/hub"
 
-  # instance_type           = "Standard_F2"
-  instance_type                       = "Standard_E4as_v5"
-  resource_group_location             = azurerm_resource_group.rg.location
-  resource_group_name                 = azurerm_resource_group.rg.name
-  name                                = join("-", ["hub", "primary"])
-  subnet_id                           = module.network.vnet_subnets[0]
-  public_ssh_key                      = tls_private_key.ssh_key.public_key_openssh
-  binaries_location                   = local.tarball_location
-  resource_type                       = "hub"
-  web_console_admin_password          = "Imp3rva12#"
-  use_public_ip                       = true
-  sg_ingress_cidr                     = ["82.166.106.192/27"]
+  friendly_name              = join("-", ["hub", "primary"])
+  resource_group             = local.resource_group
+  subnet_id                  = module.network.vnet_subnets[0]
+  binaries_location          = local.tarball_location
+  web_console_admin_password = local.web_console_admin_password
+  storage_details            = var.hub_managed_disk_details
+
   create_and_attach_public_elastic_ip = true
-  ssh_key_path = local_sensitive_file.ssh_key.filename
-  # ebs                                 = var.hub_ebs_details
-  # create_and_attach_public_elastic_ip = true
-  # ssh_key_pair = {
-  #   ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
-  #   ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-  # }
-  # ingress_communication = {
-  #   additional_web_console_access_cidr_list = var.web_console_cidr
-  #   full_access_cidr_list                   = local.workstation_cidr
-  #   use_public_ip                           = true
-  # }
-  # depends_on = [
-  #   module.vpc
-  # ]
+
+  ssh_key = {
+    ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
+    ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
+  }
+  ingress_communication = {
+    additional_web_console_access_cidr_list = var.web_console_cidr
+    full_access_cidr_list                   = local.workstation_cidr
+    use_public_ip                           = true
+  }
+
   depends_on = [
-    azurerm_resource_group.rg
+    azurerm_resource_group.rg,
+    module.network
   ]
 }
-
-# module "globals" {
-#   source = "imperva/dsf-globals/aws"
-# }
-
-# module "key_pair" {
-#   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-#   key_name_prefix          = "imperva-dsf-"
-#   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
-# }
-
-# data "aws_availability_zones" "available" { state = "available" }
-
-# locals {
-#   workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-# }
-
-# locals {
-#   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
-# }
-
-# locals {
-#   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
-#   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-#   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
-#   tarball_location           = module.globals.tarball_location
-#   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-# }
-
-# ##############################
-# # Generating network
-# ##############################
-
-# module "vpc" {
-#   source = "terraform-aws-modules/vpc/aws"
-#   name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
-#   cidr   = var.vpc_ip_range
-
-#   enable_nat_gateway   = true
-#   single_nat_gateway   = true
-#   enable_dns_hostnames = true
-
-#   azs             = slice(data.aws_availability_zones.available.names, 0, 2)
-#   private_subnets = var.private_subnets
-#   public_subnets  = var.public_subnets
-# }
 
 # ##############################
 # # Generating deployment
 # ##############################
-
-# module "hub" {
-#   source                              = "imperva/dsf-hub/aws"
-#   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
-#   subnet_id                           = module.vpc.public_subnets[0]
-#   binaries_location                   = local.tarball_location
-#   web_console_admin_password          = local.web_console_admin_password
-#   ebs                                 = var.hub_ebs_details
-#   create_and_attach_public_elastic_ip = true
-#   ssh_key_pair = {
-#     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
-#     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-#   }
-#   ingress_communication = {
-#     additional_web_console_access_cidr_list = var.web_console_cidr
-#     full_access_cidr_list                   = local.workstation_cidr
-#     use_public_ip                           = true
-#   }
-#   depends_on = [
-#     module.vpc
-#   ]
-# }
 
 # module "agentless_gw_group" {
 #   count                               = var.gw_count

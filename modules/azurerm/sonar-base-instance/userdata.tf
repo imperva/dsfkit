@@ -1,12 +1,12 @@
 locals {
-  bastion_host        = var.proxy_address
-  bastion_private_key = var.proxy_ssh_key
-  bastion_user        = var.proxy_ssh_user
+  bastion_host        = var.proxy_info.proxy_address
+  bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
+  bastion_user        = var.proxy_info.proxy_ssh_user
 
   public_ip        = try(data.azurerm_public_ip.example[0].ip_address, null)
   private_ip       = azurerm_network_interface.example.private_ip_address
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
-  display_name = "DSF-${var.resource_type}-${var.name}"
+  display_name     = "DSF-${var.resource_type}-${var.name}"
 
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                 = var.resource_type

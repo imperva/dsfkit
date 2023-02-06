@@ -7,17 +7,17 @@
 # }
 
 locals {
-  cidr_blocks       = concat(var.sg_ingress_cidr, var.create_and_attach_public_elastic_ip ? try(["${data.azurerm_public_ip.example[0].ip_address}/32"], []) : [])
-  ingress_ports     = [22, 8080, 8443, 3030, 27117]
+  cidr_blocks   = concat(var.sg_ingress_cidr, var.create_and_attach_public_elastic_ip ? try(["${data.azurerm_public_ip.example[0].ip_address}/32"], []) : [])
+  ingress_ports = [22, 8080, 8443, 3030, 27117]
 
-  ingress_cidrs_map = { for cidr in local.cidr_blocks   : cidr => cidr }
+  ingress_cidrs_map = { for cidr in local.cidr_blocks : cidr => cidr }
   ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
 
 resource "azurerm_network_security_group" "dsf_base_sg" {
   name                = join("-", [var.name, "sg"])
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = var.resource_group.location
+  resource_group_name = var.resource_group.name
 }
 
 # tbd: https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview#security-rules
@@ -41,7 +41,7 @@ resource "azurerm_network_security_rule" "sg_rule_all_out" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
+  resource_group_name         = var.resource_group.name
   network_security_group_name = azurerm_network_security_group.dsf_base_sg.name
 }
 
@@ -56,7 +56,7 @@ resource "azurerm_network_security_rule" "sg_rule_all_in" {
   destination_port_range      = "*"
   source_address_prefix       = "*"
   destination_address_prefix  = "*"
-  resource_group_name         = var.resource_group_name
+  resource_group_name         = var.resource_group.name
   network_security_group_name = azurerm_network_security_group.dsf_base_sg.name
 }
 
@@ -71,7 +71,7 @@ resource "azurerm_network_security_rule" "sg_rule_all_in" {
 #   destination_port_range      = local.ingress_ports
 #   source_address_prefix       = "*"
 #   destination_address_prefix  = each.value
-#   resource_group_name         = var.resource_group_name
+#   resource_group_name         = var.resource_group.name
 #   network_security_group_name = azurerm_network_security_group.dsf_base_sg.name
 # }
 
