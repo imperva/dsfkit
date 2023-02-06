@@ -2,8 +2,9 @@ locals {
   disk_app_size   = 100
   disk_app_type   = "Standard_LRS"
   disk_app_cache  = "ReadWrite"
-  disk_data_size  = 1000
-  disk_data_type  = "Standard_LRS"
+  disk_data_size  = var.storage_details.disk_size
+  disk_data_type  = var.storage_details.storage_account_type
+  disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
   # tbd: add iops and more important attributes like throughput
   # ebs_state_disk_type  = "gp3"
@@ -19,8 +20,8 @@ locals {
 
 resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   name                = var.name
-  resource_group_name = var.resource_group_name
-  location            = var.resource_group_location
+  resource_group_name = var.resource_group.name
+  location            = var.resource_group.location
   size                = var.instance_type
   admin_username      = local.compute_instance_default_user
 
@@ -66,11 +67,12 @@ resource "azurerm_role_assignment" "dsf_base_role_assignment" {
 
 resource "azurerm_managed_disk" "external_data_vol" {
   name                 = join("-", [var.name, "data", "volume", "ebs"])
-  location             = var.resource_group_location
-  resource_group_name  = var.resource_group_name
+  location             = var.resource_group.location
+  resource_group_name  = var.resource_group.name
   storage_account_type = local.disk_data_type
   create_option        = "Empty"
   disk_size_gb         = local.disk_data_size
+  disk_iops_read_write = local.disk_data_iops
   # lifecycle {
   #   prevent_destroy = true
   # }
@@ -86,15 +88,15 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disk_attachment" {
 resource "azurerm_public_ip" "example" {
   count               = var.create_and_attach_public_elastic_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = var.resource_group.location
+  resource_group_name = var.resource_group.name
   allocation_method   = "Dynamic"
 }
 
 data "azurerm_public_ip" "example" {
   count               = var.create_and_attach_public_elastic_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.resource_group.name
   depends_on = [
     azurerm_linux_virtual_machine.dsf_base_instance
   ]
@@ -102,8 +104,8 @@ data "azurerm_public_ip" "example" {
 
 resource "azurerm_network_interface" "example" {
   name                = join("-", [var.name, "nic"])
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = var.resource_group.location
+  resource_group_name = var.resource_group.name
 
   ip_configuration {
     name                          = join("-", [var.name, "nic"])
