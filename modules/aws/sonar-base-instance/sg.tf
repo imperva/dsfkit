@@ -7,14 +7,14 @@ data "aws_vpc" "selected" {
 }
 
 locals {
-  should_create_security_group = var.security_group_id == "" ? true : false
-  cidr_blocks                  = var.sg_ingress_cidr
-  ingress_ports                = [22, 8080, 8443, 3030, 27117]
-  ingress_ports_map            = { for port in local.ingress_ports : port => port }
+  create_security_group_count = var.security_group_id == null ? 1 : 0
+  cidr_blocks                 = var.sg_ingress_cidr
+  ingress_ports               = [22, 8080, 8443, 3030, 27117]
+  ingress_ports_map           = { for port in local.ingress_ports : port => port }
 }
 
 resource "aws_security_group" "dsf_base_sg" {
-  count       = local.should_create_security_group == true ? 1 : 0
+  count       = local.create_security_group_count
   description = "Public internet access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
 
@@ -24,7 +24,7 @@ resource "aws_security_group" "dsf_base_sg" {
 }
 
 resource "aws_security_group_rule" "all_out" {
-  count             = local.should_create_security_group == true ? 1 : 0
+  count             = local.create_security_group_count
   type              = "egress"
   from_port         = 0
   to_port           = 0
@@ -34,7 +34,7 @@ resource "aws_security_group_rule" "all_out" {
 }
 
 resource "aws_security_group_rule" "sg_cidr_ingress" {
-  for_each          = local.should_create_security_group == true ? local.ingress_ports_map : {}
+  for_each          = local.create_security_group_count > 0 ? local.ingress_ports_map : {}
   type              = "ingress"
   from_port         = each.value
   to_port           = each.value
@@ -44,7 +44,7 @@ resource "aws_security_group_rule" "sg_cidr_ingress" {
 }
 
 resource "aws_security_group_rule" "sg_self" {
-  for_each          = local.should_create_security_group == true ? local.ingress_ports_map : {}
+  for_each          = local.create_security_group_count > 0 ? local.ingress_ports_map : {}
   type              = "ingress"
   from_port         = each.value
   to_port           = each.value
@@ -54,7 +54,7 @@ resource "aws_security_group_rule" "sg_self" {
 }
 
 resource "aws_security_group_rule" "sonarrsyslog_self" {
-  count             = local.should_create_security_group == true ? 1 : 0
+  count             = local.create_security_group_count
   type              = "ingress"
   from_port         = 10800
   to_port           = 10899
@@ -64,7 +64,7 @@ resource "aws_security_group_rule" "sonarrsyslog_self" {
 }
 
 resource "aws_security_group_rule" "sg_ingress_self" {
-  count             = local.should_create_security_group == true ? 1 : 0
+  count             = local.create_security_group_count
   type              = "ingress"
   from_port         = 0
   to_port           = 65535
@@ -74,7 +74,7 @@ resource "aws_security_group_rule" "sg_ingress_self" {
 }
 
 resource "aws_security_group_rule" "sg_web_console_access" {
-  count             = (length(var.web_console_cidr) != 0) && (local.should_create_security_group == true) ? 1 : 0
+  count             = (length(var.web_console_cidr) != 0) && (local.create_security_group_count > 0) ? 1 : 0
   type              = "ingress"
   from_port         = 8443
   to_port           = 8443
@@ -84,7 +84,7 @@ resource "aws_security_group_rule" "sg_web_console_access" {
 }
 
 resource "aws_security_group_rule" "sg_allow_ssh_in_vpc" {
-  count             = local.should_create_security_group == true ? 1 : 0
+  count             = local.create_security_group_count
   type              = "ingress"
   from_port         = 22
   to_port           = 22

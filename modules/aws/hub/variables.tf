@@ -19,9 +19,10 @@ variable "subnet_id" {
 
 variable "security_group_id" {
   type        = string
-  description = "Security group id for the DSF hub instance"
+  default     = null
+  description = "Security group id for the DSF Hub instance. In case it is not set, a security group will be created automatically."
   validation {
-    condition     = var.security_group_id == "" || substr(var.security_group_id, 0, 3) == "sg-"
+    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
     error_message = "Security group id is invalid. Must be sg-********"
   }
 }

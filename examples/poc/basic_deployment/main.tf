@@ -38,7 +38,6 @@ locals {
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  security_group_id          = ""
 }
 
 ##############################
@@ -68,7 +67,6 @@ module "hub" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = module.vpc.public_subnets[0]
-  security_group_id                   = local.security_group_id
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
   ebs                                 = var.hub_ebs_details
@@ -93,7 +91,6 @@ module "agentless_gw_group" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                           = module.vpc.private_subnets[0]
-  security_group_id                   = local.security_group_id
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
