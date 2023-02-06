@@ -59,7 +59,7 @@ module "hub" {
   source = "../../../modules/azurerm/sonar-base-instance"
 
   # instance_type           = "Standard_F2"
-  instance_type                       = "Standard_F8"
+  instance_type                       = "Standard_E4as_v5"
   resource_group_location             = azurerm_resource_group.rg.location
   resource_group_name                 = azurerm_resource_group.rg.name
   name                                = join("-", ["hub", "primary"])
