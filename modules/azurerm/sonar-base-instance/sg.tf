@@ -20,6 +20,8 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
   resource_group_name = var.resource_group_name
 }
 
+# tbd: https://learn.microsoft.com/en-us/azure/virtual-network/network-security-groups-overview#security-rules
+
 # # resource "aws_security_group_rule" "all_in" {
 # #   type        = "ingress"
 # #   from_port   = 0
