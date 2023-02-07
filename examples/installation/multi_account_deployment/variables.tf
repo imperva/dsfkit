@@ -66,7 +66,7 @@ variable "web_console_admin_password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "CIDR blocks allowing DSF hub web console access"
+  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
