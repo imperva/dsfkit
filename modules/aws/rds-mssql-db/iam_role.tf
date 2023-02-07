@@ -50,19 +50,6 @@ locals {
       }
     ]
   })
-  inline_policy_rds = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "rdsPermissions",
-        "Effect" : "Allow",
-        "Action" : [
-          "rds:DescribeDBInstances"
-        ]
-        "Resource" : "*"
-      }
-    ]
-  })
   inline_policy_ec2 = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -154,10 +141,6 @@ resource "aws_iam_role" "lambda_mssql_infra_role" {
   inline_policy {
     name   = "imperva-dsf-mssql-s3-access"
     policy = local.inline_policy_s3
-  }
-  inline_policy {
-    name   = "imperva-dsf-mssql-rds-access"
-    policy = local.inline_policy_rds
   }
   inline_policy {
     name   = "imperva-dsf-mssql-ec2-access"
