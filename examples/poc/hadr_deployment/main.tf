@@ -56,6 +56,7 @@ module "vpc" {
 ##############################
 # Generating deployment
 ##############################
+# TODO rename to hub_primary in another commit
 module "hub" {
   # TODO uncomment before commit
 #  source                              = "imperva/dsf-hub/aws"
@@ -110,7 +111,7 @@ module "hub_secondary" {
   ]
 }
 
-module "agentless_gw_group" {
+module "agentless_gw_group_primary" {
   # TODO uncomment before commit
   count                               = var.gw_count
 #  source                              = "imperva/dsf-agentless-gw/aws"
@@ -154,8 +155,8 @@ module "agentless_gw_group_secondary" {
   web_console_admin_password          = local.web_console_admin_password
   hub_sonarw_public_key               = module.hub.primary_hub_sonarw_public_key
   hadr_secondary_node                 = true
-  primary_gw_sonarw_public_key        = module.agentless_gw_group[count.index].primary_gw_sonarw_public_key
-  primary_gw_sonarw_private_key       = module.agentless_gw_group[count.index].primary_gw_sonarw_private_key
+  primary_gw_sonarw_public_key        = module.agentless_gw_group_primary[count.index].primary_gw_sonarw_public_key
+  primary_gw_sonarw_private_key       = module.agentless_gw_group_primary[count.index].primary_gw_sonarw_private_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
@@ -179,7 +180,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group : val],
+      [for idx, val in module.agentless_gw_group_primary : val],
       [for idx, val in module.agentless_gw_group_secondary : val]
     )
   )
@@ -209,7 +210,7 @@ module "federation" {
   depends_on = [
     module.hub,
     module.hub_secondary,
-    module.agentless_gw_group,
+    module.agentless_gw_group_primary,
     module.agentless_gw_group_secondary,
   ]
 }
@@ -239,20 +240,19 @@ module "agentless_gw_group_hadr" {
 #  source                       = "imperva/dsf-hadr/null"
 #  version                      = "1.3.5" # latest release tag
   source = "../../../modules/null/hadr"
-  dsf_primary_ip               = module.agentless_gw_group[count.index].private_ip
-  dsf_primary_private_ip       = module.agentless_gw_group[count.index].private_ip
+  dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
+  dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
   dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
-  ssh_user                     = module.agentless_gw_group[count.index].ssh_user
+  ssh_user                     = module.agentless_gw_group_primary[count.index].ssh_user
   proxy_host                   = module.hub.public_ip
   proxy_private_ssh_key_path   = module.key_pair.key_pair_private_pem.filename
   proxy_ssh_user               = module.hub.ssh_user
   depends_on = [
     module.federation,
-    module.agentless_gw_group,
-    module.agentless_gw_group_secondary,
-    module.hub,
+    module.agentless_gw_group_primary,
+    module.agentless_gw_group_secondary
   ]
 }
 
