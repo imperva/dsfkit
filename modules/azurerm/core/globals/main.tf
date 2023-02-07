@@ -1,6 +1,6 @@
 locals {
   tarball_key_map = {
-    "4.10" = "jsonar-4.10.0.0.0-rc1_20221019194459.tar.gz"
+    "4.10" = "jsonar-4.10.0.0.0.tar.gz"
     "4.9"  = "jsonar-4.9.c_20221129220420.tar.gz"
   }
   supported_versions  = keys(local.tarball_key_map)
@@ -26,6 +26,10 @@ data "http" "workstation_public_ip" {
 }
 
 data "azurerm_client_config" "current" {
+}
+
+data "azuread_user" "current" {
+  object_id = data.azurerm_client_config.current.object_id
 }
 
 # data "aws_region" "current" {}
