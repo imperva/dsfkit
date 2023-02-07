@@ -21,8 +21,10 @@ locals {
     #   dsf_hub_sonarw_private_ssh_key_name = "dsf_hub_federation_private_key_${var.name}"
     #   dsf_hub_sonarw_public_ssh_key_name  = "dsf_hub_federation_public_key_${var.name}"
     #   ssh_key_path                        = var.ssh_key_path
-    #   hub_federation_public_key           = var.hub_federation_public_key
-    #   sonarw_secret_name                  = var.sonarw_secret_name
+    hub_federation_public_key = var.hub_federation_public_key
+    sonarw_secret_vault       = azurerm_key_vault.example.name
+    sonarw_secret_name        = azurerm_key_vault_secret.dsf_hub_federation_private_key.name
+
     public_fqdn                   = var.use_public_ip ? "True" : ""
     uuid                          = random_uuid.uuid.result
     additional_install_parameters = var.additional_install_parameters

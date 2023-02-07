@@ -14,13 +14,9 @@ output "random_password" {
   value = resource.random_password.pass.result
 }
 
-output "current_user_arn" {
-  value = data.azurerm_client_config.current.client_id
+output "current_user_name" {
+  value = data.azuread_user.current.mail_nickname
 }
-
-# output "current_user_name" {
-#   value = split("/", data.aws_caller_identity.current.arn)[1] // arn:aws:iam::xxxxxxxxx:user/name
-# }
 
 # output "availability_zones" {
 #   value = sort(data.aws_availability_zones.available.names)

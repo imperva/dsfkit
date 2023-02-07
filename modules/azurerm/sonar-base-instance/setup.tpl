@@ -101,7 +101,6 @@ function install_tarball() {
     # Download intallation tarball
     TARBALL_FILE=$(basename ${az_blob})
     az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --file ./$TARBALL_FILE --name ${az_blob} >/dev/null
-    # /usr/local/bin/aws s3 cp s3://$${installation_s3_bucket}/$${installation_s3_key} ./$TARBALL_FILE >/dev/null
 
     echo Installing tarball..
     # Installing tarball
@@ -169,24 +168,25 @@ function set_environment_vars() {
     fi
 }
 
-# function install_ssh_keys() {
-#     echo Installing SSH keys
-#     if [ "$${resource_type}" == "hub" ]; then
-#         mkdir -p /home/sonarw/.ssh/
-#         /usr/local/bin/aws secretsmanager get-secret-value --secret-id $${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-#         echo "$${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
-#         touch /home/sonarw/.ssh/authorized_keys
-#         grep -q "$${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
-#         chown -R sonarw:sonar /home/sonarw/.ssh
-#         chmod -R 600 /home/sonarw/.ssh
-#         chmod 700 /home/sonarw/.ssh
-#     else
-#         mkdir -p /home/sonarw/.ssh
-#         touch /home/sonarw/.ssh/authorized_keys
-#         grep -q "$${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "$${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-#         chown -R sonarw:sonar /home/sonarw
-#     fi
-# }
+function install_ssh_keys() {
+    echo Installing SSH keys
+    if [ "${resource_type}" == "hub" ]; then
+        mkdir -p /home/sonarw/.ssh/
+
+        az keyvault secret show --vault-name ${sonarw_secret_vault} --name ${sonarw_secret_name} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
+        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+        touch /home/sonarw/.ssh/authorized_keys
+        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
+        chown -R sonarw:sonar /home/sonarw/.ssh
+        chmod -R 600 /home/sonarw/.ssh
+        chmod 700 /home/sonarw/.ssh
+    else
+        mkdir -p /home/sonarw/.ssh
+        touch /home/sonarw/.ssh/authorized_keys
+        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+        chown -R sonarw:sonar /home/sonarw
+    fi
+}
 
 wait_for_network
 install_deps
@@ -205,5 +205,5 @@ if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" !=
     echo "blob://${az_storage_account}/${az_container}/${az_blob}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi
 
-# set_environment_vars
-# install_ssh_keys
+set_environment_vars
+install_ssh_keys

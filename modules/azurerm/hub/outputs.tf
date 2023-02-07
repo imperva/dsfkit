@@ -22,13 +22,13 @@ output "sg_id" {
 #   value = local.role_arn
 # }
 
-# output "federation_public_key" {
-#   value = local.dsf_hub_ssh_public_federation_key
-# }
+output "federation_public_key" {
+  value = local.dsf_hub_ssh_public_federation_key
+}
 
-# output "federation_private_key" {
-#   value = local.dsf_hub_ssh_private_federation_key
-# }
+output "federation_private_key" {
+  value = local.dsf_hub_ssh_private_federation_key
+}
 
 output "jsonar_uid" {
   value = module.hub_instance.jsonar_uid

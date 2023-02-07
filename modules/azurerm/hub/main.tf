@@ -22,8 +22,9 @@ module "hub_instance" {
   additional_install_parameters = var.additional_install_parameters
   web_console_admin_password    = var.web_console_admin_password
   binaries_location             = var.binaries_location
-  # hub_federation_public_key           = local.dsf_hub_ssh_public_federation_key
-  # sonarw_secret_name                  = local.secret_aws_name
+  hub_federation_public_key     = local.dsf_hub_ssh_public_federation_key
+  hub_federation_private_key    = local.dsf_hub_ssh_private_federation_key
+  # sonarw_secret                  = local.secret
   proxy_info = {
     proxy_address      = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
