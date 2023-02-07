@@ -9,6 +9,7 @@ module "gw_instance" {
   resource_type                       = "gw"
   name                                = var.friendly_name
   subnet_id                           = var.subnet_id
+  security_group_id                   = var.security_group_id
   key_pair                            = var.ssh_key_pair.ssh_public_key_name
   ec2_instance_type                   = var.instance_type
   ebs_details                         = var.ebs
