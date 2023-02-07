@@ -48,6 +48,7 @@ resource "local_sensitive_file" "ssh_key" {
 
 module "network" {
   source              = "Azure/network/azurerm"
+  vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = azurerm_resource_group.rg.name
   address_spaces      = [var.network_ip_range]
   subnet_prefixes     = var.private_subnets
@@ -67,8 +68,9 @@ module "network" {
 module "hub" {
   # count  = 0
   source = "../../../modules/azurerm/hub"
+  # version                             = "1.3.5" # latest release tag
 
-  friendly_name              = join("-", ["hub", "primary"])
+  friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   resource_group             = local.resource_group
   subnet_id                  = module.network.vnet_subnets[0]
   binaries_location          = local.tarball_location
@@ -99,10 +101,12 @@ module "hub" {
 
 # module "agentless_gw_group" {
 #   count                               = var.gw_count
-#   source                              = "imperva/dsf-agentless-gw/aws"
+#   source = "../../../modules/azurerm/dsf-agentless-gw"
+#   # version                             = "1.3.5" # latest release tag
+
 #   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
-#   subnet_id                           = module.vpc.private_subnets[0]
-#   ebs                                 = var.gw_group_ebs_details
+#   subnet_id                  = module.network.vnet_subnets[1]
+#   storage_details            = var.hub_managed_disk_details
 #   binaries_location                   = local.tarball_location
 #   web_console_admin_password          = local.web_console_admin_password
 #   hub_federation_public_key           = module.hub.federation_public_key
@@ -116,9 +120,9 @@ module "hub" {
 #     use_public_ip         = false
 #   }
 #   ingress_communication_via_proxy = {
-#     proxy_address         = module.hub.public_ip
-#     proxy_private_ssh_key = try(file(module.key_pair.key_pair_private_pem.filename), "")
-#     proxy_ssh_user        = module.hub.ssh_user
+#     proxy_address              = module.hub.public_ip
+#     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+#     proxy_ssh_user             = module.hub.ssh_user
 #   }
 #   depends_on = [
 #     module.vpc
