@@ -7,7 +7,7 @@ locals {
   federate_hub_cmds = templatefile("${path.module}/federate_hub.tpl", {
     ssh_key_path = var.hub_info.hub_private_ssh_key_path
     dsf_gw_ip    = var.gw_info.gw_ip_address
-    # null check in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
+    # null check to allow destroy in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
     dsf_hub_ip   = var.hub_info.hub_ip_address != null ? var.hub_info.hub_ip_address : ""
     hub_ssh_user = var.hub_info.hub_ssh_user
     hub_proxy_address              = var.hub_proxy_info.proxy_address != null ? var.hub_proxy_info.proxy_address : ""
