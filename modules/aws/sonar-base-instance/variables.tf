@@ -126,7 +126,7 @@ variable "proxy_info" {
     proxy_ssh_key_path = string
     proxy_ssh_user    = string
   })
-  description = "Proxy address used for ssh to the sonar instance, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
   default     = {
     proxy_address     = null
     proxy_ssh_key_path = null

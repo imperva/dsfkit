@@ -266,9 +266,11 @@ module "agentless_gw_group_hadr" {
   dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   ssh_user                     = module.agentless_gw_group_primary[count.index].ssh_user
-  proxy_host                   = module.hub.public_ip
-  proxy_private_ssh_key_path   = module.key_pair.key_pair_private_pem.filename
-  proxy_ssh_user               = module.hub.ssh_user
+  proxy_info = {
+    proxy_address              = module.hub.public_ip
+    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_ssh_user             = module.hub.ssh_user
+  }
   depends_on = [
     module.federation,
     module.agentless_gw_group_primary,

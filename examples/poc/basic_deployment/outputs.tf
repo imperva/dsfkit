@@ -12,18 +12,16 @@ output "dsf_agentless_gw_group" {
   }
 }
 
-output "dsf_hubs" {
+output "dsf_hub" {
   value = {
-    primary = {
-      public_ip    = try(module.hub.public_ip, null)
-      public_dns   = try(module.hub.public_dns, null)
-      private_ip   = try(module.hub.private_ip, null)
-      private_dns  = try(module.hub.private_dns, null)
-      jsonar_uid   = try(module.hub.jsonar_uid, null)
-      display_name = try(module.hub.display_name, null)
-      role_arn     = try(module.hub.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_ip}", null)
-    }
+    public_ip    = try(module.hub.public_ip, null)
+    public_dns   = try(module.hub.public_dns, null)
+    private_ip   = try(module.hub.private_ip, null)
+    private_dns  = try(module.hub.private_dns, null)
+    jsonar_uid   = try(module.hub.jsonar_uid, null)
+    display_name = try(module.hub.display_name, null)
+    role_arn     = try(module.hub.iam_role, null)
+    ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_ip}", null)
   }
 }
 

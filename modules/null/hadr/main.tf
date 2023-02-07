@@ -17,9 +17,9 @@ resource "null_resource" "exec_hadr_primary" {
 
     timeout = "5m"
 
-    bastion_host        = var.proxy_host
-    bastion_private_key = try(file(var.proxy_private_ssh_key_path), "")
-    bastion_user        = var.proxy_ssh_user
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {
@@ -36,9 +36,9 @@ resource "null_resource" "exec_hadr_secondary" {
 
     timeout = "5m"
 
-    bastion_host        = var.proxy_host
-    bastion_private_key = try(file(var.proxy_private_ssh_key_path), "")
-    bastion_user        = var.proxy_ssh_user
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {
@@ -66,9 +66,9 @@ resource "null_resource" "hadr_verify" {
 
     timeout = "5m"
 
-    bastion_host        = var.proxy_host
-    bastion_private_key = try(file(var.proxy_private_ssh_key_path), "")
-    bastion_user        = var.proxy_ssh_user
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {
