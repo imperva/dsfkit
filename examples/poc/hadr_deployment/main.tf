@@ -163,7 +163,7 @@ module "agentless_gw_group_secondary" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32", "${module.hub_secondary.private_ip}/32", "${module.agentless_gw_group_primary[count.index].private_ip}/32"])
     use_public_ip         = false
   }
   ingress_communication_via_proxy = {
@@ -174,6 +174,26 @@ module "agentless_gw_group_secondary" {
   depends_on = [
     module.vpc
   ]
+}
+
+# assumes that ingress_ports output of all gateways is the same
+locals {
+  primary_gw_sg_and_secondary_gw_ip_combinations = setproduct(
+    [for idx, gw in module.agentless_gw_group_primary: gw.sg_id],
+    [for idx, gw in module.agentless_gw_group_secondary: gw.private_ip],
+    [for idx, ingress_port in module.agentless_gw_group_secondary[0].ingress_ports : ingress_port]
+  )
+}
+
+# adds secondary gw cidr to ingress cidrs of the primary gw's sg
+resource aws_security_group_rule "primary_gw_sg_secondary_cidr_ingress" {
+  count             = length(local.primary_gw_sg_and_secondary_gw_ip_combinations)
+  type              = "ingress"
+  from_port         = local.primary_gw_sg_and_secondary_gw_ip_combinations[count.index][2]
+  to_port           = local.primary_gw_sg_and_secondary_gw_ip_combinations[count.index][2]
+  protocol          = "tcp"
+  cidr_blocks       = ["${local.primary_gw_sg_and_secondary_gw_ip_combinations[count.index][1]}/32"]
+  security_group_id = local.primary_gw_sg_and_secondary_gw_ip_combinations[count.index][0]
 }
 
 locals {
