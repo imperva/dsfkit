@@ -8,7 +8,7 @@ variable "resource_group" {
 
 variable "friendly_name" {
   type        = string
-  default     = "imperva-dsf-hub"
+  default     = "imperva-dsf-agentless-gw"
   description = "Friendly name, vm instance Name"
   validation {
     condition     = length(var.friendly_name) > 3
@@ -18,17 +18,23 @@ variable "friendly_name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF hub instance"
+  description = "Subnet id for the DSF agentless gw instance"
   # validation {
   #   condition     = length(var.subnet_id) >= 15 && regex("/subnets/", var.subnet_id)
   #   error_message = "Subnet id is invalid. Must contain '/subnets/'"
   # }
 }
 
+variable "public_ip" {
+  type        = bool
+  default     = false
+  description = "Create public IP for the instance"
+}
+
 variable "instance_type" {
   type        = string
   default     = "Standard_E4as_v5"
-  description = "instance type for the DSF hub"
+  description = "Ec2 instance type for the DSF agentless gw"
 }
 
 variable "storage_details" {
@@ -46,7 +52,7 @@ variable "ingress_communication_via_proxy" {
     proxy_private_ssh_key_path = string
     proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private gw (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default = {
     proxy_address              = null
     proxy_private_ssh_key_path = null
@@ -62,9 +68,8 @@ variable "create_and_attach_public_elastic_ip" {
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list                   = list(any) #22, 8080, 8443, 3030, 27117
-    additional_web_console_access_cidr_list = list(any) #8443
-    use_public_ip                           = bool
+    full_access_cidr_list = list(any) #22, 8080, 8443, 3030, 27117
+    use_public_ip         = bool
   })
   description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
   nullable    = false
@@ -90,22 +95,10 @@ variable "binaries_location" {
   nullable    = false
 }
 
-variable "hadr_secondary_node" {
-  type        = bool
-  default     = false
-  description = "Is this node a hadr secondary one"
-}
-
-variable "hadr_main_hub_federation_public_key" {
+variable "hub_federation_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
-  default     = null
-}
-
-variable "hadr_main_hub_federation_private_key" {
-  type        = string
-  description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
-  default     = null
+  description = "Public key of sonarw taken from the main hub output"
+  nullable    = false
 }
 
 variable "web_console_admin_password" {
@@ -114,7 +107,7 @@ variable "web_console_admin_password" {
   description = "Admin password"
   validation {
     condition     = length(var.web_console_admin_password) > 8
-    error_message = "Admin password must be at least 8 characters"
+    error_message = "Admin password must be at least 8 characters" # tbd explain why we have here admin console
   }
   nullable = false
 }
@@ -134,7 +127,7 @@ variable "web_console_admin_password" {
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to DSF gw. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

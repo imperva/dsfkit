@@ -19,7 +19,7 @@ echo 'Running federation hub[${dsf_hub_ip}]->gw[${dsf_gw_ip}]'
 #     echo "Encountered network issues. Can't approach ${dsf_hub_ip}:22"
 # fi
 
-JSONAR_VERSION=$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${hub_ssh_user}@${dsf_hub_ip} 'echo $JSONAR_VERSION ')
+JSONAR_VERSION=$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${hub_ssh_user}@${dsf_hub_ip} 'echo $JSONAR_VERSION')
 
 if [ -z "$JSONAR_VERSION" ]; then
     echo JSONAR_VERSION is not defined
