@@ -315,7 +315,7 @@ module "db_onboarding" {
     module.federation,
     module.hub_hadr,
     module.agentless_gw_group_hadr, # TODO do we need this?
-    module.rds_mysql
+    module.rds_mysql,
     module.rds_mssql
   ]
 }
