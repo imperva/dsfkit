@@ -63,10 +63,8 @@ module "vpc" {
 ##############################
 # TODO rename to hub_primary in another commit
 module "hub" {
-  # TODO uncomment before commit
-#  source                              = "imperva/dsf-hub/aws"
-#  version                             = "1.3.6" # latest release tag
-  source = "../../../modules/aws/hub"
+  source                              = "imperva/dsf-hub/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = module.vpc.public_subnets[0]
   binaries_location                   = local.tarball_location
@@ -88,10 +86,8 @@ module "hub" {
 }
 
 module "hub_secondary" {
-  # TODO uncomment before commit
-#  source                               = "imperva/dsf-hub/aws"
-#  version                              = "1.3.6" # latest release tag
-  source = "../../../modules/aws/hub"
+  source                               = "imperva/dsf-hub/aws"
+  version                              = "1.3.6" # latest release tag
   friendly_name                        = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                            = module.vpc.public_subnets[1]
   binaries_location                    = local.tarball_location
@@ -117,11 +113,9 @@ module "hub_secondary" {
 }
 
 module "agentless_gw_group_primary" {
-  # TODO uncomment before commit
   count                               = var.gw_count
-#  source                              = "imperva/dsf-agentless-gw/aws"
-#  version                             = "1.3.6" # latest release tag
-  source = "../../../modules/aws/agentless-gw"
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
   subnet_id                           = module.vpc.private_subnets[0]
   ebs                                 = var.gw_group_ebs_details
@@ -149,10 +143,8 @@ module "agentless_gw_group_primary" {
 
 module "agentless_gw_group_secondary" {
   count                               = var.gw_count
-  # TODO uncomment before commit
-  #  source                              = "imperva/dsf-agentless-gw/aws"
-  #  version                             = "1.3.5" # latest release tag
-  source = "../../../modules/aws/agentless-gw"
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.5" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
   subnet_id                           = module.vpc.private_subnets[1]
   ebs                                 = var.gw_group_ebs_details
@@ -213,10 +205,8 @@ locals {
 
 module "federation" {
   count   = length(local.hub_gw_combinations)
-  # TODO uncomment before commit
-  #source  = "imperva/dsf-federation/null"
-  #version = "1.3.6" # latest release tag
-  source = "../../../modules/null/federation"
+  source  = "imperva/dsf-federation/null"
+  version = "1.3.6" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
@@ -241,10 +231,8 @@ module "federation" {
 }
 
 module "hub_hadr" {
-  # TODO uncomment before commit
-#  source                       = "imperva/dsf-hadr/null"
-#  version                      = "1.3.6" # latest release tag
-  source = "../../../modules/null/hadr"
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.3.6" # latest release tag
   dsf_primary_ip               = module.hub.public_ip
   dsf_primary_private_ip       = module.hub.private_ip
   dsf_secondary_ip             = module.hub_secondary.public_ip
@@ -260,10 +248,8 @@ module "hub_hadr" {
 
 module "agentless_gw_group_hadr" {
   count                        = var.gw_count
-  # TODO uncomment before commit
-#  source                       = "imperva/dsf-hadr/null"
-#  version                      = "1.3.5" # latest release tag
-  source = "../../../modules/null/hadr"
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.3.5" # latest release tag
   dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
   dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip

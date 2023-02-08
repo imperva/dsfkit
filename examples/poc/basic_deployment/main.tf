@@ -63,10 +63,8 @@ module "vpc" {
 ##############################
 
 module "hub" {
-  # TODO uncomment before commit
-  #  source                              = "imperva/dsf-hub/aws"
-  #  version                             = "1.3.6" # latest release tag
-  source = "../../../modules/aws/hub"
+  source                              = "imperva/dsf-hub/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                           = module.vpc.public_subnets[0]
   binaries_location                   = local.tarball_location
@@ -88,11 +86,9 @@ module "hub" {
 }
 
 module "agentless_gw_group" {
-  # TODO uncomment before commit
   count                               = var.gw_count
-  #  source                              = "imperva/dsf-agentless-gw/aws"
-  #  version                             = "1.3.6" # latest release tag
-  source = "../../../modules/aws/agentless-gw"
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                           = module.vpc.private_subnets[0]
   ebs                                 = var.gw_group_ebs_details
@@ -120,10 +116,8 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  # TODO uncomment before commit
-  #source  = "imperva/dsf-federation/null"
-  #version = "1.3.6" # latest release tag
-  source = "../../../modules/null/federation"
+  source  = "imperva/dsf-federation/null"
+  version = "1.3.6" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
