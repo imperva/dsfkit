@@ -26,7 +26,7 @@ variable "hub_proxy_info" {
     proxy_ssh_user             = string
   })
 
-  description = "Hub proxy info"
+  description = "Proxy address, private key file path and user used for ssh to a private DSF Hub. Keep empty if a proxy is not used."
   default = {
     proxy_address              = null
     proxy_private_ssh_key_path = null
@@ -65,6 +65,6 @@ variable "database_details" {
 
   validation {
     condition     = contains(["mysql", "sqlserver-ex"], var.database_details.db_engine)
-    error_message = "Allowed values for db engine: \"mysql\" or \"sqlserver-ex\"."
+    error_message = "Allowed values for db engine: \"mysql\", \"sqlserver-ex\""
   }
 }

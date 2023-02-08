@@ -52,25 +52,27 @@ variable "sg_ingress_cidr" {
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
 }
 
-variable "iam_instance_profile_id" {
-  type        = string
-  default     = null
-  description = "DSF base ec2 IAM instance profile id"
-}
-
 variable "ami_name_tag" {
   type = string
 }
 
 variable "ami_user" {
-  type = string
+  type        = string
+  default     = null
+  description = "Ami user to use for SSH to the EC2. Keep empty to use the default user."
+}
+
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
 }
 
 variable "resource_type" {
   type = string
   validation {
     condition     = contains(["hub", "gw"], var.resource_type)
-    error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
+    error_message = "Allowed values for DSF node type: \"hub\", \"gw\""
   }
   nullable = false
 }
@@ -105,13 +107,31 @@ variable "binaries_location" {
   nullable    = false
 }
 
+variable "hadr_secondary_node" {
+  type        = bool
+  default     = false
+  description = "Is this node a HADR secondary one"
+}
+
+variable "sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
+variable "sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
 variable "proxy_info" {
   type = object({
     proxy_address      = string
     proxy_ssh_key_path = string
     proxy_ssh_user     = string
   })
-  description = "Proxy address used for ssh to the sonar instance, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
   default = {
     proxy_address      = null
     proxy_ssh_key_path = null
@@ -119,16 +139,10 @@ variable "proxy_info" {
   }
 }
 
-variable "hub_federation_public_key" {
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "SSH public key for sonarw user"
-  nullable    = false
-}
-
-variable "sonarw_secret_name" {
-  type        = string
-  description = "Secret name for sonarw ssh key"
-  default     = ""
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
+  default     = null
 }
 
 variable "skip_instance_health_verification" {

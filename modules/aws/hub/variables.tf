@@ -84,18 +84,24 @@ variable "binaries_location" {
 variable "hadr_secondary_node" {
   type        = bool
   default     = false
-  description = "Is this node a hadr secondary one"
+  description = "Is this node a HADR secondary one"
 }
 
-variable "hadr_main_hub_federation_public_key" {
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
+  description = "Public key of the sonarw user taken from the primary Hub output"
   default     = null
 }
 
-variable "hadr_main_hub_federation_private_key" {
+variable "sonarw_public_key" {
   type        = string
-  description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
+  default     = null
+}
+
+variable "sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
   default     = null
 }
 
@@ -129,13 +135,13 @@ variable "ami_name_tag" {
 variable "ami_user" {
   type        = string
   default     = null
-  description = "Ami user to use for SSH to the compute instance"
+  description = "Ami user to use for SSH to the EC2. Keep empty to use the default user."
 }
 
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF Hub. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

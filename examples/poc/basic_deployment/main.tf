@@ -65,7 +65,7 @@ module "vpc" {
 module "hub" {
   source                              = "imperva/dsf-hub/aws"
   version                             = "1.3.6" # latest release tag
-  friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name                       = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                           = module.vpc.public_subnets[0]
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
@@ -94,7 +94,7 @@ module "agentless_gw_group" {
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_federation_public_key           = module.hub.federation_public_key
+  hub_sonarw_public_key               = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
@@ -116,8 +116,8 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  source   = "imperva/dsf-federation/null"
-  version  = "1.3.6" # latest release tag
+  source  = "imperva/dsf-federation/null"
+  version = "1.3.6" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename

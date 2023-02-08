@@ -13,13 +13,17 @@ resource "null_resource" "exec_hadr_primary" {
     type        = "ssh"
     user        = local.primary_ssh_user
     private_key = file(local.primary_ssh_key_path)
-    host        = var.dsf_hub_primary_public_ip
+    host        = var.dsf_primary_ip
 
     timeout = "5m"
+
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup setup-2hadr-replica-set --ipv4-address-main=${var.dsf_hub_primary_private_ip} --ipv4-address-dr=${var.dsf_hub_secondary_private_ip} --replication-sync-interval=1"]
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup setup-2hadr-replica-set --ipv4-address-main=${var.dsf_primary_private_ip} --ipv4-address-dr=${var.dsf_secondary_private_ip} --replication-sync-interval=1"]
   }
 }
 
@@ -28,9 +32,13 @@ resource "null_resource" "exec_hadr_secondary" {
     type        = "ssh"
     user        = local.secondary_ssh_user
     private_key = file(local.ssh_key_path_secondary)
-    host        = var.dsf_hub_secondary_public_ip
+    host        = var.dsf_secondary_ip
 
     timeout = "5m"
+
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {
@@ -54,9 +62,13 @@ resource "null_resource" "hadr_verify" {
     type        = "ssh"
     user        = local.primary_ssh_user
     private_key = file(local.primary_ssh_key_path)
-    host        = var.dsf_hub_primary_public_ip
+    host        = var.dsf_primary_ip
 
     timeout = "5m"
+
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
   }
 
   provisioner "remote-exec" {

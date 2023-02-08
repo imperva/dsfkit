@@ -149,21 +149,24 @@ function set_environment_vars() {
 
 function install_ssh_keys() {
     echo Installing SSH keys
-    if [ "${resource_type}" == "hub" ]; then
-        mkdir -p /home/sonarw/.ssh/
-        /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
-        chown -R sonarw:sonar /home/sonarw/.ssh
-        chmod -R 600 /home/sonarw/.ssh
-        chmod 700 /home/sonarw/.ssh
-    else
-        mkdir -p /home/sonarw/.ssh
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-        chown -R sonarw:sonar /home/sonarw
+    mkdir -p /home/sonarw/.ssh/
+    touch /home/sonarw/.ssh/authorized_keys
+
+    # install the generated primary node public and private keys in the primary node and the secondary node
+    /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${primary_node_sonarw_private_key_secret} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+    echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+
+    # enable communication between a pair of primary and secondary nodes
+    grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+
+    # enable communication between the the primary/secondary hub and the GW
+    if [ "${resource_type}" == "gw" ]; then
+        grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
     fi
+
+    chown -R sonarw:sonar /home/sonarw/.ssh
+    chmod -R 600 /home/sonarw/.ssh
+    chmod 700 /home/sonarw/.ssh
 }
 
 wait_for_network

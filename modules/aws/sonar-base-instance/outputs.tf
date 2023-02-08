@@ -23,6 +23,24 @@ output "sg_id" {
   value       = local.security_group_id
 }
 
+output "ingress_ports" {
+  value = local.ingress_ports
+  description = "The ingress ports of the security group on the DSF node EC2"
+}
+
+output "iam_role" {
+  description = "IAM Role ARN of the DSF node"
+  value = local.role_arn
+}
+
+output "sonarw_public_key" {
+  value = local.primary_node_sonarw_public_key
+}
+
+output "sonarw_private_key" {
+  value = local.primary_node_sonarw_private_key
+}
+
 output "jsonar_uid" {
   value = random_uuid.uuid.result
 }
