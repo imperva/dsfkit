@@ -93,13 +93,13 @@ variable "hub_sonarw_public_key" {
   default     = null
 }
 
-variable "primary_hub_sonarw_public_key" {
+variable "sonarw_public_key" {
   type        = string
   description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
   default     = null
 }
 
-variable "primary_hub_sonarw_private_key" {
+variable "sonarw_private_key" {
   type        = string
   description = "Private key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
   default     = null

@@ -16,6 +16,7 @@ module "gw_instance" {
   ami_name_tag                        = var.ami_name_tag
   ami_user                            = var.ami_user
   sg_ingress_cidr                     = var.ingress_communication.full_access_cidr_list
+  role_arn                            = var.role_arn
   create_and_attach_public_elastic_ip = var.create_and_attach_public_elastic_ip
   use_public_ip                       = var.ingress_communication.use_public_ip
   additional_install_parameters       = var.additional_install_parameters
@@ -24,8 +25,8 @@ module "gw_instance" {
   binaries_location                   = var.binaries_location
   hub_sonarw_public_key               = var.hub_sonarw_public_key
   hadr_secondary_node                 = var.hadr_secondary_node
-  primary_node_sonarw_public_key      = var.primary_gw_sonarw_public_key
-  primary_node_sonarw_private_key     = var.primary_gw_sonarw_private_key
+  sonarw_public_key      = var.sonarw_public_key
+  sonarw_private_key     = var.sonarw_private_key
   proxy_info = {
     proxy_address      = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path

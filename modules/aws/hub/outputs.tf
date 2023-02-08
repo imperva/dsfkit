@@ -23,12 +23,12 @@ output "iam_role" {
   value = module.hub_instance.iam_role
 }
 
-output "primary_hub_sonarw_public_key" {
-  value = module.hub_instance.primary_node_sonarw_public_key
+output "sonarw_public_key" {
+  value = module.hub_instance.sonarw_public_key
 }
 
-output "primary_hub_sonarw_private_key" {
-  value = module.hub_instance.primary_node_sonarw_private_key
+output "sonarw_private_key" {
+  value = module.hub_instance.sonarw_private_key
 }
 
 output "jsonar_uid" {

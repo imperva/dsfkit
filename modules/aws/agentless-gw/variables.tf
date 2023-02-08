@@ -108,13 +108,13 @@ variable "hub_sonarw_public_key" {
   nullable    = false
 }
 
-variable "primary_gw_sonarw_public_key" {
+variable "sonarw_public_key" {
   type        = string
   description = "Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
   default     = null
 }
 
-variable "primary_gw_sonarw_private_key" {
+variable "sonarw_private_key" {
   type        = string
   description = "Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
   default     = null

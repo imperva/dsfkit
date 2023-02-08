@@ -98,10 +98,10 @@ module "hub_secondary" {
   web_console_admin_password           = local.web_console_admin_password
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = true
-  hub_sonarw_public_key                = module.hub.primary_hub_sonarw_public_key
+  hub_sonarw_public_key                = module.hub.sonarw_public_key
   hadr_secondary_node                  = true
-  primary_hub_sonarw_public_key        = module.hub.primary_hub_sonarw_public_key
-  primary_hub_sonarw_private_key       = module.hub.primary_hub_sonarw_private_key
+  sonarw_public_key                    = module.hub.sonarw_public_key
+  sonarw_private_key                   = module.hub.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -127,7 +127,7 @@ module "agentless_gw_group_primary" {
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key               = module.hub.primary_hub_sonarw_public_key
+  hub_sonarw_public_key               = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
@@ -158,10 +158,10 @@ module "agentless_gw_group_secondary" {
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key               = module.hub.primary_hub_sonarw_public_key
+  hub_sonarw_public_key               = module.hub.sonarw_public_key
   hadr_secondary_node                 = true
-  primary_gw_sonarw_public_key        = module.agentless_gw_group_primary[count.index].primary_gw_sonarw_public_key
-  primary_gw_sonarw_private_key       = module.agentless_gw_group_primary[count.index].primary_gw_sonarw_private_key
+  sonarw_public_key                   = module.agentless_gw_group_primary[count.index].sonarw_public_key
+  sonarw_private_key                  = module.agentless_gw_group_primary[count.index].sonarw_private_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
@@ -245,8 +245,7 @@ module "hub_hadr" {
 #  source                       = "imperva/dsf-hadr/null"
 #  version                      = "1.3.6" # latest release tag
   source = "../../../modules/null/hadr"
-  # null check to allow destroy in case we got: Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached.
-  dsf_primary_ip               = module.hub.public_ip != null ? module.hub.public_ip : ""
+  dsf_primary_ip               = module.hub.public_ip
   dsf_primary_private_ip       = module.hub.private_ip
   dsf_secondary_ip             = module.hub_secondary.public_ip
   dsf_secondary_private_ip     = module.hub_secondary.private_ip

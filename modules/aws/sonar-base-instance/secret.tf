@@ -3,7 +3,7 @@
 # A key pair is generated only for the HADR primary nodes, and then "copied"
 # to the HADR secondary nodes.
 # To do that, the public key is passed to the user data of the EC2 in clear text,
-# but The private key is put in AWS secret manager, and the scrip of the EC2 user
+# but The private key is put in AWS secret manager, and the script of the EC2 user
 # data fetches it from there.
 # Currently we don't delete the private key from the secret manager once the
 # deployment is completed, we may need it in the future.
@@ -22,8 +22,8 @@ resource "tls_private_key" "sonarw_private_key" {
 }
 
 locals {
-  primary_node_sonarw_public_key  = !var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key
-  primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.primary_node_sonarw_private_key
+  primary_node_sonarw_public_key  = !var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.sonarw_public_key
+  primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.sonarw_private_key
   secret_aws_arn                     = aws_secretsmanager_secret.sonarw_private_key_secret.arn
   secret_aws_name                    = aws_secretsmanager_secret.sonarw_private_key_secret.name
 }
