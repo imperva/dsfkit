@@ -99,54 +99,63 @@ module "hub" {
 # # Generating deployment
 # ##############################
 
-# module "agentless_gw_group" {
-#   count                               = var.gw_count
-#   source = "../../../modules/azurerm/dsf-agentless-gw"
-#   # version                             = "1.3.5" # latest release tag
+module "agentless_gw_group" {
+  count  = var.gw_count
+  source = "../../../modules/azurerm/agentless-gw"
+  # version                             = "1.3.5" # latest release tag
 
-#   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
-#   subnet_id                  = module.network.vnet_subnets[1]
-#   storage_details            = var.hub_managed_disk_details
-#   binaries_location                   = local.tarball_location
-#   web_console_admin_password          = local.web_console_admin_password
-#   hub_federation_public_key           = module.hub.federation_public_key
-#   create_and_attach_public_elastic_ip = false
-#   ssh_key_pair = {
-#     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
-#     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-#   }
-#   ingress_communication = {
-#     full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
-#     use_public_ip         = false
-#   }
-#   ingress_communication_via_proxy = {
-#     proxy_address              = module.hub.public_ip
-#     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-#     proxy_ssh_user             = module.hub.ssh_user
-#   }
-#   depends_on = [
-#     module.vpc
-#   ]
-# }
+  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
+  resource_group                      = local.resource_group
+  subnet_id                           = module.network.vnet_subnets[0]
+  storage_details                     = var.hub_managed_disk_details
+  binaries_location                   = local.tarball_location
+  web_console_admin_password          = local.web_console_admin_password
+  hub_federation_public_key           = module.hub.federation_public_key
+  create_and_attach_public_elastic_ip = false
+  # create_and_attach_public_elastic_ip = true
+  ssh_key = {
+    ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
+    ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
+  }
+  ingress_communication = {
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
+    use_public_ip         = false
+    # use_public_ip         = true
+  }
+  ingress_communication_via_proxy = {
+    proxy_address              = module.hub.public_ip
+    proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    proxy_ssh_user             = module.hub.ssh_user
+  }
+  depends_on = [
+    module.network
+  ]
+}
 
-# module "federation" {
-#   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-#   source   = "imperva/dsf-federation/null"
-#   gws_info = {
-#     gw_ip_address           = each.value.private_ip
-#     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-#     gw_ssh_user             = each.value.ssh_user
-#   }
-#   hub_info = {
-#     hub_ip_address           = module.hub.public_ip
-#     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-#     hub_ssh_user             = module.hub.ssh_user
-#   }
-#   depends_on = [
-#     module.hub,
-#     module.agentless_gw_group,
-#   ]
-# }
+module "federation" {
+  for_each = { for idx, val in module.agentless_gw_group : idx => val }
+  source   = "imperva/dsf-federation/null"
+  gw_info = {
+    gw_ip_address = each.value.private_ip
+    # gw_ip_address           = each.value.public_ip
+    gw_private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    gw_ssh_user             = each.value.ssh_user
+  }
+  hub_info = {
+    hub_ip_address           = module.hub.public_ip
+    hub_private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    hub_ssh_user             = module.hub.ssh_user
+  }
+  gw_proxy_info = {
+    proxy_address              = module.hub.public_ip
+    proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    proxy_ssh_user             = module.hub.ssh_user
+  }
+  depends_on = [
+    module.hub,
+    module.agentless_gw_group,
+  ]
+}
 
 # module "rds_mysql" {
 #   count                        = 1
