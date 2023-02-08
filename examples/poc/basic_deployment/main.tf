@@ -4,15 +4,20 @@ provider "aws" {
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+  alias  = "poc_scripts_s3_region"
+}
+
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.3.5" # latest release tag
+  version       = "1.3.6" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.5" # latest release tag
+  version                  = "1.3.6" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -60,7 +65,7 @@ module "vpc" {
 module "hub" {
   # TODO uncomment before commit
   #  source                              = "imperva/dsf-hub/aws"
-  #  version                             = "1.3.5" # latest release tag
+  #  version                             = "1.3.6" # latest release tag
   source = "../../../modules/aws/hub"
   friendly_name                       = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                           = module.vpc.public_subnets[0]
@@ -86,7 +91,7 @@ module "agentless_gw_group" {
   # TODO uncomment before commit
   count                               = var.gw_count
   #  source                              = "imperva/dsf-agentless-gw/aws"
-  #  version                             = "1.3.5" # latest release tag
+  #  version                             = "1.3.6" # latest release tag
   source = "../../../modules/aws/agentless-gw"
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                           = module.vpc.private_subnets[0]
@@ -117,7 +122,7 @@ module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
   # TODO uncomment before commit
   #source  = "imperva/dsf-federation/null"
-  #version = "1.3.5" # latest release tag
+  #version = "1.3.6" # latest release tag
   source = "../../../modules/null/federation"
   gw_info = {
     gw_ip_address           = each.value.private_ip
@@ -143,51 +148,29 @@ module "federation" {
 module "rds_mysql" {
   count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.3.5" # latest release tag
+  version                      = "1.3.6" # latest release tag
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
-}
-
-module "db_onboarding_mysql" {
-  for_each      = { for idx, val in module.rds_mysql : idx => val }
-  source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.5" # latest release tag
-  sonar_version = module.globals.tarball_location.version
-  hub_info = {
-    hub_ip_address           = module.hub.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = module.hub.ssh_user
-  }
-  assignee_gw   = module.hub.jsonar_uid
-  assignee_role = module.hub.iam_role
-  database_details = {
-    db_username   = each.value.db_username
-    db_password   = each.value.db_password
-    db_arn        = each.value.db_arn
-    db_port       = each.value.db_port
-    db_identifier = each.value.db_identifier
-    db_address    = each.value.db_endpoint
-    db_engine     = each.value.db_engine
-  }
-  depends_on = [
-    module.federation,
-    module.rds_mysql
-  ]
 }
 
 # create a RDS SQL Server DB
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.3.5" # latest release tag
+  version                      = "1.3.6" # latest release tag
   rds_subnet_ids               = module.vpc.public_subnets
   security_group_ingress_cidrs = local.workstation_cidr
+
+  providers = {
+    aws                       = aws,
+    aws.poc_scripts_s3_region = aws.poc_scripts_s3_region
+  }
 }
 
-module "db_onboarding_mssql" {
-  for_each      = { for idx, val in module.rds_mssql : idx => val }
+module "db_onboarding" {
+  for_each      = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
   source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.5" # latest release tag
+  version       = "1.3.6" # latest release tag
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub.public_ip
@@ -208,13 +191,13 @@ module "db_onboarding_mssql" {
   }
   depends_on = [
     module.federation,
-    module.rds_mssql,
-    module.db_onboarding_mysql
+    module.rds_mysql,
+    module.rds_mssql
   ]
 }
 
 module "statistics" {
   source  = "imperva/dsf-statistics/aws"
-  version = "1.3.5" # latest release tag
+  version = "1.3.6" # latest release tag
 }
 

@@ -12,10 +12,10 @@ function curl_fail_on_error() {
   OUTPUT_FILE=$(mktemp)
   HTTP_CODE=$(curl --silent --output $OUTPUT_FILE --write-out "%%{http_code}" "$@")
   if [[ $HTTP_CODE -lt 200 || $HTTP_CODE -gt 299 ]] ; then
-    >&2 cat $OUTPUT_FILE
+    >&2 cat $OUTPUT_FILE; >&2 echo
     return 22
   fi
-  cat $OUTPUT_FILE
+  cat $OUTPUT_FILE; echo
   rm $OUTPUT_FILE
 }
 
@@ -38,10 +38,15 @@ fi
 # Add cloud account
 if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts/${account_arn}' --header "Authorization: Bearer $hub_token" &>/dev/null; then
     echo ********Adding new cloud account********
-    curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts' \
+    if curl_fail_on_error -k --location --request POST 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts' \
         --header "Authorization: Bearer $hub_token" \
         --header 'Content-Type: application/json' \
-        --data '${cloud_account_data}'
+        --data '${cloud_account_data}'; then
+        echo ********Cloud account was added successfully********
+    else
+        curl_fail_on_error -k 'https://127.0.0.1:8443/dsf/api/v1/cloud-accounts/${account_arn}' --header "Authorization: Bearer $hub_token" >/dev/null
+        echo ********Cloud account already exists********
+    fi
 fi
 
 # Add database asset

@@ -7,6 +7,11 @@ variable "subnet_id" {
   description = "Subnet id for the ec2 instance"
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "Security group id for the ec2 instance"
+}
+
 variable "ec2_instance_type" {
   type        = string
   description = "Ec2 instance type for the DSF base instance"
@@ -122,15 +127,15 @@ variable "primary_node_sonarw_private_key" {
 
 variable "proxy_info" {
   type = object({
-    proxy_address     = string
+    proxy_address      = string
     proxy_ssh_key_path = string
-    proxy_ssh_user    = string
+    proxy_ssh_user     = string
   })
   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-  default     = {
-    proxy_address     = null
+  default = {
+    proxy_address      = null
     proxy_ssh_key_path = null
-    proxy_ssh_user    = null
+    proxy_ssh_user     = null
   }
 }
 

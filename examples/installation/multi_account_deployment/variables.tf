@@ -23,6 +23,12 @@ variable "subnet_hub" {
   description = "Aws subnet id for the DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
+variable "security_group_id_hub" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+}
+
 variable "aws_profile_gw" {
   type        = string
   description = "Aws profile name for the DSF agentless gw account"
@@ -36,6 +42,12 @@ variable "aws_region_gw" {
 variable "subnet_gw" {
   type        = string
   description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
+}
+
+variable "security_group_id_gw" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the Agentless GW (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "gw_count" {
@@ -54,7 +66,7 @@ variable "web_console_admin_password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "CIDR blocks allowing DSF hub web console access"
+  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {

@@ -17,6 +17,16 @@ variable "subnet_id" {
   }
 }
 
+variable "security_group_id" {
+  type        = string
+  default     = null
+  description = "Security group id for the DSF Hub instance. In case it is not set, a security group will be created automatically."
+  validation {
+    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
+    error_message = "Security group id is invalid. Must be sg-********"
+  }
+}
+
 variable "instance_type" {
   type        = string
   default     = "r6i.xlarge"
@@ -34,15 +44,15 @@ variable "ebs" {
 
 variable "ingress_communication_via_proxy" {
   type = object({
-    proxy_address     = string
+    proxy_address              = string
     proxy_private_ssh_key_path = string
-    proxy_ssh_user    = string
+    proxy_ssh_user             = string
   })
   description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default     = {
-    proxy_address     = null
+  default = {
+    proxy_address              = null
     proxy_private_ssh_key_path = null
-    proxy_ssh_user    = null
+    proxy_ssh_user             = null
   }
 }
 

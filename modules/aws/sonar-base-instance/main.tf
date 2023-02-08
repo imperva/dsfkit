@@ -9,6 +9,8 @@ locals {
   ami_name         = var.ami_name_tag != null ? var.ami_name_tag : local.ami_name_default
   ami_user_default = "ec2-user"
   ami_user         = var.ami_user != null ? var.ami_user : local.ami_user_default
+
+  security_group_id = length(aws_security_group.dsf_base_sg) > 0 ? element(aws_security_group.dsf_base_sg.*.id, 0) : var.security_group_id
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -81,13 +83,10 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   lifecycle {
     ignore_changes = [iops]
   }
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 # Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
-  security_groups = [aws_security_group.dsf_base_sg.id]
+  security_groups = [local.security_group_id]
 }

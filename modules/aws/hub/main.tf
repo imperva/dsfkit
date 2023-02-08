@@ -7,6 +7,7 @@ module "hub_instance" {
   resource_type                       = "hub"
   name                                = var.friendly_name
   subnet_id                           = var.subnet_id
+  security_group_id                   = var.security_group_id
   key_pair                            = var.ssh_key_pair.ssh_public_key_name
   ec2_instance_type                   = var.instance_type
   ebs_details                         = var.ebs
@@ -25,9 +26,9 @@ module "hub_instance" {
   primary_node_sonarw_public_key      = var.primary_hub_sonarw_public_key
   primary_node_sonarw_private_key     = var.primary_hub_sonarw_private_key
   proxy_info = {
-    proxy_address                     = var.ingress_communication_via_proxy.proxy_address
-    proxy_ssh_key_path                = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
-    proxy_ssh_user                    = var.ingress_communication_via_proxy.proxy_ssh_user
+    proxy_address      = var.ingress_communication_via_proxy.proxy_address
+    proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
+    proxy_ssh_user     = var.ingress_communication_via_proxy.proxy_ssh_user
   }
-  skip_instance_health_verification   = var.skip_instance_health_verification
+  skip_instance_health_verification = var.skip_instance_health_verification
 }

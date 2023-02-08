@@ -15,9 +15,9 @@ locals {
     hub_proxy_ssh_user             = var.hub_proxy_info.proxy_ssh_user != null ? var.hub_proxy_info.proxy_ssh_user : ""
   })
   federate_gw_cmds = templatefile("${path.module}/federate_gw.tpl", {
-    ssh_key_path       = var.gw_info.gw_private_ssh_key_path
-    dsf_gw_ip          = var.gw_info.gw_ip_address
-    gw_ssh_user        = var.gw_info.gw_ssh_user
+    ssh_key_path                  = var.gw_info.gw_private_ssh_key_path
+    dsf_gw_ip                     = var.gw_info.gw_ip_address
+    gw_ssh_user                   = var.gw_info.gw_ssh_user
     gw_proxy_address              = var.gw_proxy_info.proxy_address != null ? var.gw_proxy_info.proxy_address : ""
     gw_proxy_private_ssh_key_path = var.gw_proxy_info.proxy_private_ssh_key_path != null ? var.gw_proxy_info.proxy_private_ssh_key_path : ""
     gw_proxy_ssh_user             = var.gw_proxy_info.proxy_ssh_user != null ? var.gw_proxy_info.proxy_ssh_user : ""
