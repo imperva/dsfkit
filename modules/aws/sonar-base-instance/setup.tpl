@@ -5,7 +5,7 @@ set -x
 cd /root || exit 1
 
 function wait_for_network() {
-    until ping -c1 www.google.com >/dev/null 2>&1; do
+    until ping -c1 www.google.com &>/dev/null; do
         echo waiting for network..;
         sleep 15;
     done

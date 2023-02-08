@@ -134,7 +134,7 @@ variable "hub_federation_public_key" {
 variable "hub_federation_private_key" {
   type        = string
   description = "SSH private key for sonarw user"
-  nullable    = false
+  default     = "" # tbd: this might need to be a mandatory var
 }
 
 variable "sonarw_secret" {
