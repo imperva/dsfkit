@@ -56,11 +56,11 @@ jobs:
           - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
-            hub_output: .dsf_hub.value.public_ip
+            hub_output: '.dsf_hub.value.public_ip'
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
-            hub_output: .dsf_hubs.value.primary.public_ip
+            hub_output: '.dsf_hubs.value.primary.public_ip'
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
@@ -153,7 +153,7 @@ jobs:
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '$HUB_OUTPUT') >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $HUB_OUTPUT) >> $GITHUB_ENV
         echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".primary.private_ip') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
