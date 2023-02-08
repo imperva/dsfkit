@@ -34,6 +34,8 @@ The following input variables are **required**:
 * `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
+* `sonarw_public_key`: Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub.
+* `sonarw_private_key`: Private key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub.
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 
@@ -50,8 +52,8 @@ The following [outputs](outputs.tf) are exported:
 * `iam_role`: AWS IAM arn
 * `sg_id`: AWS security group id of the instance
 * `ssh_user`: SSH user for the instance
-* `federation_public_key`: The Federation public key (also known as the sonarw public SSH key) should be used when connecting an agentless gateway
-* `federation_private_key`: The Federation private key (also known as the sonarw private SSH key) should be used when connecting secondary hadr hub
+* `sonarw_public_key`: The public key (also known as the sonarw public SSH key) should be used when connecting an agentless gateway
+* `sonarw_private_key`: The private key (also known as the sonarw private SSH key) should be used when connecting secondary hadr hub
 * `sonarw_secret`: AWS secret details. Should be used when deploying a second DSF hub for HADR
 
 ## Usage

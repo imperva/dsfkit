@@ -33,7 +33,9 @@ The following input variables are **required**:
 * `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
-* `hub_federation_public_key`: Federation public key (sonarw public ssh key). Should be taken from [hub](../hub)'s outputs
+* `hub_sonarw_public_key`: Public key of the sonarw user taken from the primary [Hub](../hub)'s output
+* `sonarw_public_key`: Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
+* `sonarw_private_key`: Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 
@@ -49,6 +51,8 @@ The following [outputs](outputs.tf) are exported:
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
 * `ssh_user`: SSH user for the instance
+* `sonarw_public_key`: Public key of the sonarw user
+* `sonarw_private_key`: Private key of the sonarw user
 
 ## Usage
 
@@ -84,7 +88,7 @@ module "dsf_gw" {
     throughput       = 125
   }
   binaries_location             = module.globals.tarball_location
-  hub_federation_public_key     = module.hub.federation_public_key
+  hub_sonarw_public_key         = module.hub.federation_public_key
 }
 ```
 
