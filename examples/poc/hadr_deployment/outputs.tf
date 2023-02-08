@@ -1,4 +1,4 @@
-output "dsf_agentless_gws" {
+output "dsf_agentless_gw_group" {
   value = {
     for idx, val in module.agentless_gw_group_primary : "gw-${idx}" => {
       primary = {
