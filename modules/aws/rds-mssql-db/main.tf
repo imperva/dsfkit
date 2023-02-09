@@ -16,7 +16,6 @@ locals {
   db_username           = var.username
   db_password           = length(var.password) > 0 ? var.password : random_password.db_password.result
   db_identifier         = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
-  db_name               = length(var.name) > 0 ? var.name : replace("edsf-db-demo-${random_pet.db_id.id}", "-", "_")
   mssql_connect_db_name = "rdsadmin"
   lambda_salt           = random_id.salt.hex
   db_audit_bucket_name  = "${local.db_identifier}-audit-bucket"
