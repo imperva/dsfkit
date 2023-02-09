@@ -59,6 +59,7 @@ variable "database_details" {
     db_engine     = string
     db_identifier = string
     db_address    = string
+    db_name       = string
   })
   description = "database details"
   nullable    = false
