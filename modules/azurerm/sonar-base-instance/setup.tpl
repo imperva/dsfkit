@@ -117,7 +117,7 @@ function set_instance_fqdn() {
         exit 1
     fi
     if [ -n "${public_fqdn}" ]; then
-        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.imds.network.interface[0].ipv4.ipAddress[0].publicIpAddress)
+        instance_fqdn=$(curl ifconfig.me)
         if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
             echo "Failed to extract instance public FQDN"
             exit 1
