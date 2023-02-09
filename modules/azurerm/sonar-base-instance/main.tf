@@ -90,7 +90,8 @@ resource "azurerm_public_ip" "example" {
   name                = join("-", [var.name, "public", "ip"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
-  allocation_method   = "Dynamic"
+  sku                 = "Standard"
+  allocation_method   = "Static"
 }
 
 data "azurerm_public_ip" "example" {
