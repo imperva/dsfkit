@@ -21,7 +21,7 @@ output "dsf_hub" {
     jsonar_uid   = try(module.hub.jsonar_uid, null)
     display_name = try(module.hub.display_name, null)
     role_arn     = try(module.hub.iam_role, null)
-    ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_ip}", null)
+    ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
   }
 }
 

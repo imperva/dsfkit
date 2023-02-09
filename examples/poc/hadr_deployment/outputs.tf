@@ -31,7 +31,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub.jsonar_uid, null)
       display_name = try(module.hub.display_name, null)
       role_arn     = try(module.hub.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_ip}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
     }
     secondary = {
       public_ip    = try(module.hub_secondary.public_ip, null)
@@ -41,7 +41,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub_secondary.jsonar_uid, null)
       display_name = try(module.hub_secondary.display_name, null)
       role_arn     = try(module.hub_secondary.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub_secondary.ssh_user}@${module.hub_secondary.public_ip}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.key_pair_private_pem.filename} ${module.hub_secondary.ssh_user}@${module.hub_secondary.public_dns}", null)
     }
   }
 }
