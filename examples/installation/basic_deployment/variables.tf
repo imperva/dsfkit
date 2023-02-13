@@ -38,6 +38,18 @@ variable "subnet_gw_secondary" {
   description = "Aws subnet id for the secondary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
+variable "security_group_id_hub" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+}
+
+variable "security_group_id_gw" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the Agentless gateway (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+}
+
 variable "gw_count" {
   type        = number
   default     = 1
@@ -93,6 +105,18 @@ variable "gw_group_ebs_details" {
     provisioned_iops = 0
     throughput       = 125
   }
+}
+
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF Hub"
+}
+
+variable "gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the Agentless gateway"
 }
 
 variable "hub_ami_name" {
