@@ -85,7 +85,6 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   }
 }
 
-# Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = [local.security_group_id]

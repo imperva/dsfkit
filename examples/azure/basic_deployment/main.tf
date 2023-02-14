@@ -15,8 +15,8 @@ module "globals" {
 }
 
 locals {
-  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+  workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   # database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
@@ -77,7 +77,7 @@ module "hub" {
   web_console_admin_password = local.web_console_admin_password
   storage_details            = var.hub_managed_disk_details
 
-# tbd: change the "elastic" terminology
+  # tbd: change the "elastic" terminology
   create_and_attach_public_elastic_ip = true
 
   ssh_key = {
@@ -111,7 +111,7 @@ module "agentless_gw_group" {
   storage_details                     = var.hub_managed_disk_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key            = module.hub.sonarw_public_key
+  hub_sonarw_public_key               = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   # create_and_attach_public_elastic_ip = true
   ssh_key = {

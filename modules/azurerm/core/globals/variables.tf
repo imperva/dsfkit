@@ -7,20 +7,6 @@ variable "sonar_version" {
   }
 }
 
-variable "proxy_info" {
-  type = object({
-    proxy_address      = string
-    proxy_ssh_key_path = string
-    proxy_ssh_user     = string
-  })
-  description = "Proxy address used for ssh to the sonar instance, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default = {
-    proxy_address      = null
-    proxy_ssh_key_path = null
-    proxy_ssh_user     = null
-  }
-}
-
 variable "tarball_location" {
   type = object({
     storage_account = string

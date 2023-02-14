@@ -27,7 +27,7 @@ variable "subnet_id" {
 
 variable "instance_type" {
   type        = string
-  default     = "Standard_E4as_v5"
+  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
   description = "instance type for the DSF hub"
 }
 
@@ -119,23 +119,28 @@ variable "web_console_admin_password" {
   nullable = false
 }
 
-# variable "ami_name_tag" {
-#   type        = string
-#   default     = null
-#   description = "Ami name to use as base image for the compute instance"
-# }
+variable "vm_image" {
+  type = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default     = null
+  description = "VM image details to base image for the compute instance"
+}
 
-# variable "ami_user" {
-#   type        = string
-#   default     = null
-#   description = "Ami user to use for SSH to the compute instance"
-# }
-
-variable "role_arn" {
+variable "vm_user" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
+  description = "VM user to use for SSH. Keep empty to use the default user."
 }
+
+#variable "role_arn" {
+#  type        = string
+#  default     = null
+#  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
+#}
 
 variable "additional_install_parameters" {
   default     = ""
