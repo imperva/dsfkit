@@ -54,8 +54,10 @@ module "hub" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = var.subnet_hub
+  security_group_id                   = var.security_group_id_hub
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
+  instance_type                       = var.hub_instance_type
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
   ami_name_tag                        = var.hub_ami_name
@@ -72,12 +74,14 @@ module "hub" {
 }
 
 module "hub_secondary" {
-  source                              = "imperva/dsf-hub/aws"
-  version                             = "1.3.6" # latest release tag
+  source                               = "imperva/dsf-hub/aws"
+  version                              = "1.3.6" # latest release tag
   friendly_name                        = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                            = var.subnet_hub_secondary
+  security_group_id                    = var.security_group_id_hub
   binaries_location                    = local.tarball_location
   web_console_admin_password           = local.web_console_admin_password
+  instance_type                        = var.hub_instance_type
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = false
   ami_name_tag                         = var.hub_ami_name
@@ -102,6 +106,8 @@ module "agentless_gw_group_primary" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
   subnet_id                           = var.subnet_gw
+  security_group_id                   = var.security_group_id_gw
+  instance_type                       = var.gw_instance_type
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
@@ -130,6 +136,8 @@ module "agentless_gw_group_secondary" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
   subnet_id                           = var.subnet_gw_secondary
+  security_group_id                   = var.security_group_id_gw
+  instance_type                       = var.gw_instance_type
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
