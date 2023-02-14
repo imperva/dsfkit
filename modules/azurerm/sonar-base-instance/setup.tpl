@@ -1,5 +1,4 @@
 #!/bin/bash -x
-
 set -e
 set -u
 set -x
@@ -36,7 +35,7 @@ function install_deps() {
     usermod -g sonar sonargd
 }
 
-# make this more robust
+# tbd: make this more robust
 function resize_root_disk() {
     # this should run once
     echo "Resizing root fs"
@@ -54,7 +53,7 @@ function resize_root_disk() {
 
 # Formatting and mounting the external ebs device
 function attach_disk() {
-    # Find device name ebs external device
+    ## Find device name ebs external device
     number_of_expected_disks=1
     lsblk
     DEVICES=$(lsblk --noheadings -o NAME,TYPE | grep disk | awk '{print $1}' | grep "^[a-zA-Z]")
@@ -170,22 +169,24 @@ function set_environment_vars() {
 
 function install_ssh_keys() {
     echo Installing SSH keys
-    if [ "${resource_type}" == "hub" ]; then
-        mkdir -p /home/sonarw/.ssh/
+    mkdir -p /home/sonarw/.ssh/
+    touch /home/sonarw/.ssh/authorized_keys
 
-        az keyvault secret show --vault-name ${sonarw_secret_vault} --name ${sonarw_secret_name} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
-        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
-        chown -R sonarw:sonar /home/sonarw/.ssh
-        chmod -R 600 /home/sonarw/.ssh
-        chmod 700 /home/sonarw/.ssh
-    else
-        mkdir -p /home/sonarw/.ssh
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-        chown -R sonarw:sonar /home/sonarw
+    # install the generated primary node public and private keys in the primary node and the secondary node
+    az keyvault secret show --vault-name ${primary_node_sonarw_private_key_vault} --name ${primary_node_sonarw_private_key_secret} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
+    echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+
+    # enable communication between a pair of primary and secondary nodes
+    grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+
+    # enable communication between the the primary/secondary hub and the GW
+    if [ "${resource_type}" == "gw" ]; then
+        grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
     fi
+
+    chown -R sonarw:sonar /home/sonarw/.ssh
+    chmod -R 600 /home/sonarw/.ssh
+    chmod 700 /home/sonarw/.ssh
 }
 
 wait_for_network
@@ -207,3 +208,4 @@ fi
 
 set_environment_vars
 install_ssh_keys
+

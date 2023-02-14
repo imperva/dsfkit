@@ -55,6 +55,8 @@ function attach_disk() {
         echo "No external device is found"
         exit 1
     fi
+    
+    echo "$DEVICE is the external disk"
 
     lsblk -no FSTYPE /dev/$DEVICE
     FS=$(lsblk -no FSTYPE /dev/$DEVICE)

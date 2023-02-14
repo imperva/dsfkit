@@ -95,10 +95,28 @@ variable "binaries_location" {
   nullable    = false
 }
 
-variable "hub_federation_public_key" {
+variable "hadr_secondary_node" {
+  type        = bool
+  default     = false
+  description = "Is this node a HADR secondary one"
+}
+
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output"
+  description = "Public key of the sonarw user taken from the primary Hub output"
   nullable    = false
+}
+
+variable "sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
+}
+
+variable "sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
 }
 
 variable "web_console_admin_password" {

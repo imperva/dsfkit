@@ -1,11 +1,3 @@
-# data "aws_subnet" "subnet" {
-#   id = var.subnet_id
-# }
-
-# data "aws_vpc" "selected" {
-#   id = data.aws_subnet.selected_subnet.vpc_id
-# }
-
 locals {
   cidr_blocks   = concat(var.sg_ingress_cidr, var.create_and_attach_public_elastic_ip ? try(["${data.azurerm_public_ip.example[0].ip_address}/32"], []) : [])
   ingress_ports = [22, 8080, 8443, 3030, 27117]

@@ -22,12 +22,12 @@ output "sg_id" {
 #   value = local.role_arn
 # }
 
-output "federation_public_key" {
-  value = local.dsf_hub_ssh_public_federation_key
+output "sonarw_public_key" {
+  value = module.hub_instance.sonarw_public_key
 }
 
-output "federation_private_key" {
-  value = local.dsf_hub_ssh_private_federation_key
+output "sonarw_private_key" {
+  value = module.hub_instance.sonarw_private_key
 }
 
 output "jsonar_uid" {

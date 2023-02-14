@@ -1,5 +1,20 @@
+#################################
+# Generating ssh federation keys
+#################################
+
+resource "tls_private_key" "sonarw_private_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+locals {
+  primary_node_sonarw_public_key  = !var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.sonarw_public_key
+  primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.sonarw_private_key
+}
+
 data "azurerm_client_config" "current" {}
 
+# tbd: rename all example resources
 resource "azurerm_key_vault" "example" {
   # tbd: change this discussting hash. The problem is that the vault name must be up to ~24 chars
   name = "a${substr(md5(join("-", [var.name, "vault"])), 0, 10)}"
@@ -53,7 +68,7 @@ resource "azurerm_key_vault_access_policy" "example2" {
 
 resource "azurerm_key_vault_secret" "dsf_hub_federation_private_key" {
   name         = join("-", [var.name, "sonarw", "private", "key"])
-  value        = chomp(var.hub_federation_private_key)
+  value        = chomp(local.primary_node_sonarw_private_key)
   key_vault_id = azurerm_key_vault.example.id
   content_type = "sonarw ssh private key"
   # tbd: try to avoid this dependency

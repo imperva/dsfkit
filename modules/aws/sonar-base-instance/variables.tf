@@ -4,7 +4,7 @@ variable "name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the ec2 instance"
+  description = "Subnet id for the DSF base compute instance"
 }
 
 variable "security_group_id" {
@@ -72,7 +72,7 @@ variable "resource_type" {
   type = string
   validation {
     condition     = contains(["hub", "gw"], var.resource_type)
-    error_message = "Allowed values for DSF node type: \"hub\", \"gw\""
+    error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
   }
   nullable = false
 }
