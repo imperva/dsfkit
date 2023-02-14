@@ -111,13 +111,31 @@ variable "binaries_location" {
   nullable    = false
 }
 
+variable "hadr_secondary_node" {
+  type        = bool
+  default     = false
+  description = "Is this node a HADR secondary one"
+}
+
+variable "sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
+variable "sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
+  default     = null
+}
+
 variable "proxy_info" {
   type = object({
     proxy_address      = string
     proxy_ssh_key_path = string
     proxy_ssh_user     = string
   })
-  description = "Proxy address used for ssh to the sonar instance, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
   default = {
     proxy_address      = null
     proxy_ssh_key_path = null
@@ -125,32 +143,12 @@ variable "proxy_info" {
   }
 }
 
-variable "hub_federation_public_key" {
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "SSH public key for sonarw user"
-  nullable    = false
-}
-
-variable "hub_federation_private_key" {
-  type        = string
-  description = "SSH private key for sonarw user"
-  default     = "" # tbd: this might need to be a mandatory var
-}
-
-variable "sonarw_secret" {
-  type = object({
-    vault  = string
-    secret = string
-  })
-  description = "Secret details for sonarw ssh key"
-  default = {
-    # tbd: should we just pass null?
-    vault  = "",
-    secret = ""
-  }
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
+  default     = null
 }
 
 variable "skip_instance_health_verification" {
   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
-  default     = false
 }

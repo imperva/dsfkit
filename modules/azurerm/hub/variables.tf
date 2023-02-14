@@ -93,18 +93,18 @@ variable "binaries_location" {
 variable "hadr_secondary_node" {
   type        = bool
   default     = false
-  description = "Is this node a hadr secondary one"
+  description = "Is this a secondary HADR node"
 }
 
-variable "hadr_main_hub_federation_public_key" {
+variable "sonarw_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
   default     = null
 }
 
-variable "hadr_main_hub_federation_private_key" {
+variable "sonarw_private_key" {
   type        = string
-  description = "Private key of sonarw taken from the main hub output. This var must be defined for hadr seconday node"
+  description = "Private key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub."
   default     = null
 }
 
