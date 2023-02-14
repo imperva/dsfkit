@@ -4,9 +4,6 @@ on:
   workflow_dispatch: {}
   schedule:
     - cron: '0 2 * * *'
-  push:
-    branches:
-      - 'split_nightly'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -23,7 +20,7 @@ permissions:
 
 jobs:
   dev_nightly:
-    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@split_nightly
+    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@dev
     with:
       branch: dev
       workspace: simple_cli_dev_nightly
@@ -33,7 +30,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_nightly:
-    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@split_nightly
+    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@master
     with:
       branch: master
       workspace: simple_cli_master_nightly
