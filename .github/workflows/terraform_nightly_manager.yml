@@ -1,0 +1,53 @@
+name: 'Cli (simple) Nightly'
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 2 * * *'
+  push:
+    branches:
+      - 'split_nightly'
+
+env:
+  TF_WARN_OUTPUT_ERRORS: 1
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+  TF_VAR_gw_count: 2
+  EXAMPLE_DIR: ./examples/poc/basic_deployment
+  AWS_REGION: eu-west-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+permissions:
+  contents: read
+
+jobs:
+  dev_nightly:
+    uses: ./.github/workflows/terraform_simple_cli_nightly.yml@dev
+    with:
+      branch: dev
+      workspace: simple_cli_dev_nightly
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  master_nightly:
+      uses: ./.github/workflows/terraform_simple_cli_nightly.yml@master
+      with:
+        branch: master
+        workspace: simple_cli_master_nightly
+      secrets:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#    steps:
+#      # Send job failure to Slack
+#      - name: Send Slack by action-slack
+#        uses: 8398a7/action-slack@v3
+#        with:
+#          status: ${{ job.status }}
+#          fields: author,action,eventName,ref,workflow,pullRequest
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#        if: ${{ failure() }}
