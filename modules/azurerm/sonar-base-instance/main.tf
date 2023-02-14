@@ -45,7 +45,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   source_image_reference {
     publisher = "RedHat"
     offer     = "RHEL"
-    sku       = "8_7" # "7_9"
+    sku       = "8_7"
     version   = "latest"
   }
 

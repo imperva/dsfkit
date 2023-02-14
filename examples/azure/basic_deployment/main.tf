@@ -16,13 +16,7 @@ module "globals" {
 
 locals {
   workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-}
-
-locals {
   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
-}
-
-locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   # database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
@@ -40,6 +34,7 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
+# create key
 resource "tls_private_key" "ssh_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -50,6 +45,7 @@ resource "local_sensitive_file" "ssh_key" {
   content  = tls_private_key.ssh_key.private_key_openssh
 }
 
+# network
 module "network" {
   source              = "Azure/network/azurerm"
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
@@ -81,6 +77,7 @@ module "hub" {
   web_console_admin_password = local.web_console_admin_password
   storage_details            = var.hub_managed_disk_details
 
+# tbd: change the "elastic" terminology
   create_and_attach_public_elastic_ip = true
 
   ssh_key = {
@@ -114,7 +111,7 @@ module "agentless_gw_group" {
   storage_details                     = var.hub_managed_disk_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_federation_public_key           = module.hub.federation_public_key
+  hub_sonarw_public_key            = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   # create_and_attach_public_elastic_ip = true
   ssh_key = {

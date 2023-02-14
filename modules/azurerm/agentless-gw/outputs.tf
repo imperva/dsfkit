@@ -18,6 +18,14 @@ output "private_ip" {
 #   value = local.role_arn
 # }
 
+output "sonarw_public_key" {
+  value = module.gw_instance.sonarw_public_key
+}
+
+output "sonarw_private_key" {
+  value = module.gw_instance.sonarw_private_key
+}
+
 output "jsonar_uid" {
   value = module.gw_instance.jsonar_uid
 }

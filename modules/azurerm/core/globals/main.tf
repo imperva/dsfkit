@@ -32,10 +32,6 @@ data "azuread_user" "current" {
   object_id = data.azurerm_client_config.current.object_id
 }
 
-# data "aws_region" "current" {}
-
-# data "aws_availability_zones" "available" { state = "available" }
-
 resource "time_static" "current_time" {}
 
 resource "random_password" "pass" {
