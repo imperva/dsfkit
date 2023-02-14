@@ -6,14 +6,6 @@ output "private_ip" {
   value = module.hub_instance.private_ip
 }
 
-# output "public_dns" {
-#   value = module.hub_instance.public_dns
-# }
-
-# output "private_dns" {
-#   value = module.hub_instance.private_dns
-# }
-
 output "sg_id" {
   value = module.hub_instance.sg_id
 }

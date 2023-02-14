@@ -1,5 +1,5 @@
 locals {
-  cidr_blocks   = concat(var.sg_ingress_cidr, var.create_and_attach_public_elastic_ip ? try(["${data.azurerm_public_ip.example[0].ip_address}/32"], []) : [])
+  cidr_blocks   = concat(var.sg_ingress_cidr, var.create_and_attach_public_elastic_ip ? try(["${data.azurerm_public_ip.vm_public_ip[0].ip_address}/32"], []) : [])
   ingress_ports = [22, 8080, 8443, 3030, 27117]
 
   ingress_cidrs_map = { for cidr in local.cidr_blocks : cidr => cidr }
