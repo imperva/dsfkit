@@ -1,4 +1,4 @@
-name: 'Cli (simple) Nightly'
+name: 'Nightly Manager'
 
 on:
   workflow_dispatch: {}
