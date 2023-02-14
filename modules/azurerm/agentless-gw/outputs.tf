@@ -6,13 +6,6 @@ output "private_ip" {
   value = module.gw_instance.private_ip
 }
 
-# output "public_dns" {
-#   value = module.gw_instance.public_dns
-# }
-
-# output "private_dns" {
-#   value = module.gw_instance.private_dns
-# }
 
 # output "iam_role" {
 #   value = local.role_arn

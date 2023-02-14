@@ -191,7 +191,6 @@ function install_ssh_keys() {
 
 wait_for_network
 install_deps
-
 resize_root_disk
 attach_disk
 

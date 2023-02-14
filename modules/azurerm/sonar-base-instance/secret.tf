@@ -1,5 +1,5 @@
 #################################
-# Generating ssh federation keys
+# Generating a key pair for remote Agentless Gateway federation, HADR, etc.
 #################################
 
 resource "tls_private_key" "sonarw_private_key" {
@@ -14,8 +14,7 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
-# tbd: rename all example resources
-resource "azurerm_key_vault" "example" {
+resource "azurerm_key_vault" "vault" {
   # tbd: change this discussting hash. The problem is that the vault name must be up to ~24 chars
   name = "a${substr(md5(join("-", [var.name, "vault"])), 0, 10)}"
   # name                       = join("-", [var.friendly_name, "vault"])
@@ -25,16 +24,14 @@ resource "azurerm_key_vault" "example" {
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   soft_delete_retention_days = 7
   purge_protection_enabled   = false
-  # public_network_access_enabled = false
-  sku_name = "standard"
+  sku_name                   = "standard"
 
 }
 
-resource "azurerm_key_vault_access_policy" "example1" {
-  key_vault_id = azurerm_key_vault.example.id
+resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {
+  key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
-  # tbd: move to key (not secret). and make sure we only keep the relevant permissions
   secret_permissions = [
     "Backup",
     "Delete",
@@ -47,10 +44,8 @@ resource "azurerm_key_vault_access_policy" "example1" {
   ]
 }
 
-# tbd: rename all "example" resourcs
-# tbd: reduce this secret permissions
-resource "azurerm_key_vault_access_policy" "example2" {
-  key_vault_id = azurerm_key_vault.example.id
+resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
+  key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 
@@ -66,15 +61,12 @@ resource "azurerm_key_vault_access_policy" "example2" {
   ]
 }
 
-resource "azurerm_key_vault_secret" "dsf_hub_federation_private_key" {
+resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
   name         = join("-", [var.name, "sonarw", "private", "key"])
   value        = chomp(local.primary_node_sonarw_private_key)
-  key_vault_id = azurerm_key_vault.example.id
+  key_vault_id = azurerm_key_vault.vault.id
   content_type = "sonarw ssh private key"
-  # tbd: try to avoid this dependency
   depends_on = [
-    azurerm_key_vault_access_policy.example1
+    azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
 }
-
-# tbd: move to key instead of secret

@@ -14,17 +14,13 @@ output "random_password" {
   value = resource.random_password.pass.result
 }
 
+output "current_user_object_id" {
+  value = data.azurerm_client_config.current.object_id
+}
+
 output "current_user_name" {
   value = data.azuread_user.current.mail_nickname
 }
-
-# output "availability_zones" {
-#   value = sort(data.aws_availability_zones.available.names)
-# }
-
-# output "region" {
-#   value = data.aws_region.current.name
-# }
 
 output "tags" {
   value = {
