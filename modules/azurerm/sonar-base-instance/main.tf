@@ -22,6 +22,8 @@ locals {
   # vm user
   vm_default_user = "adminuser"
   vm_user         = var.vm_user != null ? var.vm_user : local.vm_default_user
+
+  security_group_id = var.security_group_id != null ? var.security_group_id : azurerm_network_security_group.dsf_base_sg[0].id
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
@@ -44,7 +46,7 @@ data "azurerm_public_ip" "vm_public_ip" {
 
 resource "azurerm_network_interface_security_group_association" "nic_ip_association" {
   network_interface_id      = azurerm_network_interface.nic.id
-  network_security_group_id = azurerm_network_security_group.dsf_base_sg.id
+  network_security_group_id = local.security_group_id
 }
 
 resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
