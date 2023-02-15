@@ -25,6 +25,7 @@ locals {
     public_fqdn                            = var.use_public_ip ? "True" : ""
     uuid                                   = random_uuid.uuid.result
     additional_install_parameters          = var.additional_install_parameters
+    firewall_ports                         = "${join(" ", local.ingress_ports)} ${local.local_port_start}-${local.local_port_end}"
   })
 }
 
