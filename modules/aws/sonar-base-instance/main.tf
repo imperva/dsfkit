@@ -10,7 +10,7 @@ locals {
   ami_user_default = "ec2-user"
   ami_user         = var.ami_user != null ? var.ami_user : local.ami_user_default
 
-  security_group_id = length(aws_security_group.dsf_base_sg) > 0 ? element(aws_security_group.dsf_base_sg.*.id, 0) : var.security_group_id
+  security_group_id = var.security_group_id != null ? var.security_group_id : aws_security_group.dsf_base_sg[0].id
 }
 
 resource "aws_eip" "dsf_instance_eip" {

@@ -10,7 +10,7 @@ output "private_ip" {
 
 output "sg_id" {
   description = "Security group for DSF base instance"
-  value       = azurerm_network_security_group.dsf_base_sg.id
+  value       = local.security_group_id
 }
 
 output "sonarw_public_key" {
