@@ -116,7 +116,9 @@ function set_instance_fqdn() {
         exit 1
     fi
     if [ -n "${public_fqdn}" ]; then
-        instance_fqdn=$(curl ifconfig.me)
+        rg=$(cloud-init query -a | jq -r .ds.meta_data.imds.compute.resourceGroupName)
+        vm=$(cloud-init query -a | jq -r .ds.meta_data.imds.compute.name)
+        instance_fqdn=$(az vm show -d --name $vm --resource-group $rg --query publicIps --output tsv)
         if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
             echo "Failed to extract instance public FQDN"
             exit 1
@@ -189,8 +191,13 @@ function install_ssh_keys() {
     chmod 700 /home/sonarw/.ssh
 }
 
+function disable_firewall() {
+    systemctl stop firewalld || true
+}
+
 wait_for_network
 install_deps
+disable_firewall
 resize_root_disk
 attach_disk
 
@@ -207,4 +214,3 @@ fi
 
 set_environment_vars
 install_ssh_keys
-
