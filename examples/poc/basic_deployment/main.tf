@@ -51,7 +51,7 @@ module "vpc" {
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
-  azs             = slice(module.globals.availability_zones.available.names, 0, 2)
+  azs             = slice(module.globals.availability_zones, 0, 2)
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
 }
