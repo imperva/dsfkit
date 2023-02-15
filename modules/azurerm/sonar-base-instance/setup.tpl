@@ -191,13 +191,16 @@ function install_ssh_keys() {
     chmod 700 /home/sonarw/.ssh
 }
 
-function disable_firewall() {
-    systemctl stop firewalld || true
+function firewall_open_ports() {
+    for port in ${firewall_ports}; do
+        firewall-offline-cmd --add-port=$port/tcp
+    done
+    systemctl restart firewalld
 }
 
 wait_for_network
 install_deps
-disable_firewall
+firewall_open_ports || true
 resize_root_disk
 attach_disk
 

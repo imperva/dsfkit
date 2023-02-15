@@ -11,6 +11,8 @@ locals {
   cidr_blocks                 = var.sg_ingress_cidr
   ingress_ports               = [22, 8080, 8443, 3030, 27117]
   ingress_ports_map           = { for port in local.ingress_ports : port => port }
+  local_port_start            = 10800
+  local_port_end              = 10899
 }
 
 resource "aws_security_group" "dsf_base_sg" {
@@ -56,8 +58,8 @@ resource "aws_security_group_rule" "sg_self" {
 resource "aws_security_group_rule" "sonarrsyslog_self" {
   count             = local.create_security_group_count
   type              = "ingress"
-  from_port         = 10800
-  to_port           = 10899
+  from_port         = local.local_port_start
+  to_port           = local.local_port_end
   protocol          = "tcp"
   self              = true
   security_group_id = aws_security_group.dsf_base_sg[0].id
