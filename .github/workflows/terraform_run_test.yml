@@ -55,7 +55,10 @@ jobs:
       id: step3
       if: always()
 #      if: ${{ steps.step2.conclusion == 'success' }}
-      run: echo "step 2 status is ${{ steps.step2.conclusion }}"
+      run: | 
+        echo "step 2 conclusion is ${{ steps.step2.conclusion }}"
+        echo "step 2 outcome is ${{ steps.step2.outcome }}"
+        echo "step 2 is ${{ steps.step2 }}"
 
 
 #    - name: Checkout
