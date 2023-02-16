@@ -158,7 +158,7 @@
             ],
             "Resource": [
                 "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002",
-                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002/*"
+                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002/UsageData/*"
             ],
             "Condition": {
                 "StringEquals": {
