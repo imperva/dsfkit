@@ -50,14 +50,14 @@ jobs:
     - name: Step 2
       if: always()
       id: step2
-      run: echo "step 2"
+      run: echo "step 1 conclusion is ${{ steps.step1.conclusion }}"
     - name: Step 3
       id: step3
 #      if: always()
-      if: ${{ steps.step1.conclusion == 'failure' }}
+      if: steps.step1.conclusion == 'failure'
       run: | 
         echo "step 2 conclusion is ${{ steps.step2.conclusion }}"
-        echo "step 2 outcome is ${{ steps.step2.outcome }}"
+        echo "step 1 conclusion is ${{ steps.step1.conclusion }}"
         echo "step 2 is ${{ steps.step2 }}"
 
 
