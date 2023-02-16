@@ -53,7 +53,8 @@ jobs:
       run: echo "step 2"
     - name: Step 3
       id: step3
-      if: ${{ steps.step2.conclusion == 'success' }}
+      if: always()
+#      if: ${{ steps.step2.conclusion == 'success' }}
       run: echo "step 2 status is ${{ steps.step2.conclusion }}"
 
 
