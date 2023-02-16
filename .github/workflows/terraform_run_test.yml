@@ -54,7 +54,7 @@ jobs:
     - name: Step 3
       id: step3
 #      if: always()
-      if: steps.step1.conclusion == 'failure'
+      if: steps.step1.conclusion == failure
       run: | 
         echo "step 2 conclusion is ${{ steps.step2.conclusion }}"
         echo "step 1 conclusion is ${{ steps.step1.conclusion }}"
