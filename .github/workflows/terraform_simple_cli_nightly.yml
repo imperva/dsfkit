@@ -8,7 +8,10 @@ on:
         type: string
       workspace:
         required: true
-        type: string
+        type: choice
+        options:
+          - simple_cli_dev_nightly
+          - simple_cli_master_nightly
 
   workflow_call:
     inputs:
