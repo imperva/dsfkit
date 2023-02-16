@@ -192,41 +192,6 @@ resource aws_security_group_rule "primary_gw_sg_secondary_cidr_ingress" {
   security_group_id = local.primary_gw_sg_and_secondary_gw_ip_combinations[count.index][0]
 }
 
-locals {
-  hub_primary_gw_combinations = setproduct(
-    [module.hub, module.hub_secondary],
-    concat(
-      [for idx, val in module.agentless_gw_group_primary : val]
-    )
-  )
-}
-
-module "primary_gws_federation" {
-  count                     = length(local.hub_primary_gw_combinations)
-  source                    = "imperva/dsf-federation/null"
-  version                   = "1.3.6" # latest release tag
-  gw_info = {
-    gw_ip_address           = local.hub_primary_gw_combinations[count.index][1].private_ip
-    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    gw_ssh_user             = local.hub_primary_gw_combinations[count.index][1].ssh_user
-  }
-  hub_info = {
-    hub_ip_address           = local.hub_primary_gw_combinations[count.index][0].public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = local.hub_primary_gw_combinations[count.index][0].ssh_user
-  }
-  gw_proxy_info = {
-    proxy_address              = module.hub.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    proxy_ssh_user             = module.hub.ssh_user
-  }
-  depends_on = [
-    module.hub,
-    module.hub_secondary,
-    module.agentless_gw_group_primary
-  ]
-}
-
 module "hub_hadr" {
   source                       = "imperva/dsf-hadr/null"
   version                      = "1.3.6" # latest release tag
@@ -237,7 +202,6 @@ module "hub_hadr" {
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   ssh_user                     = module.hub.ssh_user
   depends_on = [
-    module.primary_gws_federation,
     module.hub,
     module.hub_secondary
   ]
@@ -259,35 +223,35 @@ module "agentless_gw_group_hadr" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
-    module.primary_gws_federation,
     module.agentless_gw_group_primary,
     module.agentless_gw_group_secondary,
-    module.hub_hadr
+    aws_security_group_rule.primary_gw_sg_secondary_cidr_ingress
   ]
 }
 
 locals {
-  hub_secondary_gw_combinations = setproduct(
+  hub_gw_combinations = setproduct(
     [module.hub, module.hub_secondary],
     concat(
+      [for idx, val in module.agentless_gw_group_primary : val],
       [for idx, val in module.agentless_gw_group_secondary : val]
     )
   )
 }
 
-module "secondary_gws_federation" {
-  count                     = length(local.hub_secondary_gw_combinations)
+module "federation" {
+  count                     = length(local.hub_gw_combinations)
   source                    = "imperva/dsf-federation/null"
   version                   = "1.3.6" # latest release tag
   gw_info = {
-    gw_ip_address           = local.hub_secondary_gw_combinations[count.index][1].private_ip
+    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    gw_ssh_user             = local.hub_secondary_gw_combinations[count.index][1].ssh_user
+    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   hub_info = {
-    hub_ip_address           = local.hub_secondary_gw_combinations[count.index][0].public_ip
+    hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = local.hub_secondary_gw_combinations[count.index][0].ssh_user
+    hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub.public_ip
@@ -295,6 +259,7 @@ module "secondary_gws_federation" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
+    module.hub_hadr,
     module.agentless_gw_group_hadr
   ]
 }
@@ -344,8 +309,7 @@ module "db_onboarding" {
     db_name       = try(each.value.db_name, null)
   }
   depends_on = [
-    module.primary_gws_federation,
-    module.secondary_gws_federation,
+    module.federation,
     module.hub_hadr,
     module.agentless_gw_group_hadr, # TODO do we need this?
     module.rds_mysql,
