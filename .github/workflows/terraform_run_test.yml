@@ -48,6 +48,7 @@ jobs:
       id: step1
       run: exit 1
     - name: Step 2
+      if: always()
       id: step2
       run: echo "step 2"
     - name: Step 3
