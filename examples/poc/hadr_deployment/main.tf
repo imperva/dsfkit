@@ -224,7 +224,8 @@ module "agentless_gw_group_hadr" {
   }
   depends_on = [
     module.agentless_gw_group_primary,
-    module.agentless_gw_group_secondary
+    module.agentless_gw_group_secondary,
+    aws_security_group_rule.primary_gw_sg_secondary_cidr_ingress
   ]
 }
 
