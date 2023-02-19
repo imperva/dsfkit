@@ -26,6 +26,11 @@ resource "azurerm_key_vault" "vault" {
   purge_protection_enabled   = false
   sku_name                   = "standard"
 
+  timeouts {
+    create = "20m"
+    update = "20m"
+    delete = "20m"
+  }
 }
 
 resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {

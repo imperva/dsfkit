@@ -38,7 +38,7 @@ function install_deps() {
 function format_unformatted_disk() {
     LUN=$1
     echo "Checking if disk with lun $LUN needs formatting"
-    DEV=$(disk_from_lun $LUN)
+    disk=$(disk_from_lun $LUN)
     lsblk -no FSTYPE /dev/$disk
     FS=$(lsblk -no FSTYPE /dev/$disk)
     if [ "$FS" != "xfs" ]; then
