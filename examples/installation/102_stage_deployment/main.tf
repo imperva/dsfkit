@@ -39,7 +39,8 @@ locals {
 ##############################
 
 module "hub" {
-  source                              = "../../../modules/aws/hub"
+  source                              = "imperva/dsf-hub/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                           = var.subnet_hub
   binaries_location                   = local.tarball_location
@@ -61,7 +62,8 @@ module "hub" {
 
 module "agentless_gw_group" {
   count                               = var.gw_count
-  source                              = "../../../modules/aws/agentless-gw"
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   instance_type                       = var.gw_instance_type
   ami_name_tag                        = var.gw_ami_name
@@ -91,7 +93,8 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  source   = "../../../modules/null/federation"
+  source   = "imperva/dsf-federation/null"
+  version  = "1.3.6" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = var.private_key_pem_file_path
