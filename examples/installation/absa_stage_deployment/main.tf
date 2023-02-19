@@ -69,7 +69,7 @@ module "agentless_gw_group" {
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key               = module.hub.sonarw_public_key
+  hub_federation_public_key           = module.hub.federation_public_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = var.private_key_pem_file_path
