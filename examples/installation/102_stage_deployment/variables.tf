@@ -5,22 +5,22 @@ variable "deployment_name" {
 
 variable "aws_profile_hub" {
   type        = string
-  description = "Aws profile name for the DSF hub account"
+  description = "AWS profile name for the DSF hub account"
 }
 
 variable "aws_region_hub" {
   type        = string
-  description = "Aws region for the DSF hub (e.g us-east-2)"
+  description = "AWS region for the DSF hub (e.g us-east-2)"
 }
 
 variable "aws_profile_gw" {
   type        = string
-  description = "Aws profile name for the DSF agentless gw account"
+  description = "AWS profile name for the DSF agentless gw account"
 }
 
 variable "aws_region_gw" {
   type        = string
-  description = "Aws region for the DSF agentless gw (e.g us-east-1)"
+  description = "AWS region for the DSF agentless gw (e.g us-east-1)"
 }
 
 variable "sonar_version" {
