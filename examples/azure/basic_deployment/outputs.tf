@@ -34,10 +34,6 @@ output "dsf_hub_web_console" {
   }
 }
 
-output "deployment_name" {
-  value = local.deployment_name_salted
-}
-
 output "dsf_private_ssh_key" {
   sensitive = true
   value     = try(tls_private_key.ssh_key.private_key_openssh, null)
