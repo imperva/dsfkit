@@ -1,5 +1,4 @@
 provider "azurerm" {
-  # tbd: verify how a customer would pass on his creds to this provider https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
@@ -16,13 +15,11 @@ module "globals" {
 
 locals {
   workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-  deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   # database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location = module.globals.tarball_location
-  # tbd: add tags to all resources
-  tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  tags = merge(module.globals.tags, { "deployment_name" = var.deployment_name })
   resource_group = {
     location = azurerm_resource_group.rg.location
     name     = azurerm_resource_group.rg.name
@@ -48,7 +45,7 @@ resource "local_sensitive_file" "ssh_key" {
 # network
 module "network" {
   source              = "Azure/network/azurerm"
-  vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
+  vnet_name           = "${var.deployment_name}-${module.globals.current_user_name}"
   resource_group_name = azurerm_resource_group.rg.name
   address_spaces      = [var.network_ip_range]
   subnet_prefixes     = var.private_subnets
@@ -69,14 +66,13 @@ module "hub" {
   source = "../../../modules/azurerm/hub"
   # version                             = "1.3.5" # latest release tag
 
-  friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name              = join("-", [var.deployment_name, "hub", "primary"])
   resource_group             = local.resource_group
   subnet_id                  = module.network.vnet_subnets[0]
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   storage_details            = var.hub_managed_disk_details
 
-  # tbd: change the "elastic" terminology
   create_and_attach_public_elastic_ip = true
 
   ssh_key = {
@@ -104,7 +100,7 @@ module "agentless_gw_group" {
   source = "../../../modules/azurerm/agentless-gw"
   # version                             = "1.3.5" # latest release tag
 
-  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
+  friendly_name                       = join("-", [var.deployment_name, "gw", count.index])
   resource_group                      = local.resource_group
   subnet_id                           = module.network.vnet_subnets[0]
   storage_details                     = var.hub_managed_disk_details
