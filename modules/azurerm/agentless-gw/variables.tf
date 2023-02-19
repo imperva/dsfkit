@@ -127,7 +127,7 @@ variable "web_console_admin_password" {
   description = "Admin password"
   validation {
     condition     = length(var.web_console_admin_password) > 8
-    error_message = "Admin password must be at least 8 characters" # tbd explain why we have here admin console
+    error_message = "Admin password must be at least 8 characters"
   }
   nullable = false
 }

@@ -89,7 +89,7 @@ data "azurerm_subscription" "primary" {
 
 resource "azurerm_role_assignment" "dsf_base_role_assignment" {
   scope                = data.azurerm_subscription.primary.id
-  role_definition_name = "Owner" # tbd: set minimal role
+  role_definition_name = "Owner"
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 

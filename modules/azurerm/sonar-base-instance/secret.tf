@@ -15,9 +15,7 @@ locals {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "vault" {
-  # tbd: change this discussting hash. The problem is that the vault name must be up to ~24 chars
-  name = "a${substr(md5(join("-", [var.name, "vault"])), 0, 10)}"
-  # name                       = join("-", [var.friendly_name, "vault"])
+  name                       = var.name
   location                   = var.resource_group.location
   resource_group_name        = var.resource_group.name
   enabled_for_deployment     = true
@@ -26,10 +24,8 @@ resource "azurerm_key_vault" "vault" {
   purge_protection_enabled   = false
   sku_name                   = "standard"
 
-  timeouts {
-    create = "20m"
-    update = "20m"
-    delete = "20m"
+  tags = {
+    "name" = join("-", [var.name, "vault"])
   }
 }
 
