@@ -64,7 +64,6 @@ module "network" {
 ##############################
 # Generating deployment
 ##############################
-# tbd: consider changing to vent
 module "hub" {
   # count  = 0
   source = "../../../modules/azurerm/hub"
