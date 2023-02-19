@@ -58,6 +58,7 @@ resource "aws_volume_attachment" "ebs_att" {
   stop_instance_before_detaching = true
 }
 
+# use the ebs id in the userdata identify this volume https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html?icmpid=docs_ec2_console & https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/nvme-ebs-volumes.html
 resource "aws_ebs_volume" "ebs_external_data_vol" {
   size              = local.ebs_state_disk_size
   type              = local.ebs_state_disk_type

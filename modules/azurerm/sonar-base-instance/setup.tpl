@@ -35,77 +35,74 @@ function install_deps() {
     usermod -g sonar sonargd
 }
 
-# tbd: make this more robust
-function resize_root_disk() {
-    # this should run once
-    echo "Resizing root fs"
-    mount_device=$(findmnt --noheadings --output SOURCE /)
-    device_mapper=$(realpath $mount_device)
-    major_minor=$(dmsetup table $device_mapper  | awk '{print $4}')
-    child_block_device=$(basename $(realpath /sys/dev/block/$major_minor))
-    device=$(echo $child_block_device | grep -o [a-z]*)
-    child_device_id=$(echo $child_block_device | grep -o [0-9]*)
-    growpart /dev/$device $child_device_id
-    pvresize /dev/$child_block_device
-    vgdisplay
-    lvresize -r -L +75G $mount_device
+function format_unformatted_disk() {
+    LUN=$1
+    echo "Checking if disk with lun $LUN needs formatting"
+    DEV=$(disk_from_lun $LUN)
+    lsblk -no FSTYPE /dev/$disk
+    FS=$(lsblk -no FSTYPE /dev/$disk)
+    if [ "$FS" != "xfs" ]; then
+        echo "/dev/$disk fs is \"$FS\". Formatting it..."
+        ## Formatting the device
+        mkfs -t xfs /dev/$disk
+    fi
 }
 
-# Formatting and mounting the external ebs device
-function attach_disk() {
+function format_unformatted_disks() {
     ## Find device name ebs external device
-    number_of_expected_disks=1
+    number_of_expected_disks=$(($1 + 1))
     lsblk
-    DEVICES=$(lsblk --noheadings -o NAME,TYPE | grep disk | awk '{print $1}' | grep "^[a-zA-Z]")
-    while [ "$(wc -w <<< $DEVICES)" -lt "$number_of_expected_disks" ]; do
-        DEVICES=$(lsblk --noheadings -o NAME | grep "^[a-zA-Z]")
+    DISKS=$(lsblk --noheadings -o NAME,TYPE,FSTYPE | grep 'disk' | awk '{print $1}' | grep "^[a-zA-Z]")
+    while [ "$(wc -w <<< $DISKS)" -lt "$number_of_expected_disks" ]; do
+        DISKS=$(lsblk --noheadings -o NAME,TYPE,FSTYPE | grep 'disk' | awk '{print $1}' | grep "^[a-zA-Z]")
         echo "Waiting for all external disk attachments"
         sleep 10
     done
 
-    for d in $DEVICES; do
-        if [ "$(lsblk --noheadings -o NAME| grep $d | wc -l)" -eq 1 ]; then
-            DEVICE=$d;
-            break;
-        fi;
-    done
+    format_unformatted_disk 10
+    format_unformatted_disk 11
+}
 
-    if [ -z "$DEVICE" ]; then
-        echo "No external device is found"
+function disk_from_lun() {
+    LUN=$1
+    DEV=$(lsblk -S | grep ":$LUN *disk" | awk '{print $1}')
+    if [ -z "$DEV" ]; then
+        echo "No device with lun=$LUN is found"
         exit 1
     fi
-    
-    echo "$DEVICE is the external disk"
+    echo $DEV
+}
 
-    lsblk -no FSTYPE /dev/$DEVICE
-    FS=$(lsblk -no FSTYPE /dev/$DEVICE)
-    if [ "$FS" != "xfs" ]; then
-        echo "/dev/$DEVICE fs is \"$FS\". Formatting it..."
-        ## Formatting the device
-        mkfs -t xfs /dev/$DEVICE
-    fi
-    
-    ## Mounting the device
-    STATE_DIR=/data_vol/sonar-dsf/jsonar
-    mkdir -p $STATE_DIR
-    DEV_UUID=$(blkid /dev/$DEVICE | cut -d ' ' -f2 | awk '{print $1}')
+function mount_disk() {
+    MOUNT_POINT=$1
+    LUN=$2
+    echo "Trying to mount disk with lun $LUN to $MOUNT_POINT"
+    mkdir -p $MOUNT_POINT
+    DEV=$(disk_from_lun $LUN)
+    DEV_UUID=$(blkid /dev/$DEV | cut -d ' ' -f2 | awk '{print $1}')
+    echo "$DEV uuid is $DEV_UUID"
     if ! grep $DEV_UUID /etc/fstab &>/dev/null; then
-        echo "$DEV_UUID $STATE_DIR xfs defaults 0 0" >> /etc/fstab
+        echo "$DEV_UUID $MOUNT_POINT xfs defaults 0 0" >> /etc/fstab
     fi
+}
+
+function mount_disks() {
+    mount_disk /opt/sonar-dsf/ 10
+    mount_disk /data_vol/sonar-dsf/jsonar 11
     mount -a
 }
 
 function install_tarball() {
     echo Downloading tarball..
     # Download intallation tarball
-    TARBALL_FILE=$(basename ${az_blob})
-    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --file ./$TARBALL_FILE --name ${az_blob} >/dev/null
+    TARBALL_FILE=$DIR/$(basename ${az_blob})
+    mkdir -p $DIR
+    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --file $TARBALL_FILE --name ${az_blob} >/dev/null
 
     echo Installing tarball..
     # Installing tarball
-    sudo mkdir -p $DIR
-    sudo tar -xf ./$TARBALL_FILE -gz -C $DIR
-    rm ./$TARBALL_FILE
+    sudo tar -xf $TARBALL_FILE -gz -C $DIR
+    rm $TARBALL_FILE
     sudo chown -R sonarw:sonar $DIR
 }
 
@@ -201,8 +198,8 @@ function firewall_open_ports() {
 wait_for_network
 install_deps
 firewall_open_ports || true
-resize_root_disk
-attach_disk
+format_unformatted_disks 2
+mount_disks
 
 STATE_DIR=/data_vol/sonar-dsf/jsonar
 LAST_INSTALLATION_SOURCE=$STATE_DIR/last_install_source.txt

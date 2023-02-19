@@ -19,20 +19,12 @@ variable "friendly_name" {
 variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF agentless gw instance"
-  # validation {
-  #   condition     = length(var.subnet_id) >= 15 && regex("/subnets/", var.subnet_id)
-  #   error_message = "Subnet id is invalid. Must contain '/subnets/'"
-  # }
 }
 
 variable "security_group_id" {
   type        = string
   default     = null
   description = "Security group id for the Agentless GW instance. In case it is not set, a security group will be created automatically."
-  validation {
-    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
-    error_message = "Security group id is invalid. Must be sg-********"
-  }
 }
 
 variable "public_ip" {
