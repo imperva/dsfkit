@@ -3,9 +3,39 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
+variable "aws_profile_hub" {
+  type        = string
+  description = "Aws profile name for the DSF hub account"
+}
+
+variable "aws_region_hub" {
+  type        = string
+  description = "Aws region for the DSF hub (e.g us-east-2)"
+}
+
+variable "aws_profile_gw" {
+  type        = string
+  description = "Aws profile name for the DSF agentless gw account"
+}
+
+variable "aws_region_gw" {
+  type        = string
+  description = "Aws region for the DSF agentless gw (e.g us-east-1)"
+}
+
 variable "sonar_version" {
   type    = string
   default = "4.10"
+}
+
+variable "subnet_hub" {
+  type        = string
+  description = "Aws subnet id for the primary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+}
+
+variable "subnet_gw" {
+  type        = string
+  description = "Aws subnet id for the primary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "gw_count" {
@@ -31,39 +61,10 @@ variable "web_console_cidr" {
   description = "CIDR blocks allowing DSF hub web console access"
 }
 
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
-}
-
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
   description = "CIDR blocks allowing hub ssh and debugging access"
-}
-
-variable "additional_install_parameters" {
-  default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
-}
-
-variable "vpc_ip_range" {
-  type        = string
-  default     = "10.0.0.0/16"
-  description = "VPC cidr range"
-}
-
-variable "private_subnets" {
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "VPC private subnet cidr range"
-}
-
-variable "public_subnets" {
-  type        = list(string)
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet cidr range"
 }
 
 variable "hub_ebs_details" {
@@ -94,14 +95,36 @@ variable "gw_group_ebs_details" {
   }
 }
 
-variable "db_types_to_onboard" {
-  type        = list(string)
-  default     = ["RDS MySQL"]
-  description = "DB types to onboard, available types are - 'RDS MySQL', 'RDS MsSQL' with data"
-  validation {
-    condition = alltrue([
-      for db_type in var.db_types_to_onboard : contains(["RDS MySQL", "RDS MsSQL"], db_type)
-    ])
-    error_message = "Valid values should contain at least one of the following: 'RDS MySQL', 'RDS MsSQL'."
-  }
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF Hub"
+}
+
+variable "gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the Agentless gateway"
+}
+
+variable "hub_ami_name" {
+  type        = string
+  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+  description = "Ec2 AMI name for the DSF hub"
+}
+
+variable "gw_ami_name" {
+  type        = string
+  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+  description = "Ec2 AMI name for the Agentless gateway"
+}
+
+variable "private_key_pem_file_path" {
+  type = string
+  description = "Private key file path used to ssh to the Hub and Gateway EC2s."
+}
+
+variable "public_key_name" {
+  type = string
+  description = "Public key name used to ssh to the Hub and Gateway EC2s."
 }
