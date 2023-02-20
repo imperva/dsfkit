@@ -55,7 +55,10 @@ jobs:
       id: step3
       if: always()
       run: | 
-        if [ '${{ steps.step2.conclusion }}' = 'success' ]; then; echo "step 2 is ok"; fi
+        if [ '${{ steps.step2.conclusion }}' = 'success' ]
+        then 
+        echo "step 2 is ok"
+        fi
         echo "step 2 conclusion is ${{ steps.step2.conclusion }}"
         echo "step 1 conclusion is ${{ steps.step1.conclusion }}"
 
