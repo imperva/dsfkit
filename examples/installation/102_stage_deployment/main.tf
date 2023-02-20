@@ -16,7 +16,8 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "../../../modules/aws/core/globals"
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.3.6" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -58,6 +59,9 @@ module "hub" {
     full_access_cidr_list                   = local.workstation_cidr
     use_public_ip                           = false
   }
+  depends_on = [
+    module.hub
+  ]
 }
 
 module "agentless_gw_group" {
