@@ -22,16 +22,58 @@
                 "ec2:DescribeImages",
                 "ec2:AllocateAddress",
                 "ec2:AssociateAddress",
-                "ec2:CreateNetworkInterface",
-                "ec2:DeleteKeyPair",
-                "ec2:DeleteNetworkInterface",
                 "ec2:DetachNetworkInterface",
                 "ec2:DisassociateAddress",
-                "ec2:ModifyInstanceAttribute",
                 "ec2:ReleaseAddress",
                 "ec2:CreateSecurityGroup"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "ec2DeleteResources",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DeleteKeyPair",
+                "ec2:DeleteNetworkInterface"
+            ],
+            "Resource": [
+                "*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "ec2ModifyResources",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:ModifyInstanceAttribute"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:instance/*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "ec2CreateNetworkInterface",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateNetworkInterface"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:subnet/*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
         },
         {
             "Sid": "ec2CreateTagsPermissions",
