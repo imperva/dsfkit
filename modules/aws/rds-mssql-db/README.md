@@ -5,7 +5,7 @@ This Terraform module provisions an RDS MsSQL, configure audit on it using s3 bu
 It should be used for poc / pov / lab purposes.
 
 ## Requirements
-* Terraform v1.3.1
+* Terraform v0.13 and up
 * An AWS account
 * Permissions to create RDS MsSQL, S3 bucket (for configuring the audit), and lambda (for generating data on the DB and running queried on it). Required permissions can be found [here](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
 

@@ -4,4 +4,6 @@
 ## Sonar versions
   - 4.10 (recommended)
   - 4.9
-  
+
+## Requirements
+* Terraform v0.13 and up

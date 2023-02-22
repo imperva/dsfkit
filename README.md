@@ -192,7 +192,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
    <td>1.3.5
    </td>
-   <td>1. Enable creating RDS MsSQL with synthetic data for POC purposes. <br>2. Fix manual and automatic installer machine deployments. 
+   <td>1. Enabled creating RDS MsSQL with synthetic data for POC purposes. <br>2. Fixed manual and automatic installer machine deployments. 
    </td>
   </tr>
   <tr>

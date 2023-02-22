@@ -8,7 +8,7 @@ This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instan
   - 4.9
 
 ## Requirements
-* Terraform v1.3.1
+* Terraform v1.3.1 and up
 * An AWS account
 * SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)

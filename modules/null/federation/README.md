@@ -1,7 +1,7 @@
-# HADR
+# Federation
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a High Availability and Disaster Recovery support on top of an DSF Hub or agentless gateway deployment.
+This Terraform module provisions a registration of an agentless gateway to an DSF Hub.
 
 ## Sonar versions
 - 4.10 (recommended)
