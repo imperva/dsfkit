@@ -8,7 +8,10 @@ on:
         type: string
       workspace:
         required: true
-        type: string
+        type: choice
+        options:
+          - simple_cli_dev_nightly
+          - simple_cli_master_nightly
 
   workflow_call:
     inputs:
@@ -87,8 +90,6 @@ jobs:
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init

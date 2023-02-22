@@ -178,8 +178,12 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Terraform Delete Workspace
-      if: steps.destroy.outcome == 'success'
-      run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+      if: always()
+      run: |
+        if [ '${{ steps.destroy.conclusion }}' = 'success' ]
+        then 
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        fi
       env:
         TF_WORKSPACE: default
 
