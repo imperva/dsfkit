@@ -49,7 +49,7 @@ resource "null_resource" "wait_for_installation_completion" {
 
   provisioner "remote-exec" {
     inline = [
-      "if ! sudo timeout 720 cloud-init status --wait | grep done &>/dev/null; then",
+      "if ! sudo timeout 900 cloud-init status --wait | grep done &>/dev/null; then",
       "  cat /var/log/user-data.log;",
       "  echo;",
       "  sudo cloud-init status;",
