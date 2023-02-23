@@ -52,14 +52,25 @@ variable "sg_ingress_cidr" {
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
 }
 
-variable "ami_name_tag" {
-  type = string
-}
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = "Aws machine image filter details. The latest image that answers to this filter is chosen. owner_account_id defaults to the current account. username is the ami default username. Set to null if you wish to use the recommended image."
+  nullable    = true
 
-variable "ami_user" {
-  type        = string
-  default     = null
-  description = "Ami user to use for SSH to the EC2. Keep empty to use the default user."
+  validation {
+    condition     = var.ami == null || try(var.ami.id != null || var.ami.name != null, false)
+    error_message = "ami id or name mustn't be null"
+  }
+
+  validation {
+    condition     = var.ami == null || try(var.ami.username != null, false)
+    error_message = "ami username mustn't be null"
+  }
 }
 
 variable "role_arn" {

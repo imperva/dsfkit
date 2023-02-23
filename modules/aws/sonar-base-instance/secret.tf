@@ -24,8 +24,8 @@ resource "tls_private_key" "sonarw_private_key" {
 locals {
   primary_node_sonarw_public_key  = !var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.sonarw_public_key
   primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.sonarw_private_key
-  secret_aws_arn                     = aws_secretsmanager_secret.sonarw_private_key_secret.arn
-  secret_aws_name                    = aws_secretsmanager_secret.sonarw_private_key_secret.name
+  secret_aws_arn                  = aws_secretsmanager_secret.sonarw_private_key_secret.arn
+  secret_aws_name                 = aws_secretsmanager_secret.sonarw_private_key_secret.name
 }
 
 # generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003

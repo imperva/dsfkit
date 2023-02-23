@@ -11,8 +11,7 @@ module "hub_instance" {
   key_pair                            = var.ssh_key_pair.ssh_public_key_name
   ec2_instance_type                   = var.instance_type
   ebs_details                         = var.ebs
-  ami_name_tag                        = var.ami_name_tag
-  ami_user                            = var.ami_user
+  ami                                 = var.ami
   web_console_cidr                    = var.ingress_communication.additional_web_console_access_cidr_list
   sg_ingress_cidr                     = var.ingress_communication.full_access_cidr_list
   role_arn                            = var.role_arn
