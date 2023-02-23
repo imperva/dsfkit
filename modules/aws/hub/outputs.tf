@@ -20,7 +20,7 @@ output "sg_id" {
 
 output "iam_role" {
   description = "IAM Role ARN of the DSF Hub node"
-  value = module.hub_instance.iam_role
+  value       = module.hub_instance.iam_role
 }
 
 output "sonarw_public_key" {
