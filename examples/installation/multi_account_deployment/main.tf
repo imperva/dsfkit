@@ -22,7 +22,7 @@ module "globals" {
 }
 
 locals {
-  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
 }
 
 locals {
@@ -115,6 +115,9 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder = var.terraform_script_path_folder
+  depends_on = [
+    module.hub
+  ]
   providers = {
     aws = aws.gw
   }

@@ -25,7 +25,7 @@ module "key_pair" {
 data "aws_availability_zones" "available" { state = "available" }
 
 locals {
-  workstation_cidr_24 = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
 }
 
 locals {
@@ -136,7 +136,8 @@ module "agentless_gw_group_primary" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
-    module.vpc
+    module.vpc,
+    module.hub
   ]
 }
 

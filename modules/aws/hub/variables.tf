@@ -64,12 +64,24 @@ variable "create_and_attach_public_elastic_ip" {
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list                   = list(any) #22, 8080, 8443, 3030, 27117
-    additional_web_console_access_cidr_list = list(any) #8443
+    full_access_cidr_list                   = list(any) # will be attached to the following ports - 22, 8080, 8443, 3030, 27117
+    additional_web_console_access_cidr_list = list(any) # will be attached to port 8443
     use_public_ip                           = bool
   })
-  description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
+  description = "List of allowed ingress cidr patterns for the DSF Hub instance for ssh and internal protocols"
   nullable    = false
+  validation {
+    condition = alltrue([
+      for address in var.ingress_communication.full_access_cidr_list : can(cidrnetmask(address))
+    ]) && (length(var.ingress_communication.full_access_cidr_list) > 0)
+    error_message = "Each item of the 'full_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  validation {
+    condition = alltrue([
+      for address in var.ingress_communication.additional_web_console_access_cidr_list : can(cidrnetmask(address))
+    ]) && (length(var.ingress_communication.additional_web_console_access_cidr_list) > 0)
+    error_message = "Each item of the 'additional_web_console_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
 }
 
 variable "binaries_location" {

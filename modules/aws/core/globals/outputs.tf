@@ -3,7 +3,7 @@ output "salt" {
 }
 
 output "my_ip" {
-  value = trimspace(data.http.workstation_public_ip.response_body)
+  value = try(trimspace(data.http.workstation_public_ip.response_body), null)
 }
 
 output "now" {
