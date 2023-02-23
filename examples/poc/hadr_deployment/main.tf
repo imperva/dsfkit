@@ -184,7 +184,8 @@ module "federation" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
-    module.hub_hadr
+    module.hub_hadr,
+    module.agentless_gw_group_primary
   ]
 }
 
