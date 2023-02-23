@@ -59,3 +59,13 @@ variable "proxy_info" {
     proxy_ssh_user             = null
   }
 }
+
+variable "terraform_script_path_folder" {
+  type = string
+  description = "Terraform script path folder to create terraform temporary script files on a private DSF node. Use '.' to represent the instance home directory"
+  default = null
+  validation {
+    condition = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
+}

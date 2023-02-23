@@ -71,6 +71,7 @@ module "hub" {
     use_public_ip                           = false
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
 }
 
 module "hub_secondary" {
@@ -98,6 +99,7 @@ module "hub_secondary" {
     use_public_ip                           = false
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
 }
 
 module "agentless_gw_group" {
@@ -128,6 +130,7 @@ module "agentless_gw_group" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
 }
 
 locals {
@@ -148,6 +151,7 @@ module "hub_hadr" {
   dsf_secondary_private_ip = module.hub_secondary.private_ip
   ssh_key_path             = module.key_pair_hub.key_pair_private_pem.filename
   ssh_user                 = module.hub.ssh_user
+  terraform_script_path_folder = var.terraform_script_path_folder
   depends_on = [
     module.hub,
     module.hub_secondary

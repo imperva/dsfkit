@@ -45,6 +45,8 @@ resource "null_resource" "wait_for_installation_completion" {
     bastion_host        = local.bastion_host
     bastion_private_key = local.bastion_private_key
     bastion_user        = local.bastion_user
+
+    script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   }
 
   provisioner "remote-exec" {
