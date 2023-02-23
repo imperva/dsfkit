@@ -1,17 +1,15 @@
 # Installation Basic Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-A DSF Hub and an Agentless Gateway (formerly Sonar) deployment with HADR.
+A DSF Hub with HADR and an Agentless Gateway (formerly Sonar) deployment.
 
 This deployment consists of:
 
-1. One DSF primary Hub
-2. One DSF secondary Hub
-3. One primary Agentless Gateway
-4. One secondary Agentless Gateway
+1. One primary DSF Hub
+2. One secondary DSF Hub
+3. One Agentless Gateway
+4. DSF Hub HADR setup
 5. Federation
-6. DSF Hub HADR setup
-7. Agentless Gateway HADR setup
 
 This example is intended for PS/customers who want to bring their own networking.
 It is mandatory to provide as input to this example the subnets to deploy the DSF Hub and the Agentless Gateway.
@@ -23,7 +21,7 @@ In the current example setting AWS profile, AWS region and the subnets of the DS
 This example contains variables with default values. In order to customize the variables, you can use the following:
 * Run terraform with variables in a command line. For example, in order to run terraform with a specific EC2 AMI version for the Agentless gateway, run the following:
   ```bash
-  terraform apply -auto-approve -var 'aws_profile="myProfile", aws_region="us-east-1", subnet_hub="subnet-xxxxxxxxxxxxxxxx1", subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2", subnet_gw="subnet-xxxxxxxxxxxxxxxx3", subnet_gw_secondary="subnet-xxxxxxxxxxxxxxxx4", gw_ami_name="RHEL-7.9_HVM-20221027-x86_64-0-Hourly2-GP2"'
+  terraform apply -auto-approve -var 'aws_profile="myProfile", aws_region="us-east-1", subnet_hub="subnet-xxxxxxxxxxxxxxxx1", subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2", subnet_gw="subnet-xxxxxxxxxxxxxxxx3", gw_ami_name="RHEL-7.9_HVM-20221027-x86_64-0-Hourly2-GP2"'
    ```
 * In case there are a lot of variables to change, it might be convenient to run terraform using a file named 'terraform.tfvars' which should contain all the mandatory and customized variables. Using 'terraform.tfvars' file replace the need to use 'var' parameter in terraform apply command. The file should be located under the same example's directory.<br/><br/> 
 Example for 'terraform.tfvars' file with skipping SSH verification check for the DSF Hub and the Agentless gateway:<br/> 
@@ -32,7 +30,6 @@ aws_region="us-east-1"<br/>
 subnet_hub="subnet-xxxxxxxxxxxxxxxx1"<br/>
 subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2"<br/>
 subnet_gw="subnet-xxxxxxxxxxxxxxxx3"<br/>
-subnet_gw_secondary="subnet-xxxxxxxxxxxxxxxx4"<br/>
 hub_skip_instance_health_verification=true<br/>
 gw_skip_instance_health_verification=true<br/><br/>
 

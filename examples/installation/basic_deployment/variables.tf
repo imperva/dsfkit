@@ -33,11 +33,6 @@ variable "subnet_gw" {
   description = "Aws subnet id for the primary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "subnet_gw_secondary" {
-  type        = string
-  description = "Aws subnet id for the secondary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
-}
-
 variable "security_group_id_hub" {
   type        = string
   default     = null

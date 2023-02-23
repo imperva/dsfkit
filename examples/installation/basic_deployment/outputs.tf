@@ -1,21 +1,13 @@
 output "dsf_agentless_gw_group" {
   value = {
-  for idx, val in module.agentless_gw_group_primary : "gw-${idx}" => {
+  for idx, val in module.agentless_gw_group : "gw-${idx}" => {
     primary = {
-      private_ip   = try(module.agentless_gw_group_primary[idx].private_ip, null)
-      private_dns  = try(module.agentless_gw_group_primary[idx].private_dns, null)
-      jsonar_uid   = try(module.agentless_gw_group_primary[idx].jsonar_uid, null)
-      display_name = try(module.agentless_gw_group_primary[idx].display_name, null)
-      role_arn     = try(module.agentless_gw_group_primary[idx].iam_role, null)
-      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair_hub.key_pair_private_pem.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.private_ip}' -i ${module.key_pair_gw.key_pair_private_pem.filename} ${module.agentless_gw_group_primary[idx].ssh_user}@${module.agentless_gw_group_primary[idx].private_ip}", null)
-    }
-    secondary = {
-      private_ip   = try(module.agentless_gw_group_secondary[idx].private_ip, null)
-      private_dns  = try(module.agentless_gw_group_secondary[idx].private_dns, null)
-      jsonar_uid   = try(module.agentless_gw_group_secondary[idx].jsonar_uid, null)
-      display_name = try(module.agentless_gw_group_secondary[idx].display_name, null)
-      role_arn     = try(module.agentless_gw_group_secondary[idx].iam_role, null)
-      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair_hub.key_pair_private_pem.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.private_ip}' -i ${module.key_pair_gw.key_pair_private_pem.filename} ${module.agentless_gw_group_secondary[idx].ssh_user}@${module.agentless_gw_group_secondary[idx].private_ip}", null)
+      private_ip   = try(module.agentless_gw_group[idx].private_ip, null)
+      private_dns  = try(module.agentless_gw_group[idx].private_dns, null)
+      jsonar_uid   = try(module.agentless_gw_group[idx].jsonar_uid, null)
+      display_name = try(module.agentless_gw_group[idx].display_name, null)
+      role_arn     = try(module.agentless_gw_group[idx].iam_role, null)
+      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair_hub.key_pair_private_pem.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.private_ip}' -i ${module.key_pair_gw.key_pair_private_pem.filename} ${module.agentless_gw_group[idx].ssh_user}@${module.agentless_gw_group[idx].private_ip}", null)
     }
   }
   }
