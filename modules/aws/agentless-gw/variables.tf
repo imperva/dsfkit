@@ -96,12 +96,6 @@ variable "binaries_location" {
   nullable    = false
 }
 
-variable "hadr_secondary_node" {
-  type        = bool
-  default     = false
-  description = "Is this node a HADR secondary one"
-}
-
 variable "hub_sonarw_public_key" {
   type        = string
   description = "Public key of the sonarw user taken from the primary Hub output"

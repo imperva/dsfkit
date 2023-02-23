@@ -1,24 +1,24 @@
 variable "dsf_primary_ip" {
   type        = string
-  description = "IP of the primary Hub or Gateway, can be public or private"
+  description = "IP of the primary Hub, can be public or private"
   nullable    = false
 }
 
 variable "dsf_primary_private_ip" {
   type        = string
-  description = "Private IP of the primary Hub or Gateway"
+  description = "Private IP of the primary Hub"
   nullable    = false
 }
 
 variable "dsf_secondary_ip" {
   type        = string
-  description = "IP of the secondary Hub or Gateway, can be public or private"
+  description = "IP of the secondary Hub, can be public or private"
   nullable    = false
 }
 
 variable "dsf_secondary_private_ip" {
   type        = string
-  description = "Private IP of the secondary Hub or Gateway"
+  description = "Private IP of the secondary Hub"
   nullable    = false
 }
 
