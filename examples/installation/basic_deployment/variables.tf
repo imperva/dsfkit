@@ -135,3 +135,13 @@ variable "gw_skip_instance_health_verification" {
   default     = false
   description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
+
+variable "terraform_script_path_folder" {
+  type = string
+  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  default = null
+  validation {
+    condition = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
+}

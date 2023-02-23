@@ -83,6 +83,7 @@ module "hub" {
     use_public_ip                           = false
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
 }
 
 module "agentless_gw_group" {
@@ -113,6 +114,7 @@ module "agentless_gw_group" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
   providers = {
     aws = aws.gw
   }

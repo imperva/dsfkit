@@ -30,4 +30,5 @@ module "hub_instance" {
     proxy_ssh_user     = var.ingress_communication_via_proxy.proxy_ssh_user
   }
   skip_instance_health_verification = var.skip_instance_health_verification
+  terraform_script_path_folder = var.terraform_script_path_folder
 }

@@ -9,6 +9,7 @@ locals {
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
+  script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                          = var.resource_type
     installation_s3_bucket                 = var.binaries_location.s3_bucket
@@ -45,6 +46,8 @@ resource "null_resource" "wait_for_installation_completion" {
     bastion_host        = local.bastion_host
     bastion_private_key = local.bastion_private_key
     bastion_user        = local.bastion_user
+
+    script_path = local.script_path
   }
 
   provisioner "remote-exec" {
