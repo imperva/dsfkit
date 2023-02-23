@@ -48,4 +48,10 @@ variable "rds_subnet_ids" {
 variable "security_group_ingress_cidrs" {
   type        = list(string)
   description = "List of allowed ingress cidr ranges for access to the RDS cluster"
+  validation {
+    condition = alltrue([
+      for address in var.security_group_ingress_cidrs : can(cidrnetmask(address))
+    ]) && (length(var.security_group_ingress_cidrs) > 0)
+    error_message = "Each item of the 'security_group_ingress_cidrs' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
 }
