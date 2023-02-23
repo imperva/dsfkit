@@ -3,6 +3,7 @@ locals {
   ssh_key_path_secondary = var.ssh_key_path_secondary != null ? var.ssh_key_path_secondary : var.ssh_key_path
   primary_ssh_user       = var.ssh_user
   secondary_ssh_user     = var.ssh_user_secondary != null ? var.ssh_user_secondary : var.ssh_user
+  script_path            = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
 }
 
 #################################
@@ -21,7 +22,7 @@ resource "null_resource" "exec_hadr_primary" {
     bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
     bastion_user        = var.proxy_info.proxy_ssh_user
 
-    script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+    script_path = local.script_path
   }
 
   provisioner "remote-exec" {
@@ -42,7 +43,7 @@ resource "null_resource" "exec_hadr_secondary" {
     bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
     bastion_user        = var.proxy_info.proxy_ssh_user
 
-    script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+    script_path = local.script_path
   }
 
   provisioner "remote-exec" {
@@ -74,7 +75,7 @@ resource "null_resource" "hadr_verify" {
     bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
     bastion_user        = var.proxy_info.proxy_ssh_user
 
-    script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+    script_path = local.script_path
   }
 
   provisioner "remote-exec" {
