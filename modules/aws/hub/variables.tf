@@ -87,6 +87,7 @@ variable "ingress_communication" {
 variable "binaries_location" {
   type = object({
     s3_bucket = string
+    s3_region = string
     s3_key    = string
   })
   description = "S3 DSF installation location"

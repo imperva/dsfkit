@@ -32,7 +32,7 @@ locals {
 locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tarball_location           = module.globals.tarball_location
+  tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
