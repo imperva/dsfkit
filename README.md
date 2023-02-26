@@ -184,7 +184,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
    <td>1.3.4
    </td>
-   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported hub/gw on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation. <br>5. Added the module's version to the examples.
+   <td>1. Refactored directory structure. <br>2. Released to terraform registry. <br>3. Supported DSF Hub / Agentless Gateway on RedHat 7 ami. <br>4. Restricted permissions for Sonar installation. <br>5. Added the module's version to the examples.
    </td>
   </tr>
   <tr>
@@ -200,7 +200,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
    <td>1.3.6
    </td>
-   <td>Supported SSH proxy for hub/gw in modules: hub, agentless-gw, federation, poc-db-onboarder.
+   <td>Supported SSH proxy for DSF Hub / Agentless Gateway in modules: hub, agentless-gw, federation, poc-db-onboarder.
    </td>
   </tr>
 
@@ -505,7 +505,7 @@ Complete these steps to manually create an installer machine:
     5. ${region}: AWS region where you want to deploy DSF.
     6. ${web_console_cidr}: A list of CIDR blocks each surrounded by "" and separated by commas, which will allow DSF Hub web access once it is deployed. E.g., using ["0.0.0.0/0"] makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
-7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.). 
+7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (DSF Hub, Agentless Gateway's, etc.). 
 
 8. Run SSH to installer machine from your computer or another computer which has access to the installer machine:
     ```bash
@@ -580,7 +580,7 @@ Complete the following instructions to automate the creation of an installer mac
     terraform apply -auto-approve
     ```
    You will be prompted to input the AWS access key, AWS secret key and AWS region variables.
-   At this stage, the Installer Machine is initializing and will automatically create all necessary resources (Hub, GWs, etc.).
+   At this stage, the Installer Machine is initializing and will automatically create all necessary resources (DSF Hub, Agentless Gateway, etc.).
 
    This should take a few minutes.
 
@@ -643,7 +643,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a Hub, a GW, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a Hub, a Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
       </td>
@@ -653,7 +653,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a Hub HADR, a GW, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a Hub HADR, a Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
       </td>
@@ -663,7 +663,7 @@ For more details about each example, click on the example name.
       </td>
       <td>PS/Customer
       </td>
-      <td>A DSF deployment with a Hub and a GW in different AWS accounts and federation. 
+      <td>A DSF deployment with a Hub and a Gateway in different AWS accounts and federation. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
       </td>

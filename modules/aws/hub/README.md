@@ -31,7 +31,7 @@ The following input variables are **required**:
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
-* `ingress_communication`: List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols
+* `ingress_communication`: List of allowed ingress cidr patterns for the DSF Agentless Gateway instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the secondary Hub.
