@@ -139,7 +139,7 @@ variable "ami" {
     username         = string
     owner_account_id = string
   })
-  description = "Aws machine image filter details. The latest image that answers to this filter is chosen. owner_account_id defaults to the current account. username is the ami default username. Set to null if you wish to use the recommended image."
+  description = "Aws machine image filter details. Set to null if you wish to use the recommended image. The latest image that answers to this filter is chosen. Set owner_account_id to null to get the current account. username is the ami username (mandatory)."
   default     = null
 
   validation {

@@ -138,16 +138,15 @@ variable "gw_instance_type" {
   description = "Ec2 instance type for the DSF gw"
 }
 
-variable "hub_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the DSF hub"
-}
-
-variable "gw_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the DSF gw"
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = "Aws machine image filter details. Set to null if you wish to use the recommended image. The latest image that answers to this filter is chosen. Set owner_account_id to null to get the current account. username is the ami username (mandatory)."
+  default     = null
 }
 
 variable "hub_skip_instance_health_verification" {
