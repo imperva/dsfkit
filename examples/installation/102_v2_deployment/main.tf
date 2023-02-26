@@ -83,11 +83,6 @@ module "agentless_gw_group" {
     full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
     use_public_ip         = false
   }
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub.private_ip
-    proxy_private_ssh_key_path = var.private_key_pem_file_path
-    proxy_ssh_user             = module.hub.ssh_user
-  }
   terraform_script_path_folder = var.terraform_script_path_folder
   depends_on = [
     module.hub
@@ -107,11 +102,6 @@ module "federation" {
     hub_ip_address           = module.hub.private_ip
     hub_private_ssh_key_path = var.private_key_pem_file_path
     hub_ssh_user             = module.hub.ssh_user
-  }
-  gw_proxy_info = {
-    proxy_address              = module.hub.private_ip
-    proxy_private_ssh_key_path = var.private_key_pem_file_path
-    proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
     module.hub,
