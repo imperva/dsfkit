@@ -3,25 +3,25 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-variable "aws_profile_hub" {
-  type        = string
-  description = "AWS profile name for the DSF hub account"
-}
-
-variable "aws_region_hub" {
-  type        = string
-  description = "AWS region for the DSF hub (e.g us-east-2)"
-}
-
-variable "aws_profile_gw" {
-  type        = string
-  description = "AWS profile name for the DSF agentless gw account"
-}
-
-variable "aws_region_gw" {
-  type        = string
-  description = "AWS region for the DSF agentless gw (e.g us-east-1)"
-}
+#variable "aws_profile_hub" {
+#  type        = string
+#  description = "AWS profile name for the DSF hub account"
+#}
+#
+#variable "aws_region_hub" {
+#  type        = string
+#  description = "AWS region for the DSF hub (e.g us-east-2)"
+#}
+#
+#variable "aws_profile_gw" {
+#  type        = string
+#  description = "AWS profile name for the DSF agentless gw account"
+#}
+#
+#variable "aws_region_gw" {
+#  type        = string
+#  description = "AWS region for the DSF agentless gw (e.g us-east-1)"
+#}
 
 variable "sonar_version" {
   type    = string
@@ -107,16 +107,15 @@ variable "gw_instance_type" {
   description = "Ec2 instance type for the Agentless gateway"
 }
 
-variable "hub_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the DSF hub"
-}
-
-variable "gw_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the Agentless gateway"
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = "Aws machine image filter details. Set to null if you wish to use the recommended image. The latest image that answers to this filter is chosen. Set owner_account_id to null to get the current account. username is the ami username (mandatory)."
+  default     = null
 }
 
 variable "private_key_pem_file_path" {
@@ -127,4 +126,14 @@ variable "private_key_pem_file_path" {
 variable "public_key_name" {
   type = string
   description = "Public key name used to ssh to the Hub and Gateway EC2s."
+}
+
+variable "terraform_script_path_folder" {
+  type = string
+  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  default = null
+  validation {
+    condition = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
 }
