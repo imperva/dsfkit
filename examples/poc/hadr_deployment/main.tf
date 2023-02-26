@@ -242,8 +242,3 @@ module "db_onboarding" {
   ]
 }
 
-module "statistics" {
-  source  = "imperva/dsf-statistics/aws"
-  version = "1.3.6" # latest release tag
-}
-

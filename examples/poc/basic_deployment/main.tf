@@ -191,8 +191,3 @@ module "db_onboarding" {
     module.rds_mssql
   ]
 }
-
-module "statistics" {
-  source  = "imperva/dsf-statistics/aws"
-  version = "1.3.6" # latest release tag
-}
