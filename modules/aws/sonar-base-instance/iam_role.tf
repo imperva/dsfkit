@@ -26,7 +26,8 @@ locals {
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
         "Resource" : [
-          "${local.secret_aws_arn}"
+          "${local.sonarw_secret_aws_arn}",
+          "${local.password_secret_aws_arn}"
         ]
       }
     ]

@@ -15,14 +15,11 @@ locals {
     installation_s3_bucket                 = var.binaries_location.s3_bucket
     installation_s3_key                    = var.binaries_location.s3_key
     display-name                           = local.display_name
-    web_console_admin_password             = var.web_console_admin_password
-    secweb_console_admin_password          = var.web_console_admin_password
-    sonarg_pasword                         = var.web_console_admin_password
-    sonargd_pasword                        = var.web_console_admin_password
+    password_secret                        = aws_secretsmanager_secret.password_secret.name
     ssh_key_path                           = var.ssh_key_path
     hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
-    primary_node_sonarw_private_key_secret = local.secret_aws_name
+    primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
     public_fqdn                            = var.use_public_ip ? "True" : ""
     uuid                                   = random_uuid.uuid.result
     additional_install_parameters          = var.additional_install_parameters

@@ -117,6 +117,8 @@ function setup() {
     VERSION=$(ls /opt/sonar-dsf/jsonar/apps/ -Art | tail -1)
     echo Setup sonar $VERSION
 
+    password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
+
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
     else
@@ -127,10 +129,10 @@ function setup() {
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
         --product "$PRODUCT" \
-        --newadmin-pass="${web_console_admin_password}" \
-        --secadmin-pass="${web_console_admin_password}" \
-        --sonarg-pass="${web_console_admin_password}" \
-        --sonargd-pass="${web_console_admin_password}" \
+        --newadmin-pass="$password" \
+        --secadmin-pass="$password" \
+        --sonarg-pass="$password" \
+        --sonargd-pass="$password" \
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
