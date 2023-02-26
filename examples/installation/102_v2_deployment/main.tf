@@ -1,19 +1,19 @@
-provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-  profile = var.aws_profile_hub
-  region  = var.aws_region_hub
-}
+# provider "aws" {
+#   default_tags {
+#     tags = local.tags
+#   }
+#   profile = var.aws_profile_hub
+#   region  = var.aws_region_hub
+# }
 
-provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-  profile = var.aws_profile_gw
-  region  = var.aws_region_gw
-  alias   = "gw"
-}
+# provider "aws" {
+#   default_tags {
+#     tags = local.tags
+#   }
+#   profile = var.aws_profile_gw
+#   region  = var.aws_region_gw
+#   alias   = "gw"
+# }
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
@@ -59,9 +59,6 @@ module "hub" {
     full_access_cidr_list                   = local.workstation_cidr
     use_public_ip                           = false
   }
-  depends_on = [
-    module.hub
-  ]
 }
 
 module "agentless_gw_group" {
@@ -90,9 +87,9 @@ module "agentless_gw_group" {
     proxy_private_ssh_key_path = var.private_key_pem_file_path
     proxy_ssh_user             = module.hub.ssh_user
   }
-  providers = {
-    aws = aws.gw
-  }
+  depends_on = [
+    module.hub
+  ]
 }
 
 module "federation" {
