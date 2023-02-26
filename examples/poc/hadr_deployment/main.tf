@@ -151,8 +151,7 @@ module "hub_hadr" {
   ssh_key_path                 = module.key_pair.key_pair_private_pem.filename
   ssh_user                     = module.hub.ssh_user
   depends_on = [
-    module.hub,
-    module.hub_secondary
+    module.federation
   ]
 }
 
@@ -185,7 +184,8 @@ module "federation" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
-    module.hub_hadr,
+    module.hub,
+    module.hub_secondary,
     module.agentless_gw_group_primary
   ]
 }
