@@ -72,7 +72,7 @@ module "hub" {
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
   instance_type                       = var.hub_instance_type
-  ami_name_tag                        = var.hub_ami_name
+  ami = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair_hub.key_pair.key_pair_name
@@ -92,7 +92,7 @@ module "agentless_gw_group" {
   version                             = "1.3.6" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   instance_type                       = var.gw_instance_type
-  ami_name_tag                        = var.gw_ami_name
+  ami = var.ami
   subnet_id                           = var.subnet_gw
   security_group_id                   = var.security_group_id_gw
   ebs                                 = var.gw_group_ebs_details

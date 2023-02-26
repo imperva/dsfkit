@@ -21,7 +21,7 @@ In the current example setting AWS profile, AWS region and the subnets of the DS
 This example contains variables with default values. In order to customize the variables, you can use the following:
 * Run terraform with variables in a command line. For example, in order to run terraform with a specific EC2 AMI version for the Agentless gateway, run the following:
   ```bash
-  terraform apply -auto-approve -var 'aws_profile="myProfile"' -var 'aws_region="us-east-1"' -var 'subnet_hub="subnet-xxxxxxxxxxxxxxxx1"' -var 'subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2"' -var 'subnet_gw="subnet-xxxxxxxxxxxxxxxx3"' -var 'gw_ami_name="RHEL-7.9_HVM-20221027-x86_64-0-Hourly2-GP2"'
+  terraform apply -auto-approve -var 'aws_profile="myProfile"' -var 'aws_region="us-east-1"' -var 'subnet_hub="subnet-xxxxxxxxxxxxxxxx1"' -var 'subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2"' -var 'subnet_gw="subnet-xxxxxxxxxxxxxxxx3"'
    ```
 * In case there are a lot of variables to change, it might be convenient to run terraform using a file named 'terraform.tfvars' which should contain all the mandatory and customized variables. Using 'terraform.tfvars' file replace the need to use 'var' parameter in terraform apply command. The file should be located under the same example's directory.<br/><br/> 
 Example for 'terraform.tfvars' file with skipping SSH verification check for the DSF Hub and the Agentless gateway:<br/> 

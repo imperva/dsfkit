@@ -60,7 +60,7 @@ module "hub" {
   instance_type                       = var.hub_instance_type
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
-  ami_name_tag                        = var.hub_ami_name
+  ami = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair_hub.key_pair.key_pair_name
@@ -85,7 +85,7 @@ module "hub_secondary" {
   instance_type                        = var.hub_instance_type
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = false
-  ami_name_tag                         = var.hub_ami_name
+  ami = var.ami
   hadr_secondary_node                  = true
   sonarw_public_key                    = module.hub.sonarw_public_key
   sonarw_private_key                   = module.hub.sonarw_private_key
@@ -115,7 +115,7 @@ module "agentless_gw_group" {
   web_console_admin_password          = local.web_console_admin_password
   hub_sonarw_public_key               = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
-  ami_name_tag                        = var.gw_ami_name
+  ami = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair_gw.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair_gw.key_pair.key_pair_name
