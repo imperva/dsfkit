@@ -237,8 +237,6 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
    [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).  
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Only if you chose the [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode), it is required that you have access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
-   Click [here](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform) to request access to Imperva's Terraform Cloud account.
 
 
 **NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
@@ -352,8 +350,11 @@ This deployment mode uses the Terraform Cloud service, which allows deploying an
 
 This deployment mode can be used to demonstrate DSF in a customer's Terraform Cloud account or the Imperva Terraform Cloud account, which is accessible for internal use (SEs, QA, Research, etc.), and can be used to deploy/undeploy POC environments on AWS accounts owned by Imperva.
 
+ It is required that you have access to a Terraform Cloud account. Any account may be used, whether the account is owned by Imperva or the customer. [Click here to request access to Imperva's Terraform Cloud account](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform).
+
 If you want to use Imperva's Terraform Cloud account, the first thing to do is to request access here:
-[Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform)
+[Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform).
+**Our internal Terraform Cloud account can only be used for demo purposes and not for customer deployments**.
 
 **NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 

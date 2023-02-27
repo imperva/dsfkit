@@ -19,4 +19,4 @@ Note that in case of supplying the security group id of the DSF Hub and the Agen
 4. Enable the federation
 5. Run again the deployment 
 
-For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](https://github.com/imperva/dsfkit/tree/1.3.6/examples/installation/multi_account_deployment/variables.tf) file.
+For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](./variables.tf) file.

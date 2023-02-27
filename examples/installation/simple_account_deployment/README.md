@@ -37,4 +37,4 @@ gw_skip_instance_health_verification=true<br/><br/>
   ```bash
   terraform apply -auto-approve
    ```
-For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](https://github.com/imperva/dsfkit/tree/1.3.6/examples/installation/simple_account_deployment/variables.tf) file.
+For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](./variables.tf) file.
