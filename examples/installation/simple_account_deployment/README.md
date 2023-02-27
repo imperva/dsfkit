@@ -8,8 +8,8 @@ This deployment consists of:
 1. One primary DSF Hub
 2. One secondary DSF Hub
 3. One Agentless Gateway
-4. DSF Hub HADR setup
-5. Federation
+4. Federation
+5. DSF Hub HADR setup
 
 This example is intended for PS/customers who want to bring their own networking.
 It is mandatory to provide as input to this example the subnets to deploy the DSF Hub and the Agentless Gateway.
