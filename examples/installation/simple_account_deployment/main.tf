@@ -145,22 +145,6 @@ locals {
   )
 }
 
-module "hub_hadr" {
-  source                   = "imperva/dsf-hadr/null"
-  version                  = "1.3.6" # latest release tag
-  dsf_primary_ip           = module.hub.private_ip
-  dsf_primary_private_ip   = module.hub.private_ip
-  dsf_secondary_ip         = module.hub_secondary.private_ip
-  dsf_secondary_private_ip = module.hub_secondary.private_ip
-  ssh_key_path             = module.key_pair_hub.key_pair_private_pem.filename
-  ssh_user                 = module.hub.ssh_user
-  terraform_script_path_folder = var.terraform_script_path_folder
-  depends_on = [
-    module.hub,
-    module.hub_secondary
-  ]
-}
-
 module "federation" {
   count   = length(local.hub_gw_combinations)
   source                    = "imperva/dsf-federation/null"
@@ -181,8 +165,23 @@ module "federation" {
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
-    module.hub_hadr,
+    module.hub,
+    module.hub_secondary,
     module.agentless_gw_group
   ]
 }
 
+module "hub_hadr" {
+  source                   = "imperva/dsf-hadr/null"
+  version                  = "1.3.6" # latest release tag
+  dsf_primary_ip           = module.hub.private_ip
+  dsf_primary_private_ip   = module.hub.private_ip
+  dsf_secondary_ip         = module.hub_secondary.private_ip
+  dsf_secondary_private_ip = module.hub_secondary.private_ip
+  ssh_key_path             = module.key_pair_hub.key_pair_private_pem.filename
+  ssh_user                 = module.hub.ssh_user
+  terraform_script_path_folder = var.terraform_script_path_folder
+  depends_on = [
+    module.federation
+  ]
+}
