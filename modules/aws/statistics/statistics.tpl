@@ -15,7 +15,7 @@ then
 {"date": "$now", "path": "$example_path", "ip": "${ip}", "account_id": "${account_id}", "user_id": "${user_id}", "whoami": "$me", "user_arn": "${user_arn}", "terraform_workspace": "${terraform_workspace}"}
 EOT
 
-  aws s3 cp $file_name s3://${statistics_bucket_path}/$day_partition/$file_name
+  aws s3 cp $file_name s3://${statistics_bucket_path}/$day_partition/$file_name --region ${statistics_bucket_region}
   # file is not deleted from the filesystem if upload to S3 failed
   rm $file_name
 else
