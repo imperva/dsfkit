@@ -8,8 +8,14 @@ variable "sonar_version" {
 }
 
 variable "tarball_s3_bucket" {
-  type        = string
-  default     = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
+  type = object({
+    bucket = string
+    region = string
+  })
+  default = {
+    bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
+    region = "us-east-1"
+  }
   description = "S3 bucket containing the installation tarballs. Use default to get Imperva's bucket"
 }
 

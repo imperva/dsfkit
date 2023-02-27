@@ -25,7 +25,7 @@ locals {
 locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tarball_location           = module.globals.tarball_location
+  tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
@@ -60,7 +60,7 @@ module "hub" {
   instance_type                       = var.hub_instance_type
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
-  ami = var.ami
+  ami                                 = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair_hub.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair_hub.key_pair.key_pair_name
@@ -85,7 +85,7 @@ module "hub_secondary" {
   instance_type                        = var.hub_instance_type
   ebs                                  = var.hub_ebs_details
   create_and_attach_public_elastic_ip  = false
-  ami = var.ami
+  ami                                  = var.ami
   hadr_secondary_node                  = true
   sonarw_public_key                    = module.hub.sonarw_public_key
   sonarw_private_key                   = module.hub.sonarw_private_key

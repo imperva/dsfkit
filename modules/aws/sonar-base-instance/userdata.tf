@@ -13,6 +13,7 @@ locals {
   install_script = templatefile("${path.module}/setup.tpl", {
     resource_type                          = var.resource_type
     installation_s3_bucket                 = var.binaries_location.s3_bucket
+    installation_s3_region                 = var.binaries_location.s3_region
     installation_s3_key                    = var.binaries_location.s3_key
     display-name                           = local.display_name
     password_secret                        = aws_secretsmanager_secret.password_secret.name
@@ -38,7 +39,7 @@ resource "null_resource" "wait_for_installation_completion" {
     private_key = file(var.ssh_key_path)
     host        = local.instance_address
 
-    timeout = "1m"
+    timeout = "5m"
 
     bastion_host        = local.bastion_host
     bastion_private_key = local.bastion_private_key

@@ -18,6 +18,16 @@ variable "sonar_version" {
   default = "4.10"
 }
 
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket DSF installation location"
+  default     = null
+}
+
 variable "subnet_hub" {
   type        = string
   description = "Aws subnet id for the primary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"

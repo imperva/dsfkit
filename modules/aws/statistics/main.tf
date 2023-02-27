@@ -18,12 +18,13 @@ data "aws_caller_identity" "current" {}
 # ################################
 locals {
   statistics_cmds = templatefile("${path.module}/statistics.tpl", {
-    statistics_bucket_path = "04274532-55f0-11ed-bdc3-0242ac120002/UsageData"
-    ip                     = trimspace(data.http.workstation_public_ip.response_body)
-    account_id             = data.aws_caller_identity.current.account_id
-    user_id                = data.aws_caller_identity.current.user_id
-    user_arn               = data.aws_caller_identity.current.arn
-    terraform_workspace    = terraform.workspace
+    statistics_bucket_path   = "04274532-55f0-11ed-bdc3-0242ac120002/UsageData"
+    statistics_bucket_region = "us-east-1"
+    ip                       = trimspace(data.http.workstation_public_ip.response_body)
+    account_id               = data.aws_caller_identity.current.account_id
+    user_id                  = data.aws_caller_identity.current.user_id
+    user_arn                 = data.aws_caller_identity.current.arn
+    terraform_workspace      = terraform.workspace
   })
 }
 
