@@ -32,4 +32,4 @@ The default example contains variables with default values. In order to customiz
 ```bash
 terraform apply -auto-approve -var 'gw_count=2' -var 'vpc_ip_range="10.1.0.0/24"'
 ```
-For a full list of this example's customization options which don't require code changes, refer to the [variables file](./variables.tf). Please pay attention to the value type you are customizing.
+For a full list of this example's customization options which don't require code changes, refer to the [variables file](./variables.tf). Pay attention to the value type you are customizing.

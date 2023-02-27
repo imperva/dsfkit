@@ -1,7 +1,7 @@
-# DSF agentless gateway
+# Agentless Gateway
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instance.
+This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 
 ## Sonar versions
   - 4.10 (recommended)
@@ -14,26 +14,26 @@ This Terraform module provisions a DSF agentless gateway on AWS as an EC2 instan
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
 
 ## Resources Provisioned
-This Terraform module provisions several resources on AWS to create the DSF agentless gateway. These resources include:
-* An EC2 instance for running the DSF agentless gateway software
+This Terraform module provisions several resources on AWS to create the Agentless Gateway. These resources include:
+* An EC2 instance for running the Agentless Gateway software
 * An EBS volume for storage
-* A security group to allow the required network access to and from the DSF agentless gateway instance
+* A security group to allow the required network access to and from the Agentless Gateway instance
 * An IAM role with relevant policies
 * An AWS Elastic Network Interface (ENI)
 
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF agentless gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the Agentless Gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
 
 ## Inputs
 
 The following input variables are **required**:
 
-* `subnet_id`: The ID of the subnet in which to launch the DSF agentless gateway instance
+* `subnet_id`: The ID of the subnet in which to launch the Agentless Gateway instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
-* `ingress_communication`: List of allowed ingress cidr patterns for the DSF Agentless Gateway instance for ssh and internal protocols
+* `ingress_communication`: List of allowed ingress CIDR patterns for the Agentless Gateway instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
-* `hub_sonarw_public_key`: Public key of the sonarw user taken from the primary [Hub](../hub)'s output
+* `hub_sonarw_public_key`: Public key of the sonarw user taken from the primary [DSF Hub](../hub)'s output
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
 * `sonarw_private_key`: Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
 
@@ -107,9 +107,9 @@ module "dsf_gw" {
 ```
 
 ## SSH Access
-SSH access is required to provision this module. To SSH into the DSF agentless gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF agentless gateway instance is not possible, you can use a bastion host as a proxy.
+SSH access is required to provision this module. To SSH into the Agentless Gateway instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the Agentless Gateway instance is not possible, you can use a bastion host as a proxy.
 
 ## Additional Information
 
-For more information about the DSF agentless gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
+For more information about the Agentless Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.3.6).

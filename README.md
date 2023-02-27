@@ -234,7 +234,7 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
 2. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva. 
-   Click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform) to request access to download this file.  
+   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).  
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 5. Only if you chose the [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode), it is required that you have access to a Terraform Cloud account. Any  account may be used, whether the account is owned by Imperva or the customer. 
@@ -246,7 +246,7 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
 ## Choosing the Example/Recipe that Fits Your Use Case
 
 An important thing to understand about the DSF deployment, is that there are many variations on what can be deployed, 
-e.g., the number of Gateways, with or without HADR, the number of VPCs, etc.
+e.g., the number of Agentless Gateways, with or without HADR, the number of VPCs, etc.
 
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
@@ -256,11 +256,13 @@ To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-bo
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
 
-If you need help choosing or customizing an example to fit your use case, please contact [Imperva Technical Support](https://support.imperva.com/s/). 
+Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to suit your needs. 
 
 ## Sonar Binaries Location and Versioning
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example recipe.
+
+The latest version of Sonar, 4.10, is recommended, and Sonar 4.9 and higher are supported.
 
 **For example**: examples/poc/basic_deployment/variables.tf
    ```terraform
@@ -274,13 +276,16 @@ When using DSFKit there is no need to manually download the DSF binaries, DSFKit
 
 Make sure that the Sonar version you are using is supported by all the modules which are part of your deployment.
 To see which Sonar versions are supported by each module, refer to the specific module's README. 
-(For example, [Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
+(For example, [DSF Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
 # Deployment 
 
 After you have [chosen the deployment mode](#choosing-the-deployment-mode), follow the step-by-step instructions below to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 ## CLI Deployment Mode
+
+As mentioned above, the deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
+[Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
 
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
@@ -503,9 +508,9 @@ Complete these steps to manually create an installer machine:
     3. ${access_key}: AWS access key which provides access to the AWS account where you want to deploy DSF. 
     4. ${secret_key}: AWS secret key which provides access to the AWS account where you want to deploy DSF.
     5. ${region}: AWS region where you want to deploy DSF.
-    6. ${web_console_cidr}: A list of CIDR blocks each surrounded by "" and separated by commas, which will allow DSF Hub web access once it is deployed. E.g., using ["0.0.0.0/0"] makes the Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
+    6. ${web_console_cidr}: A list of CIDR blocks each surrounded by "" and separated by commas, which will allow DSF Hub web access once it is deployed. E.g., using ["0.0.0.0/0"] makes the  DSF Hub web console public. It is recommended to specify a more restricted IP and CIDR range.
 
-7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (DSF Hub, Agentless Gateway's, etc.). 
+7. Click on **Launch Instance**. At this stage, the Installer Machine is initializing and will automatically create all necessary resources (DSF Hub, Agentless Gateways, etc.). 
 
 8. Run SSH to installer machine from your computer or another computer which has access to the installer machine:
     ```bash
@@ -643,7 +648,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a Hub, a Gateway, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a  DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
       </td>
@@ -653,7 +658,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a Hub HADR, a Gateway, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a  DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
       </td>
@@ -663,7 +668,7 @@ For more details about each example, click on the example name.
       </td>
       <td>PS/Customer
       </td>
-      <td>A DSF deployment with a Hub and a Gateway in different AWS accounts and federation. 
+      <td>A DSF deployment with a  DSF Hub and an Agentless Gateway in different AWS accounts and federation. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.6/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
       </td>
