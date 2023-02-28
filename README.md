@@ -204,26 +204,19 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
   </tr>
   <tr>
-   <td>27 Feb 2023
+   <td>28 Feb 2023
    </td>
    <td>1.3.7
    </td>
    <td>
-      1. Created a common db_onboarding module for all DB types in the relevant examples.
-      <br>2. Added security_group_id variable to multi_account_deployment example.
-      <br>3. Restricted MSSQL Lambda permissions.
-      <br>4. Restricted network resources and general IAM permissions.
-      <br>5. Added a new installation example - single_account_deployment.
-      <br>6. Added the minimum required Terraform version to all modules.
-      <br>7. Added EC2 AMI filter details variable to agentless-gw and hub modules.
-      <br>8. Added terraform_script_path_folder variable to installation examples and modules which contain "remote-exec" blocks.
-      <br>9. Added validations to CIDR blocks variables.
-      <br>10. Added an explicit dependency of agenless-gw module on hub module in all examples.
-      <br>11. Replaced usage of 'ping' in wait_for_network function with 'curl' in sonar-base-instance module.
-      <br>12. Passed the DSF node's password to the node via an AWS secret.
-      <br>13. Added to installation examples the option to provide a custom S3 bucket location for the Sonar binaries via the tarball_location variable.
-      <br>14. Disabled usage statistics collection.
-      <br>15. Bug fixes.
+      1. Added to installation's multi_account_deployment example the option to provide a custom security group id for the DSF Hub and the Agentless Gateway via the 'security_group_id' variable.
+      <br>2. Restricted network resources and general IAM permissions.
+      <br>3. Added a new installation example - single_account_deployment.
+      <br>4. Added to installation examples the option to provide EC2 AMI filter details for the DSF Hub and the Agentless Gateway via the 'ami' variable.
+      <br>5. Added to installation examples the option to provide terraform script path folder in the DSF Hub and the Agentless Gateway via the 'terraform_script_path_folder' variable.
+      <br>6. Passed the DSF nodes (DSF Hub and the Agentless Gateway) password to the node via an AWS Secrets Manager.
+      <br>7. Added to installation examples the option to provide a custom S3 bucket location for the Sonar binaries via the tarball_location variable.
+      <br>8. Bug fixes.
    </td>
   </tr>
 
