@@ -2,7 +2,7 @@ locals {
   bastion_host        = var.hub_proxy_info.proxy_address
   bastion_private_key = try(file(var.hub_proxy_info.proxy_private_ssh_key_path), "")
   bastion_user        = var.hub_proxy_info.proxy_ssh_user
-  script_path            = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+  script_path         = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
 
   db_policy_by_engine_map = {
     "mysql" : local.mysql_policy,

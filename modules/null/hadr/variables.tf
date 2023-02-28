@@ -53,7 +53,7 @@ variable "proxy_info" {
     proxy_ssh_user             = string
   })
   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-  default     = {
+  default = {
     proxy_address              = null
     proxy_private_ssh_key_path = null
     proxy_ssh_user             = null
@@ -61,11 +61,11 @@ variable "proxy_info" {
 }
 
 variable "terraform_script_path_folder" {
-  type = string
+  type        = string
   description = "Terraform script path folder to create terraform temporary script files on a private DSF node. Use '.' to represent the instance home directory"
-  default = null
+  default     = null
   validation {
-    condition = var.terraform_script_path_folder != ""
+    condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
 }

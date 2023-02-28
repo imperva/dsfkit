@@ -20,7 +20,7 @@ yum -y install wget
 
 pwd
 
-wget https://github.com/imperva/dsfkit/raw/1.3.5/examples/${example_type}/${example_name}/${example_name}.zip
+wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/${example_type}/${example_name}/${example_name}.zip
 unzip ${example_name}.zip
 cd ${example_name}
 

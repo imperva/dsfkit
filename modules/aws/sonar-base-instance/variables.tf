@@ -162,11 +162,11 @@ variable "skip_instance_health_verification" {
 }
 
 variable "terraform_script_path_folder" {
-  type = string
+  type        = string
   description = "Terraform script path folder to create terraform temporary script files on a sonar base instance. Use '.' to represent the instance home directory"
-  default = null
+  default     = null
   validation {
-    condition = var.terraform_script_path_folder != ""
+    condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
 }
