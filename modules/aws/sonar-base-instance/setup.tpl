@@ -79,7 +79,7 @@ function install_tarball() {
     echo Downloading tarball..
     # Download installation tarball
     TARBALL_FILE=$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} --region ${installation_s3_region} ./$TARBALL_FILE >/dev/null
+    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
 
     echo Installing tarball..
     # Installing tarball

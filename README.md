@@ -203,6 +203,22 @@ The following table lists the released DSFKit versions, their release date and a
    <td>Supported SSH proxy for DSF Hub / Agentless Gateway in modules: hub, agentless-gw, federation, poc-db-onboarder.
    </td>
   </tr>
+  <tr>
+   <td>28 Feb 2023
+   </td>
+   <td>1.3.7
+   </td>
+   <td>
+      1. Added to installation's multi_account_deployment example the option to provide a custom security group id for the DSF Hub and the Agentless Gateway via the 'security_group_id' variable.
+      <br>2. Restricted network resources and general IAM permissions.
+      <br>3. Added a new installation example - single_account_deployment.
+      <br>4. Added to installation examples the option to provide EC2 AMI filter details for the DSF Hub and the Agentless Gateway via the 'ami' variable.
+      <br>5. Added to installation examples the option to provide terraform script path folder in the DSF Hub and the Agentless Gateway via the 'terraform_script_path_folder' variable.
+      <br>6. Passed the DSF nodes (DSF Hub and the Agentless Gateway) password to the node via an AWS Secrets Manager.
+      <br>7. Added to installation examples the option to provide a custom S3 bucket location for the Sonar binaries via the tarball_location variable.
+      <br>8. Bug fixes.
+   </td>
+  </tr>
 
 </table>
 
