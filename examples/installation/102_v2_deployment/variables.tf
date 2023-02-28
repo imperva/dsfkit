@@ -3,39 +3,34 @@ variable "deployment_name" {
   default = "imperva-dsf"
 }
 
-#variable "aws_profile_hub" {
-#  type        = string
-#  description = "AWS profile name for the DSF hub account"
-#}
-#
-#variable "aws_region_hub" {
-#  type        = string
-#  description = "AWS region for the DSF hub (e.g us-east-2)"
-#}
-#
-#variable "aws_profile_gw" {
-#  type        = string
-#  description = "AWS profile name for the DSF agentless gw account"
-#}
-#
-#variable "aws_region_gw" {
-#  type        = string
-#  description = "AWS region for the DSF agentless gw (e.g us-east-1)"
-#}
+variable "aws_profile" {
+  type        = string
+  description = "AWS profile name for the deployment"
+}
+
+variable "aws_region" {
+  type        = string
+  description = "AWS region for the deployment (e.g us-east-2)"
+}
 
 variable "sonar_version" {
   type    = string
   default = "4.10"
 }
 
-variable "subnet_hub" {
-  type        = string
-  description = "Aws subnet id for the primary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket DSF installation location"
+  default     = null
 }
 
-variable "subnet_gw" {
+variable "subnet_id" {
   type        = string
-  description = "Aws subnet id for the primary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the primary DSF node (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "gw_count" {

@@ -1,19 +1,10 @@
-# provider "aws" {
-#   default_tags {
-#     tags = local.tags
-#   }
-#   profile = var.aws_profile_hub
-#   region  = var.aws_region_hub
-# }
-
-# provider "aws" {
-#   default_tags {
-#     tags = local.tags
-#   }
-#   profile = var.aws_profile_gw
-#   region  = var.aws_region_gw
-#   alias   = "gw"
-# }
+provider "aws" {
+  default_tags {
+    tags = local.tags
+  }
+  profile = var.aws_profile
+  region  = var.aws_region
+}
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
@@ -29,9 +20,9 @@ locals {
 
 locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
-  workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
+  workstation_cidr_24        = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tarball_location           = module.globals.tarball_location
+  tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
@@ -40,16 +31,16 @@ locals {
 ##############################
 
 module "hub" {
-  source                              = "imperva/dsf-hub/aws"
-  version                             = "1.3.7" # latest release tag
-  friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                           = var.subnet_hub
+  source                               = "imperva/dsf-hub/aws"
+  version                              = "1.3.7" # latest release tag
+  friendly_name                       = join("-", [local.deployment_name_salted, "hub"])
+  subnet_id                           = var.subnet_id
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = false
   instance_type                       = var.hub_instance_type
-  ami_name_tag                        = var.ami
+  ami                                 = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = var.private_key_pem_file_path
     ssh_public_key_name       = var.public_key_name
@@ -68,12 +59,12 @@ module "agentless_gw_group" {
   version                             = "1.3.7" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index])
   instance_type                       = var.gw_instance_type
-  ami_name_tag                        = var.ami
-  subnet_id                           = var.subnet_gw
+  ami                                 = var.ami
+  subnet_id                           = var.subnet_id
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_federation_public_key           = module.hub.federation_public_key
+  hub_sonarw_public_key               = module.hub.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = var.private_key_pem_file_path
@@ -91,8 +82,8 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  source   = "imperva/dsf-federation/null"
-  version  = "1.3.7" # latest release tag
+  source                    = "imperva/dsf-federation/null"
+  version                   = "1.3.7" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = var.private_key_pem_file_path
@@ -108,9 +99,3 @@ module "federation" {
     module.agentless_gw_group,
   ]
 }
-
-#module "statistics" {
-#  source  = "imperva/dsf-statistics/aws"
-#  version = "1.3.7" # latest release tag
-#}
-
