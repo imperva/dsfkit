@@ -266,7 +266,53 @@ e.g., the number of Agentless Gateways, with or without HADR, the number of VPCs
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
 
-To see the available examples, refer to [Out-of-the-box Examples](#out-of-the-box-examples).
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples">examples</a> directory.
+Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
+
+For more details about each example, click on the example name.
+
+<table>
+   <tr>
+      <td><strong>Example</strong>
+      </td>
+      <td><strong>Purpose</strong>
+      </td>
+      <td><strong>Description</strong>
+      </td>
+      <td><strong>Download</strong>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/README.md">Basic Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with a  DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with a  DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
+      </td>
+      <td>PS/Customer
+      </td>
+      <td>A DSF deployment with a  DSF Hub and an Agentless Gateway in different AWS accounts and federation. 
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
+      </td>
+   </tr>
+</table>
 
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
@@ -640,58 +686,6 @@ Complete the following instructions to automate the creation of an installer mac
 **IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Automated Installer Machine Undeployment Mode](#automated-installer-machine-undeployment-mode) section.
 
 **The Automated Installer Machine Deployment is now complete and a functioning version of DSF is now available.**
-
-# Out-of-the-box Examples
-
-DSFKit provides a number of out-of-the-box examples which are already configured to deploy common DSF environments.
-
-These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples">examples</a> directory.
-Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
-
-For more details about each example, click on the example name.
-
-<table>
-   <tr>
-      <td><strong>Example</strong>
-      </td>
-      <td><strong>Purpose</strong>
-      </td>
-      <td><strong>Description</strong>
-      </td>
-      <td><strong>Download</strong>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/README.md">Basic Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A DSF deployment with a  DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A DSF deployment with a  DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
-      </td>
-      <td>PS/Customer
-      </td>
-      <td>A DSF deployment with a  DSF Hub and an Agentless Gateway in different AWS accounts and federation. 
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
-      </td>
-   </tr>
-</table>
 
 # IAM Roles
 
