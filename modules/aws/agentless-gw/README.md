@@ -13,6 +13,8 @@ This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 * SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
 
+**NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
+
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create the Agentless Gateway. These resources include:
 * An EC2 instance for running the Agentless Gateway software

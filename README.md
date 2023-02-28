@@ -521,7 +521,7 @@ Complete these steps to manually create an installer machine:
         the public IP of the installer machine which should now be available in the AWS EC2 console 
     ```
    
-    **Note:** You may need to decrease the access privileges of the key_pair_file in order to be able to use it in for SSH. 
+    **NOTE:** You may need to decrease the access privileges of the key_pair_file in order to be able to use it in for SSH. 
     For example: `chmode 400 ${key_pair_file}` 
 
 
