@@ -41,7 +41,7 @@ This guide uses several text styles for an enhanced readability and several call
    <td>
    
    ```
-   This fond will be used to denote code blocks, commands or user input. 
+   This font will be used to denote code blocks, commands or user input. 
    ```
 
    </td>
