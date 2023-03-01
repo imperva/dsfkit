@@ -666,7 +666,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a  DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
       </td>
@@ -676,9 +676,19 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a  DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
+      </td>
+      <td>PS/Customer
+      </td>
+      <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/single_account_deployment/single_account_deployment.zip">single_account_deployment.zip</a>
       </td>
    </tr>
    <tr>
@@ -686,7 +696,7 @@ For more details about each example, click on the example name.
       </td>
       <td>PS/Customer
       </td>
-      <td>A DSF deployment with a  DSF Hub and an Agentless Gateway in different AWS accounts and federation. 
+      <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
       </td>
