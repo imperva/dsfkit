@@ -6,8 +6,8 @@ A DSF Hub and Agentless Gateway (formerly Sonar) deployment.
 This deployment consists of:
 
 1. New VPC
-2. One Hub
-3. One Gateway
+2. One DSF Hub
+3. One Agentless Gateway
 4. Federation
 5. Creation of a new “Demo DB” - RDS MySQL
 6. Auto configuration of the RDS MySQL to enable native audit

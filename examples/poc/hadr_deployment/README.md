@@ -6,12 +6,12 @@ A DSF Hub and Agentless Gateway (formerly Sonar) deployment with Hub HADR and Ga
 This deployment consists of:
 
 1. New VPC
-2. One Primary Hub
-3. One Secondary Hub
-4. One Primary Gateway
-5. One Secondary Gateway
+2. One primary DSF Hub
+3. One secondary DSF Hub
+4. One primary Agentless Gateway
+5. One secondary Agentless Gateway
 6. Federation
-7. Hub HADR setup
+7. DSF Hub HADR setup
 8. Creation of a new “Demo DB” - RDS MySQL 
 9. Auto configuration of the RDS MySQL to enable native audit 
 10. Onboarding the DB to DSF Hub 
