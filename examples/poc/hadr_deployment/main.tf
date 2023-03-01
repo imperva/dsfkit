@@ -61,8 +61,7 @@ module "vpc" {
 ##############################
 # Generating deployment
 ##############################
-# TODO rename to hub_primary in another commit
-module "hub" {
+module "hub_primary" {
   source                              = "imperva/dsf-hub/aws"
   version                             = "1.3.7" # latest release tag
   friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
@@ -95,15 +94,15 @@ module "hub_secondary" {
   ebs                                 = var.hub_ebs_details
   create_and_attach_public_elastic_ip = true
   hadr_secondary_node                 = true
-  sonarw_public_key                   = module.hub.sonarw_public_key
-  sonarw_private_key                  = module.hub.sonarw_private_key
+  sonarw_public_key                   = module.hub_primary.sonarw_public_key
+  sonarw_private_key                  = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"])
     use_public_ip                           = true
   }
   depends_on = [
@@ -120,36 +119,36 @@ module "agentless_gw_group_primary" {
   ebs                                 = var.gw_group_ebs_details
   binaries_location                   = local.tarball_location
   web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key               = module.hub.sonarw_public_key
+  hub_sonarw_public_key               = module.hub_primary.sonarw_public_key
   create_and_attach_public_elastic_ip = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
     use_public_ip         = false
   }
   ingress_communication_via_proxy = {
-    proxy_address              = module.hub.public_ip
+    proxy_address              = module.hub_primary.public_ip
     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    proxy_ssh_user             = module.hub.ssh_user
+    proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
     module.vpc,
-    module.hub
+    module.hub_primary
   ]
 }
 
 module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
   version                  = "1.3.7" # latest release tag
-  dsf_primary_ip           = module.hub.public_ip
-  dsf_primary_private_ip   = module.hub.private_ip
+  dsf_primary_ip           = module.hub_primary.public_ip
+  dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
   dsf_secondary_private_ip = module.hub_secondary.private_ip
   ssh_key_path             = module.key_pair.key_pair_private_pem.filename
-  ssh_user                 = module.hub.ssh_user
+  ssh_user                 = module.hub_primary.ssh_user
   depends_on = [
     module.federation
   ]
@@ -157,7 +156,7 @@ module "hub_hadr" {
 
 locals {
   hub_gw_combinations = setproduct(
-    [module.hub, module.hub_secondary],
+    [module.hub_primary, module.hub_secondary],
     concat(
       [for idx, val in module.agentless_gw_group_primary : val]
     )
@@ -179,12 +178,12 @@ module "federation" {
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
   gw_proxy_info = {
-    proxy_address              = module.hub.public_ip
+    proxy_address              = module.hub_primary.public_ip
     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    proxy_ssh_user             = module.hub.ssh_user
+    proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.hub,
+    module.hub_primary,
     module.hub_secondary,
     module.agentless_gw_group_primary
   ]
@@ -218,12 +217,12 @@ module "db_onboarding" {
   version       = "1.3.7" # latest release tag
   sonar_version = module.globals.tarball_location.version
   hub_info = {
-    hub_ip_address           = module.hub.public_ip
+    hub_ip_address           = module.hub_primary.public_ip
     hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
-    hub_ssh_user             = module.hub.ssh_user
+    hub_ssh_user             = module.hub_primary.ssh_user
   }
-  assignee_gw   = module.hub.jsonar_uid
-  assignee_role = module.hub.iam_role
+  assignee_gw   = module.hub_primary.jsonar_uid
+  assignee_role = module.hub_primary.iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password
