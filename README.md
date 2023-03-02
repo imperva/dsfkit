@@ -589,7 +589,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
 
 
-10. When launching is completed, run ssh to installer machine from the deployment client's machine:
+10. When launching is completed, run ssh to the installer machine from the deployment client's machine:
      ```bash
      ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
