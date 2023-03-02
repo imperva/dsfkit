@@ -62,16 +62,21 @@ variable "ingress_communication_via_proxy" {
   }
 }
 
-variable "create_and_attach_public_elastic_ip" {
+variable "attach_pubilc_ip" {
   type        = bool
   default     = true
   description = "Create public elastic IP for the instance"
 }
 
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Setup sonar to be initilized with it's public IP. Mustn't be True if attach_pubilc_ip is set to False"
+}
+
 variable "ingress_communication" {
   type = object({
     full_access_cidr_list = list(any) # will be attached to the following ports - 22, 8080, 8443, 3030, 27117
-    use_public_ip         = bool
   })
   description = "List of allowed ingress cidr patterns for the Agentless gateway instance for ssh and internal protocols"
   nullable    = false
