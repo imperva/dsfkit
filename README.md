@@ -577,7 +577,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 5. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine. 
 
 
-6. In the Network settings panel - make configuration while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that the deployment's client machine should have access to the installer machine.
+6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that the deployment's client machine should have access to the installer machine.
 
 
 7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
