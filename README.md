@@ -400,7 +400,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
     export AWS_SECRET_ACCESS_KEY=${secret_key}
     export AWS_REGION=${region}
 
-    >>>> Fill the values of the access_key, secret_key and region placeholders
+    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
     ```
 
 5. Run:
@@ -629,9 +629,9 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 
 13. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 3.
 
-**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Manual Installer Machine Undeployment Mode](#manual-installer-machine-undeployment-mode) section.
+**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Installer Machine Undeployment Mode](#installer-machine-undeployment-mode) section.
 
-**The Manual Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
+**The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
 
 # IAM Roles
 
@@ -661,8 +661,18 @@ In case of failure, the Terraform may have deployed some resources before failin
    
    >>>> Change this command depending on the example you chose
    ```
+2. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
+   For simplicity, in this example we will use environment variables:
 
-2. Run:
+    ```bash
+    export AWS_ACCESS_KEY_ID=${access_key}
+    export AWS_SECRET_ACCESS_KEY=${secret_key}
+    export AWS_REGION=${region}
+
+    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
+    ```
+   
+3. Run:
     ```bash
     terraform destroy -auto-approve
     ```
@@ -677,34 +687,20 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 ## Installer Machine Undeployment Mode
 
-1. Run SSH to installer machine from your computer or another computer which has access to the installer machine:
+1. Run SSH to installer machine from the deployment client's machine:
     ```bash
     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
-   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.7#manual-installer-machine-deployment-mode">)  
+   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.7#installer-machine-deployment-mode">)  
     ```
 
-2. ```bash
-   cd /${example_name}
-   
-   >>>> Use the name of the example you chose
-   ```
-3. Run:
-    ```bash
-    sudo su
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
-    terraform destroy -auto-approve
-   
-    >>>> Fill the values of the access_key, secret_key and region placeholders with the 
-         AWS access key, secert key and region that you used in the deployement
-    ```
-
-4. Wait for the environment to be destroyed.
+2. Continue by following the [CLI Undeployment Mode](#cli-undeployment-mode) steps.
 
 
-5. Terminate the EC2 installer machine via the AWS Console.
+3. Wait for the environment to be destroyed.
+
+
+4. Terminate the EC2 installer machine via the AWS Console.
 
 # Troubleshooting 
 
