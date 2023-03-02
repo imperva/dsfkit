@@ -19,14 +19,3 @@ export PATH=$PATH:/usr/local/bin
 yum -y install wget
 
 pwd
-
-wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/${example_type}/${example_name}/${example_name}.zip
-unzip ${example_name}.zip
-cd ${example_name}
-
-export AWS_ACCESS_KEY_ID=${access_key}
-export AWS_SECRET_ACCESS_KEY=${secret_key}
-export AWS_REGION=${region}
-
-terraform init
-terraform apply -auto-approve -var='web_console_cidr=${web_console_cidr}'
