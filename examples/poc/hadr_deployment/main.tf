@@ -64,12 +64,12 @@ module "vpc" {
 module "hub_primary" {
   source                              = "imperva/dsf-hub/aws"
   version                             = "1.3.7" # latest release tag
-  friendly_name                       = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                           = module.vpc.public_subnets[0]
-  binaries_location                   = local.tarball_location
-  web_console_admin_password          = local.web_console_admin_password
-  ebs                                 = var.hub_ebs_details
-  create_and_attach_public_elastic_ip = true
+  friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
+  subnet_id                  = module.vpc.public_subnets[0]
+  binaries_location          = local.tarball_location
+  web_console_admin_password = local.web_console_admin_password
+  ebs                        = var.hub_ebs_details
+  attach_pubilc_ip           = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -77,8 +77,8 @@ module "hub_primary" {
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"])
-    use_public_ip                           = true
   }
+  use_public_ip = true
   depends_on = [
     module.vpc
   ]
@@ -87,15 +87,15 @@ module "hub_primary" {
 module "hub_secondary" {
   source                              = "imperva/dsf-hub/aws"
   version                             = "1.3.7" # latest release tag
-  friendly_name                       = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                           = module.vpc.public_subnets[1]
-  binaries_location                   = local.tarball_location
-  web_console_admin_password          = local.web_console_admin_password
-  ebs                                 = var.hub_ebs_details
-  create_and_attach_public_elastic_ip = true
-  hadr_secondary_node                 = true
-  sonarw_public_key                   = module.hub_primary.sonarw_public_key
-  sonarw_private_key                  = module.hub_primary.sonarw_private_key
+  friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  subnet_id                  = module.vpc.public_subnets[1]
+  binaries_location          = local.tarball_location
+  web_console_admin_password = local.web_console_admin_password
+  ebs                        = var.hub_ebs_details
+  attach_pubilc_ip           = true
+  hadr_secondary_node        = true
+  sonarw_public_key          = module.hub_primary.sonarw_public_key
+  sonarw_private_key         = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -103,32 +103,32 @@ module "hub_secondary" {
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
     full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"])
-    use_public_ip                           = true
   }
+  use_public_ip = true
   depends_on = [
     module.vpc
   ]
 }
 
 module "agentless_gw_group_primary" {
-  count                               = var.gw_count
   source                              = "imperva/dsf-agentless-gw/aws"
   version                             = "1.3.7" # latest release tag
-  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                           = module.vpc.private_subnets[0]
-  ebs                                 = var.gw_group_ebs_details
-  binaries_location                   = local.tarball_location
-  web_console_admin_password          = local.web_console_admin_password
-  hub_sonarw_public_key               = module.hub_primary.sonarw_public_key
-  create_and_attach_public_elastic_ip = false
+  count                      = var.gw_count
+  friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
+  subnet_id                  = module.vpc.private_subnets[0]
+  ebs                        = var.gw_group_ebs_details
+  binaries_location          = local.tarball_location
+  web_console_admin_password = local.web_console_admin_password
+  hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
+  attach_pubilc_ip           = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
     full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
-    use_public_ip         = false
   }
+  use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.public_ip
     proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename

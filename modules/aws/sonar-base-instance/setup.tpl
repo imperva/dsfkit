@@ -5,26 +5,59 @@ set -u
 set -x
 cd /root || exit 1
 
-function wait_for_network() {
-    until curl www.google.com &>/dev/null; do
-        echo waiting for network..;
-        sleep 15;
+function internet_access() {
+    if [ -z "$${INTERNET_ACCESS-}" ]; then
+        timeout=300 # 5 minutes
+        start_time=$(date +%s)
+        while ! curl --connect-timeout 30 www.google.com &>/dev/null; do # icmp packets might not be supported
+            echo "Waiting for network availability..."
+            sleep 10
+            current_time=$(date +%s)
+            elapsed_time=$((current_time - start_time))
+            if [ $elapsed_time -ge $timeout ]; then
+                echo "Timeout: network is not available after $timeout seconds"
+                INTERNET_ACCESS="false"
+                return 1
+            fi
+        done
+        INTERNET_ACCESS="true"
+    fi
+    if [ "$INTERNET_ACCESS" == "true" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function install_yum_deps_from_internet() {
+    if ! internet_access; then
+        echo "Error: No internet access. Please make sure $@ is installed in the base ami"
+        exit 1
+    fi
+    packages=$@
+    for p in $packages; do
+        yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y # trying x times since sometimes there is a glitch with the entitlement server
     done
 }
 
-function install_deps() {
-    # yum fails sporadically. So we try 3 times :(
-    yum install unzip -y || yum install unzip -y || yum install unzip -y
-    yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    yum install net-tools jq vim nc lsof -y
-
-    if [ ! -f /usr/local/bin/aws ]; then
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
-        aws/install
-        rm -rf aws awscliv2.zip
+function install_awscli_from_internet() {
+    if ! internet_access; then
+        echo "Error: No internet access. Please make sure awscli is installed in the base ami"
+        exit 1
     fi
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip -q awscliv2.zip
+    aws/install
+    rm -rf aws awscliv2.zip
+}
 
+function install_deps() {
+    command -v unzip || install_yum_deps_from_internet unzip
+    command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
+    test -f /usr/local/bin/aws || install_awscli_from_internet
+}
+
+function create_users_and_groups() {
     id sonargd || useradd sonargd
     id sonarg  || useradd sonarg
     id sonarw  || useradd sonarw
@@ -171,8 +204,8 @@ function install_ssh_keys() {
     chmod 700 /home/sonarw/.ssh
 }
 
-wait_for_network
 install_deps
+create_users_and_groups
 attach_disk
 
 STATE_DIR=/data_vol/sonar-dsf/jsonar
@@ -188,4 +221,3 @@ fi
 
 set_environment_vars
 install_ssh_keys
-
