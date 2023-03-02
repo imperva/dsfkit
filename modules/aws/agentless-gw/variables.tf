@@ -71,7 +71,7 @@ variable "attach_pubilc_ip" {
 variable "use_public_ip" {
   type        = bool
   default     = false
-  description = "Setup sonar to be initilized with it's public IP"
+  description = "Setup sonar to be initilized with it's public IP. Mustn't be True if attach_pubilc_ip is set to False"
 }
 
 variable "ingress_communication" {
