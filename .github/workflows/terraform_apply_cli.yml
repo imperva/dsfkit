@@ -170,7 +170,7 @@ jobs:
         username: ec2-user
         key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     - name: Terraform Destroy
       id: destroy
