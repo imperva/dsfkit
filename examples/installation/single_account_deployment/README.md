@@ -38,3 +38,7 @@ gw_skip_instance_health_verification=true<br/><br/>
   terraform apply -auto-approve
    ```
 For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](./variables.tf) file.
+
+### Storing Terraform state in S3 bucket
+To store the Terraform state in S3 bucket instead of locally, uncomment the '[backend.tf](./backend.tf)' file and fill in the necessary details.
+Make sure that the user running the deployment has read and write access to this bucket. You can find the required permissions [here](https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3-bucket-permissions).
