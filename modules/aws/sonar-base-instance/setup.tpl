@@ -53,13 +53,7 @@ function install_awscli_from_internet() {
 
 function install_deps() {
     command -v unzip || install_yum_deps_from_internet unzip
-
-    # installing Extra Packages for Enterprise Linux (EPEL) according to instructions here: https://docs.fedoraproject.org/en-US/epel/#Quickstart
-    subscription-manager repos --enable rhel-*-optional-rpms \
-                               --enable rhel-*-extras-rpms \
-                               --enable rhel-ha-for-rhel-*-server-rpms
     command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
-
     test -f /usr/local/bin/aws || install_awscli_from_internet
 }
 
