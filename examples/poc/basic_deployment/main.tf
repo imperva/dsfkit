@@ -111,7 +111,6 @@ module "agentless_gw_group" {
   }
   depends_on = [
     module.vpc,
-    module.hub
   ]
 }
 

@@ -131,9 +131,6 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  depends_on = [
-    module.hub_primary
-  ]
 }
 
 locals {

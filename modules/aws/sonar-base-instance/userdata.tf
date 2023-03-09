@@ -64,7 +64,7 @@ resource "null_resource" "wait_for_installation_completion" {
   }
 
   depends_on = [
-    aws_instance.dsf_base_instance,
+    aws_eip_association.eip_assoc,
     aws_security_group_rule.sg_cidr_ingress
   ]
 }
