@@ -3,5 +3,7 @@ output "key_pair" {
 }
 
 output "key_pair_private_pem" {
+#  value = nonsensitive(resource.local_sensitive_file.dsf_ssh_key_file)
   value = resource.local_sensitive_file.dsf_ssh_key_file
+  sensitive = true
 }
