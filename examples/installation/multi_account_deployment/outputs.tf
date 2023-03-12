@@ -6,7 +6,7 @@ output "dsf_agentless_gw_group" {
       jsonar_uid   = try(val.jsonar_uid, null)
       display_name = try(val.display_name, null)
       role_arn     = try(val.iam_role, null)
-      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair_hub.key_pair_private_pem.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.private_ip}' -i ${module.key_pair_gw.key_pair_private_pem.filename} ${val.ssh_user}@${val.private_ip}", null)
+      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${nonsensitive(module.key_pair_hub.key_pair_private_pem.filename)} -W %h:%p ${module.hub.ssh_user}@${module.hub.private_ip}' -i ${nonsensitive(module.key_pair_gw.key_pair_private_pem.filename)} ${val.ssh_user}@${val.private_ip}", null)
     }
   }
 }
@@ -18,7 +18,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub.jsonar_uid, null)
       display_name = try(module.hub.display_name, null)
       role_arn     = try(module.hub.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair_hub.key_pair_private_pem.filename} ${module.hub.ssh_user}@${module.hub.private_ip}", null)
+      ssh_command  = try("ssh -i ${nonsensitive(module.key_pair_hub.key_pair_private_pem.filename)} ${module.hub.ssh_user}@${module.hub.private_ip}", null)
     }
   }
 }
