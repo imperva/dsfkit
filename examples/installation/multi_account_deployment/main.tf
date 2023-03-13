@@ -70,7 +70,7 @@ module "hub" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_pubilc_ip           = false
+  attach_public_ip           = false
   instance_type              = var.hub_instance_type
   ami                        = var.ami
   ssh_key_pair = {
@@ -99,7 +99,7 @@ module "agentless_gw_group" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub.sonarw_public_key
-  attach_pubilc_ip           = false
+  attach_public_ip           = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair_gw.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair_gw.key_pair.key_pair_name

@@ -69,7 +69,7 @@ module "hub_primary" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_pubilc_ip           = true
+  attach_public_ip           = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -92,7 +92,7 @@ module "hub_secondary" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_pubilc_ip           = true
+  attach_public_ip           = true
   hadr_secondary_node        = true
   sonarw_public_key          = module.hub_primary.sonarw_public_key
   sonarw_private_key         = module.hub_primary.sonarw_private_key
@@ -120,7 +120,7 @@ module "agentless_gw_group_primary" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
-  attach_pubilc_ip           = false
+  attach_public_ip           = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
