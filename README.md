@@ -220,12 +220,15 @@ The following table lists the released DSFKit versions, their release date and a
       <br>9. Bug fixes.
    </td>
   <tr>
-   <td>Coming soon
+   <td>14 Mar 2023
+   </td>
+   <td>1.3.8
    </td>
    <td>
-   </td>
-   <td>
-      1. Revised the installer machine deployment mode.
+      1. Added support for deploying a DSF node on an EC2 without internet access, at which case, the customer must manually install the following depenencies: AWS CLI, unzip and jq.
+      <br>2. Replaced the installer machine manual and automatic deployment modes with a new and simplified single installer machine mode.
+      <br>3. Added support for storing the Terraform state in an AWS S3 bucket.
+      <br>4. Made adjustments to support Terraform version 1.4.0.
    </td>
   </tr>
 
