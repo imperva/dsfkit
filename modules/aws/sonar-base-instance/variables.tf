@@ -26,7 +26,7 @@ variable "ebs_details" {
   description = "Compute instance volume attributes"
 }
 
-variable "attach_pubilc_ip" {
+variable "attach_public_ip" {
   type        = bool
   description = "Create public IP for the instance"
 }

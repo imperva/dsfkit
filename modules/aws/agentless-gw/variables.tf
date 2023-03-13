@@ -62,7 +62,7 @@ variable "ingress_communication_via_proxy" {
   }
 }
 
-variable "attach_pubilc_ip" {
+variable "attach_public_ip" {
   type        = bool
   default     = true
   description = "Create public elastic IP for the instance"
@@ -71,7 +71,7 @@ variable "attach_pubilc_ip" {
 variable "use_public_ip" {
   type        = bool
   default     = false
-  description = "Setup sonar to be initilized with it's public IP. Mustn't be True if attach_pubilc_ip is set to False"
+  description = "Setup sonar to be initialized with it's public IP. Mustn't be True if attach_public_ip is set to False"
 }
 
 variable "ingress_communication" {

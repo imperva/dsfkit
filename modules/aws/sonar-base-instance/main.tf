@@ -24,12 +24,12 @@ locals {
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_pubilc_ip ? 1 : 0
+  count = var.attach_public_ip ? 1 : 0
   vpc   = true
 }
 
 resource "aws_eip_association" "eip_assoc" {
-  count         = var.attach_pubilc_ip ? 1 : 0
+  count         = var.attach_public_ip ? 1 : 0
   instance_id   = aws_instance.dsf_base_instance.id
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }

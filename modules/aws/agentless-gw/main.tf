@@ -16,7 +16,7 @@ module "gw_instance" {
   ami                           = var.ami
   sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
   role_arn                      = var.role_arn
-  attach_pubilc_ip              = var.attach_pubilc_ip
+  attach_public_ip              = var.attach_public_ip
   use_public_ip                 = var.use_public_ip
   additional_install_parameters = var.additional_install_parameters
   web_console_admin_password    = var.web_console_admin_password
