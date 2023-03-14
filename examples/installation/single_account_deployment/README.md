@@ -42,3 +42,12 @@ For a full list of this example's customization options which don't require code
 ### Storing Terraform state in S3 bucket
 To store the Terraform state in S3 bucket instead of locally, uncomment the '[backend.tf](./backend.tf)' file and fill in the necessary details.
 Make sure that the user running the deployment has read and write access to this bucket. You can find the required permissions [here](https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3-bucket-permissions).
+
+### Working with DSF Hub and Agentless Gateway without outbound internet access
+Follow these steps to deploy a DSF Hub and/or Agentless Gateway in an environment without outbound internet access.
+1. Provide a custom AMI with the following dependencies: AWS CLI, unzip, and jq. 
+   You can create a custom AMI with these dependencies installed by launching an Amazon EC2 instance, installing the dependencies, and creating an AMI from the instance. 
+   You can then use this custom AMI when launching the DSF Hub and/or Agentless Gateway instances.
+2. Update the _ami_ variable in your Terraform example with the details of the custom AMI you created.
+3. Create an S3 VPC endpoint to allow the instances to access S3 without going over the internet. You can create an S3 VPC endpoint using the Amazon VPC console, AWS CLI, or AWS SDKs.
+4. Create a Secrets Manager VPC endpoint to allow the instances to access Secrets Manager without going over the internet. You can create a Secrets Manager VPC endpoint using the Amazon VPC console, AWS CLI, or AWS SDKs.
