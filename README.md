@@ -225,7 +225,7 @@ The following table lists the released DSFKit versions, their release date and a
    <td>1.3.8
    </td>
    <td>
-      1. Added support for deploying a DSF node on an EC2 without internet access, at which case, the customer must manually install the following depenencies: AWS CLI, unzip and jq.
+      1. Added support for deploying a DSF node on an EC2 without outbound internet access by providing a custom AMI with the required dependencies and creating VPC endpoints.
       <br>2. Replaced the installer machine manual and automatic deployment modes with a new and simplified single installer machine mode.
       <br>3. Added support for storing the Terraform state in an AWS S3 bucket.
       <br>4. Made adjustments to support Terraform version 1.4.0.
