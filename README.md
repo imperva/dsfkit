@@ -221,9 +221,9 @@ The following table lists the released DSFKit versions, their release date and a
       <br>9. Bug fixes.
    </td>
   <tr>
-   <td>14 Mar 2023
+   <td>16 Mar 2023
    </td>
-   <td>1.3.8
+   <td>1.3.9
    </td>
    <td>
       1. Added support for deploying a DSF node on an EC2 without outbound internet access by providing a custom AMI with the required dependencies and creating VPC endpoints.
