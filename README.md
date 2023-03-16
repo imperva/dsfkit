@@ -126,6 +126,7 @@ This guide references the following information and links, some of which are ava
    <td><a href="https://www.terraform.io/downloads">Download Terraform</a>
    </td>
    <td>
+Latest Supported Terraform Version: 1.4.0. Using a higher version may result in unexpected behavior or errors.
    </td>
   </tr>
   <tr>
@@ -263,6 +264,7 @@ Before using DSFKit to deploy DSF, it is necessary to complete the following ste
    [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).  
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+5. Latest Supported Terraform Version: 1.4.0. Using a higher version may result in unexpected behavior or errors.
 
 
 **NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
