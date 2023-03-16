@@ -113,7 +113,7 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a> 
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8">DSFKit GitHub Repository</a> 
    </td>
    <td>
    </td>
@@ -132,7 +132,7 @@ This guide references the following information and links, some of which are ava
    <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Open Terraform Cloud Account - Request Form</a>
    </td>
    <td>Grants access for a specific e-mail address to Imperva's Terraform Cloud account.
-       Required for <a href="https://github.com/imperva/dsfkit/tree/1.3.7#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
+       Required for <a href="https://github.com/imperva/dsfkit/tree/1.3.8#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
    </td>
   </tr>
   <tr>
@@ -275,7 +275,7 @@ e.g., the number of Agentless Gateways, with or without HADR, the number of VPCs
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
 
-These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples">examples</a> directory.
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.3.8">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples">examples</a> directory.
 Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
 For more details about each example, click on the example name.
@@ -292,43 +292,43 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/README.md">Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/basic_deployment/README.md">Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/single_account_deployment/single_account_deployment.zip">single_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/installation/single_account_deployment/single_account_deployment.zip">single_account_deployment.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
       </td>
    </tr>
 </table>
@@ -374,7 +374,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.8">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
@@ -586,7 +586,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
 
-8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.7/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.3.8/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 
 9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
@@ -605,7 +605,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
      For example: `chmode 400 a_key_pair.pem` 
 
 
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.7">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.8">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
     Run:
     ```bash
     wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/poc/basic_deployment/basic_deployment.zip
@@ -694,7 +694,7 @@ In case of failure, the Terraform may have deployed some resources before failin
     ```bash
     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
-   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.7#installer-machine-deployment-mode">)  
+   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.8#installer-machine-deployment-mode">)  
     ```
 
 2. Continue by following the [CLI Undeployment Mode](#cli-undeployment-mode) steps.
@@ -709,7 +709,7 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 Information about additional topics can be found in specific examples' READMEs, when relevant.
 
-For example:  <a href="https://github.com/imperva/dsfkit/tree/1.3.7/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
+For example:  <a href="https://github.com/imperva/dsfkit/tree/1.3.8/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
 
 These topics include:
 - Storing Terraform state in S3 bucket
