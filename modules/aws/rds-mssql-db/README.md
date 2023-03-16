@@ -80,4 +80,4 @@ module "dsf_rds_mssql" {
 
 ## Additional Information
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.3.8).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.3.9).
