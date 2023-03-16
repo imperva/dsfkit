@@ -87,6 +87,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: 1.4.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
