@@ -696,7 +696,7 @@ In case of failure, the Terraform may have deployed some resources before failin
     ```bash
     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
-   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders (See <a href="https://github.com/imperva/dsfkit/tree/1.3.8#installer-machine-deployment-mode">)  
+   >>>> Fill the values of the key_pair_file and installer_machine_public_ip placeholders  
     ```
 
 2. Continue by following the [CLI Undeployment Mode](#cli-undeployment-mode) steps.
