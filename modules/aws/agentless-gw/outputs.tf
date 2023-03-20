@@ -14,8 +14,27 @@ output "private_dns" {
   value = module.gw_instance.private_dns
 }
 
+output "sg_id" {
+  value       = module.gw_instance.sg_id
+  description = "Security group Id of the Agentless Gateway EC2"
+}
+
+output "ingress_ports" {
+  value       = module.gw_instance.ingress_ports
+  description = "The ingress ports of the security group on the Agentless Gateway EC2"
+}
+
 output "iam_role" {
-  value = local.role_arn
+  description = "IAM Role ARN of the DSF agentless gateway node"
+  value       = module.gw_instance.iam_role
+}
+
+output "sonarw_public_key" {
+  value = module.gw_instance.sonarw_public_key
+}
+
+output "sonarw_private_key" {
+  value = module.gw_instance.sonarw_private_key
 }
 
 output "jsonar_uid" {

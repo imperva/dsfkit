@@ -7,6 +7,11 @@ variable "subnet_id" {
   description = "Subnet id for the ec2 instance"
 }
 
+variable "security_group_id" {
+  type        = string
+  description = "Security group id for the ec2 instance"
+}
+
 variable "ec2_instance_type" {
   type        = string
   description = "Ec2 instance type for the DSF base instance"
@@ -21,7 +26,7 @@ variable "ebs_details" {
   description = "Compute instance volume attributes"
 }
 
-variable "create_and_attach_public_elastic_ip" {
+variable "attach_public_ip" {
   type        = bool
   description = "Create public IP for the instance"
 }
@@ -47,25 +52,43 @@ variable "sg_ingress_cidr" {
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
 }
 
-variable "iam_instance_profile_id" {
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
+  nullable    = true
+
+  validation {
+    condition     = var.ami == null || try(var.ami.id != null || var.ami.name != null, false)
+    error_message = "ami id or name mustn't be null"
+  }
+
+  validation {
+    condition     = var.ami == null || try(var.ami.username != null, false)
+    error_message = "ami username mustn't be null"
+  }
+}
+
+variable "role_arn" {
   type        = string
   default     = null
-  description = "DSF base ec2 IAM instance profile id"
-}
-
-variable "ami_name_tag" {
-  type = string
-}
-
-variable "ami_user" {
-  type = string
+  description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
 }
 
 variable "resource_type" {
   type = string
   validation {
     condition     = contains(["hub", "gw"], var.resource_type)
-    error_message = "Allowed values for dsf type \"hub\" or \"gw\"."
+    error_message = "Allowed values for DSF node type: \"hub\", \"gw\""
   }
   nullable = false
 }
@@ -94,42 +117,61 @@ variable "additional_install_parameters" {
 variable "binaries_location" {
   type = object({
     s3_bucket = string
+    s3_region = string
     s3_key    = string
   })
   description = "S3 DSF installation location"
   nullable    = false
 }
 
-variable "proxy_address" {
+variable "hadr_secondary_node" {
+  type        = bool
+  default     = false
+  description = "Is this node a HADR secondary one"
+}
+
+variable "sonarw_public_key" {
   type        = string
-  description = "Proxy address used for ssh"
+  description = "Public key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
   default     = null
 }
 
-variable "proxy_ssh_key" {
+variable "sonarw_private_key" {
   type        = string
-  description = "Proxy private ssh key"
+  description = "Private key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
   default     = null
 }
 
-variable "proxy_ssh_user" {
+variable "proxy_info" {
+  type = object({
+    proxy_address      = string
+    proxy_ssh_key_path = string
+    proxy_ssh_user     = string
+  })
+  description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
+  default = {
+    proxy_address      = null
+    proxy_ssh_key_path = null
+    proxy_ssh_user     = null
+  }
+}
+
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "Proxy ssh user"
+  description = "Public key of the sonarw user taken from the primary Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
   default     = null
-}
-
-variable "hub_federation_public_key" {
-  type        = string
-  description = "SSH public key for sonarw user"
-  nullable    = false
-}
-
-variable "sonarw_secret_name" {
-  type        = string
-  description = "Secret name for sonarw ssh key"
-  default     = ""
 }
 
 variable "skip_instance_health_verification" {
   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+}
+
+variable "terraform_script_path_folder" {
+  type        = string
+  description = "Terraform script path folder to create terraform temporary script files on a sonar base instance. Use '.' to represent the instance home directory"
+  default     = null
+  validation {
+    condition     = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
 }

@@ -1,9 +1,33 @@
 name: 'Cli (simple) Nightly'
 
 on:
-  workflow_dispatch: {}
-  schedule:
-    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      workspace:
+        required: true
+        type: choice
+        options:
+          - simple_cli_dev_nightly
+          - simple_cli_master_nightly
+
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      workspace:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -14,24 +38,15 @@ env:
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_WORKSPACE: ${{ inputs.workspace }}
 
 permissions:
   contents: read
 
 jobs:
   terraform:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - workspace: simple_cli_dev_nightly
-            branch: "dev"
-          - workspace: simple_cli_master_nightly
-            branch: "master"
-    name: 'Terraform ${{ matrix.branch }}'
+    name: 'Terraform ${{ inputs.branch }}'
     runs-on: ubuntu-latest
-    env:
-      TF_WORKSPACE: ${{ matrix.workspace }}
     environment: test
   
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -43,7 +58,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ matrix.branch }}
+        ref: ${{ inputs.branch }}
 
     - name: Change the modules source to local
       run: | 
@@ -69,14 +84,13 @@ jobs:
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: 1.4.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -87,13 +101,13 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -lock-timeout=3600s
+      run: terraform -chdir=$EXAMPLE_DIR plan
 
     - name: Cleaning envrionment
       run: |
         mv $EXAMPLE_DIR/main.tf{,_}
         mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
         mv $EXAMPLE_DIR/main.tf{_,}
         mv $EXAMPLE_DIR/outputs.tf{_,}
 
@@ -101,19 +115,19 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve -lock-timeout=3600s
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
         echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    - name: Check SSH Connectivity
+    - name: Check SSH Connectivity - Hub & GW
       uses: appleboy/ssh-action@v0.1.6
       with:
         proxy_host: ${{ env.hub_ip }}
@@ -124,11 +138,25 @@ jobs:
         username: ec2-user
         key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    - name: Check Aduit data
+      uses: appleboy/ssh-action@v0.1.6
+      id: test_audit
+      with:
+        host: ${{ env.hub_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        command_timeout: "2h"
+        script: | 
+          sleep 35m
+          for run in {1..5}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
+          if [ $res -le 0 ]; then exit 1; fi
 
     - name: Terraform Destroy
       # if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve -lock-timeout=3600s
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     # Send job failure to Slack
     - name: Send Slack by action-slack

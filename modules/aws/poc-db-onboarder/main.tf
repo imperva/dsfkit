@@ -1,37 +1,26 @@
+locals {
+  bastion_host        = var.hub_proxy_info.proxy_address
+  bastion_private_key = try(file(var.hub_proxy_info.proxy_private_ssh_key_path), "")
+  bastion_user        = var.hub_proxy_info.proxy_ssh_user
+  script_path         = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+
+  db_policy_by_engine_map = {
+    "mysql" : local.mysql_policy,
+    "sqlserver-ex" : local.mssql_policy
+  }
+  server_type_by_engine_map = {
+    "mysql" : "AWS RDS MYSQL",
+    "sqlserver-ex" : "AWS RDS MS SQL SERVER"
+  }
+}
+
 data "aws_iam_role" "assignee_role" {
   name = split("/", var.assignee_role)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
 }
 
 resource "aws_iam_policy" "db_policy" {
   description = "IAM policy for collecting audit"
-  policy      = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "VisualEditor0",
-      "Effect": "Allow",
-      "Action": [
-        "logs:Describe*",
-        "logs:List*",
-        "rds:DescribeDBInstances",
-        "logs:StartQuery",
-        "logs:StopQuery",
-        "logs:TestMetricFilter",
-        "logs:FilterLogEvents",
-        "logs:Get*",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams",
-        "logs:GetLogEvents",
-        "rds:DescribeDBClusters",
-        "rds:DescribeOptionGroups"
-
-      ],
-      "Resource": "*"
-    }
-  ]
-}
-EOF
+  policy      = local.db_policy_by_engine_map[var.database_details.db_engine]
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attach" {
@@ -66,12 +55,12 @@ locals {
     data : {
       applianceType : "DSF_HUB",
       applianceId : 1,
-      serverType : "AWS RDS MYSQL",
+      serverType : local.server_type_by_engine_map[var.database_details.db_engine],
       gatewayId : var.assignee_gw,
       parentAssetId : local.cloud_account_data.data.id,
       assetData : {
-        "Server Port" : 3306,
-        database_name : var.database_details.db_identifier,
+        "Server Port" : var.database_details.db_port,
+        database_name : var.database_details.db_name,
         db_engine : var.database_details.db_engine,
         auth_mechanism : "password",
         username : var.database_details.db_username,
@@ -94,6 +83,12 @@ resource "null_resource" "connect_dsf_to_db" {
     user        = var.hub_info.hub_ssh_user
     private_key = file(var.hub_info.hub_private_ssh_key_path)
     host        = var.hub_info.hub_ip_address
+
+    bastion_host        = local.bastion_host
+    bastion_private_key = local.bastion_private_key
+    bastion_user        = local.bastion_user
+
+    script_path = local.script_path
   }
 
   provisioner "remote-exec" {

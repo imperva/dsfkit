@@ -1,3 +1,23 @@
+variable "deployment_name" {
+  type    = string
+  default = "imperva-dsf"
+}
+
+variable "sonar_version" {
+  type    = string
+  default = "4.10"
+}
+
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket DSF installation location"
+  default     = null
+}
+
 variable "aws_profile_hub" {
   type        = string
   description = "Aws profile name for the DSF hub account"
@@ -11,6 +31,12 @@ variable "aws_region_hub" {
 variable "subnet_hub" {
   type        = string
   description = "Aws subnet id for the DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+}
+
+variable "security_group_id_hub" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "aws_profile_gw" {
@@ -28,9 +54,10 @@ variable "subnet_gw" {
   description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "deployment_name" {
-  type    = string
-  default = "imperva-dsf"
+variable "security_group_id_gw" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the Agentless GW (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "gw_count" {
@@ -49,7 +76,7 @@ variable "web_console_admin_password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "CIDR blocks allowing DSF hub web console access"
+  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
@@ -60,7 +87,7 @@ variable "workstation_cidr" {
 
 variable "additional_install_parameters" {
   default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
 # variable "vpc_ip_range" {
@@ -87,7 +114,7 @@ variable "hub_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 500
     provisioned_iops = 0
@@ -101,7 +128,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
@@ -121,16 +148,20 @@ variable "gw_instance_type" {
   description = "Ec2 instance type for the DSF gw"
 }
 
-variable "hub_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the DSF hub"
-}
-
-variable "gw_ami_name" {
-  type        = string
-  default     = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  description = "Ec2 AMI name for the DSF gw"
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
+  default     = null
 }
 
 variable "hub_skip_instance_health_verification" {
@@ -141,4 +172,14 @@ variable "hub_skip_instance_health_verification" {
 variable "gw_skip_instance_health_verification" {
   default     = false
   description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+}
+
+variable "terraform_script_path_folder" {
+  type        = string
+  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  default     = null
+  validation {
+    condition     = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
 }

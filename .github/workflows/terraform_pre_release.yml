@@ -10,31 +10,80 @@ on:
 permissions:
   contents: write
 
+env:
+  src_branch: "dev"
+  dst_branch: "master"
+
 jobs:
-  prepare_branch_to_release:
-    name: 'Prepare branch to release'
+  validate_arguments:
+    name: 'Validate arguments'
     runs-on: ubuntu-latest
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
+      - name: Validate source branch
+        run: |
+          if [ "${GITHUB_REF#refs/heads/}" != "${src_branch}" ]; then
+            echo "Invalid branch. This workflow can only be ran on ${src_branch} branch. Got ${GITHUB_REF#refs/heads/}."
+            exit 1
+          fi
+      - name: Validate release version value
+        run: |
+          if ! echo ${{ github.event.inputs.future_release }} | grep -E '^([0-9]{1,3}\.){2}[0-9]{1,3}$'; then
+            echo "Future release should be in the format of x.y.z where x, y & z are all numbers"
+            exit 1
+          fi
+
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: '0'
+          fetch-depth: 0
+          ref: ${{ env.src_branch }}
+
+      - name: Validate tag availability
+        run: |
+          ! git rev-parse ${{ github.event.inputs.future_release }}
+
+      - name: Check source branch is "fast-forward" mergale
+        run: |
+          git merge-base --is-ancestor origin/${dst_branch} ${src_branch}
+
+  update_versions:
+    name: 'Update versions in examples and READMEs'
+    needs: validate_arguments
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.src_branch }}
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
+          terraform_version: 1.4.0
 
-      - name: Fix module versions in examples
+      - name: Update modules' versions in examples
         run: |
           find ./examples/ -type f -exec sed -i 's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}'" # latest release tag;' {} \; 
+
+      - name: Update READMEs
+        run: |
+          find . -type f -name 'README.md' -exec sed -E -i 's;github.com/imperva/dsfkit/tree/([0-9]*\.){2}[0-9]*;github.com/imperva/dsfkit/tree/'${{ github.event.inputs.future_release }}';g' {} \;
+
+      - name: Update installer machine link
+        run: |
+          sed -E -i 's;github.com/imperva/dsfkit/blob/([0-9]*\.){2}[0-9]*/installer_machine;github.com/imperva/dsfkit/blob/'${{ github.event.inputs.future_release }}'/installer_machine;g' ./README.md
 
       - name: Run terraform linter
         run: |
@@ -42,10 +91,95 @@ jobs:
 
       - name: Zip per examples
         run: |
-          for d in $(find ./examples -type d -links 2); do zip -r ${d}/$(basename ${d}).zip ${d}; done
+          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}.zip ${_b} -x "*.zip"; popd; done
 
-      - name: commit changes to git repo
+      - name: Commit changes to git repo
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automatic commit before release [release=${{ github.event.inputs.future_release }}] | [skip actions]
-          file_pattern: './examples'
+
+  merge:
+    name: 'Merge'
+    needs: update_versions
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.dst_branch }}
+          token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+
+      - name: Merge
+        run: |
+          git merge origin/${src_branch} --ff-only
+          git push
+
+  tag_branch:
+    needs: merge
+    name: 'Tag release'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ env.dst_branch }}
+
+      - name: tag
+        run: |
+          git tag ${{ github.event.inputs.future_release }} ${{ env.dst_branch }}
+          git push origin ${{ github.event.inputs.future_release }}
+
+  deploy_modules:
+    needs: tag_branch
+    uses: ./.github/workflows/terraform_deploy_module.yml
+    secrets:
+      PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+
+  test_plan:
+    needs: deploy_modules
+    uses: ./.github/workflows/terraform_plan.yml
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+  test_apply:
+    needs: test_plan
+    uses: ./.github/workflows/terraform_apply_cli.yml
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  release:
+    needs: [test_apply]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.dst_branch }}
+
+      - name: Release
+        run: |
+          gh release create ${{ github.event.inputs.future_release }} --verify-tag --latest --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          

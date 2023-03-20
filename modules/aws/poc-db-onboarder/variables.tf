@@ -2,10 +2,6 @@ variable "sonar_version" {
   type        = string
   description = "jsonar installation version"
   nullable    = false
-  validation {
-    condition     = var.sonar_version == "4.10"
-    error_message = "This module supports only 4.10 version"
-  }
 }
 
 variable "hub_info" {
@@ -17,6 +13,21 @@ variable "hub_info" {
 
   nullable    = false
   description = "Hub info"
+}
+
+variable "hub_proxy_info" {
+  type = object({
+    proxy_address              = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
+  })
+
+  description = "Proxy address, private key file path and user used for ssh to a private DSF Hub. Keep empty if a proxy is not used."
+  default = {
+    proxy_address              = null
+    proxy_private_ssh_key_path = null
+    proxy_ssh_user             = null
+  }
 }
 
 variable "assignee_gw" {
@@ -44,7 +55,24 @@ variable "database_details" {
     db_engine     = string
     db_identifier = string
     db_address    = string
+    db_name       = string
   })
   description = "database details"
   nullable    = false
+
+  validation {
+    condition     = contains(["mysql", "sqlserver-ex"], var.database_details.db_engine)
+    error_message = "Allowed values for db engine: \"mysql\", \"sqlserver-ex\""
+  }
 }
+
+variable "terraform_script_path_folder" {
+  type        = string
+  description = "Terraform script path folder to create terraform temporary script files on a private DSF node. Use '.' to represent the instance home directory"
+  default     = null
+  validation {
+    condition     = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
+}
+

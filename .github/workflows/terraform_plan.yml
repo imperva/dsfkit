@@ -1,7 +1,26 @@
 name: 'Terraform Plan'
 
 on:
-  workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      use_modules_from_terraform_registry:
+        required: true
+        type: boolean
+      explicit_ref:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
   push:
     branches:
       - '*'
@@ -36,19 +55,29 @@ jobs:
         example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment']
 
     steps:
-      # Checkout the repository to the GitHub Actions runner
+      - name: Pick ref
+        run: |
+          if [ -z "${{ inputs.explicit_ref }}" ]; then
+            echo REF=${{ github.ref }} >> $GITHUB_ENV;
+          else
+            echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+          fi
+
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: ${{ env.REF }}
 
       - name: Change the modules source to local
+        if: ${{ inputs.use_modules_from_terraform_registry == false }}
         run: |
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_version: 1.4.0
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init

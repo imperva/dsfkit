@@ -1,7 +1,28 @@
 name: 'Terraform Apply Cli'
 
 on:
-  workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      use_modules_from_terraform_registry:
+        required: true
+        type: boolean
+      explicit_ref:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
   push:
     branches:
       - 'master'
@@ -35,9 +56,13 @@ jobs:
           - workspace: simple_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/basic_deployment
             aws_region: eu-west-2
+            hub_output: '.dsf_hub.value.public_dns'
+            gw_output: '.dsf_agentless_gw_group.value."gw-0".private_ip'
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
             aws_region: eu-west-1
+            hub_output: '.dsf_hubs.value.primary.public_dns'
+            gw_output: '.dsf_agentless_gw_group.value."gw-0".primary.private_ip'
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
@@ -45,6 +70,8 @@ jobs:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
+      HUB_OUTPUT: ${{ matrix.hub_output }}
+      GW_OUTPUT: ${{ matrix.gw_output }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -52,11 +79,22 @@ jobs:
       run:
         shell: bash
     steps:
+    - name: Pick ref
+      run: |
+        if [ -z "${{ inputs.explicit_ref }}" ]; then
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+        else
+          echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+        fi
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        ref: ${{ env.REF }}
 
     - name: Change the modules source to local
+      if: ${{ inputs.use_modules_from_terraform_registry == false }}
       run: | 
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
@@ -80,14 +118,13 @@ jobs:
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
+        terraform_version: 1.4.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
-      with:
-        cmd: jq -n env
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -118,8 +155,8 @@ jobs:
 
     - name: Set Environment Variables
       run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hubs.value.primary.public_dns') >> $GITHUB_ENV
-        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $HUB_OUTPUT) >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $GW_OUTPUT) >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_name.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
@@ -134,14 +171,20 @@ jobs:
         username: ec2-user
         key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
-        script: ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     - name: Terraform Destroy
+      id: destroy
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Terraform Delete Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+      if: always()
+      run: |
+        if [ '${{ steps.destroy.conclusion }}' = 'success' ]
+        then 
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        fi
       env:
         TF_WORKSPACE: default
 

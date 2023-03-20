@@ -5,26 +5,59 @@ set -u
 set -x
 cd /root || exit 1
 
-function wait_for_network() {
-    until ping -c1 www.google.com >/dev/null 2>&1; do
-        echo waiting for network..;
-        sleep 15;
+function internet_access() {
+    if [ -z "$${INTERNET_ACCESS-}" ]; then
+        timeout=300 # 5 minutes
+        start_time=$(date +%s)
+        while ! curl --connect-timeout 30 www.google.com &>/dev/null; do # icmp packets might not be supported
+            echo "Waiting for network availability..."
+            sleep 10
+            current_time=$(date +%s)
+            elapsed_time=$((current_time - start_time))
+            if [ $elapsed_time -ge $timeout ]; then
+                echo "Timeout: network is not available after $timeout seconds"
+                INTERNET_ACCESS="false"
+                return 1
+            fi
+        done
+        INTERNET_ACCESS="true"
+    fi
+    if [ "$INTERNET_ACCESS" == "true" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function install_yum_deps_from_internet() {
+    if ! internet_access; then
+        echo "Error: No internet access. Please make sure $@ is installed in the base ami"
+        exit 1
+    fi
+    packages=$@
+    for p in $packages; do
+        yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y # trying x times since sometimes there is a glitch with the entitlement server
     done
 }
 
-function install_deps() {
-    # yum fails sporadically. So we try 3 times :(
-    yum install unzip -y || yum install unzip -y || yum install unzip -y
-    yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    yum install net-tools jq vim nc lsof -y
-
-    if [ ! -f /usr/local/bin/aws ]; then
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
-        aws/install
-        rm -rf aws awscliv2.zip
+function install_awscli_from_internet() {
+    if ! internet_access; then
+        echo "Error: No internet access. Please make sure awscli is installed in the base ami"
+        exit 1
     fi
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip -q awscliv2.zip
+    aws/install
+    rm -rf aws awscliv2.zip
+}
 
+function install_deps() {
+    command -v unzip || install_yum_deps_from_internet unzip
+    command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
+    test -f /usr/local/bin/aws || install_awscli_from_internet
+}
+
+function create_users_and_groups() {
     id sonargd || useradd sonargd
     id sonarg  || useradd sonarg
     id sonarw  || useradd sonarw
@@ -77,9 +110,9 @@ function attach_disk() {
 
 function install_tarball() {
     echo Downloading tarball..
-    # Download intallation tarball
+    # Download installation tarball
     TARBALL_FILE=$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE >/dev/null
+    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
 
     echo Installing tarball..
     # Installing tarball
@@ -117,6 +150,8 @@ function setup() {
     VERSION=$(ls /opt/sonar-dsf/jsonar/apps/ -Art | tail -1)
     echo Setup sonar $VERSION
 
+    password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
+
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
     else
@@ -127,10 +162,10 @@ function setup() {
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
         --product "$PRODUCT" \
-        --newadmin-pass="${web_console_admin_password}" \
-        --secadmin-pass="${web_console_admin_password}" \
-        --sonarg-pass="${web_console_admin_password}" \
-        --sonargd-pass="${web_console_admin_password}" \
+        --newadmin-pass="$password" \
+        --secadmin-pass="$password" \
+        --sonarg-pass="$password" \
+        --sonargd-pass="$password" \
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
@@ -149,25 +184,28 @@ function set_environment_vars() {
 
 function install_ssh_keys() {
     echo Installing SSH keys
-    if [ "${resource_type}" == "hub" ]; then
-        mkdir -p /home/sonarw/.ssh/
-        /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarw_secret_name} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
-        echo "${hub_federation_public_key}" > /home/sonarw/.ssh/id_rsa.pub
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || cat /home/sonarw/.ssh/id_rsa.pub > /home/sonarw/.ssh/authorized_keys
-        chown -R sonarw:sonar /home/sonarw/.ssh
-        chmod -R 600 /home/sonarw/.ssh
-        chmod 700 /home/sonarw/.ssh
-    else
-        mkdir -p /home/sonarw/.ssh
-        touch /home/sonarw/.ssh/authorized_keys
-        grep -q "${hub_federation_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_federation_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
-        chown -R sonarw:sonar /home/sonarw
+    mkdir -p /home/sonarw/.ssh/
+    touch /home/sonarw/.ssh/authorized_keys
+
+    # install the generated primary node public and private keys in the primary node and the secondary node
+    /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${primary_node_sonarw_private_key_secret} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+    echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
+
+    # enable communication between a pair of primary and secondary nodes
+    grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
+
+    # enable communication between the the primary/secondary hub and the GW
+    if [ "${resource_type}" == "gw" ]; then
+        grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
     fi
+
+    chown -R sonarw:sonar /home/sonarw/.ssh
+    chmod -R 600 /home/sonarw/.ssh
+    chmod 700 /home/sonarw/.ssh
 }
 
-wait_for_network
 install_deps
+create_users_and_groups
 attach_disk
 
 STATE_DIR=/data_vol/sonar-dsf/jsonar
@@ -183,4 +221,3 @@ fi
 
 set_environment_vars
 install_ssh_keys
-

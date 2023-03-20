@@ -5,21 +5,43 @@ locals {
   ebs_state_iops       = var.ebs_details.provisioned_iops
   ebs_state_throughput = var.ebs_details.throughput
 
-  ami_name_default = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2" # Exists on all regions
-  ami_name         = var.ami_name_tag != null ? var.ami_name_tag : local.ami_name_default
-  ami_user_default = "ec2-user"
-  ami_user         = var.ami_user != null ? var.ami_user : local.ami_user_default
+  security_group_id = length(aws_security_group.dsf_base_sg) > 0 ? element(aws_security_group.dsf_base_sg.*.id, 0) : var.security_group_id
+
+  # ami
+  ami_default = {
+    id               = null
+    owner_account_id = "309956199498"
+    username         = "ec2-user"
+    name             = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+  }
+
+  ami = var.ami != null ? var.ami : local.ami_default
+
+  ami_owner    = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
+  ami_name     = local.ami.name != null ? local.ami.name : "*"
+  ami_id       = local.ami.id != null ? local.ami.id : "*"
+  ami_username = local.ami.username
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count    = var.create_and_attach_public_elastic_ip ? 1 : 0
-  instance = aws_instance.dsf_base_instance.id
-  vpc      = true
+  count = var.attach_public_ip ? 1 : 0
+  vpc   = true
 }
 
-data "aws_ami" "redhat-7-ami" {
+resource "aws_eip_association" "eip_assoc" {
+  count         = var.attach_public_ip ? 1 : 0
+  instance_id   = aws_instance.dsf_base_instance.id
+  allocation_id = aws_eip.dsf_instance_eip[0].id
+}
+
+data "aws_ami" "selected-ami" {
   most_recent = true
-  owners      = ["309956199498"] # Amazon
+  owners      = [local.ami_owner]
+
+  filter {
+    name   = "image-id"
+    values = [local.ami_id]
+  }
 
   filter {
     name   = "name"
@@ -38,14 +60,14 @@ data "aws_ami" "redhat-7-ami" {
 }
 
 resource "aws_instance" "dsf_base_instance" {
-  ami           = data.aws_ami.redhat-7-ami.image_id
+  ami           = data.aws_ami.selected-ami.image_id
   instance_type = var.ec2_instance_type
   key_name      = var.key_pair
   user_data     = local.install_script
   root_block_device {
     volume_size = local.disk_size_app
   }
-  iam_instance_profile = var.iam_instance_profile_id
+  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
@@ -81,13 +103,10 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   lifecycle {
     ignore_changes = [iops]
   }
-  # lifecycle {
-  #   prevent_destroy = true
-  # }
 }
 
 # Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
-  security_groups = [aws_security_group.dsf_base_sg.id]
+  security_groups = [local.security_group_id]
 }

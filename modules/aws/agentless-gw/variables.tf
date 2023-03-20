@@ -17,6 +17,16 @@ variable "subnet_id" {
   }
 }
 
+variable "security_group_id" {
+  type        = string
+  default     = null
+  description = "Security group id for the Agentless GW instance. In case it is not set, a security group will be created automatically."
+  validation {
+    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
+    error_message = "Security group id is invalid. Must be sg-********"
+  }
+}
+
 variable "public_ip" {
   type        = bool
   default     = false
@@ -40,31 +50,42 @@ variable "ebs" {
 
 variable "ingress_communication_via_proxy" {
   type = object({
-    proxy_address         = string
-    proxy_private_ssh_key = string
-    proxy_ssh_user        = string
+    proxy_address              = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private gw (Usually hub address) & Proxy ssh key. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private gw (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default = {
-    proxy_address         = null
-    proxy_private_ssh_key = null
-    proxy_ssh_user        = null
+    proxy_address              = null
+    proxy_private_ssh_key_path = null
+    proxy_ssh_user             = null
   }
 }
 
-variable "create_and_attach_public_elastic_ip" {
+variable "attach_public_ip" {
   type        = bool
   default     = true
   description = "Create public elastic IP for the instance"
 }
 
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Setup sonar to be initialized with it's public IP. Mustn't be True if attach_public_ip is set to False"
+}
+
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list = list(any) #22, 8080, 8443, 3030, 27117
-    use_public_ip         = bool
+    full_access_cidr_list = list(any) # will be attached to the following ports - 22, 8080, 8443, 3030, 27117
   })
-  description = "List of allowed ingress cidr patterns for the DSF agentless gw instance for ssh and internal protocols"
+  description = "List of allowed ingress cidr patterns for the Agentless gateway instance for ssh and internal protocols"
   nullable    = false
+  validation {
+    condition = alltrue([
+      for address in var.ingress_communication.full_access_cidr_list : can(cidrnetmask(address))
+    ]) && (length(var.ingress_communication.full_access_cidr_list) > 0)
+    error_message = "Each item of the 'full_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
 }
 
 variable "ssh_key_pair" {
@@ -80,16 +101,29 @@ variable "ssh_key_pair" {
 variable "binaries_location" {
   type = object({
     s3_bucket = string
+    s3_region = string
     s3_key    = string
   })
   description = "S3 DSF installation location"
   nullable    = false
 }
 
-variable "hub_federation_public_key" {
+variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of sonarw taken from the main hub output"
+  description = "Public key of the sonarw user taken from the primary Hub output"
   nullable    = false
+}
+
+variable "sonarw_public_key" {
+  type        = string
+  description = "Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
+}
+
+variable "sonarw_private_key" {
+  type        = string
+  description = "Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  default     = null
 }
 
 variable "web_console_admin_password" {
@@ -103,30 +137,54 @@ variable "web_console_admin_password" {
   nullable = false
 }
 
-variable "ami_name_tag" {
-  type        = string
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
   default     = null
-  description = "Ami name to use as base image for the compute instance"
-}
 
-variable "ami_user" {
-  type        = string
-  default     = null
-  description = "Ami user to use for SSH to the compute instance"
+  validation {
+    condition     = var.ami == null || try(var.ami.id != null || var.ami.name != null, false)
+    error_message = "ami id or name mustn't be null"
+  }
+
+  validation {
+    condition     = var.ami == null || try(var.ami.username != null, false)
+    error_message = "ami username mustn't be null"
+  }
 }
 
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to DSF gw. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF Gateway. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {
   default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.9-sonar-installation-and-setup-guide/page/80035.htm"
+  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
 variable "skip_instance_health_verification" {
   default     = false
   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+}
+
+variable "terraform_script_path_folder" {
+  type        = string
+  description = "Terraform script path folder to create terraform temporary script files on the DSF agentless GW instance. Use '.' to represent the instance home directory"
+  default     = null
+  validation {
+    condition     = var.terraform_script_path_folder != ""
+    error_message = "Terraform script path folder can not be an empty string"
+  }
 }

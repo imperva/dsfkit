@@ -3,7 +3,7 @@ output "salt" {
 }
 
 output "my_ip" {
-  value = trimspace(data.http.workstation_public_ip.response_body)
+  value = try(trimspace(data.http.workstation_public_ip.response_body), null)
 }
 
 output "now" {
@@ -43,7 +43,8 @@ output "tags" {
 
 output "tarball_location" {
   value = {
-    s3_bucket = var.tarball_s3_bucket
+    s3_bucket = var.tarball_s3_bucket.bucket
+    s3_region = var.tarball_s3_bucket.region
     s3_key    = local.s3_object
     version   = local.s3_object_version
   }

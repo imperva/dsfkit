@@ -5,6 +5,7 @@ s;imperva/dsf-globals/aws;../../../modules/aws/core/globals;
 s;imperva/dsf-hadr/null;../../../modules/null/hadr;
 s;imperva/dsf-federation/null;../../../modules/null/federation;
 s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db;../../../modules/aws/rds-mysql-db;
+s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db;../../../modules/aws/rds-mssql-db;
 s;imperva/dsf-poc-db-onboarder/aws;../../../modules/aws/poc-db-onboarder;
 s;imperva/dsf-statistics/aws;../../../modules/aws/statistics;
 /latest release tag/c\

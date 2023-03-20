@@ -19,15 +19,16 @@ output "sg_id" {
 }
 
 output "iam_role" {
-  value = local.role_arn
+  description = "IAM Role ARN of the DSF Hub node"
+  value       = module.hub_instance.iam_role
 }
 
-output "federation_public_key" {
-  value = local.dsf_hub_ssh_public_federation_key
+output "sonarw_public_key" {
+  value = module.hub_instance.sonarw_public_key
 }
 
-output "federation_private_key" {
-  value = local.dsf_hub_ssh_private_federation_key
+output "sonarw_private_key" {
+  value = module.hub_instance.sonarw_private_key
 }
 
 output "jsonar_uid" {
