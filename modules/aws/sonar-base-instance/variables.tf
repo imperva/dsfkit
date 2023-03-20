@@ -59,7 +59,12 @@ variable "ami" {
     username         = string
     owner_account_id = string
   })
-  description = "Aws machine image filter details. The latest image that answers to this filter is chosen. owner_account_id defaults to the current account. username is the ami default username. Set to null if you wish to use the recommended image."
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
   nullable    = true
 
   validation {

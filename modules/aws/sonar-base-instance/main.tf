@@ -20,7 +20,7 @@ locals {
   ami_owner    = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
   ami_name     = local.ami.name != null ? local.ami.name : "*"
   ami_id       = local.ami.id != null ? local.ami.id : "*"
-  ami_username = local.ami.username != null ? local.ami.username : "*"
+  ami_username = local.ami.username
 }
 
 resource "aws_eip" "dsf_instance_eip" {
