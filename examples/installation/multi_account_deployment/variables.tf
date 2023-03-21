@@ -1,6 +1,7 @@
 variable "deployment_name" {
   type    = string
   default = "imperva-dsf"
+  description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
 variable "sonar_version" {
@@ -90,24 +91,6 @@ variable "additional_install_parameters" {
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
-# variable "vpc_ip_range" {
-#   type        = string
-#   default     = "10.0.0.0/16"
-#   description = "VPC cidr range"
-# }
-
-# variable "private_subnets" {
-#   type        = list(string)
-#   default     = ["10.0.1.0/24", "10.0.2.0/24"]
-#   description = "VPC private subnet cidr range"
-# }
-
-# variable "public_subnets" {
-#   type        = list(string)
-#   default     = ["10.0.101.0/24", "10.0.102.0/24"]
-#   description = "VPC public subnet cidr range"
-# }
-
 variable "hub_ebs_details" {
   type = object({
     disk_size        = number
@@ -162,6 +145,40 @@ The "id" and "name" fields are used to filter the machine image by ID or name, r
 The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
 EOF
   default     = null
+}
+
+variable "hub_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default = null
+
+  validation {
+    condition = (
+      var.hub_key_pem_details == null ||
+      try(var.hub_key_pem_details.private_key_pem_file_path != null && var.hub_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the hub_key_pem_details variable"
+  }
+}
+
+variable "gw_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default = null
+
+  validation {
+    condition = (
+      var.gw_key_pem_details == null ||
+      try(var.gw_key_pem_details.private_key_pem_file_path != null && var.gw_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the gw_key_pem_details variable"
+  }
 }
 
 variable "hub_skip_instance_health_verification" {

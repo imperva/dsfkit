@@ -1,6 +1,7 @@
 variable "deployment_name" {
   type    = string
   default = "imperva-dsf"
+  description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
 variable "aws_profile" {
@@ -148,6 +149,40 @@ variable "hub_skip_instance_health_verification" {
 variable "gw_skip_instance_health_verification" {
   default     = false
   description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+}
+
+variable "hub_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default = null
+
+  validation {
+    condition = (
+      var.hub_key_pem_details == null ||
+        try(var.hub_key_pem_details.private_key_pem_file_path != null && var.hub_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the hub_key_pem_details variable"
+  }
+}
+
+variable "gw_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default = null
+
+  validation {
+    condition = (
+      var.gw_key_pem_details == null ||
+        try(var.gw_key_pem_details.private_key_pem_file_path != null && var.gw_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the gw_key_pem_details variable"
+  }
 }
 
 variable "terraform_script_path_folder" {

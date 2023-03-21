@@ -34,6 +34,8 @@ locals {
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
+  should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
 }
 
 ##############################
@@ -41,6 +43,7 @@ locals {
 ##############################
 
 module "key_pair_hub" {
+  count                    = local.should_create_hub_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.3.9" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
@@ -48,6 +51,7 @@ module "key_pair_hub" {
 }
 
 module "key_pair_gw" {
+  count                    = local.should_create_gw_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.3.9" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
@@ -55,6 +59,13 @@ module "key_pair_gw" {
   providers = {
     aws = aws.gw
   }
+}
+
+locals {
+  hub_private_key_pem_file_path = var.hub_key_pem_details != null ? var.hub_key_pem_details.private_key_pem_file_path : module.key_pair_hub[0].private_key_file_path
+  hub_public_key_name = var.hub_key_pem_details != null ? var.hub_key_pem_details.public_key_name : module.key_pair_hub[0].key_pair.key_pair_name
+  gw_private_key_pem_file_path = var.gw_key_pem_details != null ? var.gw_key_pem_details.private_key_pem_file_path : module.key_pair_gw[0].private_key_file_path
+  gw_public_key_name = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
 ##############################
@@ -74,8 +85,8 @@ module "hub" {
   instance_type              = var.hub_instance_type
   ami                        = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair_hub.key_pair_private_pem.filename
-    ssh_public_key_name       = module.key_pair_hub.key_pair.key_pair_name
+    ssh_private_key_file_path = local.hub_private_key_pem_file_path
+    ssh_public_key_name       = local.hub_public_key_name
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
@@ -101,8 +112,8 @@ module "agentless_gw_group" {
   hub_sonarw_public_key      = module.hub.sonarw_public_key
   attach_public_ip           = false
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair_gw.key_pair_private_pem.filename
-    ssh_public_key_name       = module.key_pair_gw.key_pair.key_pair_name
+    ssh_private_key_file_path = local.gw_private_key_pem_file_path
+    ssh_public_key_name       = local.gw_public_key_name
   }
   ingress_communication = {
     full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
@@ -110,7 +121,7 @@ module "agentless_gw_group" {
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.private_ip
-    proxy_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
     proxy_ssh_user             = module.hub.ssh_user
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
@@ -126,17 +137,17 @@ module "federation" {
   version  = "1.3.9" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
-    gw_private_ssh_key_path = module.key_pair_gw.key_pair_private_pem.filename
+    gw_private_ssh_key_path = local.gw_private_key_pem_file_path
     gw_ssh_user             = each.value.ssh_user
   }
   hub_info = {
     hub_ip_address           = module.hub.private_ip
-    hub_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+    hub_private_ssh_key_path = local.hub_private_key_pem_file_path
     hub_ssh_user             = module.hub.ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub.private_ip
-    proxy_private_ssh_key_path = module.key_pair_hub.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
