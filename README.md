@@ -648,7 +648,7 @@ The permissions are separated to different policies. Use the relevant policies a
 3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
 4. In order to onboard a MsSQL RDS with audit configured and with synthetic data, use the permissions specified here - [onboard MsSQL RDS with synthetic data permissions](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
 
-Please note that when running the deployment with a custom 'deployment_name' variable, you must update the corresponding condition in the AWS permissions to reflect the new custom variable.</br></br>
+Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
 # Undeployment
