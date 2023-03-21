@@ -76,7 +76,7 @@ module "hub_primary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [var.private_subnets[0]])
   }
   use_public_ip = true
   depends_on = [
@@ -102,7 +102,7 @@ module "hub_secondary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [var.private_subnets[0]])
   }
   use_public_ip = true
   depends_on = [
