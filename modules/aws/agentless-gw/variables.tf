@@ -71,12 +71,12 @@ variable "attach_public_ip" {
 variable "use_public_ip" {
   type        = bool
   default     = false
-  description = "Setup sonar to be initialized with it's public IP. Mustn't be True if attach_public_ip is set to False"
+  description = "Whether to use the DSF instance's public or private IP to check the instance's health"
 }
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list = list(any) # will be attached to the following ports - 22, 8080, 8443, 3030, 27117
+    full_access_cidr_list = list(any) # will be attached to sg.tf:ingress_ports
   })
   description = "List of allowed ingress cidr patterns for the Agentless gateway instance for ssh and internal protocols"
   nullable    = false
