@@ -76,7 +76,7 @@ module "hub" {
   ebs                        = var.hub_ebs_details
   attach_public_ip           = true
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -101,7 +101,7 @@ module "agentless_gw_group" {
   hub_sonarw_public_key      = module.hub.sonarw_public_key
   attach_public_ip           = false
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -110,7 +110,7 @@ module "agentless_gw_group" {
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
@@ -124,17 +124,17 @@ module "federation" {
   version  = "1.3.9" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
-    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    gw_private_ssh_key_path = module.key_pair.private_key_file_path
     gw_ssh_user             = each.value.ssh_user
   }
   hub_info = {
     hub_ip_address           = module.hub.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub.ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub.ssh_user
   }
   depends_on = [
@@ -172,7 +172,7 @@ module "db_onboarding" {
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub.ssh_user
   }
 

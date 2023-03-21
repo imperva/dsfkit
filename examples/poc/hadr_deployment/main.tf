@@ -77,7 +77,7 @@ module "hub_primary" {
   ebs                        = var.hub_ebs_details
   attach_public_ip           = true
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -103,7 +103,7 @@ module "hub_secondary" {
   sonarw_public_key          = module.hub_primary.sonarw_public_key
   sonarw_private_key         = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -128,7 +128,7 @@ module "agentless_gw_group_primary" {
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   attach_public_ip           = false
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -137,7 +137,7 @@ module "agentless_gw_group_primary" {
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
@@ -152,7 +152,7 @@ module "hub_hadr" {
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
   dsf_secondary_private_ip = module.hub_secondary.private_ip
-  ssh_key_path             = module.key_pair.key_pair_private_pem.filename
+  ssh_key_path             = module.key_pair.private_key_file_path
   ssh_user                 = module.hub_primary.ssh_user
   depends_on = [
     module.federation
@@ -174,17 +174,17 @@ module "federation" {
   version = "1.3.9" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
-    gw_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    gw_private_ssh_key_path = module.key_pair.private_key_file_path
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   hub_info = {
     hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_primary.public_ip
-    proxy_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
@@ -223,7 +223,7 @@ module "db_onboarding" {
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub_primary.public_ip
-    hub_private_ssh_key_path = module.key_pair.key_pair_private_pem.filename
+    hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub_primary.ssh_user
   }
   assignee_gw   = module.hub_primary.jsonar_uid
