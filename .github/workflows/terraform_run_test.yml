@@ -109,7 +109,7 @@ jobs:
 #
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: SSH Connection
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@v0.1.8
       id: test_audit
       with:
         host: 54.179.25.83
@@ -117,8 +117,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          ifconfig
+        script: whoami
 #
 #    - name: Terraform Destroy
 #    #   if: always()
