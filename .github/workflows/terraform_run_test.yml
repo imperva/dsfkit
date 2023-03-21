@@ -89,6 +89,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR init
 
     - name: Terraform Validate
@@ -99,6 +100,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
@@ -110,6 +112,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR plan
 #
 #    - name: Cleaning envrionment
@@ -123,6 +126,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
@@ -133,6 +137,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR output -json
 #
 #    - name: Set Environment Variables
@@ -167,6 +172,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
+        envs: EXAMPLE_DIR
         script: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     # Send job failure to Slack
