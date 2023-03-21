@@ -9,7 +9,8 @@ data "aws_vpc" "selected" {
 locals {
   create_security_group_count = var.security_group_id == null ? 1 : 0
   cidr_blocks                 = var.sg_ingress_cidr
-  ingress_ports               = [22, 8080, 8443, 3030, 27117]
+  # 61617: health diagnostics port, needs to be open in the Hub
+  ingress_ports               = [22, 8080, 8443, 3030, 27117, 61617]
   ingress_ports_map           = { for port in local.ingress_ports : port => port }
 }
 

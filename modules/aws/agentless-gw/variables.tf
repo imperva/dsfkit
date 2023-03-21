@@ -76,7 +76,7 @@ variable "use_public_ip" {
 
 variable "ingress_communication" {
   type = object({
-    full_access_cidr_list = list(any) # will be attached to the following ports - 22, 8080, 8443, 3030, 27117
+    full_access_cidr_list = list(any) # will be attached to sg.tf:ingress_ports
   })
   description = "List of allowed ingress cidr patterns for the Agentless gateway instance for ssh and internal protocols"
   nullable    = false

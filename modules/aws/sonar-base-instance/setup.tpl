@@ -123,17 +123,10 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .local_hostname)
+    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.local_hostname)
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1
-    fi
-    if [ -n "${public_fqdn}" ]; then
-        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.public_hostname)
-        if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
-            echo "Failed to extract instance public FQDN"
-            exit 1
-        fi
     fi
 }
 
