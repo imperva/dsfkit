@@ -71,7 +71,7 @@ variable "attach_public_ip" {
 variable "use_public_ip" {
   type        = bool
   default     = false
-  description = "Setup sonar to be initialized with it's public IP. Mustn't be True if attach_public_ip is set to False"
+  description = "Whether to use the DSF instance's public or private IP to check the instance's health"
 }
 
 variable "ingress_communication" {

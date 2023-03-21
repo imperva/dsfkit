@@ -16,7 +16,7 @@ locals {
 
 resource "aws_security_group" "dsf_base_sg" {
   count       = local.create_security_group_count
-  description = "Public internet access"
+  // TODO put description
   vpc_id      = data.aws_subnet.subnet.vpc_id
 
   tags = {
