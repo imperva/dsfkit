@@ -25,7 +25,7 @@ jobs:
       matrix:
         include:
           - workspace: run_test
-            example_dir: ./examples/installation/single_account_deployment
+            example_dir: ./dsfkit/examples/installation/single_account_deployment
             aws_region: ap-southeast-1
           # - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
           #   example_dir: ./examples/poc/hadr_deployment
