@@ -68,6 +68,11 @@ locals {
   gw_public_key_name = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
+data "aws_subnet" "subnet_gw" {
+  id = var.subnet_gw
+  provider = aws.gw
+}
+
 ##############################
 # Generating deployment
 ##############################
@@ -90,7 +95,7 @@ module "hub" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = local.workstation_cidr
+    full_access_cidr_list                   = concat(local.workstation_cidr, [data.aws_subnet.subnet_gw.cidr_block])
   }
   use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
