@@ -77,7 +77,7 @@ module "hub" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, [for idx, val in module.agentless_gw_group : "${val.private_ip}/32"])
+    full_access_cidr_list                   = concat(local.workstation_cidr, var.private_subnets[0])
   }
   use_public_ip = true
   depends_on = [
