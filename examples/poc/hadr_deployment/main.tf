@@ -38,6 +38,10 @@ locals {
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  primary_hub_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
+  secondary_hub_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
+  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
 ##############################
@@ -45,6 +49,8 @@ locals {
 ##############################
 
 module "vpc" {
+  count = var.subnet_ids == null ? 1 : 0
+
   source = "terraform-aws-modules/vpc/aws"
   name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   cidr   = var.vpc_ip_range
@@ -65,7 +71,7 @@ module "hub_primary" {
   source                     = "imperva/dsf-hub/aws"
   version                    = "1.3.9" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                  = module.vpc.public_subnets[0]
+  subnet_id                  = local.primary_hub_subnet
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
@@ -88,7 +94,7 @@ module "hub_secondary" {
   source                     = "imperva/dsf-hub/aws"
   version                    = "1.3.9" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                  = module.vpc.public_subnets[1]
+  subnet_id                  = local.secondary_hub_subnet
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
@@ -115,7 +121,7 @@ module "agentless_gw_group_primary" {
   version                    = "1.3.9" # latest release tag
   count                      = var.gw_count
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                  = module.vpc.private_subnets[0]
+  subnet_id                  = local.gw_subnet
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
@@ -192,7 +198,7 @@ module "rds_mysql" {
   count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
   version                      = "1.3.9" # latest release tag
-  rds_subnet_ids               = module.vpc.public_subnets
+  rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
@@ -201,7 +207,7 @@ module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
   version                      = "1.3.9" # latest release tag
-  rds_subnet_ids               = module.vpc.public_subnets
+  rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 
   providers = {
