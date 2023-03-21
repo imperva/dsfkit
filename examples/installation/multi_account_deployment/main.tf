@@ -67,6 +67,7 @@ locals {
 
 data "aws_subnet" "subnet_gw" {
   id = var.subnet_gw
+  provider = aws.gw
 }
 
 ##############################
