@@ -123,7 +123,7 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.local_hostname)
+    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.local_ipv4)
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1
