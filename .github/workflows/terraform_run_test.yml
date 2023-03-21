@@ -114,7 +114,7 @@ jobs:
       with:
         host: 54.179.25.83
         username: ec2-user
-        key: ${{ $JUMP_SERVER_KEY }}
+        key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
         script: |
