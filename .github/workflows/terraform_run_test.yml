@@ -89,9 +89,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          cd ./dsfkit/examples/installation/single_account_deployment/
-          terraform init
+        script: terraform -chdir=$EXAMPLE_DIR init
 
     - name: Terraform Validate
       uses: appleboy/ssh-action@v0.1.8
@@ -101,9 +99,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          cd ./dsfkit/examples/installation/single_account_deployment/
-          terraform validate
+        script: terraform -chdir=$EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
@@ -114,9 +110,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          cd ./dsfkit/examples/installation/single_account_deployment/
-          terraform plan
+        script: terraform -chdir=$EXAMPLE_DIR plan
 #
 #    - name: Cleaning envrionment
 #      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
@@ -129,9 +123,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          cd ./dsfkit/examples/installation/single_account_deployment/
-          terraform apply -auto-approve
+        script: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       uses: appleboy/ssh-action@v0.1.8
@@ -141,9 +133,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        script: |
-          cd ./dsfkit/examples/installation/single_account_deployment/
-          terraform output -json
+        script: terraform -chdir=$EXAMPLE_DIR output -json
 #
 #    - name: Set Environment Variables
 #      run: |
@@ -167,9 +157,17 @@ jobs:
 #          terraform apply -auto-approve
 
 #
-#    - name: Terraform Destroy
-#    #   if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+    - name: Terraform Destroy
+    #   if: always()
+      uses: appleboy/ssh-action@v0.1.8
+      id: test_audit
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        script: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     # Send job failure to Slack
     # - name: Send Slack by action-slack
