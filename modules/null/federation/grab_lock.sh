@@ -13,6 +13,8 @@ while [ $lock_acquired -eq 0 ]; do
         sleep $(($RANDOM * 100 / 100000))
     done
     touch $lock_file
+    # TODO write to the file which federation touched it, i.e., hub ip -> gw ip
+    echo "touched $lock_file"
     sleep 0.2
     lock_files=$(ls $lock_file_prefix* 2>/dev/null | wc -l)
     if [ "$lock_files" -eq 1 ]; then
