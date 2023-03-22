@@ -10,14 +10,12 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "imperva/dsf-globals/aws"
-  version       = "1.3.9" # latest release tag
-  sonar_version = var.sonar_version
+  source        = "../../../modules/aws/core/globals"
+  tarball_s3_key = "jsonar-4.11.deployfix_20230315022400.tar.gz"
 }
 
 module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -69,8 +67,7 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "hub_primary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  source                     = "../../../modules/aws/hub"
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = local.primary_hub_subnet
   binaries_location          = local.tarball_location
@@ -92,8 +89,7 @@ module "hub_primary" {
 }
 
 module "hub_secondary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  source                     = "../../../modules/aws/hub"
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                  = local.secondary_hub_subnet
   binaries_location          = local.tarball_location
@@ -118,8 +114,7 @@ module "hub_secondary" {
 }
 
 module "agentless_gw_group_primary" {
-  source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.3.9" # latest release tag
+  source                     = "../../../modules/aws/agentless-gw"
   count                      = var.gw_count
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
   subnet_id                  = local.primary_gws_subnet
@@ -147,8 +142,7 @@ module "agentless_gw_group_primary" {
 }
 
 module "agentless_gw_group_secondary" {
-  source                              = "imperva/dsf-agentless-gw/aws"
-  version                             = "1.3.6" # latest release tag
+  source                              = "../../../modules/aws/agentless-gw"
   count                               = var.gw_count
   friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
   subnet_id                           = local.secondary_gws_subnet
@@ -222,8 +216,7 @@ resource aws_security_group_rule "primary_gw_sg_secondary_cidr_ingress" {
 }
 
 module "hub_hadr" {
-  source                   = "imperva/dsf-hadr/null"
-  version                  = "1.3.9" # latest release tag
+  source                   = "../../../modules/null/hadr"
   dsf_primary_ip           = module.hub_primary.public_ip
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
@@ -238,8 +231,7 @@ module "hub_hadr" {
 
 module "agentless_gw_group_hadr" {
   count                        = var.gw_count
-  source                       = "imperva/dsf-hadr/null"
-  version                      = "1.3.6" # latest release tag
+  source                       = "../../../modules/null/hadr"
   dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
   dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
@@ -270,8 +262,7 @@ locals {
 
 module "federation" {
   count   = length(local.hub_gw_combinations)
-  source  = "imperva/dsf-federation/null"
-  version = "1.3.9" # latest release tag
+  source  = "../../../modules/null/federation"
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -295,8 +286,7 @@ module "federation" {
 
 module "rds_mysql" {
   count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.3.9" # latest release tag
+  source                       = "../../../modules/aws/rds-mysql-db"
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
@@ -304,8 +294,7 @@ module "rds_mysql" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.3.9" # latest release tag
+  source                       = "../../../modules/aws/rds-mssql-db"
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 
@@ -317,8 +306,7 @@ module "rds_mssql" {
 
 module "db_onboarding" {
   for_each      = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
-  source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.9" # latest release tag
+  source        = "../../../modules/aws/poc-db-onboarder"
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub_primary.public_ip

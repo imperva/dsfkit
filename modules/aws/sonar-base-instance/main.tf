@@ -75,7 +75,7 @@ resource "aws_instance" "dsf_base_instance" {
   tags = {
     Name = var.name
   }
-  disable_api_termination     = true
+  disable_api_termination     = false
   user_data_replace_on_change = true
 }
 
