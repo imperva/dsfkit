@@ -153,6 +153,7 @@ module "agentless_gw_group_secondary" {
   hadr_secondary_node                 = true
   sonarw_public_key                   = module.agentless_gw_group_primary[count.index].sonarw_public_key
   sonarw_private_key                  = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  attach_public_ip                    = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
