@@ -31,7 +31,7 @@ function internet_access() {
 
 function install_yum_deps_from_internet() {
     if ! internet_access; then
-        echo "Error: No internet access. Please make sure $@ is installed in the base ami"
+        echo "Error: No outbound internet access. Please make sure $@ is installed in the base ami"
         exit 1
     fi
     packages=$@
@@ -42,7 +42,7 @@ function install_yum_deps_from_internet() {
 
 function install_awscli_from_internet() {
     if ! internet_access; then
-        echo "Error: No internet access. Please make sure awscli is installed in the base ami"
+        echo "Error: No outbound internet access. Please make sure awscli is installed in the base ami"
         exit 1
     fi
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -123,17 +123,10 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .local_hostname)
+    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.local_ipv4)
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1
-    fi
-    if [ -n "${public_fqdn}" ]; then
-        instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.public_hostname)
-        if [ "$instance_fqdn" == "null" ] || [ -z "$instance_fqdn" ]; then
-            echo "Failed to extract instance public FQDN"
-            exit 1
-        fi
     fi
 }
 

@@ -21,7 +21,6 @@ locals {
     hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
-    public_fqdn                            = var.use_public_ip ? "True" : ""
     uuid                                   = random_uuid.uuid.result
     additional_install_parameters          = var.additional_install_parameters
   })

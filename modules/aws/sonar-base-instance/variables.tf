@@ -33,7 +33,7 @@ variable "attach_public_ip" {
 
 variable "use_public_ip" {
   type        = bool
-  description = "Create public IP for the instance"
+  description = "Whether to use the DSF instance's public or private IP to check the instance's health"
 }
 
 variable "key_pair" {
