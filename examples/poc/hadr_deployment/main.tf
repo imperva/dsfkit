@@ -40,7 +40,8 @@ locals {
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   primary_hub_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
   secondary_hub_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
-  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  primary_gws_subnet         = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  secondary_gws_subnet       = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[1]
   db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
@@ -121,7 +122,7 @@ module "agentless_gw_group_primary" {
   version                    = "1.3.9" # latest release tag
   count                      = var.gw_count
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                  = local.gw_subnet
+  subnet_id                  = local.primary_gws_subnet
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
@@ -141,8 +142,83 @@ module "agentless_gw_group_primary" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.vpc,
+    module.vpc
   ]
+}
+
+module "agentless_gw_group_secondary" {
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.6" # latest release tag
+  count                               = var.gw_count
+  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
+  subnet_id                           = local.secondary_gws_subnet
+  ebs                                 = var.gw_group_ebs_details
+  binaries_location                   = local.tarball_location
+  web_console_admin_password          = local.web_console_admin_password
+  hub_sonarw_public_key               = module.hub_primary.sonarw_public_key
+  hadr_secondary_node                 = true
+  sonarw_public_key                   = module.agentless_gw_group_primary[count.index].sonarw_public_key
+  sonarw_private_key                  = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  create_and_attach_public_elastic_ip = false
+  ssh_key_pair = {
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
+    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
+  }
+  ingress_communication = {
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32", "${module.agentless_gw_group_primary[count.index].private_ip}/32"])
+  }
+  use_public_ip = false
+  ingress_communication_via_proxy = {
+    proxy_address              = module.hub_primary.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_primary.ssh_user
+  }
+  depends_on = [
+    module.vpc
+  ]
+}
+
+# assumes that ingress_ports output of all gateways is the same
+locals {
+  primary_gw_sg_and_secondary_gw_ip_combinations = setproduct(
+    [for idx, gw in module.agentless_gw_group_primary: gw.sg_id],
+    [for idx, gw in module.agentless_gw_group_secondary: gw.private_ip],
+    [for idx, ingress_port in module.agentless_gw_group_secondary[0].ingress_ports : ingress_port]
+  )
+}
+
+locals {
+  # Combinations of primary GW security group Id with the corresponding secondary GW IP.
+  # For example, if we have 2 GWs, the combinations would be something like:
+  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }]
+  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }]
+  sg_ip_combinations = [for idx, gw in module.agentless_gw_group_primary: {
+    primary_sg = module.agentless_gw_group_primary[idx].sg_id
+    secondary_ip = module.agentless_gw_group_secondary[idx].private_ip
+  }]
+
+  # Combinations of primary GW security group Id with the corresponding secondary GW IP x ingress ports.
+  # For example, if we have 2 GWs and 2 ingress ports, the combinations would be something like:
+  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }, port0]
+  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }, port1]
+  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }, port0]
+  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }, port1]
+  sg_ip_port_combinations = setproduct(
+    [for idx, sg_ip in local.sg_ip_combinations: sg_ip],
+    # assumes that ingress_ports output of all gateways is the same
+    [for idx, ingress_port in module.agentless_gw_group_primary[0].ingress_ports : ingress_port]
+  )
+}
+
+# Adds secondary GW CIDR to ingress CIDRs of the primary GW's security group
+resource aws_security_group_rule "primary_gw_sg_secondary_cidr_ingress" {
+  count             = length(local.sg_ip_port_combinations)
+  type              = "ingress"
+  from_port         = local.sg_ip_port_combinations[count.index][1]
+  to_port           = local.sg_ip_port_combinations[count.index][1]
+  protocol          = "tcp"
+  cidr_blocks       = ["${local.sg_ip_port_combinations[count.index][0].secondary_ip}/32"]
+  security_group_id = local.sg_ip_port_combinations[count.index][0].primary_sg
 }
 
 module "hub_hadr" {
@@ -155,7 +231,30 @@ module "hub_hadr" {
   ssh_key_path             = module.key_pair.private_key_file_path
   ssh_user                 = module.hub_primary.ssh_user
   depends_on = [
-    module.federation
+    module.hub_primary,
+    module.hub_secondary
+  ]
+}
+
+module "agentless_gw_group_hadr" {
+  count                        = var.gw_count
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.3.6" # latest release tag
+  dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
+  dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
+  dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
+  dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
+  ssh_key_path                 = module.key_pair.private_key_file_path
+  ssh_user                     = module.agentless_gw_group_primary[count.index].ssh_user
+  proxy_info = {
+    proxy_address              = module.hub_primary.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_primary.ssh_user
+  }
+  depends_on = [
+    module.agentless_gw_group_primary,
+    module.agentless_gw_group_secondary,
+    aws_security_group_rule.primary_gw_sg_secondary_cidr_ingress
   ]
 }
 
@@ -163,7 +262,8 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub_primary, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group_primary : val]
+      [for idx, val in module.agentless_gw_group_primary : val],
+      [for idx, val in module.agentless_gw_group_secondary : val]
     )
   )
 }
@@ -188,9 +288,8 @@ module "federation" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary,
-    module.agentless_gw_group_primary
+    module.hub_hadr,
+    module.agentless_gw_group_hadr
   ]
 }
 
@@ -241,6 +340,7 @@ module "db_onboarding" {
   depends_on = [
     module.federation,
     module.hub_hadr,
+    module.agentless_gw_group_hadr,
     module.rds_mysql,
     module.rds_mssql
   ]

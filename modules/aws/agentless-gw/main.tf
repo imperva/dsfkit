@@ -23,7 +23,7 @@ module "gw_instance" {
   ssh_key_path                  = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location             = var.binaries_location
   hub_sonarw_public_key         = var.hub_sonarw_public_key
-  # hadr_secondary_node                 = var.hadr_secondary_node
+  hadr_secondary_node           = var.hadr_secondary_node
   sonarw_public_key  = var.sonarw_public_key
   sonarw_private_key = var.sonarw_private_key
   proxy_info = {
