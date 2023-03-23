@@ -6,7 +6,7 @@ variable "deployment_name" {
 
 variable "sonar_version" {
   type    = string
-  default = "4.10"
+  default = "4.10.0.1"
 }
 
 variable "gw_count" {

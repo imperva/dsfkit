@@ -344,13 +344,13 @@ Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_I
 
 When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example recipe.
 
-The latest version of Sonar, 4.10, is recommended, and Sonar 4.9 and higher are supported.
+The latest version of Sonar, 4.10.0.1, is recommended, and Sonar 4.9 and higher are supported.
 
 **For example**: examples/poc/basic_deployment/variables.tf
    ```terraform
    variable "sonar_version" {
        type    = string
-       default = "4.10"
+       default = "4.10.0.1"
    }
 
    >>>> Change the Sonar version to the one you want to install
