@@ -38,13 +38,17 @@ locals {
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   primary_hub_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
   secondary_hub_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
-  primary_gws_subnet         = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
-  secondary_gws_subnet       = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[1]
+  primary_gws_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_gws_subnet_id : module.vpc[0].private_subnets[0]
+  secondary_gws_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_gws_subnet_id : module.vpc[0].private_subnets[1]
   db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
-data "aws_subnet" "gw_subnet" {
+data "aws_subnet" "primary_gws_subnet" {
   id = local.primary_gws_subnet
+}
+
+data "aws_subnet" "secondary_gws_subnet" {
+  id = local.secondary_gws_subnet
 }
 
 ##############################
@@ -84,7 +88,7 @@ module "hub_primary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.gw_subnet.cidr_block])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = true
   depends_on = [
@@ -109,7 +113,7 @@ module "hub_secondary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.gw_subnet.cidr_block])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = true
   depends_on = [
@@ -132,7 +136,7 @@ module "agentless_gw_group_primary" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = false
   ingress_communication_via_proxy = {
@@ -163,7 +167,7 @@ module "agentless_gw_group_secondary" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32", "${module.agentless_gw_group_primary[count.index].private_ip}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block])
   }
   use_public_ip = false
   ingress_communication_via_proxy = {
@@ -174,49 +178,6 @@ module "agentless_gw_group_secondary" {
   depends_on = [
     module.vpc
   ]
-}
-
-# assumes that ingress_ports output of all gateways is the same
-locals {
-  primary_gw_sg_and_secondary_gw_ip_combinations = setproduct(
-    [for idx, gw in module.agentless_gw_group_primary: gw.sg_id],
-    [for idx, gw in module.agentless_gw_group_secondary: gw.private_ip],
-    [for idx, ingress_port in module.agentless_gw_group_secondary[0].ingress_ports : ingress_port]
-  )
-}
-
-locals {
-  # Combinations of primary GW security group Id with the corresponding secondary GW IP.
-  # For example, if we have 2 GWs, the combinations would be something like:
-  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }]
-  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }]
-  sg_ip_combinations = [for idx, gw in module.agentless_gw_group_primary: {
-    primary_sg = module.agentless_gw_group_primary[idx].sg_id
-    secondary_ip = module.agentless_gw_group_secondary[idx].private_ip
-  }]
-
-  # Combinations of primary GW security group Id with the corresponding secondary GW IP x ingress ports.
-  # For example, if we have 2 GWs and 2 ingress ports, the combinations would be something like:
-  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }, port0]
-  # [{ primary_sg = gw0_primary_sg, secondary_ip = gw0_secondary_ip }, port1]
-  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }, port0]
-  # [{ primary_sg = gw1_primary_sg, secondary_ip = gw1_secondary_ip }, port1]
-  sg_ip_port_combinations = setproduct(
-    [for idx, sg_ip in local.sg_ip_combinations: sg_ip],
-    # assumes that ingress_ports output of all gateways is the same
-    [for idx, ingress_port in module.agentless_gw_group_primary[0].ingress_ports : ingress_port]
-  )
-}
-
-# Adds secondary GW CIDR to ingress CIDRs of the primary GW's security group
-resource aws_security_group_rule "primary_gw_sg_secondary_cidr_ingress" {
-  count             = length(local.sg_ip_port_combinations)
-  type              = "ingress"
-  from_port         = local.sg_ip_port_combinations[count.index][1]
-  to_port           = local.sg_ip_port_combinations[count.index][1]
-  protocol          = "tcp"
-  cidr_blocks       = ["${local.sg_ip_port_combinations[count.index][0].secondary_ip}/32"]
-  security_group_id = local.sg_ip_port_combinations[count.index][0].primary_sg
 }
 
 module "hub_hadr" {
@@ -249,8 +210,7 @@ module "agentless_gw_group_hadr" {
   }
   depends_on = [
     module.agentless_gw_group_primary,
-    module.agentless_gw_group_secondary,
-    aws_security_group_rule.primary_gw_sg_secondary_cidr_ingress
+    module.agentless_gw_group_secondary
   ]
 }
 
