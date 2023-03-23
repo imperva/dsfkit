@@ -7,7 +7,7 @@ output "dsf_agentless_gw_group" {
         jsonar_uid   = try(module.agentless_gw_group_primary[idx].jsonar_uid, null)
         display_name = try(module.agentless_gw_group_primary[idx].display_name, null)
         role_arn     = try(module.agentless_gw_group_primary[idx].iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${nonsensitive(module.key_pair.private_key_file_path)} -W %h:%p ${module.hub_primary.ssh_user}@${module.hub_primary.public_ip}' -i ${nonsensitive(module.key_pair.private_key_file_path)} ${module.agentless_gw_group_primary[idx].ssh_user}@${module.agentless_gw_group_primary[idx].private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_primary.ssh_user}@${module.hub_primary.public_ip}' -i ${module.key_pair.private_key_file_path} ${module.agentless_gw_group_primary[idx].ssh_user}@${module.agentless_gw_group_primary[idx].private_ip}", null)
       }
     }
   }
@@ -23,7 +23,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub_primary.jsonar_uid, null)
       display_name = try(module.hub_primary.display_name, null)
       role_arn     = try(module.hub_primary.iam_role, null)
-      ssh_command  = try("ssh -i ${nonsensitive(module.key_pair.private_key_file_path)} ${module.hub_primary.ssh_user}@${module.hub_primary.public_dns}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_primary.ssh_user}@${module.hub_primary.public_dns}", null)
     }
     secondary = {
       public_ip    = try(module.hub_secondary.public_ip, null)
@@ -33,7 +33,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub_secondary.jsonar_uid, null)
       display_name = try(module.hub_secondary.display_name, null)
       role_arn     = try(module.hub_secondary.iam_role, null)
-      ssh_command  = try("ssh -i ${nonsensitive(module.key_pair.private_key_file_path)} ${module.hub_secondary.ssh_user}@${module.hub_secondary.public_dns}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_secondary.ssh_user}@${module.hub_secondary.public_dns}", null)
     }
   }
 }
