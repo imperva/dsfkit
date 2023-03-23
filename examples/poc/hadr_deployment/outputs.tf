@@ -50,7 +50,7 @@ output "dsf_hub_web_console" {
   value = {
     public_url     = try(join("", ["https://", module.hub_primary.public_dns, ":8443/"]), null)
     private_url    = try(join("", ["https://", module.hub_primary.private_dns, ":8443/"]), null)
-    admin_password = local.web_console_admin_password
+    admin_password = nonsensitive(local.web_console_admin_password)
   }
 }
 
