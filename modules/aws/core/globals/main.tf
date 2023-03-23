@@ -1,5 +1,6 @@
 locals {
   tarball_s3_key_map = {
+    "4.10.0.1" = "jsonar-4.10.0.1.0.tar.gz"
     "4.10" = "jsonar-4.10.0.0.0.tar.gz"
     "4.9"  = "jsonar-4.9.c_20221129220420.tar.gz"
   }
