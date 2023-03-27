@@ -25,4 +25,11 @@ data "external" "encrypted_license" {
   query = {
     cipher_text = "cipher_text"
   }
+
+  lifecycle {
+    postcondition {
+      condition     = self.result.cipher_text == ""
+      error_message = "Failed to encrypt license"
+    }
+  }
 }
