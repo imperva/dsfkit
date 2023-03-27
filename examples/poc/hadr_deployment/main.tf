@@ -11,7 +11,7 @@ provider "aws" {
 
 module "globals" {
   source        = "../../../modules/aws/core/globals"
-  tarball_s3_key = "jsonar-4.11.deployfix_20230315022400.tar.gz"
+  tarball_s3_key = "jsonar-4.11.0.0.0-rc8_20230323203641.tar.gz"
 }
 
 module "key_pair" {
