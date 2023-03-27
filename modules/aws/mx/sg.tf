@@ -61,8 +61,8 @@ resource "aws_security_group_rule" "sg_cidr_ingress" {
 
 resource "aws_security_group_rule" "sg_web_console_access" {
   type              = "ingress"
-  from_port         = 8443
-  to_port           = 8443
+  from_port         = 8083
+  to_port           = 8083
   protocol          = "tcp"
   cidr_blocks       = var.web_console_cidr
   security_group_id = aws_security_group.dsf_base_sg.id
