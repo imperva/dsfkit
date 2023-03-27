@@ -31,6 +31,31 @@ locals {
 
   mxLicenseInternalPassphrase = random_password.pass.result
   encryptedMXLicense          = data.external.encrypted_license.result.cipher_text
+
+
+  # mapper = {
+  #   mx = {
+  #     "product": "dammxbyol"
+  #   },
+  #   agent-gw = {
+  #     "product": "damgwbyol"
+  #   }
+  # }
+
+  # GW
+  # instance_type = {
+  #   AV2500 = {
+  #     InstanceType = "m4.xlarge"
+  #   }
+  #   AV6500 = {
+  #     InstanceType = "r4.2xlarge"
+  #   }
+  # }
+
+  # MX
+  # instance_type = {
+  #   c5.xlarge
+  # }
 }
 
 data "aws_region" "current" {}
@@ -129,3 +154,10 @@ resource "aws_network_interface" "eni" {
 # 5. volume attachement?
 # 6. sg
 # 7. Poll a flag that tells us whether the installation succeeded
+# 8. reduce iam policies to minimum
+# 9. gw model - how imporant is it?
+# 10. check volume size (VolumeSize)
+# 11. apply after apply (make sure it doesn't destroy both mx and gw)
+# 12. should we use "--waitForServer"" gw arg
+# 13. split secure pass and imperva pass 
+# 14. add post test to licence encryption

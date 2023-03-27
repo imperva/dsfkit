@@ -1,7 +1,7 @@
 locals {
     commands = jsonencode({
         "commands": [
-            "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${local.ami_username} --secure_password=%securePassword% --system_password=%securePassword% --timezone=${local.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encryptedMXLicense} --passPhrase=${local.mxLicenseInternalPassphrase} --serverPassword=%mxPassword%"
+            "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${local.ami_username} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${local.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encryptedMXLicense} --passPhrase=${local.mxLicenseInternalPassphrase}"
         ]
     }
     )
