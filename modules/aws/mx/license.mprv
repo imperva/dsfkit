@@ -1,0 +1,82 @@
+License Level: Enterprise
+License Products: URMS, SharePoint, DB, URMF, File, DirectoryService, DAS, Web, File, ZosFile
+Organization Name: Imperva Inc.
+SecureSphere Version: 12.0
+License Version: 2.0
+License Type: Eval
+Deployment Type (MX/MoM): MX
+Magic License: true
+Date of Issue: Wed Mar 01 00:00:00 PST 2023
+Gateway Modules: 
+Type: DSM, Hardware: V4500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: FFW, Hardware: x2000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: FFW, Hardware: V2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: SPT, Hardware: V2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: V2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: FFW, Hardware: V4500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSM, Hardware: V2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSG, Hardware: x2000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: GV1000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSG, Hardware: V2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: GV2500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: V4500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: V1000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSM, Hardware: x2000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: SPT, Hardware: V4500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSG, Hardware: V6500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: DSG, Hardware: V4500, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: SPT, Hardware: x2000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Type: WAF, Hardware: x2000, Amount: 16, Expiration Date: Thu Jun 1, 2023
+Cross System Modules: 
+Module Type: Maintenance, License Type: Basic, Start Date: Wed Mar 1, 2023, End Date: Thu Jun 1, 2023
+Module Type: ADCContent, License Type: $ALL$, Start Date: Wed Mar 1, 2023, End Date: Thu Jun 1, 2023
+PO Number: 0
+Machine Challenge: 000000000000
+Maximum Assessed Services: 1000
+Maximum Entitlement Connections: 5
+Maximum Number Of Users for URMF: 500
+Maximum Number Of Monitored File Users: 500
+Maximum Number Of Users for URMS: 500
+Maximum Number Of Monitored SharePoint Users: 500
+Maximum terabytes of file data monitored: 1000
+Maximum Number Of Monitored Directory Service Users: 500
+Gateway cluster allowed: true
+Maximum number of GWs in cluster: 16
+Maximum number of Big Data nodes: 200
+
+-- start encrypted data -- 
+AQACau+jugqn8fym2048lTwwxZj0zf7lKbXDX0rNf8TxIPHXDKG111quztukwWWyrIqLTCR+ePk5
+ujzjzN6Fzy1tcvxEqtlRnZD2A/s5JMXgAXOzb6jQolo5EpOK/3U1LFTENitpExw7YnYMwOeMRjdJ
+hnCEBY0DT8liAoZh1q4ZEKpcJPfEOeMbFKc4c7Kpz7nbippyNJeGCkifvg+IbTDMfjjrL6ILwzW/
+8U2hJZGWNx/ERjl4xErW+eyaUJ6/MKW8cd5tpPguZ04I3cJOlh7AKqxhNyXT0ZXL4fe50oUaxoD6
+Q5DV2qh3JmgVxpWqyckpEgEZvPrAkMcrAEBNm/1bo7ZjCgI7QyyikmvhOkgkxLfWQxeA9ozF3/5A
+GZMTULl3poBx18yKf9d6XahIuA/N2oRti5x/mgowvFAqpRS7W78MmzlnIAczQcWQxMloD1b3Y+re
+xIuCNf/9KAUMlgbq7ouCkJewjpOP3Xm3M2o3+AbckDILApQd0AV47RQpZ7t4j5nQ2EOwqGoleVIz
+UgDGUU9Bp9TXkKHFlzu4eW6ut1PJOEGOkB9vk+oH5GBJvZRZLH+SICMmOE0qgC1x5OiUHFCkkfuQ
+wKgJLJoLZhsyVDz3WFJ+UOocI/6BZPyxpmX2FsQ95gVMHjUQDvdc5aShbldbBzhBiBuJ0HzsZcTu
+LStnGiqaMHY50rnZ1tNh63p34Hqgjwy7lqpeinW+jTgOkc5IU9VEGViuf8LWpvhraoZp3hIZaYfd
+XheXDpTdMDL+x8JPHaCG/2emCKf3VR6fi7voE9Mzi1+9oy20GiAPzOe0lr6noj53X4Y0tDtN9QDx
+oUL+Jp49jIOIGvoL/7r1HZ4m+vuhdw0xrPw+gepzgOAB67PegFRwXkY6yrks9YMN4UIdeM5t59lU
+aeJxHg+DnhJwcmD04Mf39CpvSdKItWQpXK141WIcqMH74fKMrF7lOthuCdF1rD8ItgZyN5A+v58j
+f+FmMhC9xc8BqvV6Wgu04ICRhP8Y5Ly7kD9WQKGse80HN/Cwkb9rczbp9XVyUxUaLBmt8hTeCDUQ
+H1BVpXnLWLYMARv3raQ/bM6Lpz74IdEW/hr4Mz059219oTeB7gtdNvP0+adzhGlhPvVpfdQmvYdq
+6W78rZ7UTkUqxcnqP681xL9HfWOgQ1HaTr6HrM/sUYMgdC0b4sQGB1AevN0aR6VWKrNRU1vBLdyz
+koqnxvZoqtOSUISVhLH6y/ERNA==
+-- end encrypted data -- 
+
+-- start signature data -- 
+GtphhYc+Pf03s0kTsAUCQnFjrm/mmAjAkv1hfOELiKKKGSf9frvRHhB8XGG6NdaieuLPbj551mwT
+/cs0zAg7Vw==
+-- end signature data -- 
+
+-- start xml data V3 -- 
+<?xml version="1.0" encoding="UTF-8"?><license-file><file-name>SecureSphere_Lic12.0_PO0_000000000000_1_3_2023.mprv</file-name><organization-name>Imperva Inc.</organization-name><secure-sphere-version>12.0</secure-sphere-version><license-version>3.0</license-version><license-type>Eval</license-type><magic>true</magic><license-level>Enterprise</license-level><license-products><product type="URMS"/><product type="SharePoint"/><product type="DB"/><product type="URMF"/><product type="File"/><product type="DirectoryService"/><product type="DAS"/><product type="Web"/><product type="File"/><product type="ZosFile"/></license-products><date-of-issue>2023-03-01</date-of-issue><gateway-modules><gw-module amount="16" expiration-date="2023-06-01" hw="V4500" type="DSM"/><gw-module amount="16" expiration-date="2023-06-01" hw="x2000" type="FFW"/><gw-module amount="16" expiration-date="2023-06-01" hw="V2500" type="FFW"/><gw-module amount="16" expiration-date="2023-06-01" hw="V2500" type="SPT"/><gw-module amount="16" expiration-date="2023-06-01" hw="V2500" type="WAF"/><gw-module amount="16" expiration-date="2023-06-01" hw="V4500" type="FFW"/><gw-module amount="16" expiration-date="2023-06-01" hw="V2500" type="DSM"/><gw-module amount="16" expiration-date="2023-06-01" hw="x2000" type="DSG"/><gw-module amount="16" expiration-date="2023-06-01" hw="GV1000" type="WAF"/><gw-module amount="16" expiration-date="2023-06-01" hw="V2500" type="DSG"/><gw-module amount="16" expiration-date="2023-06-01" hw="GV2500" type="WAF"/><gw-module amount="16" expiration-date="2023-06-01" hw="V4500" type="WAF"/><gw-module amount="16" expiration-date="2023-06-01" hw="V1000" type="WAF"/><gw-module amount="16" expiration-date="2023-06-01" hw="x2000" type="DSM"/><gw-module amount="16" expiration-date="2023-06-01" hw="V4500" type="SPT"/><gw-module amount="16" expiration-date="2023-06-01" hw="V6500" type="DSG"/><gw-module amount="16" expiration-date="2023-06-01" hw="V4500" type="DSG"/><gw-module amount="16" expiration-date="2023-06-01" hw="x2000" type="SPT"/><gw-module amount="16" expiration-date="2023-06-01" hw="x2000" type="WAF"/></gateway-modules><cross-system-modules><cs-module end-date="2023-06-01" license-type="Basic" module-type="Maintenance" start-date="2023-03-01"/><cs-module end-date="2023-06-01" license-type="$ALL$" module-type="ADCContent" start-date="2023-03-01"/></cross-system-modules><po-number>0</po-number><comment/><machine-challenge>000000000000</machine-challenge><max-assessed-services>1000</max-assessed-services><max-ent-conns>5</max-ent-conns><num-scanned-users>500</num-scanned-users><max-monitored-users-urm>500</max-monitored-users-urm><sharepoint-num-scanned-users>500</sharepoint-num-scanned-users><sharepoint-max-monitored-users>500</sharepoint-max-monitored-users><file-max-data-volume>1000</file-max-data-volume><ds-max-monitored-users>500</ds-max-monitored-users><deployment-type>MX</deployment-type><has-cluster>true</has-cluster><max-number-of-gws-in-cluster>16</max-number-of-gws-in-cluster><max-number-of-big-data-nodes>200</max-number-of-big-data-nodes></license-file>
+-- end xml data V3 -- 
+
+-- start signature data V3 -- 
+gn3mNdlrWnQy2dWL23FXuYP/Zi0PthW1Pz1qFAO8JB2Cnf4EQudahimdfr2r5P4lUKqt8NMiDTlm
+BbgmEgW/+01enyHhg4EXLFZAYwSckgCz51rTBQPrVTg6ZeeUT0R0lmjtKc70jHIeaABx57kG2dPx
+ygq1gW6PJwsGUBSs+Vqf2qE53uMHp7c2XmZnUfGYhbv2YOBk0tuTalgfCC2PpvgyHODxd89cRuar
+2nwG2pTsHwNaUgxud3qXFsZ9xgb1WiZ2SE8WpmJRxu71eLA480SsF7nuWs7zFX6cuUGiT6WX25T5
+LXUINkYtIPBGm+DuyTxEEyolFw/mHp0RD6dUpA==
+-- end signature data V3 -- 

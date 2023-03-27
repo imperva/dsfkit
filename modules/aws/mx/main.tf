@@ -21,44 +21,62 @@ locals {
   # ami_name     = local.ami.name != null ? local.ami.name : "*"
   # ami_id       = local.ami.id != null ? local.ami.id : "*"
   ami_username = "ec2-user"
+
+  secure_password           = var.password
+  mx_password               = var.password
+  encrypted_secure_password = chomp(aws_kms_ciphertext.encrypted_secure_password.ciphertext_blob)
+  encrypted_mx_password     = chomp(aws_kms_ciphertext.encrypted_mx_password.ciphertext_blob)
+
+  timezone = "UTC"
+
+  mxLicenseInternalPassphrase = random_password.pass.result
+  encryptedMXLicense          = data.external.encrypted_license.result.cipher_text
+}
+
+data "aws_region" "current" {}
+
+variable "dammxbyolRegion2Ami" {
+  default = {
+    us-east-1 = {
+      ImageId = "ami-019af5343736a400e"
+    }
+    us-east-2 = {
+      ImageId = "ami-046e98684e13345cd"
+    }
+  }
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_pubilc_ip ? 1 : 0
+  count = var.attach_public_ip ? 1 : 0
   vpc   = true
 }
 
 resource "aws_eip_association" "eip_assoc" {
-  count         = var.attach_pubilc_ip ? 1 : 0
+  count         = var.attach_public_ip ? 1 : 0
   instance_id   = aws_instance.dsf_base_instance.id
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }
 
+# we can't enforce usage of images from market place
 data "aws_ami" "selected-ami" {
-  most_recent = true
-  # owners      = [local.ami_owner]
+  owners = ["aws-marketplace"]
 
   filter {
     name   = "image-id"
-    values = [var.ami]
+    values = [lookup(var.dammxbyolRegion2Ami[data.aws_region.current.name], "ImageId")]
   }
-}
-
-data local_file userdata {
-  filename = "${path.module}/1.sh"
 }
 
 resource "aws_instance" "dsf_base_instance" {
   ami           = data.aws_ami.selected-ami.image_id
   instance_type = var.ec2_instance_type
   key_name      = var.key_pair
-  user_data     = data.local_file.userdata.content
-  # user_data     = local.install_script
+  user_data = local.userdata
   # root_block_device {
   #   volume_size = local.disk_size_app
   # }
   #should we enable the customer to enlarge the disk?
-  # iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
@@ -101,3 +119,13 @@ resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = [local.security_group_id]
 }
+
+# tbd: questions
+# 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
+# 1. Should we limit the amis for marketplace?
+# 2. Should we limit the ec2 type a customer can use?
+# 3. how do we want to encrypt the dam license?
+# 4. Add some kind of predeployment MPRV file validation
+# 5. volume attachement?
+# 6. sg
+# 7. Poll a flag that tells us whether the installation succeeded

@@ -1,3 +1,25 @@
+locals {
+    commands = jsonencode({
+        "commands": [
+            "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${local.ami_username} --secure_password=%securePassword% --system_password=%securePassword% --timezone=${local.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encryptedMXLicense} --passPhrase=${local.mxLicenseInternalPassphrase} --serverPassword=%mxPassword%"
+        ]
+    }
+    )
+    userdata = <<EOF
+WaitHandle : none
+StackId : none
+Region : ${data.aws_region.current.name}
+IsTerraform : true
+SecurePassword : ${local.encrypted_secure_password}
+MxPassword : ${local.encrypted_mx_password}
+KMSKeyRegion : ${data.aws_region.current.name}
+ProductRole :  server
+AssetTag :  AVM150
+ProductLicensing :  BYOL
+MetaData : ${local.commands}
+EOF
+}
+
 # locals {
 #   bastion_host        = var.proxy_info.proxy_address
 #   bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
