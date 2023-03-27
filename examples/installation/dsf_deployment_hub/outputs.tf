@@ -4,7 +4,7 @@ output "dsf_hub" {
     jsonar_uid   = try(module.hub_primary.jsonar_uid, null)
     display_name = try(module.hub_primary.display_name, null)
     role_arn     = try(module.hub_primary.iam_role, null)
-    ssh_command  = try("ssh -i ${nonsensitive(module.key_pair_hub.key_pair_private_pem.filename)} ${module.hub_primary.ssh_user}@${module.hub_primary.private_ip}", null)
+    ssh_command  = try("ssh -i ${module.key_pair_hub.private_key_file_path} ${module.hub_primary.ssh_user}@${module.hub_primary.private_ip}", null)
   }
 }
 

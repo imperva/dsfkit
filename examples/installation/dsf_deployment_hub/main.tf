@@ -7,7 +7,7 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -29,7 +29,7 @@ locals {
 ##############################
 module "key_pair_hub" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
@@ -39,7 +39,7 @@ module "key_pair_hub" {
 ##############################
 module "hub_primary" {
   source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = var.subnet_hub
   security_group_id          = var.security_group_id_hub
@@ -50,7 +50,7 @@ module "hub_primary" {
   attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair_hub.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair_hub.private_key_file_path
     ssh_public_key_name       = module.key_pair_hub.key_pair.key_pair_name
   }
   ingress_communication = {

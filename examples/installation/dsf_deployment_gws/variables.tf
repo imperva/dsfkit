@@ -15,7 +15,7 @@ variable "aws_region_gw2" {
 
 variable "sonar_version" {
   type    = string
-  default = "4.10"
+  default = "4.10.0.1"
 }
 
 variable "subnet_gw1" {

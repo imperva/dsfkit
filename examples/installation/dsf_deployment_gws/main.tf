@@ -15,7 +15,7 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -37,14 +37,14 @@ locals {
 ##############################
 module "key_pair_gw1" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   key_name_prefix          = "imperva-dsf-gw1"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw1-${terraform.workspace}"
 }
 
 module "key_pair_gw2" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   key_name_prefix          = "imperva-dsf-gw2"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw2-${terraform.workspace}"
   providers = {
@@ -58,7 +58,7 @@ module "key_pair_gw2" {
 module "agentless_gw1_group" {
   count                      = var.gw_count
   source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "gw1", count.index])
   subnet_id                  = var.subnet_gw1
   security_group_id          = var.security_group_id_gw1
@@ -70,7 +70,7 @@ module "agentless_gw1_group" {
   attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair_gw1.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair_gw1.private_key_file_path
     ssh_public_key_name       = module.key_pair_gw1.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -89,7 +89,7 @@ module "agentless_gw1_group" {
 module "agentless_gw2_group" {
   count                      = var.gw_count
   source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "gw2", count.index])
   subnet_id                  = var.subnet_gw2
   security_group_id          = var.security_group_id_gw2
@@ -101,7 +101,7 @@ module "agentless_gw2_group" {
   attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair_gw2.key_pair_private_pem.filename
+    ssh_private_key_file_path = module.key_pair_gw2.private_key_file_path
     ssh_public_key_name       = module.key_pair_gw2.key_pair.key_pair_name
   }
   ingress_communication = {
@@ -124,8 +124,8 @@ locals {
   hub_gws_combinations = setproduct(
     [{private_ip: var.hub_private_ip, private_key_pem_file_path: var.hub_private_key_pem_file_path, ssh_user: var.hub_ssh_user}],
     concat(
-      [for idx, val in module.agentless_gw1_group : {private_ip: val.private_ip, private_key_pem_file_path: module.key_pair_gw1.key_pair_private_pem.filename, ssh_user: val.ssh_user}],
-      [for idx, val in module.agentless_gw2_group : {private_ip: val.private_ip, private_key_pem_file_path: module.key_pair_gw2.key_pair_private_pem.filename, ssh_user: val.ssh_user}]
+      [for idx, val in module.agentless_gw1_group : {private_ip: val.private_ip, private_key_pem_file_path: module.key_pair_gw1.private_key_file_path, ssh_user: val.ssh_user}],
+      [for idx, val in module.agentless_gw2_group : {private_ip: val.private_ip, private_key_pem_file_path: module.key_pair_gw2.private_key_file_path, ssh_user: val.ssh_user}]
     )
   )
 }
@@ -133,7 +133,7 @@ locals {
 module "federation_gws" {
   count                     = length(local.hub_gws_combinations)
   source                    = "imperva/dsf-federation/null"
-  version                   = "1.3.9" # latest release tag
+  version                   = "1.3.10" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gws_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = local.hub_gws_combinations[count.index][1].private_key_pem_file_path
