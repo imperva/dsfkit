@@ -1,6 +1,6 @@
 variable "deployment_name" {
-  type    = string
-  default = "imperva-dsf"
+  type        = string
+  default     = "imperva-dsf"
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
@@ -15,8 +15,8 @@ variable "aws_region" {
 }
 
 variable "sonar_version" {
-  type    = string
-  default = "4.10.0.1"
+  type        = string
+  default     = "4.10.0.1"
   description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1']"
 }
 
@@ -158,12 +158,12 @@ variable "hub_key_pem_details" {
     public_key_name           = string
   })
   description = "Key pem details used to ssh to the DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
-  default = null
+  default     = null
 
   validation {
     condition = (
       var.hub_key_pem_details == null ||
-        try(var.hub_key_pem_details.private_key_pem_file_path != null && var.hub_key_pem_details.public_key_name != null, false)
+      try(var.hub_key_pem_details.private_key_pem_file_path != null && var.hub_key_pem_details.public_key_name != null, false)
     )
     error_message = "All fields should be specified when specifying the hub_key_pem_details variable"
   }
@@ -175,12 +175,12 @@ variable "gw_key_pem_details" {
     public_key_name           = string
   })
   description = "Key pem details used to ssh to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
-  default = null
+  default     = null
 
   validation {
     condition = (
       var.gw_key_pem_details == null ||
-        try(var.gw_key_pem_details.private_key_pem_file_path != null && var.gw_key_pem_details.public_key_name != null, false)
+      try(var.gw_key_pem_details.private_key_pem_file_path != null && var.gw_key_pem_details.public_key_name != null, false)
     )
     error_message = "All fields should be specified when specifying the gw_key_pem_details variable"
   }

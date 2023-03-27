@@ -11,13 +11,13 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -73,7 +73,7 @@ module "vpc" {
 ##############################
 module "hub_primary" {
   source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = local.primary_hub_subnet
   binaries_location          = local.tarball_location
@@ -96,7 +96,7 @@ module "hub_primary" {
 
 module "hub_secondary" {
   source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                  = local.secondary_hub_subnet
   binaries_location          = local.tarball_location
@@ -122,7 +122,7 @@ module "hub_secondary" {
 
 module "agentless_gw_group_primary" {
   source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   count                      = var.gw_count
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
   subnet_id                  = local.gw_subnet
@@ -151,7 +151,7 @@ module "agentless_gw_group_primary" {
 
 module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   dsf_primary_ip           = module.hub_primary.public_ip
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
@@ -175,7 +175,7 @@ locals {
 module "federation" {
   count   = length(local.hub_gw_combinations)
   source  = "imperva/dsf-federation/null"
-  version = "1.3.9" # latest release tag
+  version = "1.3.10" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -201,7 +201,7 @@ module "federation" {
 module "rds_mysql" {
   count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.3.9" # latest release tag
+  version                      = "1.3.10" # latest release tag
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
@@ -210,7 +210,7 @@ module "rds_mysql" {
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.3.9" # latest release tag
+  version                      = "1.3.10" # latest release tag
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 
@@ -223,7 +223,7 @@ module "rds_mssql" {
 module "db_onboarding" {
   for_each      = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
   source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub_primary.public_ip

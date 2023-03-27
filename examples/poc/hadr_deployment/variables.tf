@@ -1,12 +1,12 @@
 variable "deployment_name" {
-  type    = string
-  default = "imperva-dsf"
+  type        = string
+  default     = "imperva-dsf"
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
 variable "sonar_version" {
-  type    = string
-  default = "4.10.0.1"
+  type        = string
+  default     = "4.10.0.1"
   description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1']"
 }
 

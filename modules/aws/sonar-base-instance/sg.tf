@@ -10,14 +10,14 @@ locals {
   create_security_group_count = var.security_group_id == null ? 1 : 0
   cidr_blocks                 = var.sg_ingress_cidr
   # 61617: health diagnostics port, needs to be open in the Hub
-  ingress_ports               = [22, 8080, 8443, 3030, 27117, 61617]
-  ingress_ports_map           = { for port in local.ingress_ports : port => port }
+  ingress_ports     = [22, 8080, 8443, 3030, 27117, 61617]
+  ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
 
 resource "aws_security_group" "dsf_base_sg" {
-  count       = local.create_security_group_count
+  count = local.create_security_group_count
   // TODO put description
-  vpc_id      = data.aws_subnet.subnet.vpc_id
+  vpc_id = data.aws_subnet.subnet.vpc_id
 
   tags = {
     Name = join("-", [var.name, "sg"])
