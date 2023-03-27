@@ -232,6 +232,16 @@ The following table lists the released DSFKit versions, their release date and a
       <br>4. Made adjustments to support Terraform version 1.4.0.
    </td>
   </tr>
+   <tr>
+   <td>27 Mar 2023
+   </td>
+   <td>1.3.10
+   </td>
+   <td>
+      1. Added support for supplying a custom key-pair for ssh to the DSF Hub and the Agentless Gateway.
+      <br>2. Added support for the new Sonar minor version '4.10.0.1'.
+   </td>
+  </tr>
 
 </table>
 
