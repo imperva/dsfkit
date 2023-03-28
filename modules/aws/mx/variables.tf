@@ -1,4 +1,4 @@
-variable "name" {
+variable "friendly_name" {
   type = string
 }
 
@@ -43,13 +43,13 @@ variable "key_pair" {
 }
 
 variable "web_console_cidr" {
-  type        = list(any)
+  type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for web console"
   default     = []
 }
 
 variable "sg_ingress_cidr" {
-  type        = list(any)
+  type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
 }
 
@@ -62,15 +62,6 @@ variable "role_arn" {
   type        = string
   default     = null
   description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
-}
-
-variable "resource_type" {
-  type = string
-  validation {
-    condition     = contains(["mx", "agent-gw"], var.resource_type)
-    error_message = "Allowed values for DSF node type: \"mx\", \"agent-gw\""
-  }
-  nullable = false
 }
 
 variable "password" {

@@ -33,9 +33,9 @@ locals {
 }
 
 module "gw" {
-  source                 = "../dam-base-instance"
-  name                   = join("-", [var.name, "agent-gw"])
-  ses_model              = "AV2500"
+  source                        = "../../../modules/aws/dam-base-instance"
+  name                   = join("-", [var.friendly_name, "agent-gw"])
+  ses_model              = var.gw_model
   attach_public_ip       = true
   gw_group_id            = random_uuid.gw_group.result
   imperva_password       = var.password

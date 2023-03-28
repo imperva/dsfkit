@@ -37,5 +37,5 @@ resource "time_static" "current_time" {}
 
 resource "random_password" "pass" {
   length  = 15
-  special = false
+  special = true
 }

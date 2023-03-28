@@ -106,7 +106,7 @@ resource "aws_instance" "dsf_base_instance" {
     #   error_message = "MX provisioning requires a license"
     # }
     precondition {
-      condition     = var.resource_type == "mx" || var.resource_type == "agent-gw" && var.management_server_host == null
+      condition     = var.resource_type == "mx" || var.resource_type == "agent-gw" && var.management_server_host != null
       error_message = "GW provisioning requires an MX to register to"
     }
   }
@@ -147,3 +147,4 @@ resource "aws_network_interface" "eni" {
 # 20. check agent_listener_ssl
 # 21. considering removal of management_server_host var
 # 22. add pre condition for mx license
+# 23. what's the constraints for mx/gw password? (put them in preconditions)

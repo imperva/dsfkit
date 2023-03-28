@@ -11,7 +11,7 @@ locals {
   ingress_ports     = var.ports.tcp
   udp_ingress_ports     = var.ports.udp
   ingress_ports_map = length(local.cidr_blocks) > 0 ? { for port in local.ingress_ports : port => port } : {}
-  vpc_udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
+  vpc_udp_ingress_ports_map = length(local.cidr_blocks) > 0 ? { for port in local.udp_ingress_ports : port => port } : {}
   vpc_ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
 
@@ -54,6 +54,7 @@ resource "aws_security_group_rule" "sg_cidr_ingress_udp" {
 }
 
 resource "aws_security_group_rule" "sg_web_console_access" {
+  count = length(var.web_console_cidr) > 0 ? 1 : 0
   type              = "ingress"
   from_port         = 8083
   to_port           = 8083

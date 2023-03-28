@@ -25,8 +25,8 @@ locals {
 }
 
 module "mx" {
-  source           = "../dam-base-instance"
-  name             = join("-", [var.name, "mx"])
+  source                        = "../../../modules/aws/dam-base-instance"
+  name             = join("-", [var.friendly_name, "mx"])
   ses_model        = "AVM150"
   attach_public_ip = true
   imperva_password = local.mx_password
