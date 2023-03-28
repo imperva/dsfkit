@@ -11,7 +11,7 @@ provider "aws" {
 
 module "globals" {
   source        = "../../../modules/aws/core/globals"
-  sonar_version = "4.10.0.1"
+  tarball_s3_key = "jsonar-4.11.0.0.0-rc8_20230323203641.tar.gz"
 }
 
 module "key_pair" {
