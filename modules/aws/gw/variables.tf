@@ -42,12 +42,6 @@ variable "key_pair" {
   description = "key pair for DSF base instance"
 }
 
-variable "web_console_cidr" {
-  type        = list(any)
-  description = "List of allowed ingress cidr patterns for the DSF instance for web console"
-  default     = []
-}
-
 variable "sg_ingress_cidr" {
   type        = list(any)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
@@ -119,24 +113,24 @@ variable "password" {
 # }
 
 variable "agentListenerPort" {
-  type = number
+  type        = number
   description = "Enter listener\"s port number."
-  default = 8030
+  default     = 8030
 }
 
 variable "agentListenerSsl" {
-  type = string
+  type        = string
   description = "This option may increase CPU consumption on the Agent host. Do you wish to enable SSL?"
-  default = "False"
+  default     = "False"
 }
 
 variable "management_server_host" {
-  type = string
+  type        = string
   description = "Enter Management Server\"s Hostname or IP address"
 }
 
 variable "gwModel" {
-  type = string
+  type        = string
   description = "Enter the Gateway Model"
 }
 
@@ -151,7 +145,7 @@ variable "gwModel" {
 # }
 
 variable "large_scale_mode" {
-  type = bool
+  type        = bool
   description = "Large scale mode"
-  default = false
+  default     = false
 }

@@ -133,6 +133,7 @@ variable "agentListenerSsl" {
 variable "management_server_host" {
   type = string
   description = "Enter Management Server\"s Hostname or IP address"
+  default = null
 }
 
 variable "ses_model" {

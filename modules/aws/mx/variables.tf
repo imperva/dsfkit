@@ -12,11 +12,11 @@ variable "subnet_id" {
 #   description = "Security group id for the ec2 instance"
 # }
 
-variable "ec2_instance_type" {
-  type        = string
-  description = "Ec2 instance type for the DSF base instance"
-  default     = "m4.xlarge" # remove this default
-}
+# variable "ec2_instance_type" {
+#   type        = string
+#   description = "Ec2 instance type for the DSF base instance"
+#   default     = "m4.xlarge" # remove this default
+# }
 
 # variable "ebs_details" {
 #   type = object({
@@ -117,3 +117,6 @@ variable "password" {
 #     error_message = "Terraform script path folder can not be an empty string"
 #   }
 # }
+
+variable "license_file" {
+}

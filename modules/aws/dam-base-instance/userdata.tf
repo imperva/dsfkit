@@ -11,7 +11,7 @@ IsTerraform : true
 SecurePassword : ${local.encrypted_secure_password}
 MxPassword : ${local.encrypted_mx_password}
 KMSKeyRegion : ${data.aws_region.current.name}
-ProductRole : gateway
+ProductRole : ${local.mapper.product_role[var.resource_type]}
 AssetTag : ${var.ses_model}
 GatewayMode :  dam
 ProductLicensing : BYOL

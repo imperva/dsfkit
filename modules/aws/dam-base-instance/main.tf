@@ -31,28 +31,17 @@ locals {
 
   VolumeSize = "500"
 
-  
-
-  # mapper = {
-  #   mx = {
-  #     "product": "dammxbyol"
-  #   },
-  #   agent-gw = {
-  #     "product": "damgwbyol"
-  #   }
-  # }
-
-  # GW
-  instance_type = {
-    AV2500 = "m4.xlarge",
-    AV6500 = "r4.2xlarge",
-    AVM150 = "m4.xlarge"
+  mapper = {
+    instance_type = {
+      AV2500 = "m4.xlarge",
+      AV6500 = "r4.2xlarge",
+      AVM150 = "m4.xlarge"
+    }
+    product_role = {
+      mx = "server",
+      agent-gw = "gateway"
+    }
   }
-
-  # MX
-  # instance_type = {
-  #   c5.xlarge
-  # }
 }
 
 resource "random_uuid" "gw_group" {}
@@ -93,7 +82,7 @@ data "aws_ami" "selected-ami" {
 
 resource "aws_instance" "dsf_base_instance" {
   ami           = data.aws_ami.selected-ami.image_id
-  instance_type = local.instance_type[var.ses_model]
+  instance_type = local.mapper.instance_type[var.ses_model]
   key_name      = var.key_pair
   user_data = local.userdata
   # root_block_device {
@@ -110,33 +99,23 @@ resource "aws_instance" "dsf_base_instance" {
   }
   disable_api_termination     = true
   user_data_replace_on_change = true
+
+  lifecycle {
+    # precondition {
+    #   condition     = var.resource_type == "agent-gw" || var.resource_type == "mx" && var.encrypted_license == null
+    #   error_message = "MX provisioning requires a license"
+    # }
+    precondition {
+      condition     = var.resource_type == "mx" || var.resource_type == "agent-gw" && var.management_server_host == null
+      error_message = "GW provisioning requires an MX to register to"
+    }
+  }
 }
 
 # Attach an additional storage device to DSF base instance
 data "aws_subnet" "selected_subnet" {
   id = var.subnet_id
 }
-
-# resource "aws_volume_attachment" "ebs_att" {
-#   device_name                    = "/dev/sdb"
-#   volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
-#   instance_id                    = aws_instance.dsf_base_instance.id
-#   stop_instance_before_detaching = true
-# }
-
-# resource "aws_ebs_volume" "ebs_external_data_vol" {
-#   size              = local.ebs_state_disk_size
-#   type              = local.ebs_state_disk_type
-#   iops              = local.ebs_state_iops
-#   throughput        = local.ebs_state_throughput
-#   availability_zone = data.aws_subnet.selected_subnet.availability_zone
-#   tags = {
-#     Name = join("-", [var.name, "data", "volume", "ebs"])
-#   }
-#   lifecycle {
-#     ignore_changes = [iops]
-#   }
-# }
 
 # Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
