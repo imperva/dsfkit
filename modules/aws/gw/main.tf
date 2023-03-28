@@ -29,12 +29,10 @@ locals {
 
   timezone = "UTC"
 
-  mxLicenseInternalPassphrase = random_password.pass.result
-  encryptedMXLicense          = data.external.encrypted_license.result.cipher_text
-
-  uniqueName = uuid()
   VolumeSize = "500"
 }
+
+resource "random_uuid" "gw_group" {}
 
 data "aws_region" "current" {}
 

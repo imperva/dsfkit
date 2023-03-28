@@ -8,8 +8,9 @@ data "aws_vpc" "selected" {
 
 locals {
   cidr_blocks       = var.sg_ingress_cidr
-  ingress_ports     = [22, 443, 514, 2812, 8081, 8083, 8084, 8085]
-  ingress_ports_map = { for port in local.ingress_ports : port => port }
+  ingress_ports     = [443, 514, 2812, 8081, 8083, 8084, 8085]
+  ingress_ports_map = length(local.cidr_blocks) > 0 ? { for port in local.ingress_ports : port => port } : {}
+  vpc_ingress_ports_map = { for port in local.ingress_ports : port => port }
 }
 
 resource "aws_security_group" "dsf_base_sg" {
@@ -40,25 +41,6 @@ resource "aws_security_group_rule" "sg_cidr_ingress" {
   security_group_id = aws_security_group.dsf_base_sg.id
 }
 
-# resource "aws_security_group_rule" "sg_self" {
-#   for_each          = local.ingress_ports_map
-#   type              = "ingress"
-#   from_port         = each.value
-#   to_port           = each.value
-#   protocol          = "tcp"
-#   self              = true
-#   security_group_id = aws_security_group.dsf_base_sg.id
-# }
-
-# resource "aws_security_group_rule" "sg_ingress_self" {
-#   type              = "ingress"
-#   from_port         = 0
-#   to_port           = 65535
-#   protocol          = "tcp"
-#   self              = true
-#   security_group_id = aws_security_group.dsf_base_sg.id
-# }
-
 resource "aws_security_group_rule" "sg_web_console_access" {
   type              = "ingress"
   from_port         = 8083
@@ -69,9 +51,11 @@ resource "aws_security_group_rule" "sg_web_console_access" {
 }
 
 resource "aws_security_group_rule" "sg_allow_ssh_in_vpc" {
+  for_each          = local.vpc_ingress_ports_map
+  description       = "vpc "
   type              = "ingress"
-  from_port         = 22
-  to_port           = 22
+  from_port         = each.value
+  to_port           = each.value
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.selected.cidr_block]
   security_group_id = aws_security_group.dsf_base_sg.id
