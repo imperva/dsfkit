@@ -8,8 +8,8 @@ data "aws_vpc" "selected" {
 
 locals {
   cidr_blocks       = var.sg_ingress_cidr
-  ingress_ports     = [22, 443, 80, 3792, 7700, var.agentListenerPort]
-  udp_ingress_ports     = [3792]
+  ingress_ports     = var.ports.tcp
+  udp_ingress_ports     = var.ports.udp
   ingress_ports_map = length(local.cidr_blocks) > 0 ? { for port in local.ingress_ports : port => port } : {}
   vpc_udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
   vpc_ingress_ports_map = { for port in local.ingress_ports : port => port }
@@ -73,11 +73,11 @@ resource "aws_security_group_rule" "sg_allow_ssh_in_vpc" {
   security_group_id = aws_security_group.dsf_base_sg.id
 }
 
-# resource "aws_security_group_rule" "sg_allow_all_ssh" {
-#   type              = "ingress"
-#   from_port         = 22
-#   to_port           = 22
-#   protocol          = "tcp"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.dsf_base_sg.id
-# }
+resource "aws_security_group_rule" "sg_allow_all_ssh" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.dsf_base_sg.id
+}

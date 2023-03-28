@@ -1,10 +1,6 @@
 locals {
-    large_scale_mode = var.large_scale_mode == true ? "--sonar-only-mode" : ""
     commands = jsonencode({
-        "commands": [
-            "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}",
-            "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${local.ami_username} --gateway_group=${random_uuid.gw_group.result} --secure_password=%securePassword% --imperva_password=%securePassword% --timezone=${local.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_server_ip=${var.managementServerHost} --management_interface=eth0 --internal_data_interface=eth0 --external_data_interface=eth0 --check_server_status --check_gateway_received_configuration --register --initiate_services ${local.large_scale_mode} --set_sniffing --listener_port=${var.agentListenerPort} --agent_listener_ssl=${var.agentListenerSsl} --cluster-enabled --cluster-port=3792 --product=DAM --waitForServer"
-        ]
+        "commands": var.user_data_commands
     }
     )
     userdata = <<EOF
@@ -16,7 +12,7 @@ SecurePassword : ${local.encrypted_secure_password}
 MxPassword : ${local.encrypted_mx_password}
 KMSKeyRegion : ${data.aws_region.current.name}
 ProductRole : gateway
-AssetTag : ${var.gwModel}
+AssetTag : ${var.ses_model}
 GatewayMode :  dam
 ProductLicensing : BYOL
 MetaData : ${local.commands}

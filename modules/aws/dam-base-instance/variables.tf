@@ -73,16 +73,16 @@ variable "resource_type" {
   nullable = false
 }
 
-variable "password" {
-  type        = string
-  sensitive   = true
-  description = "Admin password"
-  validation {
-    condition     = length(var.password) > 8
-    error_message = "Admin password must be at least 8 characters"
-  }
-  nullable = false
-}
+# variable "password" {
+#   type        = string
+#   sensitive   = true
+#   description = "Admin password"
+#   validation {
+#     condition     = length(var.password) > 8
+#     error_message = "Admin password must be at least 8 characters"
+#   }
+#   nullable = false
+# }
 
 # variable "ssh_key_path" {
 #   type        = string
@@ -125,9 +125,9 @@ variable "agentListenerPort" {
 }
 
 variable "agentListenerSsl" {
-  type = string
+  type = bool
   description = "This option may increase CPU consumption on the Agent host. Do you wish to enable SSL?"
-  default = "False"
+  default = false
 }
 
 variable "management_server_host" {
@@ -135,23 +135,63 @@ variable "management_server_host" {
   description = "Enter Management Server\"s Hostname or IP address"
 }
 
-variable "gwModel" {
+variable "ses_model" {
   type = string
-  description = "Enter the Gateway Model"
+  description = "Enter the Gateway/Mx Model"
+  validation {
+    condition     = contains(["AV2500", "AV6500", "AVM150"], var.ses_model)
+    error_message = <<EOF
+     Allowed values for DSF node type: "AV2500", "AV6500", "AVM150"
+EOF
+  }
 }
 
-# variable "imperva_password" {
-#   type = string
-#   description = "Enter the Gateway Model"
-# }
+variable "imperva_password" {
+  type = string
+  description = "MX password"
+  sensitive   = true
+  validation {
+    condition     = length(var.imperva_password) > 8
+    error_message = "MX password must be at least 8 characters"
+  }
+  nullable = false
+}
 
-# variable "secure_password" {
-#   type = string
-#   description = "Enter the Gateway Model"
-# }
+variable "secure_password" {
+  type = string
+  description = "secure password (password between gw -> mx)"
+  sensitive   = true
+  validation {
+    condition     = length(var.secure_password) > 8
+    error_message = "secure password must be at least 8 characters"
+  }
+  nullable = false
+}
 
-variable "large_scale_mode" {
-  type = bool
-  description = "Large scale mode"
-  default = false
+variable "encrypted_license" {
+  type = object({
+    cipher_text = string
+    passphrase = string
+  })
+  default = null
+}
+
+variable "gw_group_id" {
+  type = string
+  default = null
+}
+
+variable "user_data_commands" {
+  type = list(string)
+}
+
+variable "ports" {
+  type = object({
+    tcp = list(string)
+    udp = list(string)
+  })
+}
+
+variable "iam_actions" {
+  type = list(string)
 }

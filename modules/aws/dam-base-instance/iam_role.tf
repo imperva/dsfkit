@@ -24,22 +24,7 @@ locals {
       {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
-        "Action" : [
-          "ec2:DescribeSecurityGroups",
-          "elasticloadbalancing:DescribeLoadBalancers",
-          "ec2:DescribeInstanceAttribute",
-          "ec2:ModifyInstanceAttribute",
-          "rds:DescribeDBLogFiles",
-          "rds:DownloadCompleteDBLogFile",
-          "rds:DownloadDBLogFilePortion",
-          "s3:PutObject",
-          "s3:PutObjectAcl",
-          "s3:PutObjectTagging",
-          "s3:PutObjectVersionAcl",
-          "s3:PutObjectVersionTagging",
-          "ec2:DescribeInstances",
-          "ec2:AuthorizeSecurityGroupIngress"
-          ],
+        "Action" : var.iam_actions,
         "Resource" : "*"
       },
     ]

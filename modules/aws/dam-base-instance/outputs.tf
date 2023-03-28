@@ -1,42 +1,54 @@
 output "public_ip" {
   description = "Public elastic IP address of the DSF base instance"
-  value       = module.gw.public_ip
+  value       = try(aws_eip.dsf_instance_eip[0].public_ip, null)
+  depends_on = [
+    aws_eip_association.eip_assoc
+  ]
 }
 
 output "private_ip" {
   description = "Private IP address of the DSF base instance"
-  value       = module.gw.private_ip
+  value       = tolist(aws_network_interface.eni.private_ips)[0]
+  depends_on = [
+    aws_eip_association.eip_assoc
+  ]
 }
 
 output "public_dns" {
   description = "Public dns of elastic IP address of the DSF base instance"
-  value       = module.gw.public_dns
+  value       = try(aws_eip.dsf_instance_eip[0].public_dns, null)
+  depends_on = [
+    aws_eip_association.eip_assoc
+  ]
 }
 
 output "private_dns" {
   description = "Private dns address of the DSF base instance"
-  value       = module.gw.private_dns
+  value       = aws_network_interface.eni.private_dns_name
+  depends_on = [
+    aws_eip_association.eip_assoc
+  ]
 }
 
 output "sg_id" {
   description = "Security group on DSF base instance"
-  value       = module.gw.sg_id
+  value       = local.security_group_id
 }
 
 output "ingress_ports" {
-  value       = module.gw.ingress_ports
+  value       = local.ingress_ports
   description = "The ingress ports of the security group on the DSF node EC2"
 }
 
 output "iam_role" {
   description = "IAM Role ARN of the DSF node"
-  value       = module.gw.iam_role
+  value       = local.role_arn
 }
 
 output "display_name" {
-  value = module.gw.display_name
+  value = var.name
 }
 
 output "ssh_user" {
-  value = module.gw.ssh_user
+  value = local.ami_username
 }
