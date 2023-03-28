@@ -52,7 +52,3 @@ output "display_name" {
 output "ssh_user" {
   value = local.ami_username
 }
-
-output "lalala" {
-  value = local.userdata
-}

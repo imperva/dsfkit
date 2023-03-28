@@ -18,7 +18,7 @@ locals {
       },
     ]
   })
-  inline_policy_mx = jsonencode({
+  inline_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
       {
@@ -63,6 +63,6 @@ resource "aws_iam_role" "dsf_node_role" {
   }
   inline_policy {
     name   = "imperva-dsf-mx-base"
-    policy = local.inline_policy_mx
+    policy = local.inline_policy
   }
 }

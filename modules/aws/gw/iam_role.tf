@@ -18,28 +18,28 @@ locals {
       },
     ]
   })
-  inline_policy_mx = jsonencode({
+  inline_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
       {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
         "Action" : [
-								"ec2:DescribeSecurityGroups",
-								"elasticloadbalancing:DescribeLoadBalancers",
-								"ec2:DescribeInstanceAttribute",
-								"ec2:ModifyInstanceAttribute",
-								"rds:DescribeDBLogFiles",
-								"rds:DownloadCompleteDBLogFile",
-								"rds:DownloadDBLogFilePortion",
-								"s3:PutObject",
-								"s3:PutObjectAcl",
-								"s3:PutObjectTagging",
-								"s3:PutObjectVersionAcl",
-								"s3:PutObjectVersionTagging",
-								"ec2:DescribeInstances",
-                "ec2:AuthorizeSecurityGroupIngress"
-              ],
+          "ec2:DescribeSecurityGroups",
+          "elasticloadbalancing:DescribeLoadBalancers",
+          "ec2:DescribeInstanceAttribute",
+          "ec2:ModifyInstanceAttribute",
+          "rds:DescribeDBLogFiles",
+          "rds:DownloadCompleteDBLogFile",
+          "rds:DownloadDBLogFilePortion",
+          "s3:PutObject",
+          "s3:PutObjectAcl",
+          "s3:PutObjectTagging",
+          "s3:PutObjectVersionAcl",
+          "s3:PutObjectVersionTagging",
+          "ec2:DescribeInstances",
+          "ec2:AuthorizeSecurityGroupIngress"
+          ],
         "Resource" : "*"
       },
     ]
@@ -76,6 +76,6 @@ resource "aws_iam_role" "dsf_node_role" {
   }
   inline_policy {
     name   = "imperva-dsf-mx-base"
-    policy = local.inline_policy_mx
+    policy = local.inline_policy
   }
 }

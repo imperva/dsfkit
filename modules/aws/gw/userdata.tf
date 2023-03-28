@@ -23,7 +23,6 @@ MetaData : ${local.commands}
 RegistrationParams : {"StackName" : "${var.name}","StackId" : "${var.name}","SQSName" : "","Region" : "${data.aws_region.current.name}","AccessKey" : "","SecretKey" : ""}
 EOF
 }
-  
 
 # locals {
 #   bastion_host        = var.proxy_info.proxy_address

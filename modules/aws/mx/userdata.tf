@@ -15,7 +15,7 @@ MxPassword : ${local.encrypted_mx_password}
 KMSKeyRegion : ${data.aws_region.current.name}
 ProductRole :  server
 AssetTag :  AVM150
-ProductLicensing :  BYOL
+ProductLicensing : BYOL
 MetaData : ${local.commands}
 EOF
 }
