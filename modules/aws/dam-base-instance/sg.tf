@@ -56,29 +56,6 @@ resource "aws_security_group_rule" "sg_cidr_ingress_udp" {
 }
 
 ##############################################################################
-### Web console security group
-##############################################################################
-resource "aws_security_group" "dsf_web_console_sg" {
-  description = "${var.name} - web console access"
-  vpc_id      = data.aws_subnet.selected_subnet.vpc_id
-
-  tags = {
-    Name = join("-", [var.name, "web", "console", "sg"])
-  }
-}
-
-resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
-  count             = length(var.web_console_cidr) > 0 ? 1 : 0
-  description       = "${var.name} - Allow 8083 for web console access"
-  type              = "ingress"
-  from_port         = 8083
-  to_port           = 8083
-  protocol          = "tcp"
-  cidr_blocks       = var.web_console_cidr
-  security_group_id = aws_security_group.dsf_web_console_sg.id
-}
-
-##############################################################################
 ### SSH security group
 ##############################################################################
 resource "aws_security_group" "dsf_ssh_sg" {

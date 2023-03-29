@@ -1,10 +1,23 @@
 variable "friendly_name" {
-  type = string
+  type        = string
+  description = "Friendly name to identify to all resources"
+  validation {
+    condition     = length(var.friendly_name) >= 3
+    error_message = "Variable must be at least 3 characters long"
+  }
+  validation {
+    condition     = can(regex("^\\p{L}.*", var.friendly_name))
+    error_message = "Variable must start with a letter"
+  }
 }
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the ec2 instance"
+  description = "Subnet id for the DSF MX instance"
+  validation {
+    condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
+    error_message = "Subnet id is invalid. Must be subnet-********"
+  }
 }
 
 # variable "security_group_id" {
@@ -25,24 +38,25 @@ variable "attach_public_ip" {
 
 variable "key_pair" {
   type        = string
-  description = "key pair for DSF base instance"
-}
-
-variable "web_console_cidr" {
-  type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for web console"
-  default     = []
+  description = "key pair for DSF MX instance"
 }
 
 variable "sg_ingress_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
+  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF MX instance"
   default     = []
 }
 
 variable "sg_ssh_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
+  description = "List of allowed ingress cidr patterns allowing ssh protocols to the DSF MX instance"
+  default     = []
+}
+
+variable "sg_web_console_cidr" {
+  type        = list(string)
+  description = "List of allowed ingress cidr patterns allowing web console access to the DSF MX instance"
+  default     = []
 }
 
 # variable "ami" {
@@ -53,7 +67,7 @@ variable "sg_ssh_cidr" {
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF MX. Keep empty if you wish to create a new role."
 }
 
 variable "imperva_password" {
@@ -61,10 +75,34 @@ variable "imperva_password" {
   description = "MX password"
   sensitive   = true
   validation {
-    condition     = length(var.imperva_password) > 8
-    error_message = "MX password must be at least 8 characters"
+    # Check that the password is at least 8 characters long
+    condition     = length(var.imperva_password) >= 8
+    error_message = "Password must be at least 8 characters long"
   }
-  nullable = false
+
+  validation {
+    # Check that the password contains at least one uppercase letter
+    condition     = can(regex("[A-Z]", var.imperva_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one lowercase letter
+    condition     = can(regex("[a-z]", var.imperva_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one digit
+    condition     = can(regex("\\d", var.imperva_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    # Check that the password contains at least one special character
+    condition     = can(regex("[^a-zA-Z0-9]", var.imperva_password))
+    error_message = "Password must contain at least one special character"
+  }
 }
 
 variable "secure_password" {
@@ -72,13 +110,43 @@ variable "secure_password" {
   description = "secure password (password between agent-gw -> mx)"
   sensitive   = true
   validation {
-    condition     = length(var.secure_password) > 8
-    error_message = "secure password must be at least 8 characters"
+    # Check that the password is at least 8 characters long
+    condition     = length(var.secure_password) >= 8
+    error_message = "Password must be at least 8 characters long"
   }
-  nullable = false
+
+  validation {
+    # Check that the password contains at least one uppercase letter
+    condition     = can(regex("[A-Z]", var.secure_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one lowercase letter
+    condition     = can(regex("[a-z]", var.secure_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one digit
+    condition     = can(regex("\\d", var.secure_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    # Check that the password contains at least one special character
+    condition     = can(regex("[^a-zA-Z0-9]", var.secure_password))
+    error_message = "Password must contain at least one special character"
+  }
 }
 
 variable "license_file" {
+  type        = string
+  description = "DAM license file path. Make sure this license is valid before deploying DAM"
+  validation {
+    condition     = fileexists(var.license_file)
+    error_message = "No such file on disk (${var.license_file})"
+  }
 }
 
 variable "timezone" {

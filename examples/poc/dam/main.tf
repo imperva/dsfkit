@@ -58,17 +58,17 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source           = "../../../modules/aws/mx"
-  friendly_name    = join("-", [local.deployment_name_salted, "dam"])
-  subnet_id        = local.hub_subnet
-  license_file     = "license.mprv"
-  key_pair         = module.key_pair.key_pair.key_pair_name
-  secure_password  = local.web_console_admin_password
-  imperva_password = local.web_console_admin_password
-  sg_ingress_cidr  = local.workstation_cidr
-  sg_ssh_cidr      = local.workstation_cidr
-  web_console_cidr = local.workstation_cidr
-  attach_public_ip = true
+  source              = "../../../modules/aws/mx"
+  friendly_name       = join("-", [local.deployment_name_salted, "dam"])
+  subnet_id           = local.hub_subnet
+  license_file        = "license.mprv"
+  key_pair            = module.key_pair.key_pair.key_pair_name
+  secure_password     = local.web_console_admin_password
+  imperva_password    = local.web_console_admin_password
+  sg_ingress_cidr     = local.workstation_cidr
+  sg_ssh_cidr         = local.workstation_cidr
+  sg_web_console_cidr = local.workstation_cidr
+  attach_public_ip    = true
 }
 
 module "agent_gw" {

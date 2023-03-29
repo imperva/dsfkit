@@ -1,11 +1,13 @@
 locals {
-  VolumeSize = "500"
-  group_id   = var.group_id == null ? random_uuid.gw_group.result : var.group_id
+  VolumeSize         = "500"
+  group_id           = var.group_id == null ? random_uuid.gw_group.result : var.group_id
+  required_tcp_ports = [22, 443, 80, 3792, 7700]
+  required_udp_ports = [3792]
+  ses_model          = var.gw_model
+  resource_type      = "agent-gw"
 }
 
 resource "random_uuid" "gw_group" {}
-
-# data "aws_region" "current" {}
 
 locals {
   user_data_commands = [
@@ -30,14 +32,14 @@ locals {
 
 module "agent_gw" {
   source           = "../../../modules/aws/dam-base-instance"
-  name             = join("-", [var.friendly_name, "agent-gw"])
-  resource_type    = "agent-gw"
-  ses_model        = var.gw_model
+  name             = join("-", [var.friendly_name, local.resource_type])
+  resource_type    = local.resource_type
+  ses_model        = local.ses_model
   imperva_password = var.imperva_password
   secure_password  = var.secure_password
   ports = {
-    tcp = [22, 443, 80, 3792, 7700]
-    udp = [3792]
+    tcp = local.required_tcp_ports
+    udp = local.required_udp_ports
   }
   subnet_id          = var.subnet_id
   user_data_commands = local.user_data_commands
@@ -45,5 +47,5 @@ module "agent_gw" {
   sg_ssh_cidr        = var.sg_ssh_cidr
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
-  attach_public_ip   = true
+  attach_public_ip   = var.attach_public_ip
 }

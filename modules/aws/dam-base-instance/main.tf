@@ -1,8 +1,7 @@
 locals {
   security_group_ids = concat(
     [aws_security_group.dsf_base_sg.id],
-    [aws_security_group.dsf_ssh_sg.id],
-  [aws_security_group.dsf_web_console_sg.id])
+  [aws_security_group.dsf_ssh_sg.id])
 
   secure_password           = var.secure_password
   mx_password               = var.imperva_password
@@ -96,20 +95,18 @@ resource "aws_network_interface" "eni" {
 }
 
 # tbd: questions
-# 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
-# 1. Should we limit the amis for marketplace?
-# 2. Should we limit the ec2 type a customer can use?
-# 2. What happens if something faild? What the customer should do? It should be obvious how to extract the failure? Poll a flag that tells us whether the installation succeeded?
-# 4. Add some kind of predeployment MPRV file validation
-# 17. add description too all variables
-# 18. remove uneeded variables
-# 20. test agent_listener_ssl
+# 1. rename gw 
 # 24. disable root login
-# 25. allow an option to deploy without license?
-# 26. add validation to all variables (management_server_host)
 # 28. pass sg from outside
 # 29. search and fix all tbd
 # 30. add many preconditions all over
+
+## tests:
+# 1. matan's tests
+# 20. test agent_listener_ssl
+
+## validations
+# 1. management_server_host. Should also support hostname - not just ipv4
 
 ## Things to verify with GW team
 # 8. reduce iam policies to minimum
@@ -123,3 +120,10 @@ resource "aws_network_interface" "eni" {
 # 15. How can we detect a failing environemnt? maybe through API?
 # 16. katya about licensing
 # 17. what are the agent's ports
+
+## Stratigic decisions
+# 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
+# 1. Should we limit the amis for marketplace?
+# 2. Should we limit the ec2 type a customer can use?
+# 2. What happens if something faild? What the customer should do? It should be obvious how to extract the failure? Poll a flag that tells us whether the installation succeeded?
+# 25. allow an option to deploy without license?

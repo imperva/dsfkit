@@ -12,7 +12,7 @@ resource "aws_security_group" "dsf_agent_sg" {
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
 
   tags = {
-    Name = join("-", [var.friendly_name, "web", "agent"])
+    Name = join("-", [var.friendly_name, "agent"])
   }
 }
 

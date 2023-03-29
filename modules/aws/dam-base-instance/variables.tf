@@ -4,7 +4,11 @@ variable "name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the ec2 instance"
+  description = "Subnet id for the DAM DSF instance"
+  validation {
+    condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
+    error_message = "Subnet id is invalid. Must be subnet-********"
+  }
 }
 
 # variable "security_group_id" {
@@ -18,15 +22,6 @@ variable "subnet_id" {
 #   default     = "m4.xlarge" # remove this default
 # }
 
-# variable "ebs_details" {
-#   type = object({
-#     disk_size        = number
-#     provisioned_iops = number
-#     throughput       = number
-#   })
-#   description = "Compute instance volume attributes"
-# }
-
 variable "attach_public_ip" {
   type        = bool
   description = "Create public IP for the instance"
@@ -34,23 +29,17 @@ variable "attach_public_ip" {
 
 variable "key_pair" {
   type        = string
-  description = "key pair for DSF base instance"
-}
-
-variable "web_console_cidr" {
-  type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for web console"
-  default     = []
+  description = "key pair for DSF DAM instance"
 }
 
 variable "sg_ingress_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
+  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF DAM instance"
 }
 
 variable "sg_ssh_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
+  description = "List of allowed ingress cidr patterns allowing ssh protocols to the DSF DAM instance"
 }
 
 # variable "ami" {
@@ -61,7 +50,7 @@ variable "sg_ssh_cidr" {
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF DAM instance. Keep empty if you wish to create a new role."
 }
 
 variable "resource_type" {
@@ -89,28 +78,80 @@ variable "imperva_password" {
   description = "MX password"
   sensitive   = true
   validation {
-    condition     = length(var.imperva_password) > 8
-    error_message = "MX password must be at least 8 characters"
+    # Check that the password is at least 8 characters long
+    condition     = length(var.imperva_password) >= 8
+    error_message = "Password must be at least 8 characters long"
   }
-  nullable = false
+
+  validation {
+    # Check that the password contains at least one uppercase letter
+    condition     = can(regex("[A-Z]", var.imperva_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one lowercase letter
+    condition     = can(regex("[a-z]", var.imperva_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one digit
+    condition     = can(regex("\\d", var.imperva_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    # Check that the password contains at least one special character
+    condition     = can(regex("[^a-zA-Z0-9]", var.imperva_password))
+    error_message = "Password must contain at least one special character"
+  }
 }
+
 
 variable "secure_password" {
   type        = string
-  description = "secure password (password between gw -> mx)"
+  description = "secure password (password between agent-gw -> mx)"
   sensitive   = true
   validation {
-    condition     = length(var.secure_password) > 8
-    error_message = "secure password must be at least 8 characters"
+    # Check that the password is at least 8 characters long
+    condition     = length(var.secure_password) >= 8
+    error_message = "Password must be at least 8 characters long"
   }
-  nullable = false
+
+  validation {
+    # Check that the password contains at least one uppercase letter
+    condition     = can(regex("[A-Z]", var.secure_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one lowercase letter
+    condition     = can(regex("[a-z]", var.secure_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    # Check that the password contains at least one digit
+    condition     = can(regex("\\d", var.secure_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    # Check that the password contains at least one special character
+    condition     = can(regex("[^a-zA-Z0-9]", var.secure_password))
+    error_message = "Password must contain at least one special character"
+  }
 }
 
+
 variable "user_data_commands" {
-  type = list(string)
+  type        = list(string)
+  description = "Commands that run on instance startup. Should contain at least the FTL command"
 }
 
 variable "ports" {
+  description = "Ports needed for internal communication"
   type = object({
     tcp = list(string)
     udp = list(string)
@@ -118,5 +159,6 @@ variable "ports" {
 }
 
 variable "iam_actions" {
-  type = list(string)
+  description = "Required AWS IAM action list for the DSF DAM instance"
+  type        = list(string)
 }
