@@ -28,6 +28,6 @@ resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
 }
 
 resource "aws_network_interface_sg_attachment" "dsf_basic_sg_attachment" {
-  network_interface_id = module.gw.eni_id
+  network_interface_id = module.agent_gw.eni_id
   security_group_id    = aws_security_group.dsf_agent_sg.id
 }
