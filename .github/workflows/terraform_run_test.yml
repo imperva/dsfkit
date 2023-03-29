@@ -24,18 +24,21 @@ jobs:
     strategy:
       matrix:
         include:
-#          - name: single account
-#            example_dir: ./dsfkit/examples/installation/single_account_deployment
-#            aws_region: ap-southeast-1
+          - name: single account
+            example_dir: ./dsfkit/examples/installation/single_account_deployment
+            aws_region: ap-southeast-1
+            workspace: single_account
           - name: multi account
             example_dir: ./dsfkit/examples/installation/multi_account_deployment
             aws_region: ap-southeast-1
+            workspace: multi_account
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
       AWS_REGION: ${{ matrix.aws_region }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
