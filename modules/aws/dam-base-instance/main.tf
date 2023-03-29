@@ -38,7 +38,7 @@ locals {
       AVM150 = "m4.xlarge"
     }
     product_role = {
-      mx = "server",
+      mx       = "server",
       agent-gw = "gateway"
     }
   }
@@ -84,7 +84,7 @@ resource "aws_instance" "dsf_base_instance" {
   ami           = data.aws_ami.selected-ami.image_id
   instance_type = local.mapper.instance_type[var.ses_model]
   key_name      = var.key_pair
-  user_data = local.userdata
+  user_data     = local.userdata
   # root_block_device {
   #   volume_size = local.disk_size_app
   # }
@@ -105,10 +105,10 @@ resource "aws_instance" "dsf_base_instance" {
     #   condition     = var.resource_type == "agent-gw" || var.resource_type == "mx" && var.encrypted_license == null
     #   error_message = "MX provisioning requires a license"
     # }
-    precondition {
-      condition     = var.resource_type == "mx" || var.resource_type == "agent-gw" && var.management_server_host != null
-      error_message = "GW provisioning requires an MX to register to"
-    }
+    # precondition {
+    #   condition     = var.resource_type == "mx" || var.resource_type == "agent-gw" && var.management_server_host != null
+    #   error_message = "GW provisioning requires an MX to register to"
+    # }
   }
 }
 
@@ -119,32 +119,32 @@ data "aws_subnet" "selected_subnet" {
 
 # Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
-  subnet_id       = var.subnet_id
-  security_groups = [local.security_group_id]
+  subnet_id = var.subnet_id
+  # security_groups = [local.security_group_id, aws_security_group.dsf_ssh_sg.id, aws_security_group.dsf_web_console_sg.id]
 }
 
 # tbd: questions
+# 6. sg - ssh, internal ports, web console
 # 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
 # 1. Should we limit the amis for marketplace?
 # 2. Should we limit the ec2 type a customer can use?
-# 3. how do we want to encrypt the dam license?
+# 2. What happens if something faild? What the customer should do? It should be obvious how to extract the failure
 # 4. Add some kind of predeployment MPRV file validation
 # 5. volume attachement?
-# 6. sg
 # 7. Poll a flag that tells us whether the installation succeeded
-# 8. reduce iam policies to minimum
-# 9. gw model - how imporant is it?
-# 10. check volume size (VolumeSize) (/opt/SecureSphere/etc/ec2/create_audit_volume)
-# 11. apply after apply (make sure it doesn't destroy both mx and gw)
-# 12. should we use "--waitForServer"" gw arg
-# 13. split secure pass and imperva pass 
-# 14. add post test to licence encryption
-# 15. what's the difference between AV6500 and AV2500
-# 16. add precondition for gw_group_id when deploying gw
 # 17. add description too all variables
 # 18. remove uneeded variables
-# 19. use external data disks
 # 20. check agent_listener_ssl
-# 21. considering removal of management_server_host var
-# 22. add pre condition for mx license
-# 23. what's the constraints for mx/gw password? (put them in preconditions)
+# 24. don't allow root login
+# 25. allow an option to deploy without license
+# 26. add validation to all variables (management_server_host)
+# 27. add an option to pass gw group id from outside (and put it in the gw outputs)
+# 28. we will need to create an additional agent sg cidr list variable
+
+## Things to verify with GW team
+# 8. reduce iam policies to minimum
+# 9. gw model - What models are there? Do we must use the imperva terms? Any reason we can use aws instance naming? what's the difference between AV6500 and AV2500? - https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf
+# 10. What's the constraints for a password - "2023-03-28_18:11:58: Setting system password for db. Function - configure_system_user_password. Error -  Invalid password (exit status: 7)."
+# 11. secure password vs imperva/mx password
+# 12. allow 2 password per gw/mx module
+# 13. Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"

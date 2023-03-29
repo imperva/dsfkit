@@ -45,6 +45,12 @@ variable "key_pair" {
 variable "sg_ingress_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
+  default = []
+}
+
+variable "sg_ssh_cidr" {
+  type        = list(string)
+  description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
 }
 
 # variable "ami" {
@@ -103,13 +109,13 @@ variable "password" {
 #   }
 # }
 
-variable "agentListenerPort" {
+variable "agent_listener_port" {
   type        = number
   description = "Enter listener\"s port number."
   default     = 8030
 }
 
-variable "agentListenerSsl" {
+variable "agent_listener_ssl" {
   type        = string
   description = "This option may increase CPU consumption on the Agent host. Do you wish to enable SSL?"
   default     = "False"
@@ -123,7 +129,7 @@ variable "management_server_host" {
 variable "gw_model" {
   type        = string
   description = "Enter the Gateway Model"
-  default = "AV2500"
+  default     = "AV2500"
 }
 
 # variable "imperva_password" {

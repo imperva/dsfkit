@@ -25,7 +25,7 @@ locals {
 }
 
 module "mx" {
-  source                        = "../../../modules/aws/dam-base-instance"
+  source           = "../../../modules/aws/dam-base-instance"
   name             = join("-", [var.friendly_name, "mx"])
   ses_model        = "AVM150"
   attach_public_ip = true
@@ -40,10 +40,11 @@ module "mx" {
   web_console_cidr   = var.web_console_cidr
   user_data_commands = local.user_data_commands
   sg_ingress_cidr    = var.sg_ingress_cidr
+  sg_ssh_cidr        = var.sg_ssh_cidr
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   encrypted_license = {
     cipher_text = local.encrypted_license
-    passphrase = local.license_passphrase
+    passphrase  = local.license_passphrase
   }
 }

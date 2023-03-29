@@ -43,14 +43,19 @@ variable "key_pair" {
 }
 
 variable "web_console_cidr" {
-  type        = list(any)
+  type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for web console"
   default     = []
 }
 
 variable "sg_ingress_cidr" {
-  type        = list(any)
+  type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
+}
+
+variable "sg_ssh_cidr" {
+  type        = list(string)
+  description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
 }
 
 # variable "ami" {
@@ -118,26 +123,8 @@ variable "resource_type" {
 #   }
 # }
 
-variable "agentListenerPort" {
-  type = number
-  description = "Enter listener\"s port number."
-  default = 8030
-}
-
-variable "agentListenerSsl" {
-  type = bool
-  description = "This option may increase CPU consumption on the Agent host. Do you wish to enable SSL?"
-  default = false
-}
-
-variable "management_server_host" {
-  type = string
-  description = "Enter Management Server\"s Hostname or IP address"
-  default = null
-}
-
 variable "ses_model" {
-  type = string
+  type        = string
   description = "Enter the Gateway/Mx Model"
   validation {
     condition     = contains(["AV2500", "AV6500", "AVM150"], var.ses_model)
@@ -148,7 +135,7 @@ EOF
 }
 
 variable "imperva_password" {
-  type = string
+  type        = string
   description = "MX password"
   sensitive   = true
   validation {
@@ -159,7 +146,7 @@ variable "imperva_password" {
 }
 
 variable "secure_password" {
-  type = string
+  type        = string
   description = "secure password (password between gw -> mx)"
   sensitive   = true
   validation {
@@ -172,13 +159,8 @@ variable "secure_password" {
 variable "encrypted_license" {
   type = object({
     cipher_text = string
-    passphrase = string
+    passphrase  = string
   })
-  default = null
-}
-
-variable "gw_group_id" {
-  type = string
   default = null
 }
 

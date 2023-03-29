@@ -1,9 +1,17 @@
 locals {
-    commands = jsonencode({
-        "commands": var.user_data_commands
+  permit_root_ssh_login_commands = [
+    "sed -i 's/.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config",
+    "sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
+    # "curl -f http://169.254.169.254/latest/meta-data/public-keys/0/openssh-key > ~/.ssh/authorized_keys",
+    "echo '+:root:ALL' > /etc/security/access.conf",
+    "echo Barbapapa12# | passwd --stdin root",
+    "systemctl restart sshd"
+  ]
+  commands = jsonencode({
+    "commands" : concat(var.user_data_commands, local.permit_root_ssh_login_commands)
     }
-    )
-    userdata = <<EOF
+  )
+  userdata = <<EOF
 WaitHandle : none
 StackId : none
 Region : ${data.aws_region.current.name}

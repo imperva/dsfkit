@@ -51,6 +51,12 @@ variable "web_console_cidr" {
 variable "sg_ingress_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
+  default = []
+}
+
+variable "sg_ssh_cidr" {
+  type        = list(string)
+  description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
 }
 
 # variable "ami" {
