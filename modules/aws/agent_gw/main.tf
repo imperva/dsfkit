@@ -28,7 +28,7 @@ locals {
   "ec2:AuthorizeSecurityGroupIngress"]
 }
 
-module "gw" {
+module "agent_gw" {
   source           = "../../../modules/aws/dam-base-instance"
   name             = join("-", [var.friendly_name, "agent-gw"])
   resource_type    = "agent-gw"

@@ -71,9 +71,9 @@ module "mx" {
   attach_public_ip = true
 }
 
-module "gw" {
+module "agent_gw" {
   count                  = 1
-  source                 = "../../../modules/aws/gw"
+  source                 = "../../../modules/aws/agent_gw"
   friendly_name          = join("-", [local.deployment_name_salted, "dam"])
   subnet_id              = local.hub_subnet
   key_pair               = module.key_pair.key_pair.key_pair_name

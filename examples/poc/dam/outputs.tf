@@ -1,6 +1,6 @@
 output "dsf_agent_gw_group" {
   value = {
-    for idx, val in module.gw : "gw-${idx}" =>
+    for idx, val in module.agent_gw : "gw-${idx}" =>
     {
       private_ip   = try(val.private_ip, null)
       private_dns  = try(val.private_dns, null)

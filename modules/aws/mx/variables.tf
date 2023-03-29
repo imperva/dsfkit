@@ -69,7 +69,7 @@ variable "imperva_password" {
 
 variable "secure_password" {
   type        = string
-  description = "secure password (password between gw -> mx)"
+  description = "secure password (password between agent-gw -> mx)"
   sensitive   = true
   validation {
     condition     = length(var.secure_password) > 8
