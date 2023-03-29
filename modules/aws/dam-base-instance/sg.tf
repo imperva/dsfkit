@@ -59,11 +59,6 @@ resource "aws_security_group_rule" "sg_cidr_ingress_udp" {
   security_group_id = aws_security_group.dsf_base_sg.id
 }
 
-resource "aws_network_interface_sg_attachment" "dsf_basic_sg_attachment" {
-  security_group_id    = aws_security_group.dsf_base_sg.id
-  network_interface_id = aws_network_interface.eni.id
-}
-
 #######################################
 ### Web console security group
 #######################################
@@ -87,12 +82,6 @@ resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
   security_group_id = aws_security_group.dsf_web_console_sg.id
 }
 
-resource "aws_network_interface_sg_attachment" "dsf_web_console_sg_attachment" {
-  count                = length(var.web_console_cidr) > 0 ? 1 : 0
-  security_group_id    = aws_security_group.dsf_web_console_sg.id
-  network_interface_id = aws_network_interface.eni.id
-}
-
 #######################################
 ### SSH security group
 #######################################
@@ -114,10 +103,4 @@ resource "aws_security_group_rule" "dsf_ssh_sg_rule" {
   protocol          = "tcp"
   cidr_blocks       = var.sg_ssh_cidr
   security_group_id = aws_security_group.dsf_ssh_sg.id
-}
-
-resource "aws_network_interface_sg_attachment" "dsf_ssh_sg_attachment" {
-  count                = length(var.sg_ssh_cidr) > 0 ? 1 : 0
-  security_group_id    = aws_security_group.dsf_ssh_sg.id
-  network_interface_id = aws_network_interface.eni.id
 }

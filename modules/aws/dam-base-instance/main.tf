@@ -5,7 +5,10 @@ locals {
   # ebs_state_iops       = var.ebs_details.provisioned_iops
   # ebs_state_throughput = var.ebs_details.throughput
 
-  security_group_id = aws_security_group.dsf_base_sg.id
+  security_group_ids = concat(
+    [aws_security_group.dsf_base_sg.id],
+    [aws_security_group.dsf_ssh_sg.id],
+    [aws_security_group.dsf_web_console_sg.id])
 
   # ami
   # ami_default = {
@@ -120,7 +123,7 @@ data "aws_subnet" "selected_subnet" {
 # Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id = var.subnet_id
-  # security_groups = [local.security_group_id, aws_security_group.dsf_ssh_sg.id, aws_security_group.dsf_web_console_sg.id]
+  security_groups = local.security_group_ids
 }
 
 # tbd: questions
@@ -140,6 +143,7 @@ resource "aws_network_interface" "eni" {
 # 26. add validation to all variables (management_server_host)
 # 27. add an option to pass gw group id from outside (and put it in the gw outputs)
 # 28. we will need to create an additional agent sg cidr list variable
+# 29. search and fix all tbd
 
 ## Things to verify with GW team
 # 8. reduce iam policies to minimum
