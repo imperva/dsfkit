@@ -32,11 +32,6 @@ variable "attach_public_ip" {
   description = "Create public IP for the instance"
 }
 
-# variable "use_public_ip" {
-#   type        = bool
-#   description = "Create public IP for the instance"
-# }
-
 variable "key_pair" {
   type        = string
   description = "key pair for DSF base instance"
@@ -78,51 +73,6 @@ variable "resource_type" {
   nullable = false
 }
 
-# variable "password" {
-#   type        = string
-#   sensitive   = true
-#   description = "Admin password"
-#   validation {
-#     condition     = length(var.password) > 8
-#     error_message = "Admin password must be at least 8 characters"
-#   }
-#   nullable = false
-# }
-
-# variable "ssh_key_path" {
-#   type        = string
-#   description = "SSH key path"
-#   nullable    = false
-# }
-
-# variable "proxy_info" {
-#   type = object({
-#     proxy_address      = string
-#     proxy_ssh_key_path = string
-#     proxy_ssh_user     = string
-#   })
-#   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-#   default = {
-#     proxy_address      = null
-#     proxy_ssh_key_path = null
-#     proxy_ssh_user     = null
-#   }
-# }
-
-# variable "skip_instance_health_verification" {
-#   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
-# }
-
-# variable "terraform_script_path_folder" {
-#   type        = string
-#   description = "Terraform script path folder to create terraform temporary script files on a sonar base instance. Use '.' to represent the instance home directory"
-#   default     = null
-#   validation {
-#     condition     = var.terraform_script_path_folder != ""
-#     error_message = "Terraform script path folder can not be an empty string"
-#   }
-# }
-
 variable "ses_model" {
   type        = string
   description = "Enter the Gateway/Mx Model"
@@ -154,14 +104,6 @@ variable "secure_password" {
     error_message = "secure password must be at least 8 characters"
   }
   nullable = false
-}
-
-variable "encrypted_license" {
-  type = object({
-    cipher_text = string
-    passphrase  = string
-  })
-  default = null
 }
 
 variable "user_data_commands" {

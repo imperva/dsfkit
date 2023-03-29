@@ -18,15 +18,15 @@ output "private_dns" {
   value       = module.gw.private_dns
 }
 
-output "sg_id" {
-  description = "Security group on DSF base instance"
-  value       = module.gw.sg_id
-}
+# output "sg_id" {
+#   description = "Security group on DSF base instance"
+#   value       = module.gw.sg_id
+# }
 
-output "ingress_ports" {
-  value       = module.gw.ingress_ports
-  description = "The ingress ports of the security group on the DSF node EC2"
-}
+# output "ingress_ports" {
+#   value       = module.gw.ingress_ports
+#   description = "The ingress ports of the security group on the DSF node EC2"
+# }
 
 output "iam_role" {
   description = "IAM Role ARN of the DSF node"
@@ -38,5 +38,9 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  value = module.gw.ssh_user
+  value = var.ssh_user
+}
+
+output "group_id" {
+  value = local.group_id
 }

@@ -1,5 +1,5 @@
 resource "aws_kms_key" "password_kms" {
-  description             = "DAM kms"
+  description             = "${var.name} - DAM kms"
   deletion_window_in_days = 10
 }
 

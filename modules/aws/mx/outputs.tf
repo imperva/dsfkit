@@ -18,15 +18,15 @@ output "private_dns" {
   value       = module.mx.private_dns
 }
 
-output "sg_id" {
-  description = "Security group on DSF base instance"
-  value       = module.mx.sg_id
-}
+# output "sg_id" {
+#   description = "Security group on DSF base instance"
+#   value       = module.mx.sg_id
+# }
 
-output "ingress_ports" {
-  value       = module.mx.ingress_ports
-  description = "The ingress ports of the security group on the DSF node EC2"
-}
+# output "ingress_ports" {
+#   value       = module.mx.ingress_ports
+#   description = "The ingress ports of the security group on the DSF node EC2"
+# }
 
 output "iam_role" {
   description = "IAM Role ARN of the DSF node"
@@ -38,5 +38,5 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  value = module.mx.ssh_user
+  value = var.ssh_user
 }

@@ -1,7 +1,3 @@
-data "aws_subnet" "subnet" {
-  id = var.subnet_id
-}
-
 data "aws_vpc" "selected" {
   id = data.aws_subnet.selected_subnet.vpc_id
 }
@@ -14,13 +10,13 @@ locals {
   udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
 }
 
-#######################################
+##############################################################################
 ### Basic security group (vpc, and additional requires cidr blocks)
-#######################################
+##############################################################################
 
 resource "aws_security_group" "dsf_base_sg" {
   description = "${var.name} - Basic security group"
-  vpc_id      = data.aws_subnet.subnet.vpc_id
+  vpc_id      = data.aws_subnet.selected_subnet.vpc_id
 
   tags = {
     Name = join("-", [var.name, "sg"])
@@ -59,12 +55,12 @@ resource "aws_security_group_rule" "sg_cidr_ingress_udp" {
   security_group_id = aws_security_group.dsf_base_sg.id
 }
 
-#######################################
+##############################################################################
 ### Web console security group
-#######################################
+##############################################################################
 resource "aws_security_group" "dsf_web_console_sg" {
   description = "${var.name} - web console access"
-  vpc_id      = data.aws_subnet.subnet.vpc_id
+  vpc_id      = data.aws_subnet.selected_subnet.vpc_id
 
   tags = {
     Name = join("-", [var.name, "web", "console", "sg"])
@@ -82,12 +78,12 @@ resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
   security_group_id = aws_security_group.dsf_web_console_sg.id
 }
 
-#######################################
+##############################################################################
 ### SSH security group
-#######################################
+##############################################################################
 resource "aws_security_group" "dsf_ssh_sg" {
   description = "${var.name} - ssh access"
-  vpc_id      = data.aws_subnet.subnet.vpc_id
+  vpc_id      = data.aws_subnet.selected_subnet.vpc_id
 
   tags = {
     Name = join("-", [var.name, "ssh", "sg"])

@@ -45,12 +45,18 @@ variable "key_pair" {
 variable "sg_ingress_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh and internal protocols"
-  default = []
+  default     = []
 }
 
 variable "sg_ssh_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns for the DSF instance for ssh"
+}
+
+variable "sg_agent_cidr" {
+  type        = list(string)
+  description = "List of allowed ingress cidr patterns for the DSF instance for agents traffic"
+  default     = []
 }
 
 # variable "ami" {
@@ -64,50 +70,27 @@ variable "role_arn" {
   description = "IAM role to assign to the DSF node. Keep empty if you wish to create a new role."
 }
 
-variable "password" {
+variable "imperva_password" {
   type        = string
+  description = "MX password"
   sensitive   = true
-  description = "Admin password"
   validation {
-    condition     = length(var.password) > 8
-    error_message = "Admin password must be at least 8 characters"
+    condition     = length(var.imperva_password) > 8
+    error_message = "MX password must be at least 8 characters"
   }
   nullable = false
 }
 
-# variable "ssh_key_path" {
-#   type        = string
-#   description = "SSH key path"
-#   nullable    = false
-# }
-
-# variable "proxy_info" {
-#   type = object({
-#     proxy_address      = string
-#     proxy_ssh_key_path = string
-#     proxy_ssh_user     = string
-#   })
-#   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-#   default = {
-#     proxy_address      = null
-#     proxy_ssh_key_path = null
-#     proxy_ssh_user     = null
-#   }
-# }
-
-# variable "skip_instance_health_verification" {
-#   description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
-# }
-
-# variable "terraform_script_path_folder" {
-#   type        = string
-#   description = "Terraform script path folder to create terraform temporary script files on a sonar base instance. Use '.' to represent the instance home directory"
-#   default     = null
-#   validation {
-#     condition     = var.terraform_script_path_folder != ""
-#     error_message = "Terraform script path folder can not be an empty string"
-#   }
-# }
+variable "secure_password" {
+  type        = string
+  description = "secure password (password between gw -> mx)"
+  sensitive   = true
+  validation {
+    condition     = length(var.secure_password) > 8
+    error_message = "secure password must be at least 8 characters"
+  }
+  nullable = false
+}
 
 variable "agent_listener_port" {
   type        = number
@@ -115,10 +98,11 @@ variable "agent_listener_port" {
   default     = 8030
 }
 
+# tbd: can this be a boolean?
 variable "agent_listener_ssl" {
-  type        = string
+  type        = bool
   description = "This option may increase CPU consumption on the Agent host. Do you wish to enable SSL?"
-  default     = "False"
+  default     = false
 }
 
 variable "management_server_host" {
@@ -132,18 +116,24 @@ variable "gw_model" {
   default     = "AV2500"
 }
 
-# variable "imperva_password" {
-#   type = string
-#   description = "Enter the Gateway Model"
-# }
-
-# variable "secure_password" {
-#   type = string
-#   description = "Enter the Gateway Model"
-# }
-
 variable "large_scale_mode" {
   type        = bool
   description = "Large scale mode"
   default     = false
+}
+
+variable "group_id" {
+  type        = string
+  description = "Gw group id"
+  default     = null
+}
+
+variable "timezone" {
+  type    = string
+  default = "UTC"
+}
+
+variable "ssh_user" {
+  type    = string
+  default = "ec2-user"
 }

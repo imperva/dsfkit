@@ -30,15 +30,15 @@ output "private_dns" {
   ]
 }
 
-output "sg_id" {
-  description = "Security group on DSF base instance"
-  value       = local.security_group_ids[0] # tbd: fix this
-}
+# output "sg_id" {
+#   description = "Security group on DSF base instance"
+#   value       = local.security_group_ids[0] # tbd: fix this
+# }
 
-output "ingress_ports" {
-  value       = local.ingress_ports
-  description = "The ingress ports of the security group on the DSF node EC2"
-}
+# output "ingress_ports" {
+#   value       = local.ingress_ports
+#   description = "The ingress ports of the security group on the DSF node EC2"
+# }
 
 output "iam_role" {
   description = "IAM Role ARN of the DSF node"
@@ -46,9 +46,9 @@ output "iam_role" {
 }
 
 output "display_name" {
-  value = var.name
+  value = aws_instance.dsf_base_instance.tags.Name
 }
 
-output "ssh_user" {
-  value = local.ami_username
+output "eni_id" {
+  value = aws_network_interface.eni.id
 }
