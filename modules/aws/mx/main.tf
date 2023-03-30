@@ -18,19 +18,10 @@ locals {
   http_auth_header = base64encode("admin:${var.imperva_password}")
   timeout = 60 * 20 # 20m
   # this should be smart enough to know whether there is a public ip and whether it can access it
-  verify_health_commands = <<EOF
-set -x
-while true; do
-  response=$(curl -k -s -o /dev/null -w "%%{http_code}" \
-    --request POST 'https://${module.mx.public_ip}:8083/SecureSphere/api/v1/auth/session' \
-    --header "Authorization: Basic ${local.http_auth_header}")
-  if [ $response -eq 200 ]; then
-    exit 0
-  else
-    sleep 10
-  fi
-done
-EOF
+  installation_completion_commands = templatefile("${path.module}/completion.sh", {
+    mx_address = module.mx.public_ip
+    http_auth_header = local.http_auth_header
+  })
 }
 
 module "mx" {
@@ -51,8 +42,8 @@ module "mx" {
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = var.attach_public_ip
-  instance_health_params = {
-  commands = local.verify_health_commands
+  instance_initialization_completion_params = {
+  commands = local.installation_completion_commands
     enable = true
     timeout = local.timeout
   }

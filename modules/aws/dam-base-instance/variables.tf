@@ -143,7 +143,7 @@ variable "secure_password" {
   }
 }
 
-variable "instance_health_params" {
+variable "instance_initialization_completion_params" {
   description = "This variable allows the user to configure how to checks the health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended"
   type = object({
     enable = bool
