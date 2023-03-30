@@ -94,10 +94,10 @@ resource "aws_network_interface" "eni" {
 }
 
 # questions
-# 1. rename gw 
 # 24. disable root login
 # 28. pass sg from outside
 # 29. search and fix all tbd
+# 30. compare with sonar modules
 
 ## tests:
 # 1. matan's tests
@@ -107,19 +107,16 @@ resource "aws_network_interface" "eni" {
 # 1. management_server_host. Should also support hostname - not just ipv4
 
 ## Things to verify with GW team
-# 8. reduce iam policies to minimum
+# 18. gw tells agent to send data to it's local ip rather than the one the agent registered with. Why? and how to fix it?
 # 9. gw model - What models are there? Do we must use the imperva terms? Any reason we can use aws instance naming? what's the difference between AV6500 and AV2500? - https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf
 # 9. How to pick the mx instance type? should we limit the customer to what he can do?
-# 10. What's the constraints for a password - "2023-03-28_18:11:58: Setting system password for db. Function - configure_system_user_password. Error -  Invalid password (exit status: 7)."
+# 17. what are the agent's ports 8030
 # 11. secure password vs imperva/mx password
-# 12. allow 2 password per gw/mx module
 # 13. Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
 # 14. What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis
 # 15. How can we detect a failing environemnt? maybe through API?
 # 16. katya about licensing
-# 17. what are the agent's ports
-# 18. gw tells agent to send data to it's local ip rather than the one the agent registered with. Why? and how to fix it?
-# 19. what are the constraints for an auto generated password - https://imperva.slack.com/archives/C01RGKGPWG0/p1680154704317109
+# 8. reduce iam policies to minimum
 
 ## Stratigic decisions
 # 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
