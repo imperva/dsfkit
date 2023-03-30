@@ -117,6 +117,7 @@ resource "aws_network_interface" "eni" {
 # 15. How can we detect a failing environemnt? maybe through API?
 # 16. katya about licensing
 # 8. reduce iam policies to minimum
+# 9. /opt/SecureSphere/bin/openssl-fips/gw.x --encrypt Imperva12#
 
 ## Stratigic decisions
 # 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
