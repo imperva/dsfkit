@@ -120,7 +120,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
+        envs: REMOTE_EXAMPLE_DIR,TF_VAR_subnet_hub,TF_VAR_aws_profile,TF_VAR_aws_profile_hub,TF_VAR_aws_profile_gw,TF_VAR_subnet_gw,TF_VAR_aws_region,TF_VAR_aws_region_hub,TF_VAR_aws_region_gw,TF_VAR_subnet_hub_secondary
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
