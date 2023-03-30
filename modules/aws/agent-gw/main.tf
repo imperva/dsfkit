@@ -29,7 +29,7 @@ locals {
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
   http_auth_header = base64encode("admin:${var.imperva_password}")
-  timeout = 60 * 25 # 20m
+  timeout          = 60 * 25 # 20m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = "exit 0" #templatefile("${path.module}/completion.sh", {
   #   mx_address = var.management_server_host
@@ -58,8 +58,8 @@ module "agent_gw" {
   key_pair           = var.key_pair
   attach_public_ip   = var.attach_public_ip
   instance_initialization_completion_params = {
-  commands = local.installation_completion_commands
-    enable = true
-    timeout = local.timeout
+    commands = local.installation_completion_commands
+    enable   = true
+    timeout  = local.timeout
   }
 }

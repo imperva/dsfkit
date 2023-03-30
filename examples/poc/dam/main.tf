@@ -20,8 +20,8 @@ module "key_pair" {
 data "aws_availability_zones" "available" { state = "available" }
 
 locals {
-  workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
-  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+  workstation_cidr_24        = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
+  deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = ["82.166.106.0/24", "94.188.165.0/24"] #var.workstation_cidr # != null ? var.workstation_cidr : local.workstation_cidr_24
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })

@@ -29,13 +29,13 @@ EOF
 
 resource "null_resource" "wait_for_installation_completion" {
   count = var.instance_initialization_completion_params.enable == true ? 1 : 0
- provisioner "local-exec" {
-  command = <<EOF
+  provisioner "local-exec" {
+    command = <<EOF
 timeout ${var.instance_initialization_completion_params.timeout} bash -c '${var.instance_initialization_completion_params.commands}'
 EOF
- }
+  }
   triggers = {
     instance_id = aws_instance.dsf_base_instance.id
-  commands = var.instance_initialization_completion_params.commands
+    commands    = var.instance_initialization_completion_params.commands
   }
 }

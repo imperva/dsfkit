@@ -58,7 +58,7 @@ variable "gw_group_id" {
 }
 
 variable "license_file" {
-  type        = string
+  type = string
   validation {
     condition     = fileexists(var.license_file)
     error_message = "File doesn't exist"

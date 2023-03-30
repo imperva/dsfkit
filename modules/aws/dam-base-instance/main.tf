@@ -113,15 +113,15 @@ resource "aws_network_interface" "eni" {
 
 ## Stratigic decisions
 # 1. ses model
-  # GW MODEL - should we allow the user to pick ec2 instance type?
-  # MX MODEL - should we allow the user to pick ec2 instance type? Probably yes (as cloudformation allows him to pick 1)
+# GW MODEL - should we allow the user to pick ec2 instance type?
+# MX MODEL - should we allow the user to pick ec2 instance type? Probably yes (as cloudformation allows him to pick 1)
 # 2. external disks:
-  # Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
+# Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
 # 3. amis
-  # Permissions
-  # how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)  # market place
-  # What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis - or yesharim
-  # Should we limit the amis for marketplace?
+# Permissions
+# how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)  # market place
+# What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis - or yesharim
+# Should we limit the amis for marketplace?
 # 4. iam roles
-  # reduce to minimum
+# reduce to minimum
 # 5. allow an option to deploy without license?
