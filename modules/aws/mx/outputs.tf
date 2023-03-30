@@ -40,3 +40,7 @@ output "display_name" {
 output "ssh_user" {
   value = var.ssh_user
 }
+
+output "instance_id" {
+  value = module.mx.instance_id
+}

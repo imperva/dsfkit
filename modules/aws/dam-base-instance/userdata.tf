@@ -26,3 +26,16 @@ MetaData : ${local.commands}
 RegistrationParams : {"StackName" : "${var.name}","StackId" : "${var.name}","SQSName" : "","Region" : "${data.aws_region.current.name}","AccessKey" : "","SecretKey" : ""}
 EOF
 }
+
+resource "null_resource" "dam_health" {
+  count = var.instance_health_params.enable == true ? 1 : 0
+ provisioner "local-exec" {
+  command = <<EOF
+timeout ${var.instance_health_params.timeout} bash -c '${var.instance_health_params.commands}'
+EOF
+ }
+  triggers = {
+    instance_id = aws_instance.dsf_base_instance.id
+  commands = var.instance_health_params.commands
+  }
+}

@@ -95,33 +95,33 @@ resource "aws_network_interface" "eni" {
 
 # questions
 # 24. disable root login
+# 25. remove gw public ip assignment
 # 28. pass sg from outside
-# 29. search and fix all tbd
 # 30. compare with sonar modules
 
 ## tests:
-# 1. matan's tests
+# 1. matan's tests - nat ip - yotan
 # 20. test agent_listener_ssl
 
-## validations
-# 1. management_server_host. Should also support hostname - not just ipv4
-
 ## Things to verify with GW team
-# 18. gw tells agent to send data to it's local ip rather than the one the agent registered with. Why? and how to fix it?
-# 9. gw model - What models are there? Do we must use the imperva terms? Any reason we can use aws instance naming? what's the difference between AV6500 and AV2500? - https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf
-# 9. How to pick the mx instance type? should we limit the customer to what he can do?
-# 17. what are the agent's ports 8030
-# 11. secure password vs imperva/mx password
-# 13. Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
-# 14. What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis
-# 15. How can we detect a failing environemnt? maybe through API?
+# 11. secure password vs imperva/mx password. Ariel bresler.
+# 15. How can we detect a failing environemnt? maybe through API? How to get the failure (print command to get the failure)
 # 16. katya about licensing
-# 8. reduce iam policies to minimum
-# 9. /opt/SecureSphere/bin/openssl-fips/gw.x --encrypt Imperva12#
+
+## bugs:
+# 1. creating multiple (happened twice with 3) gw concurrenrly results a failure - Cannot connect to 10.0.101.100:8083 [HTTP: 450 APP: response code is 450. CANNOT_ACQUIRE_LOCK] (exit status: 100)
 
 ## Stratigic decisions
-# 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)
-# 1. Should we limit the amis for marketplace?
-# 2. Should we limit the ec2 type a customer can use?
-# 2. What happens if something faild? What the customer should do? It should be obvious how to extract the failure? Poll a flag that tells us whether the installation succeeded?
-# 25. allow an option to deploy without license?
+# 1. ses model
+  # GW MODEL - should we allow the user to pick ec2 instance type?
+  # MX MODEL - should we allow the user to pick ec2 instance type? Probably yes (as cloudformation allows him to pick 1)
+# 2. external disks:
+  # Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
+# 3. amis
+  # Permissions
+  # how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)  # market place
+  # What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis - or yesharim
+  # Should we limit the amis for marketplace?
+# 4. iam roles
+  # reduce to minimum
+# 5. allow an option to deploy without license?

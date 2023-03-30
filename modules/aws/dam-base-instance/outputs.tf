@@ -52,3 +52,7 @@ output "display_name" {
 output "eni_id" {
   value = aws_network_interface.eni.id
 }
+
+output "instance_id" {
+  value = aws_instance.dsf_base_instance.id
+}

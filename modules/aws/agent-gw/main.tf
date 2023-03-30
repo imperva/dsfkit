@@ -28,6 +28,12 @@ locals {
     "s3:PutObjectVersionTagging",
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
+  http_auth_header = base64encode("admin:${var.imperva_password}")
+  timeout = 60 * 20 # 20m
+  # this should be smart enough to know whether there is a public ip and whether it can access it
+  verify_health_commands = <<EOF
+exit 0
+EOF
 }
 
 module "agent_gw" {
@@ -48,4 +54,9 @@ module "agent_gw" {
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = var.attach_public_ip
+  instance_health_params = {
+  commands = local.verify_health_commands
+    enable = true
+    timeout = local.timeout
+  }
 }

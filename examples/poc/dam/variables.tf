@@ -4,11 +4,6 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
-# variable "sonar_version" {
-#   type    = string
-#   default = "4.10"
-# }
-
 variable "gw_count" {
   type        = number
   default     = 1
@@ -22,7 +17,7 @@ variable "gw_count" {
 variable "web_console_admin_password" {
   sensitive   = true
   type        = string
-  default     = "Barbapapa12#" # null # Random tbd - make this random
+  default     = null # Random
   description = "Admin password (Random generated if not set)"
 }
 
@@ -30,12 +25,6 @@ variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
   description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
-}
-
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
 }
 
 variable "workstation_cidr" {
@@ -60,6 +49,21 @@ variable "public_subnets" {
   type        = list(string)
   default     = ["10.0.101.0/24", "10.0.102.0/24"]
   description = "VPC public subnet cidr range"
+}
+
+variable "gw_group_id" {
+  type        = string
+  default     = null # None
+  description = "Gw group id. Keep empty for random generated one"
+}
+
+variable "license_file" {
+  type        = string
+  validation {
+    condition     = fileexists(var.license_file)
+    error_message = "File doesn't exist"
+  }
+  description = "License file"
 }
 
 variable "subnet_ids" {

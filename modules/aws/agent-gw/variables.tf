@@ -186,8 +186,12 @@ variable "large_scale_mode" {
 
 variable "group_id" {
   type        = string
-  description = "Gw group id"
+  description = "Gw group id. Keep empty to get random id"
   default     = null
+  validation {
+    condition     = var.group_id == null || try(length(var.group_id) >= 3, false)
+    error_message = "Id must be at least 3 chrachters long"
+  }
 }
 
 variable "timezone" {

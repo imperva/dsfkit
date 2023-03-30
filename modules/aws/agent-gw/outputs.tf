@@ -44,3 +44,7 @@ output "ssh_user" {
 output "group_id" {
   value = local.group_id
 }
+
+output "instance_id" {
+  value = module.agent_gw.instance_id
+}
