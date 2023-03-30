@@ -11,7 +11,7 @@ variable "sonar_version" {
 
 variable "gw_count" {
   type        = number
-  default     = 4
+  default     = 10
   description = "Number of agentless gateways"
   validation {
     condition     = var.gw_count > 0
