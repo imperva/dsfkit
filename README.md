@@ -620,19 +620,19 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.3.10">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.3.10/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
     Run:
     ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/poc/basic_deployment/basic_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.3.10/examples/poc/basic_deployment/basic_deployment.zip
     
     or
     
-    wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/poc/hadr_deployment/hadr_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/installation/single_account_deployment/single_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.3.10/examples/poc/hadr_deployment/hadr_deployment.zip
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.3.7/examples/installation/multi_account_deployment/multi_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.3.10/examples/installation/single_account_deployment/single_account_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.3.10/examples/installation/multi_account_deployment/multi_account_deployment.zip
     ```
 
 12. Unzip the zip file:
