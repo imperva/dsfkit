@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
-      REMOTE_EXAMPLE_DIR: ./dsfkit${{ matrix.example_dir }}
+      REMOTE_EXAMPLE_DIR: ./dsfkit/${{ matrix.example_dir }}
       AWS_REGION: ${{ matrix.aws_region }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       TF_VARS: ${{ matrix.tf_vars }}
