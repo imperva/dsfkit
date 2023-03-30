@@ -76,8 +76,8 @@ variable "imperva_password" {
   sensitive   = true
   validation {
     # Check that the password is at least 8 characters long
-    condition     = length(var.imperva_password) >= 8
-    error_message = "Password must be at least 8 characters long"
+    condition     = length(var.imperva_password) >= 7 && length(var.imperva_password) <= 14
+    error_message = "Password must be 7-14 characters long"
   }
 
   validation {
@@ -100,8 +100,8 @@ variable "imperva_password" {
 
   validation {
     # Check that the password contains at least one special character
-    condition     = can(regex("[^a-zA-Z0-9]", var.imperva_password))
-    error_message = "Password must contain at least one special character"
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.imperva_password))
+    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
   }
 }
 
@@ -111,8 +111,8 @@ variable "secure_password" {
   sensitive   = true
   validation {
     # Check that the password is at least 8 characters long
-    condition     = length(var.secure_password) >= 8
-    error_message = "Password must be at least 8 characters long"
+    condition     = length(var.secure_password) >= 7 && length(var.secure_password) <= 14
+    error_message = "Password must be 7-14 characters long"
   }
 
   validation {
@@ -135,8 +135,8 @@ variable "secure_password" {
 
   validation {
     # Check that the password contains at least one special character
-    condition     = can(regex("[^a-zA-Z0-9]", var.secure_password))
-    error_message = "Password must contain at least one special character"
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.secure_password))
+    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
   }
 }
 

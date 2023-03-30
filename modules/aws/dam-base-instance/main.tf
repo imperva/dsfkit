@@ -45,7 +45,6 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }
 
-# tbd: we can't enforce usage of images from market place
 data "aws_ami" "selected-ami" {
   owners = ["aws-marketplace"]
 
@@ -94,12 +93,11 @@ resource "aws_network_interface" "eni" {
   security_groups = local.security_group_ids
 }
 
-# tbd: questions
+# questions
 # 1. rename gw 
 # 24. disable root login
 # 28. pass sg from outside
 # 29. search and fix all tbd
-# 30. add many preconditions all over
 
 ## tests:
 # 1. matan's tests
@@ -116,10 +114,12 @@ resource "aws_network_interface" "eni" {
 # 11. secure password vs imperva/mx password
 # 12. allow 2 password per gw/mx module
 # 13. Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
-# 14. What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath?
+# 14. What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis
 # 15. How can we detect a failing environemnt? maybe through API?
 # 16. katya about licensing
 # 17. what are the agent's ports
+# 18. gw tells agent to send data to it's local ip rather than the one the agent registered with. Why? and how to fix it?
+# 19. what are the constraints for an auto generated password - https://imperva.slack.com/archives/C01RGKGPWG0/p1680154704317109
 
 ## Stratigic decisions
 # 0. how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)

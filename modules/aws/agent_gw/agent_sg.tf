@@ -18,7 +18,7 @@ resource "aws_security_group" "dsf_agent_sg" {
 
 resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
   for_each          = local.ports_map
-  description       = "${var.friendly_name} - Allow agents access"
+  description       = "${var.friendly_name} - Allow agent access"
   type              = "ingress"
   from_port         = each.value
   to_port           = each.value

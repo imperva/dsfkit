@@ -32,7 +32,7 @@ output "private_dns" {
 
 # output "sg_id" {
 #   description = "Security group on DSF base instance"
-#   value       = local.security_group_ids[0] # tbd: fix this
+#   value       = local.security_group_ids[0]
 # }
 
 # output "ingress_ports" {
