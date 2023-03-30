@@ -28,12 +28,12 @@ jobs:
             example_dir: examples/installation/single_account_deployment
             aws_region: ap-southeast-1
             workspace: single_account
-            tf_vars: -var 'aws_profile="innostage"' -var 'aws_region="ap-southeast-1"' -var 'subnet_hub="subnet-01eb3ee7b2a93a856"' -var 'subnet_hub_secondary="subnet-01eb3ee7b2a93a856"' -var 'subnet_gw="subnet-0c5ade55a259105e6"'
+            tf_vars: -var 'aws_profile=innostage' -var 'aws_region=ap-southeast-1' -var 'subnet_hub=subnet-01eb3ee7b2a93a856' -var 'subnet_hub_secondary=subnet-01eb3ee7b2a93a856' -var 'subnet_gw=subnet-01eb3ee7b2a93a856'
           - name: multi account
             example_dir: examples/installation/multi_account_deployment
             aws_region: ap-southeast-1
             workspace: multi_account
-            tf_vars: -var 'aws_profile_hub="innostage"' -var 'aws_profile_gw="innodev"' -var 'aws_region_hub="ap-southeast-1"' -var 'aws_region_gw="ap-southeast-1"' -var 'subnet_hub="subnet-01eb3ee7b2a93a856"' -var 'subnet_gw="subnet-0c5ade55a259105e6"'
+            tf_vars: -var 'aws_profile_hub=innostage' -var 'aws_profile_gw=innodev' -var 'aws_region_hub=ap-southeast-1' -var 'aws_region_gw=ap-southeast-1' -var 'subnet_hub=subnet-01eb3ee7b2a93a856' -var 'subnet_gw=subnet-0c5ade55a259105e6'
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -106,8 +106,8 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR,TF_VARS
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate $TF_VARS
+        envs: REMOTE_EXAMPLE_DIR
+        script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
