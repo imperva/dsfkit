@@ -1,13 +1,13 @@
 locals {
-  permit_root_ssh_login_commands = [
-    "sed -i 's/.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config",
-    "sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
-    "echo '+:root:ALL' > /etc/security/access.conf",
-    "echo Barbapapa12# | passwd --stdin root",
-    "systemctl restart sshd"
-  ]
+  # permit_root_ssh_login_commands = [
+  #   "sed -i 's/.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config",
+  #   "sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
+  #   "echo '+:root:ALL' > /etc/security/access.conf",
+  #   "echo Barbapapa12# | passwd --stdin root",
+  #   "systemctl restart sshd"
+  # ]
   commands = jsonencode({
-    "commands" : concat(var.user_data_commands, local.permit_root_ssh_login_commands)
+    "commands" : var.user_data_commands
     }
   )
   userdata = <<EOF
