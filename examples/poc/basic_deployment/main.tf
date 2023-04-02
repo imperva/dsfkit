@@ -11,13 +11,13 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.9" # latest release tag
+  version                  = "1.3.10" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -38,9 +38,9 @@ locals {
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  hub_subnet = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
-  gw_subnet = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
-  db_subnets = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
+  hub_subnet                 = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
+  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
 ##############################
@@ -48,7 +48,7 @@ locals {
 ##############################
 
 module "vpc" {
-  count = var.subnet_ids == null ? 1 : 0
+  count  = var.subnet_ids == null ? 1 : 0
   source = "terraform-aws-modules/vpc/aws"
   name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   cidr   = var.vpc_ip_range
@@ -68,7 +68,7 @@ module "vpc" {
 
 module "hub" {
   source                     = "imperva/dsf-hub/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                  = local.hub_subnet
   binaries_location          = local.tarball_location
@@ -92,7 +92,7 @@ module "hub" {
 module "agentless_gw_group" {
   count                      = var.gw_count
   source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.3.9" # latest release tag
+  version                    = "1.3.10" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                  = local.gw_subnet
   ebs                        = var.gw_group_ebs_details
@@ -121,7 +121,7 @@ module "agentless_gw_group" {
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
   source   = "imperva/dsf-federation/null"
-  version  = "1.3.9" # latest release tag
+  version  = "1.3.10" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -146,7 +146,7 @@ module "federation" {
 module "rds_mysql" {
   count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.3.9" # latest release tag
+  version                      = "1.3.10" # latest release tag
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
@@ -155,7 +155,7 @@ module "rds_mysql" {
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.3.9" # latest release tag
+  version                      = "1.3.10" # latest release tag
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 
@@ -168,7 +168,7 @@ module "rds_mssql" {
 module "db_onboarding" {
   for_each      = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
   source        = "imperva/dsf-poc-db-onboarder/aws"
-  version       = "1.3.9" # latest release tag
+  version       = "1.3.10" # latest release tag
   sonar_version = module.globals.tarball_location.version
   hub_info = {
     hub_ip_address           = module.hub.public_ip
