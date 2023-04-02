@@ -7,7 +7,7 @@ variable "deployment_name" {
 variable "sonar_version" {
   type        = string
   default     = "4.10.0.1"
-  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1']"
+  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1', '4.11']"
 }
 
 variable "tarball_location" {
