@@ -92,15 +92,15 @@ jobs:
     - name: Create tfvars File
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        aws_profile=TF_VAR_aws_profile
-        aws_profile_hub=TF_VAR_aws_profile_hub
-        aws_profile_gw=TF_VAR_aws_profile_gw
+        aws_profile=$TF_VAR_aws_profile
+        aws_profile_hub=$TF_VAR_aws_profile_hub
+        aws_profile_gw=$TF_VAR_aws_profile_gw
         aws_region=$TF_VAR_aws_region
         aws_region_hub=$TF_VAR_aws_region
         aws_region_gw=$TF_VAR_aws_region
         subnet_hub=$TF_VAR_subnet_hub
         subnet_hub_secondary=$TF_VAR_subnet_hub_secondary
-        subnet_gw=TF_VAR_subnet_gw
+        subnet_gw=$TF_VAR_subnet_gw
         EOF
 
     - name: View The Vars
@@ -109,6 +109,9 @@ jobs:
     - name: Create a ZIP File
       run: zip -r ../dsfkit.zip ../dsfkit
 
+    - name: View The ZIP File
+      run: ll ../
+
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
       with:
@@ -116,9 +119,10 @@ jobs:
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "../dsfkit.zip"
+        source: "dsfkit.zip"
         timeout: "10m"
         target: "tmp"
+        overwrite: true
 
 #    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
 #    - name: Setup Terraform
