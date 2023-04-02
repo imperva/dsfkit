@@ -6,8 +6,12 @@ variable "deployment_name" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.10.0.1"
-  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1']"
+  default     = "4.11"
+  description = "The Sonar version to install. Sonar's supported versions are: ['4.11']"
+  validation {
+    condition     = var.sonar_version == "4.11"
+    error_message = "This example supports Sonar version 4.11"
+  }
 }
 
 variable "gw_count" {
@@ -30,19 +34,19 @@ variable "web_console_admin_password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DSF Hub web console CIDR blocks in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "database_cidr" {
   type        = list(string)
   default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
+  description = "CIDR blocks allowing dummy database access in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
-  description = "CIDR blocks allowing hub ssh and debugging access"
+  description = "CIDR blocks allowing DSF Hub ssh and debugging access in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "additional_install_parameters" {
@@ -53,32 +57,33 @@ variable "additional_install_parameters" {
 variable "vpc_ip_range" {
   type        = string
   default     = "10.0.0.0/16"
-  description = "VPC cidr range"
+  description = "VPC CIDR range"
 }
 
 variable "private_subnets" {
   type        = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "VPC private subnet cidr range"
+  description = "VPC private subnets CIDR range"
 }
 
 variable "public_subnets" {
   type        = list(string)
   default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet cidr range"
+  description = "VPC public subnets CIDR range"
 }
 
 variable "subnet_ids" {
   type = object({
     primary_hub_subnet_id   = string
     secondary_hub_subnet_id = string
-    gw_subnet_id            = string
+    primary_gws_subnet_id   = string
+    secondary_gws_subnet_id = string
     db_subnet_ids           = list(string)
   })
   default     = null
   description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.primary_hub_subnet_id != null && var.subnet_ids.secondary_hub_subnet_id != null && var.subnet_ids.gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.primary_hub_subnet_id != null && var.subnet_ids.secondary_hub_subnet_id != null && var.subnet_ids.primary_gws_subnet_id != null && var.subnet_ids.secondary_gws_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
 }

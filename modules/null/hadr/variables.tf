@@ -1,24 +1,34 @@
+variable "sonar_version" {
+  type        = string
+  description = "The Sonar version to install"
+  nullable    = false
+  validation {
+    condition     = var.sonar_version == "4.11"
+    error_message = "This module supports Sonar version 4.11"
+  }
+}
+
 variable "dsf_primary_ip" {
   type        = string
-  description = "IP of the primary Hub, can be public or private"
+  description = "IP of the primary DSF Hub or Agentless Gateway, can be public or private"
   nullable    = false
 }
 
 variable "dsf_primary_private_ip" {
   type        = string
-  description = "Private IP of the primary Hub"
+  description = "Private IP of the primary DSF Hub or Agentless Gateway"
   nullable    = false
 }
 
 variable "dsf_secondary_ip" {
   type        = string
-  description = "IP of the secondary Hub, can be public or private"
+  description = "IP of the secondary DSF Hub or Agentless Gateway, can be public or private"
   nullable    = false
 }
 
 variable "dsf_secondary_private_ip" {
   type        = string
-  description = "Private IP of the secondary Hub"
+  description = "Private IP of the secondary DSF Hub or Agentless Gateway"
   nullable    = false
 }
 

@@ -186,6 +186,7 @@ module "federation" {
 module "hub_hadr" {
   source                       = "imperva/dsf-hadr/null"
   version                      = "1.3.10" # latest release tag
+  sonar_version                = module.globals.tarball_location.version
   dsf_primary_ip               = module.hub_primary.private_ip
   dsf_primary_private_ip       = module.hub_primary.private_ip
   dsf_secondary_ip             = module.hub_secondary.private_ip

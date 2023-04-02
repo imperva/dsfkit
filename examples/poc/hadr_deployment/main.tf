@@ -40,12 +40,17 @@ locals {
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   primary_hub_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
   secondary_hub_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
-  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  primary_gws_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_gws_subnet_id : module.vpc[0].private_subnets[0]
+  secondary_gws_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_gws_subnet_id : module.vpc[0].private_subnets[1]
   db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
-data "aws_subnet" "gw_subnet" {
-  id = local.gw_subnet
+data "aws_subnet" "primary_gws_subnet" {
+  id = local.primary_gws_subnet
+}
+
+data "aws_subnet" "secondary_gws_subnet" {
+  id = local.secondary_gws_subnet
 }
 
 ##############################
@@ -86,7 +91,7 @@ module "hub_primary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.gw_subnet.cidr_block])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = true
   depends_on = [
@@ -112,7 +117,7 @@ module "hub_secondary" {
   }
   ingress_communication = {
     additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.gw_subnet.cidr_block])
+    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = true
   depends_on = [
@@ -125,7 +130,7 @@ module "agentless_gw_group_primary" {
   version                    = "1.3.10" # latest release tag
   count                      = var.gw_count
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                  = local.gw_subnet
+  subnet_id                  = local.primary_gws_subnet
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
@@ -136,7 +141,7 @@ module "agentless_gw_group_primary" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.secondary_gws_subnet.cidr_block])
   }
   use_public_ip = false
   ingress_communication_via_proxy = {
@@ -145,13 +150,46 @@ module "agentless_gw_group_primary" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.vpc,
+    module.vpc
+  ]
+}
+
+module "agentless_gw_group_secondary" {
+  source                              = "imperva/dsf-agentless-gw/aws"
+  version                             = "1.3.10" # latest release tag
+  count                               = var.gw_count
+  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
+  subnet_id                           = local.secondary_gws_subnet
+  ebs                                 = var.gw_group_ebs_details
+  binaries_location                   = local.tarball_location
+  web_console_admin_password          = local.web_console_admin_password
+  hub_sonarw_public_key               = module.hub_primary.sonarw_public_key
+  hadr_secondary_node                 = true
+  sonarw_public_key                   = module.agentless_gw_group_primary[count.index].sonarw_public_key
+  sonarw_private_key                  = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  attach_public_ip                    = false
+  ssh_key_pair = {
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
+    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
+  }
+  ingress_communication = {
+    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block])
+  }
+  use_public_ip = false
+  ingress_communication_via_proxy = {
+    proxy_address              = module.hub_primary.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_primary.ssh_user
+  }
+  depends_on = [
+    module.vpc
   ]
 }
 
 module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
   version                  = "1.3.10" # latest release tag
+  sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.hub_primary.public_ip
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
@@ -159,7 +197,30 @@ module "hub_hadr" {
   ssh_key_path             = module.key_pair.private_key_file_path
   ssh_user                 = module.hub_primary.ssh_user
   depends_on = [
-    module.federation
+    module.hub_primary,
+    module.hub_secondary
+  ]
+}
+
+module "agentless_gw_group_hadr" {
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.3.10" # latest release tag
+  count                        = var.gw_count
+  sonar_version                = module.globals.tarball_location.version
+  dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
+  dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
+  dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
+  dsf_secondary_private_ip     = module.agentless_gw_group_secondary[count.index].private_ip
+  ssh_key_path                 = module.key_pair.private_key_file_path
+  ssh_user                     = module.agentless_gw_group_primary[count.index].ssh_user
+  proxy_info = {
+    proxy_address              = module.hub_primary.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_primary.ssh_user
+  }
+  depends_on = [
+    module.agentless_gw_group_primary,
+    module.agentless_gw_group_secondary
   ]
 }
 
@@ -167,7 +228,8 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub_primary, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group_primary : val]
+      [for idx, val in module.agentless_gw_group_primary : val],
+      [for idx, val in module.agentless_gw_group_secondary : val]
     )
   )
 }
@@ -192,9 +254,8 @@ module "federation" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary,
-    module.agentless_gw_group_primary
+    module.hub_hadr,
+    module.agentless_gw_group_hadr
   ]
 }
 
@@ -244,7 +305,6 @@ module "db_onboarding" {
   }
   depends_on = [
     module.federation,
-    module.hub_hadr,
     module.rds_mysql,
     module.rds_mssql
   ]
