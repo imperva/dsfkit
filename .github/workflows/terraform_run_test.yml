@@ -110,7 +110,9 @@ jobs:
       run: zip -r ../dsfkit.zip ../dsfkit
 
     - name: View The ZIP File
-      run: ls -l ../
+      run: | 
+        ls -l ../
+        pwd
 
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
