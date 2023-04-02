@@ -2,7 +2,7 @@ variable "sonar_version" {
   type    = string
   default = "4.10.0.1"
   validation {
-    condition     = contains(["4.9", "4.10", "4.10.0.1"], var.sonar_version)
+    condition     = contains(["4.9", "4.10", "4.10.0.1", "4.11"], var.sonar_version)
     error_message = "The sonar_version value must be from the list [\"4.9\", \"4.10\", \"4.10.0.1\"]"
   }
 }
