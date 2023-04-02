@@ -3,8 +3,8 @@ variable "sonar_version" {
   description = "The Sonar version to install"
   nullable    = false
   validation {
-    condition     = var.sonar_version >= "4.11"
-    error_message = "This module supports Sonar version 4.11 and up"
+    condition     = var.sonar_version == "4.11"
+    error_message = "This module supports Sonar version 4.11"
   }
 }
 

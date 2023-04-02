@@ -9,8 +9,8 @@ variable "sonar_version" {
   default     = "4.11"
   description = "The Sonar version to install. Sonar's supported versions are: ['4.11']"
   validation {
-    condition     = var.sonar_version >= "4.11"
-    error_message = "This example supports Sonar version 4.11 and up"
+    condition     = var.sonar_version == "4.11"
+    error_message = "This example supports Sonar version 4.11"
   }
 }
 
