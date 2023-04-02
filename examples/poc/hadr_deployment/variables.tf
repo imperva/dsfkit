@@ -65,7 +65,7 @@ variable "private_subnets" {
 variable "public_subnets" {
   type        = list(string)
   default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet CIDR range"
+  description = "VPC public subnets CIDR range"
 }
 
 variable "subnet_ids" {

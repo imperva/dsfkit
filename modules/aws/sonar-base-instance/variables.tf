@@ -127,7 +127,7 @@ variable "binaries_location" {
 variable "hadr_secondary_node" {
   type        = bool
   default     = false
-  description = "Is this node a HADR secondary one"
+  description = "Is this node an HADR secondary one"
 }
 
 variable "sonarw_public_key" {
