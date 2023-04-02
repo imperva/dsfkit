@@ -189,6 +189,7 @@ module "agentless_gw_group_secondary" {
 module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
   version                  = "1.3.10" # latest release tag
+  sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.hub_primary.public_ip
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.public_ip
@@ -205,6 +206,7 @@ module "agentless_gw_group_hadr" {
   source                       = "imperva/dsf-hadr/null"
   version                      = "1.3.10" # latest release tag
   count                        = var.gw_count
+  sonar_version                = module.globals.tarball_location.version
   dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
   dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip
