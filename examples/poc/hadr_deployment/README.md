@@ -11,7 +11,7 @@ This deployment consists of:
 4. One primary Agentless Gateway
 5. One secondary Agentless Gateway
 6. Federation
-7. DSF Hub HADR and Agenless Gateway HADR setups
+7. DSF Hub HADR and Agenless Gateway HADR
 8. Creation of a new “Demo DB” - RDS MySQL 
 9. Auto configuration of the RDS MySQL to enable native audit 
 10. Onboarding the DB to DSF Hub 
