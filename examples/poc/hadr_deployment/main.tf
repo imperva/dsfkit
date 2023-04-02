@@ -202,8 +202,9 @@ module "hub_hadr" {
 }
 
 module "agentless_gw_group_hadr" {
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.3.10" # latest release tag
   count                        = var.gw_count
-  source                       = "../../../modules/null/hadr"
   dsf_primary_ip               = module.agentless_gw_group_primary[count.index].private_ip
   dsf_primary_private_ip       = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip             = module.agentless_gw_group_secondary[count.index].private_ip

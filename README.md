@@ -318,7 +318,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
+      <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.3.10/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
       </td>
