@@ -99,18 +99,17 @@ resource "aws_network_interface" "eni" {
 # 30. compare with sonar modules
 
 ## tests:
-# 1. matan's tests - nat ip - yotam
-# 20. test agent_listener_ssl
+# 1. matan's tests, (including agent_listener_ssl)
 
 ## Things to verify with GW team
 # 11. secure password vs imperva/mx password. Ariel bresler.
-# 16. katya about licensing
+# 16. katya about licensing - What kind of licenses are there? flex? BYOL? OnDemand? Sealed/Unsealed box? what else? Who can generate licenses? what happens if I put model with more cores and memory
 
 ## bugs:
 # 1. creating multiple (happened twice with 3) gw concurrenrly results a failure - Cannot connect to 10.0.101.100:8083 [HTTP: 450 APP: response code is 450. CANNOT_ACQUIRE_LOCK] (exit status: 100)
 
 ## Stratigic decisions
-# 15. How can we detect a failing environemnt? maybe through API? How to get the failure (print command to get the failure)
+# 15. How can we detect a failing environemnt? maybe through API? How to get the failure (print command to get the failure)? How should we debug the gw init status?
 # 1. ses model
 # GW MODEL - should we allow the user to pick ec2 instance type?
 # MX MODEL - should we allow the user to pick ec2 instance type? Probably yes (as cloudformation allows him to pick 1)

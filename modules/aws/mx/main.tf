@@ -16,7 +16,7 @@ locals {
   ]
 
   http_auth_header = base64encode("admin:${var.imperva_password}")
-  timeout          = 60 * 20 # 20m
+  timeout          = 60 * 25 # 20m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = templatefile("${path.module}/completion.sh", {
     mx_address       = module.mx.public_ip
