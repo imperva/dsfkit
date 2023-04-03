@@ -232,14 +232,25 @@ The following table lists the released DSFKit versions, their release date and a
       <br>4. Made adjustments to support Terraform version 1.4.0.
    </td>
   </tr>
-   <tr>
+  <tr>
    <td>27 Mar 2023
    </td>
    <td>1.3.10
    </td>
    <td>
       1. Added support for supplying a custom key-pair for ssh to the DSF Hub and the Agentless Gateway.
-      <br>2. Added support for the new Sonar minor version '4.10.0.1'.
+      <br>2. Added support for the new Sonar public patch '4.10.0.1'.
+   </td>
+  </tr>
+  </tr>
+  <tr>
+   <td>3 Apr 2023
+   </td>
+   <td>1.4.0
+   </td>
+   <td>
+      1. Added support for the new Sonar version '4.11'.
+      <br>2. Added support for GW HADR.
    </td>
   </tr>
 
@@ -352,9 +363,9 @@ Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_I
 
 ## Sonar Binaries Location and Versioning
 
-When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example recipe.
+When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example.
 
-The latest version of Sonar, 4.10.0.1, is recommended, and Sonar 4.9 and higher are supported.
+Depending on the example, the latest Sonar versions, 4.10.0.1 and 4.11, are recommended, and Sonar 4.9 and higher are supported.
 
 **For example**: examples/poc/basic_deployment/variables.tf
    ```terraform
