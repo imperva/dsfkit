@@ -66,23 +66,12 @@ jobs:
 #        working-directory: ~
     steps:
 
-    - name: Get The Worker Path
-      run: |
-        cd ${{ github.workspace }}
-        pwd
-        ls -l
-
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-#      with:
-#        path: ${{ github.workspace }}/..
 
     - name: Change the modules source to local
       run: |
-        cd ${{ github.workspace }}
-        pwd
-        ls -l /
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
 #    - name: Sets env vars for environment
@@ -121,11 +110,11 @@ jobs:
       run: cat $EXAMPLE_DIR/terraform.tfvars
 
     - name: Create a ZIP File
-      run: zip -r ../dsfkit.zip ../dsfkit
+      run: zip -r dsfkit.zip ../dsfkit
 
     - name: View The ZIP File
       run: | 
-        ls -l ../
+        ls -l
         pwd
 
     - name: SCP the ZIP File
@@ -135,7 +124,7 @@ jobs:
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "${{ github.workspace }}/dsfkit.zip"
+        source: "dsfkit.zip"
         timeout: "10m"
         target: "tmp"
         overwrite: true
