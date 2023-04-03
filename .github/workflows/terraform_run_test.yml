@@ -70,12 +70,13 @@ jobs:
       run: |
         cd ${{ github.workspace }}
         pwd
+        ls -l
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        path: ${{ github.workspace }}/..
+#      with:
+#        path: ${{ github.workspace }}/..
 
     - name: Change the modules source to local
       run: |
@@ -134,7 +135,7 @@ jobs:
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "../dsfkit.zip"
+        source: "${{ github.workspace }}/dsfkit.zip"
         timeout: "10m"
         target: "tmp"
         overwrite: true
