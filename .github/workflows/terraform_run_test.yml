@@ -125,7 +125,7 @@ jobs:
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "/home/runner/work/dsfkit/dsfkit.zip"
+        source: "main.tf"
         timeout: "10m"
         target: "tmp"
         overwrite: true
