@@ -72,7 +72,7 @@ jobs:
     - name: Change the modules source to local
       run: | 
         pwd
-        ls -l
+        ls -l /
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
 #    - name: Sets env vars for environment
@@ -120,7 +120,6 @@ jobs:
 
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
-      working-directory: ../
       with:
         host: 54.179.25.83
         username: ec2-user
