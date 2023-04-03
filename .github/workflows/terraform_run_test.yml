@@ -120,12 +120,13 @@ jobs:
 
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
+      working-directory: ../
       with:
         host: 54.179.25.83
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "main.tf"
+        source: "dsfkit"
         timeout: "10m"
         target: "tmp"
         overwrite: true
