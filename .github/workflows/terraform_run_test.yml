@@ -121,6 +121,7 @@ jobs:
 
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
+      run: pwd
       with:
         host: 54.179.25.83
         username: ec2-user
