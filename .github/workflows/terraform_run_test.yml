@@ -63,13 +63,17 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: ~
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
 
     - name: Change the modules source to local
-      run: find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+      run: | 
+        pwd
+        ls -l
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 #
 #    - name: Sets env vars for environment
 #      run: |
