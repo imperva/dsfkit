@@ -69,7 +69,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        working-directory: ${{ github.workspace }}
+        working-directory: ${{ github.workspace }}/..
 
     - name: Change the modules source to local
       run: |
