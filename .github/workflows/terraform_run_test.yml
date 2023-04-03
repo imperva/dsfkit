@@ -72,7 +72,6 @@ jobs:
     - name: Change the modules source to local
       run: | 
         pwd
-        ls -l ../
         ls -l
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
