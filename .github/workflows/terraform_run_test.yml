@@ -63,7 +63,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ~
+#        working-directory: ~
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -72,9 +72,10 @@ jobs:
     - name: Change the modules source to local
       run: | 
         pwd
+        ls -l ../
         ls -l
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
-#
+
 #    - name: Sets env vars for environment
 #      run: |
 #        echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
