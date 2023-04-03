@@ -12,7 +12,7 @@ This deployment consists of:
 This example is intended for PS/customers who want to bring their own networking.
 
 In this example, you must provide as input the subnets in which to deploy the DSF Hub and the Agentless Gateway.
-They can be in the same or in different subnets, the same or different AWS accounts, etc.<br />
+They can be in the same or in different subnets, the same or different AWS accounts, etc.<br/>
 
 It is possible to provide as input to this example the security group IDs of the DSF Hub and the Agentless Gateways. 
 In this case, additional steps are required due to the fact that there is a cyclic dependency between the DSF Hub and Agentless Gateway's 
