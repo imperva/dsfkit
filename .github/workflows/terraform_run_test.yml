@@ -68,14 +68,12 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-      with:
-        working-directory: ${{ github.workspace }}
 
     - name: Change the modules source to local
       run: |
-#        cd ${{ github.workspace }}
+        cd ${{ github.workspace }}
         pwd
-        ls -l
+        ls -l /
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
 #    - name: Sets env vars for environment
@@ -123,12 +121,13 @@ jobs:
 
     - name: SCP the ZIP File
       uses: appleboy/scp-action@master
+      run: pwd
       with:
         host: 54.179.25.83
         username: ec2-user
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
-        source: "dsfkit.zip"
+        source: "../dsfkit.zip"
         timeout: "10m"
         target: "tmp"
         overwrite: true
