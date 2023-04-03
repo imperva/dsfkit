@@ -65,11 +65,17 @@ jobs:
         shell: bash
 #        working-directory: ~
     steps:
+
+    - name: Get The Worker Path
+      run: |
+        cd ${{ github.workspace }}
+        pwd
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        working-directory: ${{ github.workspace }}/..
+        path: ${{ github.workspace }}/..
 
     - name: Change the modules source to local
       run: |
