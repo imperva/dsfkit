@@ -68,6 +68,8 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        working-directory: ${{ github.workspace }}
 
     - name: Change the modules source to local
       run: |
