@@ -146,17 +146,6 @@ jobs:
           cd $TARGET_DIR
           unzip -uq dsfkit.zip
 
-#    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-#    - name: Setup Terraform
-#      uses: hashicorp/setup-terraform@v2
-#      with:
-#        terraform_wrapper: false
-#
-#    - name: Setup jq
-#      uses: sergeysova/jq-action@v2
-#      with:
-#        cmd: jq -n env
-#
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       uses: appleboy/ssh-action@v0.1.8
@@ -193,20 +182,31 @@ jobs:
         script: | 
           printenv
           terraform -chdir=$REMOTE_EXAMPLE_DIR plan
-#
-#    - name: Cleaning envrionment
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-#
-#    - name: Terraform Apply
-#      uses: appleboy/ssh-action@v0.1.8
-#      with:
-#        host: 54.179.25.83
-#        username: ec2-user
-#        key: ${{ env.JUMP_SERVER_KEY }}
-#        port: 22
-#        command_timeout: "2h"
-#        envs: EXAMPLE_DIR
-#        script: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+
+    - name: Cleaning envrionment
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: TARGET_DIR
+        script: |
+          cd $TARGET_DIR
+          rm -rf dsfkit
+          rm -rf dsfkit.zip
+
+    - name: Terraform Apply
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: EXAMPLE_DIR
+        script: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 #
 #    - name: Terraform Output
 #      uses: appleboy/ssh-action@v0.1.8
