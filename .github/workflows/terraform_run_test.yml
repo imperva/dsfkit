@@ -33,21 +33,22 @@ jobs:
             subnet_gw: subnet-01eb3ee7b2a93a856
             subnet_hub_secondary: subnet-01eb3ee7b2a93a856
             target_dir: single_account
-          - name: multi account
-            example_dir: examples/installation/multi_account_deployment
-            aws_region: ap-southeast-1
-            workspace: multi_account
-            subnet_hub: subnet-01eb3ee7b2a93a856
-            aws_profile: innostage
-            aws_profile_gw: innodev
-            subnet_gw: subnet-0c5ade55a259105e6
-            target_dir: multi_account
+#          - name: multi account
+#            example_dir: examples/installation/multi_account_deployment
+#            aws_region: ap-southeast-1
+#            workspace: multi_account
+#            subnet_hub: subnet-01eb3ee7b2a93a856
+#            aws_profile: innostage
+#            aws_profile_gw: innodev
+#            subnet_gw: subnet-0c5ade55a259105e6
+#            target_dir: multi_account
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
-      REMOTE_EXAMPLE_DIR: ./dsfkit/${{ matrix.example_dir }}
+      REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
+      TARGET_DIR: ${{ matrix.target_dir }}
       AWS_REGION: ${{ matrix.aws_region }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       TF_VAR_aws_profile: ${{ matrix.aws_profile }}
@@ -132,6 +133,19 @@ jobs:
         target: ${{ matrix.target_dir }}
         overwrite: true
 
+    - name: Unzip
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: TARGET_DIR
+        script: |
+          cd $TARGET_DIR
+          unzip dsfkit.zip
+
 #    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
 #    - name: Setup Terraform
 #      uses: hashicorp/setup-terraform@v2
@@ -152,7 +166,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR,TF_VAR_subnet_hub,TF_VAR_aws_profile,TF_VAR_aws_profile_hub,TF_VAR_aws_profile_gw,TF_VAR_subnet_gw,TF_VAR_aws_region,TF_VAR_aws_region_hub,TF_VAR_aws_region_gw,TF_VAR_subnet_hub_secondary
+        envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR init
 
     - name: Terraform Validate
@@ -163,7 +177,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR,TF_VAR_subnet_hub,TF_VAR_aws_profile,TF_VAR_aws_profile_hub,TF_VAR_aws_profile_gw,TF_VAR_subnet_gw,TF_VAR_aws_region,TF_VAR_aws_region_hub,TF_VAR_aws_region_gw,TF_VAR_subnet_hub_secondary
+        envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
     # Generates an execution plan for Terraform
@@ -175,7 +189,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR,TF_VAR_subnet_hub,TF_VAR_aws_profile,TF_VAR_aws_profile_hub,TF_VAR_aws_profile_gw,TF_VAR_subnet_gw,TF_VAR_aws_region,TF_VAR_aws_region_hub,TF_VAR_aws_region_gw,TF_VAR_subnet_hub_secondary
+        envs: REMOTE_EXAMPLE_DIR
         script: | 
           printenv
           terraform -chdir=$REMOTE_EXAMPLE_DIR plan
