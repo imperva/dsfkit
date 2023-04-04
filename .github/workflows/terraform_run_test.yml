@@ -78,6 +78,20 @@ jobs:
       run: |
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
+    - name: Cleaning envrionment
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: TARGET_DIR
+        script: |
+          cd $TARGET_DIR
+          rm -rf dsfkit
+          rm -rf dsfkit.zip
+
 #    - name: Sets env vars for environment
 #      run: |
 #        echo "TF_VAR_artifacts_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
@@ -182,20 +196,6 @@ jobs:
         script: | 
           printenv
           terraform -chdir=$REMOTE_EXAMPLE_DIR plan
-
-    - name: Cleaning envrionment
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: TARGET_DIR
-        script: |
-          cd $TARGET_DIR
-          rm -rf dsfkit
-          rm -rf dsfkit.zip
 
     - name: Terraform Apply
       uses: appleboy/ssh-action@v0.1.8
