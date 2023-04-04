@@ -32,6 +32,7 @@ jobs:
             aws_profile: innostage
             subnet_gw: subnet-01eb3ee7b2a93a856
             subnet_hub_secondary: subnet-01eb3ee7b2a93a856
+            target_dir: single_account
           - name: multi account
             example_dir: examples/installation/multi_account_deployment
             aws_region: ap-southeast-1
@@ -40,6 +41,7 @@ jobs:
             aws_profile: innostage
             aws_profile_gw: innodev
             subnet_gw: subnet-0c5ade55a259105e6
+            target_dir: multi_account
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -63,12 +65,13 @@ jobs:
     defaults:
       run:
         shell: bash
-#        working-directory: ~
-    steps:
 
+    steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        ref: dev
 
     - name: Change the modules source to local
       run: |
@@ -95,15 +98,15 @@ jobs:
     - name: Create tfvars File
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        aws_profile=$TF_VAR_aws_profile
-        aws_profile_hub=$TF_VAR_aws_profile_hub
-        aws_profile_gw=$TF_VAR_aws_profile_gw
-        aws_region=$TF_VAR_aws_region
-        aws_region_hub=$TF_VAR_aws_region
-        aws_region_gw=$TF_VAR_aws_region
-        subnet_hub=$TF_VAR_subnet_hub
-        subnet_hub_secondary=$TF_VAR_subnet_hub_secondary
-        subnet_gw=$TF_VAR_subnet_gw
+        aws_profile="$TF_VAR_aws_profile"
+        aws_profile_hub="$TF_VAR_aws_profile_hub"
+        aws_profile_gw="$TF_VAR_aws_profile_gw"
+        aws_region="$TF_VAR_aws_region"
+        aws_region_hub="$TF_VAR_aws_region"
+        aws_region_gw="$TF_VAR_aws_region"
+        subnet_hub="$TF_VAR_subnet_hub"
+        subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
+        subnet_gw="$TF_VAR_subnet_gw"
         EOF
 
     - name: View The Vars
@@ -126,7 +129,7 @@ jobs:
         port: 22
         source: "dsfkit.zip"
         timeout: "10m"
-        target: "tmp"
+        target: ${{ matrix.target_dir }}
         overwrite: true
 
 #    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
