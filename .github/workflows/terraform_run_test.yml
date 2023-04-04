@@ -144,7 +144,7 @@ jobs:
         envs: TARGET_DIR
         script: |
           cd $TARGET_DIR
-          unzip -uqo dsfkit.zip
+          unzip -uq dsfkit.zip
 
 #    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
 #    - name: Setup Terraform
