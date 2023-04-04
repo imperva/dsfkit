@@ -24,8 +24,8 @@ module "gw_instance" {
   binaries_location             = var.binaries_location
   hub_sonarw_public_key         = var.hub_sonarw_public_key
   hadr_secondary_node           = var.hadr_secondary_node
-  sonarw_public_key  = var.sonarw_public_key
-  sonarw_private_key = var.sonarw_private_key
+  sonarw_public_key             = var.sonarw_public_key
+  sonarw_private_key            = var.sonarw_private_key
   proxy_info = {
     proxy_address      = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
