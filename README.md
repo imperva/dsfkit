@@ -253,6 +253,15 @@ The following table lists the released DSFKit versions, their release date and a
       <br>2. Added support for GW HADR.
    </td>
   </tr>
+   <tr>
+   <td>13 Apr 2023
+   </td>
+   <td>1.4.1
+   </td>
+   <td>
+      Bug fixes.
+   </td>
+  </tr>
 
 </table>
 
