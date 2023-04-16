@@ -25,11 +25,68 @@ data "aws_region" "current" {}
 
 locals {
   dammxbyolRegion2Ami = {
+    af-south-1 = {
+      ImageId = "ami-079e3d30c3074147d"
+    }
+    ap-east-1 = {
+      ImageId = "ami-03ac6c9504dc26ac2"
+    }
+    ap-northeast-1 = {
+      ImageId = "ami-001c5dba9b08e1e20"
+    }
+    ap-northeast-2 = {
+      ImageId = "ami-08b9cdffbc03dee8b"
+    }
+    ap-northeast-3 = {
+      ImageId = "ami-0f1e40e7e8e549a58"
+    }
+    ap-south-1 = {
+      ImageId = "ami-02c40d18eb669ff26"
+    }
+    ap-southeast-1 = {
+      ImageId = "ami-06e7bef08cdc49198"
+    }
+    ap-southeast-2 = {
+      ImageId = "ami-05ef3406d6e34b6da"
+    }
+    ca-central-1 = {
+      ImageId = "ami-053e90b658d30bc99"
+    }
+    eu-central-1 = {
+      ImageId = "ami-0b89ffcd9a860992b"
+    }
+    eu-north-1 = {
+      ImageId = "ami-0329f6538d2e8180d"
+    }
+    eu-west-1 = {
+      ImageId = "ami-0490ed56f9a4fbc77"
+    }
+    eu-west-2 = {
+      ImageId = "ami-0f2c96ca38d80ff73"
+    }
+    eu-west-3 = {
+      ImageId = "ami-0c6a9375caa74fa76"
+    }
+    sa-east-1 = {
+      ImageId = "ami-0bc7e775cb2d5ec2f"
+    }
     us-east-1 = {
       ImageId = "ami-019af5343736a400e"
     }
     us-east-2 = {
       ImageId = "ami-046e98684e13345cd"
+    }
+    us-gov-east-1 = {
+      ImageId = "ami-0220487b63f39463d"
+    }
+    us-gov-west-1 = {
+      ImageId = "ami-036febe3bded78c9a"
+    }
+    us-west-1 = {
+      ImageId = "ami-060d440817f97f6a5"
+    }
+    us-west-2 = {
+      ImageId = "ami-0d3d795b13aa624f9"
     }
   }
 }
@@ -92,34 +149,3 @@ resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids
 }
-
-# questions
-# 25. remove gw public ip assignment
-# 28. pass sg from outside
-# 30. compare with sonar modules
-
-## tests:
-# 1. matan's tests, (including agent_listener_ssl)
-
-## Things to verify with GW team
-# 11. secure password vs imperva/mx password. Ariel bresler.
-# 16. katya about licensing - What kind of licenses are there? flex? BYOL? OnDemand? Sealed/Unsealed box? what else? Who can generate licenses? what happens if I put model with more cores and memory
-
-## bugs:
-# 1. creating multiple (happened twice with 3) gw concurrenrly results a failure - Cannot connect to 10.0.101.100:8083 [HTTP: 450 APP: response code is 450. CANNOT_ACQUIRE_LOCK] (exit status: 100)
-
-## Stratigic decisions
-# 15. How can we detect a failing environemnt? maybe through API? How to get the failure (print command to get the failure)? How should we debug the gw init status?
-# 1. ses model
-# GW MODEL - should we allow the user to pick ec2 instance type?
-# MX MODEL - should we allow the user to pick ec2 instance type? Probably yes (as cloudformation allows him to pick 1)
-# 2. external disks:
-# Can we attach external disks? Is that relevant for gw? where's all the state saved? (we wish to use external data disks). What does this do "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}"
-# 3. amis
-# Permissions
-# how would we manage the gigantic map of amis per region per version per environemnt. (this question is also relevant to sonar)  # market place
-# What marketplace brings to the table? that cloudformation doesnt? does market place uses cloudformation underneath? market place amis - or yesharim
-# Should we limit the amis for marketplace?
-# 4. iam roles
-# reduce to minimum
-# 5. allow an option to deploy without license?
