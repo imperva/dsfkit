@@ -17,7 +17,7 @@ variable "dam_version" {
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of agentless gateways"
+  description = "Number of agent gateways"
   validation {
     condition     = var.gw_count > 0
     error_message = "The gw_count value must be greater than 0."
@@ -31,10 +31,16 @@ variable "web_console_admin_password" {
   description = "Admin password (Random generated if not set)"
 }
 
-variable "web_console_cidr" {
+variable "web_console_cidr_list" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DAM web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF DAM web console as a public website. It is recommended to specify a more restricted IP and CIDR range"
+}
+
+variable "agent_cidr_list" {
+  type        = list(string)
+  default     = []
+  description = "Agents cidr list range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "workstation_cidr" {

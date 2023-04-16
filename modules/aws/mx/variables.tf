@@ -59,11 +59,6 @@ variable "sg_web_console_cidr" {
   default     = []
 }
 
-# variable "ami" {
-#   type        = string
-#   description = "Aws machine image"
-# }
-
 variable "role_arn" {
   type        = string
   default     = null

@@ -34,10 +34,13 @@ locals {
 ##############################
 
 module "vpc" {
-  count  = var.subnet_ids == null ? 1 : 0
-  source = "terraform-aws-modules/vpc/aws"
-  name   = "${local.deployment_name_salted}-${module.globals.current_user_name}"
-  cidr   = var.vpc_ip_range
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "4.0.1"
+
+  count = var.subnet_ids == null ? 1 : 0
+
+  name = "${local.deployment_name_salted}-${module.globals.current_user_name}"
+  cidr = var.vpc_ip_range
 
   enable_nat_gateway   = true
   single_nat_gateway   = true
@@ -76,7 +79,7 @@ module "agent_gw" {
   secure_password        = local.web_console_admin_password
   imperva_password       = local.web_console_admin_password
   sg_ingress_cidr        = local.workstation_cidr
-  sg_agent_cidr          = ["18.235.234.218/32", "10.0.101.0/24"]
+  sg_agent_cidr          = var.agent_cidr_list
   sg_ssh_cidr            = local.workstation_cidr
   attach_public_ip       = true
   management_server_host = module.mx.private_ip

@@ -51,7 +51,6 @@ resource "aws_instance" "dsf_base_instance" {
   user_data_replace_on_change = true
 }
 
-# Attach an additional storage device to DSF base instance
 data "aws_subnet" "selected_subnet" {
   id = var.subnet_id
 }

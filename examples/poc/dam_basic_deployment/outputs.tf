@@ -26,7 +26,7 @@ output "dsf_mx" {
   }
 }
 
-output "dsf_hub_web_console" {
+output "dsf_mx_web_console" {
   value = {
     public_url     = try(join("", ["https://", module.mx.public_dns, ":8083/"]), null)
     private_url    = try(join("", ["https://", module.mx.private_dns, ":8083/"]), null)
