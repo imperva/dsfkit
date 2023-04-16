@@ -19,6 +19,7 @@
                 "ec2:DescribeNetworkInterfaces",
                 "ec2:DescribeTags",
                 "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSecurityGroupRules",
                 "ec2:DescribeImages",
                 "ec2:AllocateAddress",
                 "ec2:AssociateAddress",
@@ -67,13 +68,24 @@
                 "ec2:CreateNetworkInterface"
             ],
             "Resource": [
-                "arn:aws:ec2:*:*:subnet/*"
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:security-group/*"
             ],
             "Condition": {
                 "StringLike": {
                     "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
                 }
             }
+        },
+        {
+            "Sid": "ec2CreateNetworkInterfaceForENI",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateNetworkInterface"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:network-interface/*"
+            ]
         },
         {
             "Sid": "ec2CreateTagsPermissions",
