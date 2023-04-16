@@ -31,11 +31,6 @@ variable "subnet_id" {
 #   default     = "m4.xlarge" # remove this default
 # }
 
-variable "attach_public_ip" {
-  type        = bool
-  description = "Create public IP for the instance"
-}
-
 variable "key_pair" {
   type        = string
   description = "key pair for DSF Agent GW"

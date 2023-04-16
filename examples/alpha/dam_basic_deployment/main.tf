@@ -81,6 +81,5 @@ module "agent_gw" {
   sg_ingress_cidr        = local.workstation_cidr
   sg_agent_cidr          = var.agent_cidr_list
   sg_ssh_cidr            = local.workstation_cidr
-  attach_public_ip       = true
   management_server_host = module.mx.private_ip
 }

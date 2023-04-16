@@ -57,7 +57,7 @@ module "agent_gw" {
   sg_ssh_cidr        = var.sg_ssh_cidr
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
-  attach_public_ip   = var.attach_public_ip
+  attach_public_ip   = false
   instance_initialization_completion_params = {
     commands = local.installation_completion_commands
     enable   = true
