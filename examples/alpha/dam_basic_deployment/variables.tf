@@ -84,13 +84,13 @@ variable "license_file" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id = string
+    mx_subnet_id = string
     gw_subnet_id  = string
   })
   default     = null
   description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.gw_subnet_id != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.mx_subnet_id != null && var.subnet_ids.gw_subnet_id != null, false)
     error_message = "Value must either be null or specified for all"
   }
 }

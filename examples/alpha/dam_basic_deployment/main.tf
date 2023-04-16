@@ -25,8 +25,8 @@ locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = ["82.166.106.0/24", "94.188.165.0/24"] #var.workstation_cidr # != null ? var.workstation_cidr : local.workstation_cidr_24
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  hub_subnet                 = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
-  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].public_subnets[0]
+  mx_subnet                 = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
+  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
 }
 
 ##############################
@@ -58,7 +58,7 @@ module "mx" {
   source              = "../../../modules/aws/mx"
   friendly_name       = join("-", [local.deployment_name_salted, "dam"])
   dam_version         = var.dam_version
-  subnet_id           = local.hub_subnet
+  subnet_id           = local.mx_subnet
   license_file        = var.license_file
   key_pair            = module.key_pair.key_pair.key_pair_name
   secure_password     = local.web_console_admin_password
@@ -74,7 +74,7 @@ module "agent_gw" {
   source                 = "../../../modules/aws/agent-gw"
   friendly_name          = join("-", [local.deployment_name_salted, "dam"])
   dam_version            = var.dam_version
-  subnet_id              = local.hub_subnet
+  subnet_id              = local.gw_subnet
   key_pair               = module.key_pair.key_pair.key_pair_name
   secure_password        = local.web_console_admin_password
   mx_password       = local.web_console_admin_password
