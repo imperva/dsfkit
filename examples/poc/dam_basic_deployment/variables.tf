@@ -4,6 +4,16 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
+variable "dam_version" {
+  description = "DAM version"
+  type        = string
+  default     = "14.10.1.10"
+  validation {
+    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
+  }
+}
+
 variable "gw_count" {
   type        = number
   default     = 1

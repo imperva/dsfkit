@@ -54,6 +54,7 @@ module "vpc" {
 module "mx" {
   source              = "../../../modules/aws/mx"
   friendly_name       = join("-", [local.deployment_name_salted, "dam"])
+  dam_version         = var.dam_version
   subnet_id           = local.hub_subnet
   license_file        = var.license_file
   key_pair            = module.key_pair.key_pair.key_pair_name
@@ -69,6 +70,7 @@ module "agent_gw" {
   count                  = 1
   source                 = "../../../modules/aws/agent-gw"
   friendly_name          = join("-", [local.deployment_name_salted, "dam"])
+  dam_version            = var.dam_version
   subnet_id              = local.hub_subnet
   key_pair               = module.key_pair.key_pair.key_pair_name
   secure_password        = local.web_console_admin_password
@@ -79,33 +81,3 @@ module "agent_gw" {
   attach_public_ip       = true
   management_server_host = module.mx.private_ip
 }
-
-# module "db_onboarding" {
-#   for_each      = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
-#   source        = "imperva/dsf-poc-db-onboarder/aws"
-#   version       = "1.3.9" # latest release tag
-#   sonar_version = module.globals.tarball_location.version
-#   hub_info = {
-#     hub_ip_address           = module.hub.public_ip
-#     hub_private_ssh_key_path = module.key_pair.private_key_file_path
-#     hub_ssh_user             = module.hub.ssh_user
-#   }
-
-#   assignee_gw   = module.hub.jsonar_uid
-#   assignee_role = module.hub.iam_role
-#   database_details = {
-#     db_username   = each.value.db_username
-#     db_password   = each.value.db_password
-#     db_arn        = each.value.db_arn
-#     db_port       = each.value.db_port
-#     db_identifier = each.value.db_identifier
-#     db_address    = each.value.db_address
-#     db_engine     = each.value.db_engine
-#     db_name       = try(each.value.db_name, null)
-#   }
-#   depends_on = [
-#     module.federation,
-#     module.rds_mysql,
-#     module.rds_mssql
-#   ]
-# }

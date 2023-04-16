@@ -166,6 +166,15 @@ variable "ports" {
   })
 }
 
+variable "dam_version" {
+  description = "DAM version"
+  type        = string
+  validation {
+    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
+  }
+}
+
 variable "iam_actions" {
   description = "Required AWS IAM action list for the DSF DAM instance"
   type        = list(string)

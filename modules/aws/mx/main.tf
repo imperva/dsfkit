@@ -16,7 +16,7 @@ locals {
   ]
 
   http_auth_header = base64encode("admin:${var.imperva_password}")
-  timeout          = 60 * 25 # 20m
+  timeout          = 60 * 30 # 30m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = templatefile("${path.module}/completion.sh", {
     mx_address       = module.mx.public_ip
@@ -27,6 +27,7 @@ locals {
 module "mx" {
   source           = "../../../modules/aws/dam-base-instance"
   name             = join("-", [var.friendly_name, local.resource_type])
+  dam_version      = var.dam_version
   resource_type    = local.resource_type
   ses_model        = local.ses_model
   imperva_password = var.imperva_password
