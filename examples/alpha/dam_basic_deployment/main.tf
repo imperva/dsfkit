@@ -62,7 +62,7 @@ module "mx" {
   license_file        = var.license_file
   key_pair            = module.key_pair.key_pair.key_pair_name
   secure_password     = local.web_console_admin_password
-  imperva_password    = local.web_console_admin_password
+  mx_password    = local.web_console_admin_password
   sg_ingress_cidr     = local.workstation_cidr
   sg_ssh_cidr         = local.workstation_cidr
   sg_web_console_cidr = local.workstation_cidr
@@ -77,7 +77,7 @@ module "agent_gw" {
   subnet_id              = local.hub_subnet
   key_pair               = module.key_pair.key_pair.key_pair_name
   secure_password        = local.web_console_admin_password
-  imperva_password       = local.web_console_admin_password
+  mx_password       = local.web_console_admin_password
   sg_ingress_cidr        = local.workstation_cidr
   sg_agent_cidr          = var.agent_cidr_list
   sg_ssh_cidr            = local.workstation_cidr

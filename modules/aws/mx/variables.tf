@@ -65,44 +65,44 @@ variable "role_arn" {
   description = "IAM role to assign to the DSF MX. Keep empty if you wish to create a new role."
 }
 
-variable "imperva_password" {
+variable "mx_password" {
   type        = string
   description = "MX password"
   sensitive   = true
   validation {
     # Check that the password is at least 8 characters long
-    condition     = length(var.imperva_password) >= 7 && length(var.imperva_password) <= 14
+    condition     = length(var.mx_password) >= 7 && length(var.mx_password) <= 14
     error_message = "Password must be 7-14 characters long"
   }
 
   validation {
     # Check that the password contains at least one uppercase letter
-    condition     = can(regex("[A-Z]", var.imperva_password))
+    condition     = can(regex("[A-Z]", var.mx_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
     # Check that the password contains at least one lowercase letter
-    condition     = can(regex("[a-z]", var.imperva_password))
+    condition     = can(regex("[a-z]", var.mx_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
     # Check that the password contains at least one digit
-    condition     = can(regex("\\d", var.imperva_password))
+    condition     = can(regex("\\d", var.mx_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
     # Check that the password contains at least one special character
-    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.imperva_password))
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
     error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
   }
 }
 
 variable "secure_password" {
   type        = string
-  description = "secure password (password between agent-gw -> mx)"
+  description = "The password used for communication between the Management Server and the Gateway"
   sensitive   = true
   validation {
     # Check that the password is at least 8 characters long

@@ -15,7 +15,7 @@ locals {
     "ec2:DescribeInstances"
   ]
 
-  http_auth_header = base64encode("admin:${var.imperva_password}")
+  http_auth_header = base64encode("admin:${var.mx_password}")
   timeout          = 60 * 30 # 30m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = templatefile("${path.module}/completion.sh", {
@@ -30,7 +30,7 @@ module "mx" {
   dam_version      = var.dam_version
   resource_type    = local.resource_type
   ses_model        = local.ses_model
-  imperva_password = var.imperva_password
+  mx_password = var.mx_password
   secure_password  = var.secure_password
   ports = {
     tcp = local.required_tcp_ports

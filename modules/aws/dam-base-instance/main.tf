@@ -4,7 +4,7 @@ locals {
   [aws_security_group.dsf_ssh_sg.id])
 
   secure_password           = var.secure_password
-  mx_password               = var.imperva_password
+  mx_password               = var.mx_password
   encrypted_secure_password = chomp(aws_kms_ciphertext.encrypted_secure_password.ciphertext_blob)
   encrypted_mx_password     = chomp(aws_kms_ciphertext.encrypted_mx_password.ciphertext_blob)
 

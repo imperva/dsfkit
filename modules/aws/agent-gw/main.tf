@@ -28,7 +28,7 @@ locals {
     "s3:PutObjectVersionTagging",
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
-  http_auth_header = base64encode("admin:${var.imperva_password}")
+  http_auth_header = base64encode("admin:${var.mx_password}")
   timeout          = 60 * 25 # 20m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = "exit 0" #templatefile("${path.module}/completion.sh", {
@@ -45,7 +45,7 @@ module "agent_gw" {
   dam_version      = var.dam_version
   resource_type    = local.resource_type
   ses_model        = local.ses_model
-  imperva_password = var.imperva_password
+  mx_password = var.mx_password
   secure_password  = var.secure_password
   ports = {
     tcp = local.required_tcp_ports
