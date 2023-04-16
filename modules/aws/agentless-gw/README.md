@@ -10,7 +10,7 @@ This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 - 4.9
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.0, inclusive
+* Terraform version between v1.3.1 and v1.4.x, inclusive
 * An AWS account
 * SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
