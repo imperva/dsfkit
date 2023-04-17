@@ -1,0 +1,169 @@
+name: 'Cli (basic) Nightly'
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      workspace:
+        required: true
+        type: choice
+        options:
+          - simple_cli_dev_nightly
+          - simple_cli_master_nightly
+
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+      workspace:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+
+env:
+  TF_WARN_OUTPUT_ERRORS: 1
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+  TF_VAR_gw_count: 2
+  EXAMPLE_DIR: ./examples/poc/basic_deployment
+  AWS_REGION: eu-west-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_WORKSPACE: ${{ inputs.workspace }}
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: 'Terraform ${{ inputs.branch }}'
+    runs-on: ubuntu-latest
+    environment: test
+  
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.branch }}
+
+    - name: Change the modules source to local
+      run: | 
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+
+    - name: Sets env vars for environment
+      run: |
+        echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/"master"'
+
+    - name: Create terraform backend file
+      run: |
+        cat << EOF > $EXAMPLE_DIR/backend.tf
+        terraform {
+          backend "s3" {
+            bucket         = "terraform-state-bucket-dsfkit-github-tests"
+            key            = "states/terraform.tfstate"
+            dynamodb_table = "terraform-state-lock"
+            region         = "us-east-1"
+          }
+        }
+        EOF
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+        terraform_version: ~1.4.0
+
+    - name: Setup jq
+      uses: sergeysova/jq-action@v2
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
+
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
+
+    - name: Cleaning envrionment
+      run: |
+        mv $EXAMPLE_DIR/main.tf{,_}
+        mv $EXAMPLE_DIR/outputs.tf{,_}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+        mv $EXAMPLE_DIR/main.tf{_,}
+        mv $EXAMPLE_DIR/outputs.tf{_,}
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Set Environment Variables
+      run: |
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+
+    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
+    - name: Check SSH Connectivity - Hub & GW
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        proxy_host: ${{ env.hub_ip }}
+        proxy_username: ec2-user
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_port: 22
+        host: ${{ env.gw_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    - name: Check Aduit data
+      uses: appleboy/ssh-action@v0.1.6
+      id: test_audit
+      with:
+        host: ${{ env.hub_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        command_timeout: "2h"
+        script: | 
+          sleep 35m
+          for run in {1..5}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
+          if [ $res -le 0 ]; then exit 1; fi
+
+    - name: Terraform Destroy
+      # if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+
+    # Send job failure to Slack
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: author,action,eventName,ref,workflow,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }} 
