@@ -40,13 +40,13 @@ locals {
 }
 
 module "agent_gw" {
-  source           = "../../../modules/aws/dam-base-instance"
-  name             = join("-", [var.friendly_name, local.resource_type])
-  dam_version      = var.dam_version
-  resource_type    = local.resource_type
-  ses_model        = local.ses_model
-  mx_password = var.mx_password
-  secure_password  = var.secure_password
+  source          = "../../../modules/aws/dam-base-instance"
+  name            = join("-", [var.friendly_name, local.resource_type])
+  dam_version     = var.dam_version
+  resource_type   = local.resource_type
+  ses_model       = local.ses_model
+  mx_password     = var.mx_password
+  secure_password = var.secure_password
   ports = {
     tcp = local.required_tcp_ports
     udp = local.required_udp_ports
