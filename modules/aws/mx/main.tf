@@ -9,7 +9,7 @@ locals {
 
 locals {
   user_data_commands = [
-    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${var.ssh_user} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encrypted_license} --passPhrase=${local.license_passphrase}"
+    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode --user=${var.ssh_user} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encrypted_license} --passPhrase=${local.license_passphrase} ${var.large_scale_mode == true ? "--large_scale" : ""}"
   ]
   iam_actions = [
     "ec2:DescribeInstances"
@@ -32,7 +32,7 @@ module "mx" {
   ses_model       = local.ses_model
   mx_password     = var.mx_password
   secure_password = var.secure_password
-  ports = {
+  internal_ports = {
     tcp = local.required_tcp_ports
     udp = local.required_udp_ports
   }
@@ -40,6 +40,7 @@ module "mx" {
   user_data_commands = local.user_data_commands
   sg_ingress_cidr    = var.sg_ingress_cidr
   sg_ssh_cidr        = var.sg_ssh_cidr
+  security_group_ids = concat(var.security_group_ids, [aws_security_group.dsf_web_console_sg.id])
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = var.attach_public_ip

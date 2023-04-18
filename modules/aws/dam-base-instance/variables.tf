@@ -11,10 +11,11 @@ variable "subnet_id" {
   }
 }
 
-# variable "security_group_id" {
-#   type        = string
-#   description = "Security group id for the ec2 instance"
-# }
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids for the ec2 instance"
+  default = []
+}
 
 # variable "ec2_instance_type" {
 #   type        = string
@@ -158,7 +159,7 @@ variable "user_data_commands" {
   description = "Commands that run on instance startup. Should contain at least the FTL command"
 }
 
-variable "ports" {
+variable "internal_ports" {
   description = "Ports needed for internal communication"
   type = object({
     tcp = list(string)

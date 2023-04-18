@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -x
+# set -x
 
 while true; do
   response=$(curl -k -s -o /dev/null -w "%%{http_code}" \
@@ -9,6 +8,6 @@ while true; do
   if [ $response -eq 200 ]; then
     exit 0
   else
-    sleep 30
+    sleep 60
   fi
 done

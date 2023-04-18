@@ -36,6 +36,7 @@ variable "key_pair" {
   description = "key pair for DSF Agent GW"
 }
 
+}
 variable "sg_ingress_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF Agent GW instance"
@@ -168,11 +169,6 @@ EOF
   }
 }
 
-variable "large_scale_mode" {
-  type        = bool
-  description = "Large scale mode"
-  default     = false
-}
 
 variable "group_id" {
   type        = string

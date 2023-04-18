@@ -44,5 +44,4 @@ resource "random_password" "pass" {
   min_special      = 1
   min_upper        = 1
   override_special = "*+=#%^:/~.,[]_"
-
 }

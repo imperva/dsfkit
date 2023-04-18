@@ -1,21 +1,33 @@
 output "public_ip" {
   description = "Public elastic IP address of the DSF base instance"
   value       = module.mx.public_ip
+  depends_on = [
+    module.mx.ready
+  ]
 }
 
 output "private_ip" {
   description = "Private IP address of the DSF base instance"
   value       = module.mx.private_ip
+  depends_on = [
+    module.mx.ready
+  ]
 }
 
 output "public_dns" {
   description = "Public dns of elastic IP address of the DSF base instance"
   value       = module.mx.public_dns
+  depends_on = [
+    module.mx.ready
+  ]
 }
 
 output "private_dns" {
   description = "Private dns address of the DSF base instance"
   value       = module.mx.private_dns
+  depends_on = [
+    module.mx.ready
+  ]
 }
 
 # output "sg_id" {

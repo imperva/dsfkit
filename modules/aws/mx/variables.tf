@@ -20,11 +20,6 @@ variable "subnet_id" {
   }
 }
 
-# variable "security_group_id" {
-#   type        = string
-#   description = "Security group id for the ec2 instance"
-# }
-
 # variable "ec2_instance_type" {
 #   type        = string
 #   description = "Ec2 instance type for the DSF base instance"
@@ -34,6 +29,7 @@ variable "subnet_id" {
 variable "attach_public_ip" {
   type        = bool
   description = "Create public IP for the instance"
+  default     = false
 }
 
 variable "key_pair" {
@@ -41,9 +37,15 @@ variable "key_pair" {
   description = "key pair for DSF MX instance"
 }
 
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids for the MX instance"
+  default = []
+}
+
 variable "sg_ingress_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF MX instance"
+  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF MX instance. This list should represent the agent gateways that are allowed to access the DSF MX instance via SSH and internal protocols"
   default     = []
 }
 
@@ -161,4 +163,10 @@ variable "dam_version" {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
   }
+}
+
+variable "large_scale_mode" {
+  type        = bool
+  description = "Large scale mode"
+  default     = false
 }

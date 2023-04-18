@@ -4,8 +4,8 @@ data "aws_vpc" "selected" {
 
 locals {
   cidr_blocks           = var.sg_ingress_cidr
-  ingress_ports         = var.ports.tcp
-  udp_ingress_ports     = var.ports.udp
+  ingress_ports         = var.internal_ports.tcp
+  udp_ingress_ports     = var.internal_ports.udp
   ingress_ports_map     = { for port in local.ingress_ports : port => port }
   udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
 }

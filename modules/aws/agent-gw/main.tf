@@ -12,7 +12,7 @@ resource "random_uuid" "gw_group" {}
 locals {
   user_data_commands = [
     "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.VolumeSize}",
-    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${var.ssh_user} --gateway_group=${local.group_id} --secure_password=%securePassword% --imperva_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_server_ip=${var.management_server_host} --management_interface=eth0 --internal_data_interface=eth0 --external_data_interface=eth0 --check_server_status --check_gateway_received_configuration --register --initiate_services ${var.large_scale_mode} --set_sniffing --listener_port=${var.agent_listener_port} --agent_listener_ssl=${var.agent_listener_ssl} --cluster-enabled --cluster-port=3792 --product=DAM --waitForServer"
+    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${var.ssh_user} --gateway_group=${local.group_id} --secure_password=%securePassword% --imperva_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_server_ip=${var.management_server_host} --management_interface=eth0 --internal_data_interface=eth0 --external_data_interface=eth0 --check_server_status --check_gateway_received_configuration --register --initiate_services --set_sniffing --listener_port=${var.agent_listener_port} --agent_listener_ssl=${var.agent_listener_ssl} --cluster-enabled --cluster-port=3792 --product=DAM --waitForServer"
   ]
   iam_actions = ["ec2:DescribeSecurityGroups",
     "elasticloadbalancing:DescribeLoadBalancers",
@@ -29,7 +29,7 @@ locals {
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
   http_auth_header = base64encode("admin:${var.mx_password}")
-  timeout          = 60 * 25 # 20m
+  timeout          = 60 * 25 # 25m
   # this should be smart enough to know whether there is a public ip and whether it can access it
   installation_completion_commands = "exit 0" #templatefile("${path.module}/completion.sh", {
   #   mx_address = var.management_server_host
@@ -47,7 +47,7 @@ module "agent_gw" {
   ses_model       = local.ses_model
   mx_password     = var.mx_password
   secure_password = var.secure_password
-  ports = {
+  internal_ports = {
     tcp = local.required_tcp_ports
     udp = local.required_udp_ports
   }
@@ -55,6 +55,7 @@ module "agent_gw" {
   user_data_commands = local.user_data_commands
   sg_ingress_cidr    = var.sg_ingress_cidr
   sg_ssh_cidr        = var.sg_ssh_cidr
+  security_group_ids = concat(var.security_group_ids, [aws_security_group.dsf_agent_sg.id])
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = false

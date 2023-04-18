@@ -56,3 +56,13 @@ output "eni_id" {
 output "instance_id" {
   value = aws_instance.dsf_base_instance.id
 }
+
+output "ready" {
+  description = <<-EOF
+    Indicates when module is "ready"
+  EOF
+  value = "ready"
+  depends_on = [
+    null_resource.wait_for_installation_completion
+  ]
+}
