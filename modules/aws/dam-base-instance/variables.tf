@@ -14,7 +14,7 @@ variable "subnet_id" {
 variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids for the ec2 instance"
-  default = []
+  default     = []
 }
 
 # variable "ec2_instance_type" {

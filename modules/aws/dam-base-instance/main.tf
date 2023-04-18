@@ -1,7 +1,7 @@
 locals {
   security_group_ids = concat(
     [aws_security_group.dsf_base_sg.id],
-  [aws_security_group.dsf_ssh_sg.id],
+    [aws_security_group.dsf_ssh_sg.id],
   var.security_group_ids)
 
   secure_password           = var.secure_password

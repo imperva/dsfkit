@@ -61,7 +61,7 @@ output "ready" {
   description = <<-EOF
     Indicates when module is "ready"
   EOF
-  value = "ready"
+  value       = "ready"
   depends_on = [
     null_resource.readiness
   ]
