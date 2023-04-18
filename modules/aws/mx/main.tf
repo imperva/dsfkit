@@ -15,12 +15,12 @@ locals {
     "ec2:DescribeInstances"
   ]
 
-  http_auth_header = base64encode("admin:${var.mx_password}")
+  https_auth_header = base64encode("admin:${var.mx_password}")
   timeout          = 60 * 30
 
   readiness_commands = templatefile("${path.module}/readiness.sh", {
     mx_address       = module.mx.public_ip
-    http_auth_header = local.http_auth_header
+    https_auth_header = local.https_auth_header
   })
 }
 

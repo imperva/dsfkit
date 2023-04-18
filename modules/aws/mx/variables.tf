@@ -129,7 +129,7 @@ variable "secure_password" {
 
 variable "license_file" {
   type        = string
-  description = "DAM license file path. Make sure this license is valid before deploying DAM"
+  description = "DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time"
   validation {
     condition     = fileexists(var.license_file)
     error_message = "No such file on disk (${var.license_file})"

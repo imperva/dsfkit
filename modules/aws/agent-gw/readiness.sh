@@ -1,7 +1,6 @@
 #!/bin/bash
 # set -x
 
-# Set initial values to null
 sessionid=""
 gateway_exists=false
 gw_running=false
@@ -17,7 +16,7 @@ while true; do
   # Step 1: Extract the session cookies
   if ! grep JSESSIONID $cookie_file &>/dev/null; then
     curl -k -s -X POST --cookie-jar $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/auth/session" \
-      --header "Authorization: Basic ${http_auth_header}"
+      --header "Authorization: Basic ${https_auth_header}"
   fi
 
   # Step 2: Verify gateway group "gateway-group" exists

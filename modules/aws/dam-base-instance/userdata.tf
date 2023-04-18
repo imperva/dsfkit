@@ -20,7 +20,7 @@ locals {
     KMSKeyRegion : ${data.aws_region.current.name}
     ProductRole : ${local.mapper.product_role[var.resource_type]}
     AssetTag : ${var.dam_model}
-    GatewayMode :  dam
+    GatewayMode : dam
     ProductLicensing : BYOL
     MetaData : ${local.commands}
     RegistrationParams : {"StackName" : "${var.name}","StackId" : "${var.name}","SQSName" : "","Region" : "${data.aws_region.current.name}","AccessKey" : "","SecretKey" : ""}
