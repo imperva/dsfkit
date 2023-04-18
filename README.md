@@ -250,7 +250,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
    <td>
       1. Added support for the new Sonar version '4.11'.
-      <br>2. Added support for GW HADR.
+      <br>2. Added support for Agentless Gateway HADR.
    </td>
   </tr>
    <tr>
