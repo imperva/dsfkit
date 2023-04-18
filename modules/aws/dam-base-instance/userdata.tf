@@ -34,6 +34,10 @@ resource "null_resource" "readiness" {
       timeout ${var.instance_readiness_params.timeout} bash <<\__EOS__
       ${var.instance_readiness_params.commands}
       __EOS__
+      if [ "$?" -ne 0 ]; then
+        echo "Waiting for the server to become ready has timed out. To obtain additional information, refer to the /var/log/ec2_auto_ftl.log file located on the remote server."
+        exit 1
+      fi
     EOF
   }
   triggers = {

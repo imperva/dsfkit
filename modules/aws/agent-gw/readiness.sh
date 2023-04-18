@@ -11,7 +11,7 @@ trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:80
 
 while true; do
   # Wait 1m before trying again
-  sleep 60
+  sleep 1m
 
   # Step 1: Extract the session cookies
   if ! grep JSESSIONID $cookie_file &>/dev/null; then

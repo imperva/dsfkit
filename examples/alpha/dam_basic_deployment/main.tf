@@ -68,16 +68,17 @@ module "mx" {
 }
 
 module "agent_gw" {
-  count                  = 1
-  source                 = "../../../modules/aws/agent-gw"
-  friendly_name          = join("-", [local.deployment_name_salted, "dam"])
-  dam_version            = var.dam_version
-  subnet_id              = local.gw_subnet
-  key_pair               = module.key_pair.key_pair.key_pair_name
-  secure_password        = local.web_console_admin_password
-  mx_password            = local.web_console_admin_password
-  sg_ingress_cidr        = local.workstation_cidr
-  sg_agent_cidr          = var.agent_cidr_list
-  sg_ssh_cidr            = local.workstation_cidr
-  management_server_host = module.mx.private_ip
+  count                                   = var.gw_count
+  source                                  = "../../../modules/aws/agent-gw"
+  friendly_name                           = join("-", [local.deployment_name_salted, "dam"])
+  dam_version                             = var.dam_version
+  subnet_id                               = local.gw_subnet
+  key_pair                                = module.key_pair.key_pair.key_pair_name
+  secure_password                         = local.web_console_admin_password
+  mx_password                             = local.web_console_admin_password
+  sg_ingress_cidr                         = local.workstation_cidr
+  sg_agent_cidr                           = var.agent_cidr_list
+  sg_ssh_cidr                             = local.workstation_cidr
+  management_server_host_for_registration = module.mx.private_ip
+  management_server_host_for_api_access   = module.mx.public_ip
 }
