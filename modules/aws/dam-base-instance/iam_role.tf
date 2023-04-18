@@ -1,5 +1,5 @@
 #################################
-# DSF node IAM role
+# DSF DAM node IAM role
 #################################
 
 locals {
@@ -56,11 +56,11 @@ resource "aws_iam_role" "dsf_node_role" {
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
-    name   = "imperva-dsf-kms-decrypt-access"
-    policy = local.inline_policy_kms
+    name   = "imperva-dsf-dam-base"
+    policy = local.inline_policy
   }
   inline_policy {
-    name   = "imperva-dsf-mx-base"
-    policy = local.inline_policy
+    name   = "imperva-dsf-kms-decrypt-access"
+    policy = local.inline_policy_kms
   }
 }

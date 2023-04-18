@@ -22,8 +22,6 @@ module "key_pair" {
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
 
-data "aws_availability_zones" "available" { state = "available" }
-
 locals {
   workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
 }
@@ -70,7 +68,7 @@ module "vpc" {
   single_nat_gateway   = true
   enable_dns_hostnames = true
 
-  azs             = slice(data.aws_availability_zones.available.names, 0, 2)
+  azs             = slice(module.globals.availability_zones, 0, 2)
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
 }

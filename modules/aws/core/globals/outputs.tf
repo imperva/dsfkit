@@ -1,5 +1,5 @@
 output "salt" {
-  value = try(resource.random_id.salt.hex, null)
+  value = resource.random_id.salt.hex
 }
 
 output "my_ip" {

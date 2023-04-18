@@ -4,7 +4,7 @@ variable "name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DAM DSF instance"
+  description = "Subnet id for the DSF DAM instance"
   validation {
     condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
@@ -25,22 +25,22 @@ variable "security_group_ids" {
 
 variable "attach_public_ip" {
   type        = bool
-  description = "Create public IP for the instance"
+  description = "Create and attach elastic public IP for the instance"
 }
 
 variable "key_pair" {
   type        = string
-  description = "key pair for DSF DAM instance"
+  description = "Key pair for the DSF DAM instance"
 }
 
 variable "sg_ingress_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF DAM instance"
+  description = "List of allowed ingress CIDR patterns allowing ssh and internal protocols to the DSF DAM instance"
 }
 
 variable "sg_ssh_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing ssh protocols to the DSF DAM instance"
+  description = "List of allowed ingress CIDR patterns allowing ssh protocols to the DSF DAM instance"
 }
 
 # variable "ami" {
@@ -58,18 +58,18 @@ variable "resource_type" {
   type = string
   validation {
     condition     = contains(["mx", "agent-gw"], var.resource_type)
-    error_message = "Allowed values for DSF node type: \"mx\", \"agent-gw\""
+    error_message = "Allowed values for DSF DAM node type: \"mx\", \"agent-gw\""
   }
   nullable = false
 }
 
-variable "ses_model" {
+variable "dam_model" {
   type        = string
-  description = "Enter the Gateway/Mx Model"
+  description = "Enter the Agent Gateway/MX Model"
   validation {
-    condition     = contains(["AV2500", "AV6500", "AVM150"], var.ses_model)
+    condition     = contains(["AV2500", "AV6500", "AVM150"], var.dam_model)
     error_message = <<EOF
-     Allowed values for DSF node type: "AV2500", "AV6500", "AVM150"
+     Allowed values for DSF DAM node type: "AV2500", "AV6500", "AVM150"
 EOF
   }
 }
@@ -79,73 +79,63 @@ variable "mx_password" {
   description = "MX password"
   sensitive   = true
   validation {
-    # Check that the password is at least 8 characters long
     condition     = length(var.mx_password) >= 7 && length(var.mx_password) <= 14
     error_message = "Password must be 7-14 characters long"
   }
 
   validation {
-    # Check that the password contains at least one uppercase letter
     condition     = can(regex("[A-Z]", var.mx_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    # Check that the password contains at least one lowercase letter
     condition     = can(regex("[a-z]", var.mx_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    # Check that the password contains at least one digit
     condition     = can(regex("\\d", var.mx_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    # Check that the password contains at least one special character
     condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
-    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
 
 variable "secure_password" {
   type        = string
-  description = "The password used for communication between the Management Server and the Gateway"
+  description = "The password used for communication between the Management Server and the Agent Gateway"
   sensitive   = true
   validation {
-    # Check that the password is at least 8 characters long
     condition     = length(var.secure_password) >= 7 && length(var.secure_password) <= 14
     error_message = "Password must be 7-14 characters long"
   }
 
   validation {
-    # Check that the password contains at least one uppercase letter
     condition     = can(regex("[A-Z]", var.secure_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    # Check that the password contains at least one lowercase letter
     condition     = can(regex("[a-z]", var.secure_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    # Check that the password contains at least one digit
     condition     = can(regex("\\d", var.secure_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    # Check that the password contains at least one special character
     condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.secure_password))
-    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
 
 variable "instance_readiness_params" {
-  description = "This variable allows the user to configure how to checks the health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended"
+  description = "This variable allows the user to configure how to check the readiness and health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended"
   type = object({
     enable   = bool
     commands = string
@@ -172,7 +162,7 @@ variable "dam_version" {
   type        = string
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
-    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
   }
 }
 

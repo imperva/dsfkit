@@ -19,7 +19,7 @@ locals {
     MxPassword : ${local.encrypted_mx_password}
     KMSKeyRegion : ${data.aws_region.current.name}
     ProductRole : ${local.mapper.product_role[var.resource_type]}
-    AssetTag : ${var.ses_model}
+    AssetTag : ${var.dam_model}
     GatewayMode :  dam
     ProductLicensing : BYOL
     MetaData : ${local.commands}

@@ -3,7 +3,7 @@ locals {
   encrypted_license  = data.external.encrypted_license.result.cipher_text
   required_tcp_ports = [443, 514, 2812, 8081, 8083, 8084, 8085]
   required_udp_ports = []
-  ses_model          = "AVM150"
+  dam_model          = "AVM150"
   resource_type      = "mx"
 }
 
@@ -29,7 +29,7 @@ module "mx" {
   name            = join("-", [var.friendly_name, local.resource_type])
   dam_version     = var.dam_version
   resource_type   = local.resource_type
-  ses_model       = local.ses_model
+  dam_model       = local.dam_model
   mx_password     = var.mx_password
   secure_password = var.secure_password
   internal_ports = {

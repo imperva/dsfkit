@@ -37,7 +37,7 @@ resource "aws_eip_association" "eip_assoc" {
 
 resource "aws_instance" "dsf_base_instance" {
   ami                  = data.aws_ami.selected-ami.image_id
-  instance_type        = local.mapper.instance_type[var.ses_model]
+  instance_type        = local.mapper.instance_type[var.dam_model]
   key_name             = var.key_pair
   user_data            = local.userdata
   iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
@@ -52,11 +52,6 @@ resource "aws_instance" "dsf_base_instance" {
   user_data_replace_on_change = true
 }
 
-data "aws_subnet" "selected_subnet" {
-  id = var.subnet_id
-}
-
-# Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids

@@ -2,16 +2,20 @@ data "aws_vpc" "selected" {
   id = data.aws_subnet.selected_subnet.vpc_id
 }
 
+data "aws_subnet" "selected_subnet" {
+  id = var.subnet_id
+}
+
 locals {
   cidr_blocks           = var.sg_ingress_cidr
-  ingress_ports         = var.internal_ports.tcp
+  tcp_ingress_ports         = var.internal_ports.tcp
   udp_ingress_ports     = var.internal_ports.udp
-  ingress_ports_map     = { for port in local.ingress_ports : port => port }
+  tcp_ingress_ports_map     = { for port in local.tcp_ingress_ports : port => port }
   udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
 }
 
 ##############################################################################
-### Basic security group (vpc, and additional requires cidr blocks)
+### Basic security group (vpc, and additional required CIDR blocks)
 ##############################################################################
 
 resource "aws_security_group" "dsf_base_sg" {
@@ -34,8 +38,8 @@ resource "aws_security_group_rule" "all_out" {
 }
 
 resource "aws_security_group_rule" "sg_cidr_ingress" {
-  for_each          = local.ingress_ports_map
-  description       = "${var.name} - Allow ${each.value}"
+  for_each          = local.tcp_ingress_ports_map
+  description       = "${var.name} - Allow tcp ${each.value}"
   type              = "ingress"
   from_port         = each.value
   to_port           = each.value

@@ -10,7 +10,7 @@ variable "dam_version" {
   default     = "14.10.1.10"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
-    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
   }
 }
 
@@ -18,17 +18,14 @@ variable "gw_count" {
   type        = number
   default     = 1
   description = "Number of agent gateways"
-  validation {
-    condition     = var.gw_count > 0
-    error_message = "The gw_count value must be greater than 0."
-  }
 }
 
 variable "web_console_admin_password" {
-  sensitive   = true
-  type        = string
   default     = null # Random
-  description = "Admin password (Random generated if not set)"
+  sensitive = true
+  type      = string
+  # default     = null # Random
+  description = "Admin password (Randomly generated if not set)"
 }
 
 variable "web_console_cidr_list" {
@@ -40,7 +37,7 @@ variable "web_console_cidr_list" {
 variable "agent_cidr_list" {
   type        = list(string)
   default     = []
-  description = "Agents cidr list range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+  description = "Agents CIDR list range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "workstation_cidr" {
@@ -52,19 +49,19 @@ variable "workstation_cidr" {
 variable "vpc_ip_range" {
   type        = string
   default     = "10.0.0.0/16"
-  description = "VPC cidr range"
+  description = "VPC CIDR range"
 }
 
-variable "private_subnets" {
+variable "private_subnets_cidr_list" {
   type        = list(string)
   default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "VPC private subnet cidr range"
+  description = "VPC private subnet CIDR range"
 }
 
-variable "public_subnets" {
+variable "public_subnets_cidr_list" {
   type        = list(string)
   default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet cidr range"
+  description = "VPC public subnet CIDR range"
 }
 
 variable "gw_group_id" {

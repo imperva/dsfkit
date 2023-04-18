@@ -12,11 +12,11 @@ resource "aws_security_group" "dsf_agent_sg" {
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
 
   tags = {
-    Name = join("-", [var.friendly_name, "agent"])
+    Name = join("-", [var.friendly_name, "agent", "sg"])
   }
 }
 
-resource "aws_security_group_rule" "dsf_ssh_web_console_rule" {
+resource "aws_security_group_rule" "dsf_agent_rule" {
   for_each          = local.ports_map
   type              = "ingress"
   from_port         = each.value

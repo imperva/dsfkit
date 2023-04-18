@@ -1,13 +1,13 @@
 variable "friendly_name" {
   type        = string
-  description = "Friendly name to identify to all resources"
+  description = "Friendly name to identify all resources"
   validation {
     condition     = length(var.friendly_name) >= 3
-    error_message = "Variable must be at least 3 characters long"
+    error_message = "Must be at least 3 characters long"
   }
   validation {
     condition     = can(regex("^\\p{L}.*", var.friendly_name))
-    error_message = "Variable must start with a letter"
+    error_message = "Must start with a letter"
   }
 }
 
@@ -28,13 +28,13 @@ variable "subnet_id" {
 
 variable "attach_public_ip" {
   type        = bool
-  description = "Create public IP for the instance"
+  description = "Create and attach elastic public IP for the instance"
   default     = false
 }
 
 variable "key_pair" {
   type        = string
-  description = "key pair for DSF MX instance"
+  description = "Key pair for the DSF MX instance"
 }
 
 variable "security_group_ids" {
@@ -45,19 +45,19 @@ variable "security_group_ids" {
 
 variable "sg_ingress_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF MX instance. This list should represent the agent gateways that are allowed to access the DSF MX instance via SSH and internal protocols"
+  description = "List of allowed ingress CIDR patterns allowing ssh and internal protocols to the DSF MX instance. This list should represent the agent gateways that are allowed to access the DSF MX instance via SSH and internal protocols"
   default     = []
 }
 
 variable "sg_ssh_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing ssh protocols to the DSF MX instance"
+  description = "List of allowed ingress CIDR patterns allowing ssh protocols to the DSF MX instance"
   default     = []
 }
 
 variable "sg_web_console_cidr" {
   type        = list(string)
-  description = "List of allowed ingress cidr patterns allowing web console access to the DSF MX instance"
+  description = "List of allowed ingress CIDR patterns allowing web console access to the DSF MX instance"
   default     = []
 }
 
@@ -72,68 +72,58 @@ variable "mx_password" {
   description = "MX password"
   sensitive   = true
   validation {
-    # Check that the password is at least 8 characters long
     condition     = length(var.mx_password) >= 7 && length(var.mx_password) <= 14
     error_message = "Password must be 7-14 characters long"
   }
 
   validation {
-    # Check that the password contains at least one uppercase letter
     condition     = can(regex("[A-Z]", var.mx_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    # Check that the password contains at least one lowercase letter
     condition     = can(regex("[a-z]", var.mx_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    # Check that the password contains at least one digit
     condition     = can(regex("\\d", var.mx_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    # Check that the password contains at least one special character
     condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
-    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
 
 variable "secure_password" {
   type        = string
-  description = "The password used for communication between the Management Server and the Gateway"
+  description = "The password used for communication between the Management Server and the Agent Gateway"
   sensitive   = true
   validation {
-    # Check that the password is at least 8 characters long
     condition     = length(var.secure_password) >= 7 && length(var.secure_password) <= 14
     error_message = "Password must be 7-14 characters long"
   }
 
   validation {
-    # Check that the password contains at least one uppercase letter
     condition     = can(regex("[A-Z]", var.secure_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    # Check that the password contains at least one lowercase letter
     condition     = can(regex("[a-z]", var.secure_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    # Check that the password contains at least one digit
     condition     = can(regex("\\d", var.secure_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    # Check that the password contains at least one special character
     condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.secure_password))
-    error_message = "Password must contain at least one of the following special character - *+=#%^:/~.,[]_"
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
 
@@ -161,7 +151,7 @@ variable "dam_version" {
   type        = string
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
-    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99"
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
   }
 }
 

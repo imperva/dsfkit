@@ -25,7 +25,7 @@ while true; do
     response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_id}")
 
     if [[ -z "$response" || "$response" == "{}" ]]; then
-      echo "Gateway group ${gateway_group_id} doesn't exist yet."
+      echo "Agent Gateway group ${gateway_group_id} doesn't exist yet."
       continue
     fi
 
@@ -37,14 +37,14 @@ while true; do
     response=$(curl -k -s -X GET  -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gateways/${gateway_id}")
 
     if [[ -z "$response" || "$response" == "{}" ]]; then
-      echo "Gateway ${gateway_id} doesn't exist yet."
+      echo "Agent Gateway ${gateway_id} doesn't exist yet."
       continue
     fi
 
     running=$(echo "$response" | grep -Po 'running.{2}\K[^,{}]*')
 
     if [[ "$running" != "true" ]]; then
-      echo "Gateway ${gateway_id} is not running yet."
+      echo "Agent Gateway ${gateway_id} is not running yet."
       continue
     fi
     gw_running=true
@@ -52,7 +52,7 @@ while true; do
 
   # If all three requirements are met, exit the loop and script
   if $gateway_exists && $gw_running; then
-    echo "Gateway ${gateway_id} is up and runnning."
+    echo "Agent Gateway ${gateway_id} is up and runnning."
     break
   fi
 done
