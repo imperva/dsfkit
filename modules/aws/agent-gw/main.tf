@@ -31,8 +31,8 @@ locals {
   http_auth_header = base64encode("admin:${var.mx_password}")
   timeout          = 60 * 25
 
-  readiness_commands = templatefile("${path.module}/completion.sh", {
     mx_address = "unkown"
+  readiness_commands = templatefile("${path.module}/readiness.sh", {
     http_auth_header = local.http_auth_header
     gateway_group_id = local.group_id
     gateway_id = module.agent_gw.instance_id
