@@ -1,6 +1,5 @@
 #!/bin/bash
-
-set -x
+# set -x
 
 # Set initial values to null
 sessionid=""
@@ -11,7 +10,7 @@ cookie_file=$(mktemp)
 trap "rm -f $cookie_file" EXIT
 
 while true; do
-  # Wait 5 seconds before trying again
+  # Wait 1m before trying again
   sleep 60
 
   # Step 1: Extract sessionid & SSOSESSIONID cookies
