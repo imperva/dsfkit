@@ -20,11 +20,6 @@ variable "subnet_id" {
   }
 }
 
-# variable "security_group_id" {
-#   type        = string
-#   description = "Security group id for the ec2 instance"
-# }
-
 # variable "ec2_instance_type" {
 #   type        = string
 #   description = "Ec2 instance type for the DSF base instance"
@@ -36,7 +31,12 @@ variable "key_pair" {
   description = "key pair for DSF Agent GW"
 }
 
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids for the MX instance"
+  default = []
 }
+
 variable "sg_ingress_cidr" {
   type        = list(string)
   description = "List of allowed ingress cidr patterns allowing ssh and internal protocols to the DSF Agent GW instance"
@@ -168,7 +168,6 @@ variable "gw_model" {
 EOF
   }
 }
-
 
 variable "group_id" {
   type        = string
