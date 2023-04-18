@@ -1,5 +1,4 @@
 locals {
-  ssh_options         = "-o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
   bastion_host        = var.proxy_info.proxy_address
   bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
   bastion_user        = var.proxy_info.proxy_ssh_user

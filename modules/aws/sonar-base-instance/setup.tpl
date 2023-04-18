@@ -187,7 +187,7 @@ function install_ssh_keys() {
     # enable communication between a pair of primary and secondary nodes
     grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
 
-    # enable communication between the the primary/secondary hub and the GW
+    # enable communication between the the primary/secondary hub and the Gateway
     if [ "${resource_type}" == "gw" ]; then
         grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
     fi

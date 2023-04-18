@@ -59,7 +59,7 @@ variable "subnet_gw" {
 variable "security_group_id_gw" {
   type        = string
   default     = null
-  description = "Aws security group id for the Agentless GW (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Aws security group id for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "gw_count" {
@@ -194,7 +194,7 @@ variable "gw_skip_instance_health_verification" {
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless Gateway instances. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""

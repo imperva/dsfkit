@@ -6,7 +6,7 @@ variable "gw_info" {
   })
 
   nullable    = false
-  description = "GW info"
+  description = "Gateway info"
 }
 
 variable "hub_info" {

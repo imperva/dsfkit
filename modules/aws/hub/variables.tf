@@ -73,7 +73,7 @@ variable "ingress_communication" {
     full_access_cidr_list                   = list(any) # will be attached to sg.tf:ingress_ports
     additional_web_console_access_cidr_list = list(any) # will be attached to port 8443
   })
-  description = "List of allowed ingress cidr patterns for the DSF Hub instance for ssh and internal protocols"
+  description = "List of allowed ingress CIDR patterns for the DSF Hub instance for ssh and internal protocols"
   nullable    = false
   validation {
     condition = alltrue([
