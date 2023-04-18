@@ -29,14 +29,14 @@ locals {
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
   http_auth_header = base64encode("admin:${var.mx_password}")
-  timeout          = 60 * 25 # 25m
-  # this should be smart enough to know whether there is a public ip and whether it can access it
-  installation_completion_commands = "exit 0" #templatefile("${path.module}/completion.sh", {
-  #   mx_address = var.management_server_host
-  #   http_auth_header = local.http_auth_header
-  #   gateway_group_id = local.group_id
-  #   gateway_id = module.agent_gw.instance_id
-  # })
+  timeout          = 60 * 25
+
+  readiness_commands = templatefile("${path.module}/completion.sh", {
+    mx_address = "unkown"
+    http_auth_header = local.http_auth_header
+    gateway_group_id = local.group_id
+    gateway_id = module.agent_gw.instance_id
+  })
 }
 
 module "agent_gw" {
@@ -59,9 +59,9 @@ module "agent_gw" {
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = false
-  instance_initialization_completion_params = {
-    commands = local.installation_completion_commands
-    enable   = true
+  instance_readiness_params = {
+    commands = local.readiness_commands
+    enable   = false
     timeout  = local.timeout
   }
 }

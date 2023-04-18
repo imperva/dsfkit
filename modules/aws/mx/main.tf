@@ -16,9 +16,9 @@ locals {
   ]
 
   http_auth_header = base64encode("admin:${var.mx_password}")
-  timeout          = 60 * 30 # 30m
-  # this should be smart enough to know whether there is a public ip and whether it can access it
-  installation_completion_commands = templatefile("${path.module}/completion.sh", {
+  timeout          = 60 * 30
+
+  readiness_commands = templatefile("${path.module}/readiness.sh", {
     mx_address       = module.mx.public_ip
     http_auth_header = local.http_auth_header
   })
@@ -44,8 +44,8 @@ module "mx" {
   iam_actions        = local.iam_actions
   key_pair           = var.key_pair
   attach_public_ip   = var.attach_public_ip
-  instance_initialization_completion_params = {
-    commands = local.installation_completion_commands
+  instance_readiness_params = {
+    commands = local.readiness_commands
     enable   = true
     timeout  = local.timeout
   }

@@ -63,6 +63,6 @@ output "ready" {
   EOF
   value = "ready"
   depends_on = [
-    null_resource.wait_for_installation_completion
+    null_resource.readiness
   ]
 }

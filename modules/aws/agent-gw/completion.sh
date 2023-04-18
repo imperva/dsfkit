@@ -7,6 +7,8 @@ gateway_exists=false
 gw_running=false
 
 cookie_file=$(mktemp)
+
+trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session" EXIT
 trap "rm -f $cookie_file" EXIT
 
 while true; do
@@ -15,7 +17,7 @@ while true; do
 
   # Step 1: Extract sessionid & SSOSESSIONID cookies
   if ! grep JSESSIONID $cookie_file &>/dev/null; then
-    curl -k -s -X POST -c $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/auth/session" \
+    curl -k -s -X POST --cookie-jar $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/auth/session" \
       --header "Authorization: Basic ${http_auth_header}"
   fi
 
@@ -24,7 +26,7 @@ while true; do
     response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_id}")
 
     if [[ -z "$response" || "$response" == "{}" ]]; then
-      echo "Failed to verify gateway group exists."
+      echo "Gateway group ${gateway_group_id} doesn't exist yet."
       continue
     fi
 
@@ -36,14 +38,14 @@ while true; do
     response=$(curl -k -s -X GET  -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gateways/${gateway_id}")
 
     if [[ -z "$response" || "$response" == "{}" ]]; then
-      echo "Failed to verify gateway exists."
+      echo "Gateway ${gateway_id} doesn't exist yet."
       continue
     fi
 
     running=$(echo "$response" | grep -Po 'running.{2}\\\\\\K[^,{}]*')
 
     if [[ "$running" != "true" ]]; then
-      echo "Gateway is not running."
+      echo "Gateway ${gateway_id} is not running yet."
       continue
     fi
 
@@ -52,7 +54,7 @@ while true; do
 
   # If all three requirements are met, exit the loop and script
   if $gateway_exists && $gw_running; then
-    echo "All requirements met. Done."
+    echo "Gateway ${gateway_id} is up and runnning."
     break
   fi
 done
