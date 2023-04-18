@@ -1,3 +1,10 @@
+variable "deployment_name" {
+  type        = string
+  default     = "imperva-dsf-dra"
+  description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
+}
+
+
 variable "region" {
     type = string
     description = "AWS region for placement of VPC"
@@ -26,20 +33,20 @@ variable "analytics_ami_id" {
     # default = "ami-06c0b1409371fd42f"
 }
 
-variable "registration_password" {
+variable "admin_analytics_registration_password" {
     type = string
     description = "Password to be used to register Analtyics server to Admin Server"
-    default = "yourpasswordhere"
+    default = null
 }
 
-variable "analytics_user" {
+variable "archiver_user" {
     type = string
     description = "User to be used to upload archive files for analysis"
-    default = "your_scp_user"
+    default = null
 }
 
-variable "analytics_password" {
+variable "archiver_password" {
     type = string
     description = "Password to be used to upload archive files for analysis"
-    default = "yourpasswordhere"
+    default = null
 }

@@ -2,14 +2,24 @@ provider "aws" {
   region = var.region
 }
 
+module "globals" {
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.4.2" # latest release tag
+}
+
 locals {
   networks = [for index in range (6):cidrsubnet(var.vpc_cidr,8,index)]
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+  admin_analytics_registration_password = var.admin_analytics_registration_password != null ? var.admin_analytics_registration_password : module.globals.random_password
+  archiver_password = local.admin_analytics_registration_password
+  archiver_user = var.archiver_user != null ?  var.archiver_user : join("-", [var.deployment_name, module.globals.salt,"archiver-user"])
 }
+
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   map_public_ip_on_launch = true
-  name = "DSF_DRA_VPC"
+  name = join("-", [local.deployment_name_salted, "vpc"])
   cidr = var.vpc_cidr
   azs             = [ "${var.region}a", "${var.region}b"]
   private_subnets = [local.networks[0],local.networks[1]]
@@ -43,7 +53,7 @@ module "key_pair" {
 
 module "dra_admin" {
   source = "../../../modules/aws/dra-admin"
-  registration_password = var.registration_password
+  registration_password = local.admin_analytics_registration_password
   admin_ami_id           = var.admin_ami_id
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
@@ -60,18 +70,18 @@ module "dra_admin" {
 
 module "analitycs_server" {
   source = "../../../modules/aws/dra-analitycs"
-  registration_password = var.registration_password
+  registration_password = local.admin_analytics_registration_password
   analytics_ami_id           = var.analytics_ami_id
   instance_type = var.instance_type
-  subnet_id = module.vpc.private_subnets[0]
+  subnet_id = module.vpc.public_subnets[0]
   # vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   region = var.region
-  analytics_user = var.analytics_user
-  analytics_password = var.analytics_password
+  analytics_user = local.archiver_user
+  analytics_password = local.archiver_password
   admin_server_ip = module.dra_admin.private_ip
   vpc_id = module.vpc.vpc_id
   vpc_cidr = var.vpc_cidr

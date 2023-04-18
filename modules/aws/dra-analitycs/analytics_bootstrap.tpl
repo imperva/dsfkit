@@ -2,24 +2,24 @@
 set -x
 exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
 echo BEGIN
-# function wait-for-admin(){
-#   while ! nc -z ${admin_server_ip} 8443; do
-#     sleep 0.1
-#   done
-# }
-
-
-
 function wait-for-admin(){
-  while true; do
-    response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_ip}:8443/mvc/login')
-    if [ $response -eq 200 ]; then
-      exit 0
-    else
-      sleep 60
-    fi
+  while ! nc -z ${admin_server_ip} 8443; do
+    sleep 0.1
   done
 }
+
+
+
+# function wait-for-admin(){
+#   while true; do
+#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_ip}:8443/mvc/login')
+#     if [ $response -eq 200 ]; then
+#       exit 0
+#     else
+#       sleep 60
+#     fi
+#   done
+# }
 
 date '+%Y-%m-%d %H:%M:%S'
 my_nameserver=$(ifconfig eth0 | grep "inet " | awk '{print $2}')
