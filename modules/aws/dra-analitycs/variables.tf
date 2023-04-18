@@ -28,8 +28,14 @@ variable "instance_type" {
     type = string
 }
 
-variable "key" {
-    type = string
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name       = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
+  nullable = false
 }
 
 variable "analytics_password" {

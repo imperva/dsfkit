@@ -9,9 +9,17 @@ variable "instance_type" {
     default = "m4.xlarge"
 }
 
-variable "key" {
-    type = string
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name       = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
+  nullable = false
 }
+
+
 variable "admin_ami_id" {
     type = string
     description = "DRA admin AMI ID in region"

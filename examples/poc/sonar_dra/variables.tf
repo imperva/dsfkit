@@ -14,10 +14,6 @@ variable "instance_type" {
     default = "m4.xlarge"
 }
 
-variable "key" {
-    type = string
-}
-
 variable "admin_ami_id" {
     type = string
     description = "DRA admin AMI ID in region"

@@ -34,6 +34,12 @@ module "vpc" {
 }
 
 
+module "key_pair" {
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.2" # latest release tag
+  key_name_prefix          = "imperva-dsf-dra-"
+  private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
+}
 
 module "dra_admin" {
   source = "../../../modules/aws/dra-admin"
@@ -42,7 +48,10 @@ module "dra_admin" {
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
   # vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
-  key = var.key
+  ssh_key_pair = {
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
+    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
+  }
   region = var.region
   vpc_id = module.vpc.vpc_id
   vpc_cidr = var.vpc_cidr
@@ -56,7 +65,10 @@ module "analitycs_server" {
   instance_type = var.instance_type
   subnet_id = module.vpc.private_subnets[0]
   # vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
-  key = var.key
+  ssh_key_pair = {
+    ssh_private_key_file_path = module.key_pair.private_key_file_path
+    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
+  }
   region = var.region
   analytics_user = var.analytics_user
   analytics_password = var.analytics_password
