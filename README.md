@@ -271,6 +271,16 @@ The following table lists the released DSFKit versions, their release date and a
       Updated DSFKit IAM required permissions.
    </td>
   </tr>
+  <tr>
+   <td>19 Apr 2023
+   </td>
+   <td>1.4.3
+   </td>
+   <td>
+      1. First Alpha deployment of Agent Gateway and MX. It can be used with caution.
+      <br>2. Updated DSFKit IAM required permissions.
+   </td>
+  </tr>
 
 </table>
 
