@@ -29,11 +29,9 @@ resource "aws_instance" "dra_analytics" {
   key_name = var.ssh_key_pair.ssh_public_key_name
   user_data = data.template_file.analytics_bootstrap.rendered
   tags = {
-    Name = var.deployment_name
+     Name = join("-", [var.deployment_name, module.globals.salt, "admin"])
   }
 }
-
-
 
 resource "null_resource" "waiter_cmds" {
   provisioner "local-exec" {

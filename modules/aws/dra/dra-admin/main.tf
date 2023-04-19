@@ -22,7 +22,7 @@ resource "aws_instance" "dra_admin" {
   key_name = var.ssh_key_pair.ssh_public_key_name
   user_data = data.template_file.admin_bootstrap.rendered
   tags = {
-    Name = var.deployment_name
+    Name = join("-", [var.deployment_name, module.globals.salt, "admin"])
   }
 }
 

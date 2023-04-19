@@ -74,6 +74,7 @@ module "dra_admin" {
 
 
 module "analitycs_server_group" {
+  count = 2
   source = "../../../modules/aws/dra/dra-analitycs"
   admin_analytics_registration_password = local.admin_analytics_registration_password
   analytics_ami_id           = var.analytics_ami_id
