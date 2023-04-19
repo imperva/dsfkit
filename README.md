@@ -271,6 +271,15 @@ The following table lists the released DSFKit versions, their release date and a
       Updated DSFKit IAM required permissions.
    </td>
   </tr>
+  <tr>
+   <td>19 Apr 2023
+   </td>
+   <td>1.4.3
+   </td>
+   <td>
+      Updated DSFKit IAM required permissions.
+   </td>
+  </tr>
 
 </table>
 
