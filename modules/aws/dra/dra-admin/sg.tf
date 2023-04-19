@@ -35,8 +35,4 @@ resource "aws_security_group" "admin-server-demo" {
     protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = {
-    name  = "DRA-Admin-server"
-    Stage = "Test"
-  }
 }
