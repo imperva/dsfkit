@@ -1,3 +1,17 @@
+locals {
+  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
+    admin_server_public_ip  = var.admin_server_public_ip
+  })
+}
+
+locals {
+  disk_size_app        = 100
+  ebs_state_disk_type  = "gp3"
+  ebs_state_disk_size  = var.ebs.disk_size
+  ebs_state_iops       = var.ebs.provisioned_iops
+  ebs_state_throughput = var.ebs.throughput
+}
+
 data "template_file" "analytics_bootstrap" {
   template = file("${path.module}/analytics_bootstrap.tpl")
   vars = {
@@ -20,11 +34,6 @@ resource "aws_instance" "dra_analytics" {
   }
 }
 
-locals {
-  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
-    admin_server_public_ip  = var.admin_server_public_ip
-  })
-}
 
 
 resource "null_resource" "waiter_cmds" {
@@ -35,6 +44,31 @@ resource "null_resource" "waiter_cmds" {
   depends_on = [
     aws_instance.dra_analytics
   ]
+}
+
+data "aws_subnet" "selected_subnet" {
+  id = var.subnet_id
+}
+
+resource "aws_volume_attachment" "ebs_att" {
+  device_name                    = "/dev/sdb"
+  volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
+  instance_id                    = aws_instance.dra_analytics.id
+  stop_instance_before_detaching = true
+}
+
+resource "aws_ebs_volume" "ebs_external_data_vol" {
+  size              = local.ebs_state_disk_size
+  type              = local.ebs_state_disk_type
+  iops              = local.ebs_state_iops
+  throughput        = local.ebs_state_throughput
+  availability_zone = data.aws_subnet.selected_subnet.availability_zone
+  tags = {
+    Name = join("-", [var.deployment_name, "data", "volume", "ebs"])
+  }
+  lifecycle {
+    ignore_changes = [iops]
+  }
 }
 
 # resource "null_resource" "wait_admin" {

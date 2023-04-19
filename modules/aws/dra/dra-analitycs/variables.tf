@@ -3,6 +3,11 @@ variable "region" {
     description = "AWS region for placement of VPC"
 }
 
+variable "deployment_name" {
+    type = string
+    description = "deployment_name"
+}
+
 variable "admin_analytics_registration_password" {
     type = string
     description = "Password to be used to register Analtyics server to Admin Server"
@@ -75,3 +80,15 @@ variable "vpc_cidr" {
     type = string
     description = "vpc_cidr"
 }
+
+
+variable "ebs" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "Compute instance volume attributes"
+}
+
+

@@ -50,3 +50,32 @@ variable "archiver_password" {
     description = "Password to be used to upload archive files for analysis"
     default = null
 }
+
+
+variable "analitycs_group_ebs_details" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  default = {
+    disk_size        = 75
+    provisioned_iops = 0
+    throughput       = 125
+  }
+}
+
+variable "admin_ebs_details" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  default = {
+    disk_size        = 250
+    provisioned_iops = 0
+    throughput       = 125
+  }
+}

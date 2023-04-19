@@ -4,6 +4,11 @@ variable "region" {
 }
 
 
+variable "deployment_name" {
+    type = string
+    description = "deployment_name"
+}
+
 variable "instance_type" {
     type = string
     default = "m4.xlarge"
@@ -53,4 +58,13 @@ variable "vpc_id" {
 variable "vpc_cidr" {
     type = string
     description = "vpc_cidr"
+}
+
+variable "ebs" {
+  type = object({
+    disk_size        = number
+    provisioned_iops = number
+    throughput       = number
+  })
+  description = "Compute instance volume attributes"
 }
