@@ -17,7 +17,8 @@
                 "ec2:CreateRouteTable",
                 "ec2:CreateSubnet",
                 "ec2:CreateNetworkAclEntry",
-                "ec2:DeleteNetworkAclEntry"
+                "ec2:DeleteNetworkAclEntry",
+                "ec2:DisassociateRouteTable"
             ],
             "Resource": "*"
         },
@@ -58,7 +59,6 @@
                 "ec2:DeleteSubnet",
                 "ec2:DeleteNatGateway",
                 "ec2:DetachInternetGateway",
-                "ec2:DisassociateRouteTable",
                 "ec2:ModifyVpcAttribute",
                 "ec2:ModifySubnetAttribute"
             ],
