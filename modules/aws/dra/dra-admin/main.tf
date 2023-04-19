@@ -6,6 +6,8 @@ locals {
   ebs_state_throughput = var.ebs.throughput
 }
 
+
+
 data "template_file" "admin_bootstrap" {
   template = file("${path.module}/admin_bootstrap.tpl")
   vars = {
@@ -19,10 +21,8 @@ resource "aws_instance" "dra_admin" {
   vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
   key_name = var.ssh_key_pair.ssh_public_key_name
   user_data = data.template_file.admin_bootstrap.rendered
-
   tags = {
-    Name = "DRA-Admin-server"
-    stage = "Test"
+    Name = var.deployment_name
   }
 }
 

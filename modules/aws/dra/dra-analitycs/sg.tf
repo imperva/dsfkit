@@ -22,9 +22,9 @@ resource "aws_security_group" "analytics-server-demo" {
     protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = {
-    name  = "DRA-Analytics-server"
-    Stage = "Test"
-  }
+  # tags = {
+  #   name  = "DRA-Analytics-server"
+  #   Stage = "Test"
+  # }
 }
 

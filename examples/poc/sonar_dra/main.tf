@@ -1,5 +1,8 @@
 provider "aws" {
   region = var.region
+  default_tags {
+    tags = local.tags
+  }
 }
 
 module "globals" {
@@ -13,6 +16,7 @@ locals {
   admin_analytics_registration_password = var.admin_analytics_registration_password != null ? var.admin_analytics_registration_password : module.globals.random_password
   archiver_password = local.admin_analytics_registration_password
   archiver_user = var.archiver_user != null ?  var.archiver_user : join("-", [var.deployment_name, module.globals.salt,"archiver-user"])
+  tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
 module "vpc" {

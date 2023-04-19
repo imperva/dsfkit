@@ -29,8 +29,7 @@ resource "aws_instance" "dra_analytics" {
   key_name = var.ssh_key_pair.ssh_public_key_name
   user_data = data.template_file.analytics_bootstrap.rendered
   tags = {
-    Name = "DRA-Analytics-server"
-    stage = "Test"
+    Name = var.deployment_name
   }
 }
 
