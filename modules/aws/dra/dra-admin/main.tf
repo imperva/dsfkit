@@ -10,10 +10,12 @@ data "template_file" "admin_bootstrap" {
   template = file("${path.module}/admin_bootstrap.tpl")
   vars = {
     admin_analytics_registration_password = var.admin_analytics_registration_password
+    admin_analytics_registration_password_secret = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
   }
 }
 resource "aws_instance" "dra_admin" {
   ami           = var.admin_ami_id
+  iam_instance_profile = aws_iam_instance_profile.dsf_dra_node_instance_iam_profile.id
   instance_type = var.instance_type
   subnet_id = var.subnet_id
   vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]

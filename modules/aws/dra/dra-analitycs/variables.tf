@@ -92,4 +92,8 @@ variable "ebs" {
   default = null
 }
 
-
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the DRA Analytics. Keep empty if you wish to create a new role."
+}
