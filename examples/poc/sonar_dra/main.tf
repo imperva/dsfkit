@@ -15,7 +15,6 @@ locals {
   archiver_user = var.archiver_user != null ?  var.archiver_user : join("-", [var.deployment_name, module.globals.salt,"archiver-user"])
 }
 
-
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   map_public_ip_on_launch = true
@@ -53,7 +52,7 @@ module "key_pair" {
 
 module "dra_admin" {
   source = "../../../modules/aws/dra-admin"
-  registration_password = local.admin_analytics_registration_password
+  admin_analytics_registration_password = local.admin_analytics_registration_password
   admin_ami_id           = var.admin_ami_id
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
@@ -70,7 +69,7 @@ module "dra_admin" {
 
 module "analitycs_server" {
   source = "../../../modules/aws/dra-analitycs"
-  registration_password = local.admin_analytics_registration_password
+  admin_analytics_registration_password = local.admin_analytics_registration_password
   analytics_ami_id           = var.analytics_ami_id
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
@@ -82,32 +81,11 @@ module "analitycs_server" {
   region = var.region
   analytics_user = local.archiver_user
   analytics_password = local.archiver_password
-  admin_server_ip = module.dra_admin.private_ip
+  admin_server_private_ip = module.dra_admin.private_ip
+  admin_server_public_ip = module.dra_admin.public_ip
   vpc_id = module.vpc.vpc_id
   vpc_cidr = var.vpc_cidr
 }
-
-# data "template_file" "analytics_bootstrap" {
-#   template = file("${path.module}/analytics_bootstrap.tpl")
-#   vars = {
-#     registration_password = var.registration_password
-#     analytics_user = var.analytics_user
-#     analytics_password = var.analytics_password
-#     admin_server_ip = module.dra_admin.private_ip
-#   }
-# }
-# resource "aws_instance" "dra_analytics" {
-#   ami           = var.analytics_ami_id
-#   instance_type = var.instance_type
-#   subnet_id = module.vpc.private_subnets[0]
-#   vpc_security_group_ids = ["${aws_security_group.analytics-server-demo.id}"]
-#   key_name = var.key
-#   user_data = data.template_file.analytics_bootstrap.rendered
-#   tags = {
-#     Name = "DRA-Analytics-server"
-#     stage = "Test"
-#   }
-# }
 
 
 

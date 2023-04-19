@@ -3,7 +3,7 @@ variable "region" {
     description = "AWS region for placement of VPC"
 }
 
-variable "registration_password" {
+variable "admin_analytics_registration_password" {
     type = string
     description = "Password to be used to register Analtyics server to Admin Server"
 }
@@ -18,9 +18,15 @@ variable "analytics_ami_id" {
     # default = "ami-06c0b1409371fd42f"
 }
 
-variable "admin_server_ip" {
+variable "admin_server_private_ip" {
     type = string
     description = "admin_server_private_ip"
+   
+}
+
+variable "admin_server_public_ip" {
+    type = string
+    description = "admin_server_public_ip"
    
 }
 

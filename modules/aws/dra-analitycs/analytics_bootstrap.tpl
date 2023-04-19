@@ -3,7 +3,7 @@ set -x
 exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
 echo BEGIN
 function wait-for-admin(){
-  while ! nc -z ${admin_server_ip} 8443; do
+  while ! nc -z ${admin_server_private_ip} 8443; do
     sleep 0.1
   done
 }
@@ -12,7 +12,7 @@ function wait-for-admin(){
 
 # function wait-for-admin(){
 #   while true; do
-#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_ip}:8443/mvc/login')
+#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_private_ip}:8443/mvc/login')
 #     if [ $response -eq 200 ]; then
 #       exit 0
 #     else
@@ -38,6 +38,6 @@ export ITPBA_HOME=/opt/itpba
 export CATALINA_HOME=/opt/apache-tomcat
 chmod +x /opt/itp_global_conf/auto_deploy.sh
 wait-for-admin
-/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${analytics_user}" --analytics-password "${analytics_password}" --admin-server-ip "${admin_server_ip}"
+/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${admin_analytics_registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${analytics_user}" --analytics-password "${analytics_password}" --admin-server-ip "${admin_server_private_ip}"
 
 

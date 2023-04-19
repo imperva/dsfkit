@@ -1,10 +1,10 @@
 data "template_file" "analytics_bootstrap" {
   template = file("${path.module}/analytics_bootstrap.tpl")
   vars = {
-    registration_password = var.registration_password
+    admin_analytics_registration_password = var.admin_analytics_registration_password
     analytics_user = var.analytics_user
     analytics_password = var.analytics_password
-    admin_server_ip = var.admin_server_ip
+    admin_server_private_ip = var.admin_server_private_ip
   }
 }
 resource "aws_instance" "dra_analytics" {
@@ -19,3 +19,37 @@ resource "aws_instance" "dra_analytics" {
     stage = "Test"
   }
 }
+
+locals {
+  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
+    admin_server_public_ip  = var.admin_server_public_ip
+  })
+}
+
+
+resource "null_resource" "waiter_cmds" {
+  provisioner "local-exec" {
+    command     = local.waiter_cmds_script
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    aws_instance.dra_analytics
+  ]
+}
+
+# resource "null_resource" "wait_admin" {
+#   provisioner "local-exec" {
+#     command     = ""
+#   while true; do
+#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_ip}:8443/mvc/login')
+#     if [ $response -eq 200 ]; then
+#       exit 0
+#     else
+#       sleep 60
+#     fi
+#   done
+# }"
+#     interpreter = ["/bin/bash", "-c"]
+#   }
+# }
+

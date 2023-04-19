@@ -26,7 +26,7 @@ variable "admin_ami_id" {
     # default = "ami-05d03d9f0e5f8c9f9"
 }
 
-variable "registration_password" {
+variable "admin_analytics_registration_password" {
     type = string
     description = "Password to be used to register Analtyics server to Admin Server"
 }

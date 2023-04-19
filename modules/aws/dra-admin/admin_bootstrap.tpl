@@ -18,4 +18,4 @@ sudo su
 export ITP_HOME=/opt/itp
 export CATALINA_HOME=/opt/apache-tomcat
 chmod +x /opt/itp_global_conf/auto_deploy.sh
-/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Admin"
+/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${admin_analytics_registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Admin"

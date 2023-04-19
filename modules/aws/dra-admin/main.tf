@@ -1,7 +1,7 @@
 data "template_file" "admin_bootstrap" {
   template = file("${path.module}/admin_bootstrap.tpl")
   vars = {
-    registration_password = var.registration_password
+    admin_analytics_registration_password = var.admin_analytics_registration_password
   }
 }
 resource "aws_instance" "dra_admin" {
