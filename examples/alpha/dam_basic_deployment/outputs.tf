@@ -1,3 +1,11 @@
+output "dsf_db" {
+  value = {
+    private_ip   = module.db_agent_monitored.private_ip
+    private_dns  = module.db_agent_monitored.private_dns
+    ssh_command  = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx.ssh_user}@${module.mx.public_ip}' -i ${module.key_pair.private_key_file_path} ${module.db_agent_monitored.ssh_user}@${module.db_agent_monitored.private_ip}", null)
+  }
+}
+
 output "dsf_agent_gw_group" {
   value = {
     for idx, val in module.agent_gw : "gw-${idx}" =>

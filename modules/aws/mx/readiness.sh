@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 
 cookie_file=$(mktemp)
 trap "rm -f $cookie_file" EXIT
