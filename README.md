@@ -268,7 +268,7 @@ The following table lists the released DSFKit versions, their release date and a
    <td>1.4.2
    </td>
    <td>
-      1. Updated DSFKit IAM required permissions.
+      Updated DSFKit IAM required permissions.
    </td>
   </tr>
   <tr>
