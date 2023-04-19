@@ -7,17 +7,17 @@ locals {
 locals {
   disk_size_app        = 100
   ebs_state_disk_type  = "gp3"
-  ebs_state_disk_size  = var.ebs.disk_size
-  ebs_state_iops       = var.ebs.provisioned_iops
-  ebs_state_throughput = var.ebs.throughput
+  ebs_state_disk_size  = var.ebs == null ? null : var.ebs.disk_size
+  ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
+  ebs_state_throughput = var.ebs == null ? null : var.ebs.throughput
 }
 
 data "template_file" "analytics_bootstrap" {
   template = file("${path.module}/analytics_bootstrap.tpl")
   vars = {
     admin_analytics_registration_password = var.admin_analytics_registration_password
-    analytics_user = var.analytics_user
-    analytics_password = var.analytics_password
+    archiver_user = var.archiver_user
+    archiver_password = var.archiver_password
     admin_server_private_ip = var.admin_server_private_ip
   }
 }
@@ -48,13 +48,15 @@ data "aws_subnet" "selected_subnet" {
 }
 
 resource "aws_volume_attachment" "ebs_att" {
+  count = var.ebs == null ? 0 : 1
   device_name                    = "/dev/sdb"
-  volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
+  volume_id                      = aws_ebs_volume.ebs_external_data_vol[0].id
   instance_id                    = aws_instance.dra_analytics.id
   stop_instance_before_detaching = true
 }
 
 resource "aws_ebs_volume" "ebs_external_data_vol" {
+  count = var.ebs == null ? 0 : 1
   size              = local.ebs_state_disk_size
   type              = local.ebs_state_disk_type
   iops              = local.ebs_state_iops
@@ -67,20 +69,3 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
     ignore_changes = [iops]
   }
 }
-
-# resource "null_resource" "wait_admin" {
-#   provisioner "local-exec" {
-#     command     = ""
-#   while true; do
-#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_ip}:8443/mvc/login')
-#     if [ $response -eq 200 ]; then
-#       exit 0
-#     else
-#       sleep 60
-#     fi
-#   done
-# }"
-#     interpreter = ["/bin/bash", "-c"]
-#   }
-# }
-

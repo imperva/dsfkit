@@ -13,7 +13,7 @@ variable "admin_analytics_registration_password" {
     description = "Password to be used to register Analtyics server to Admin Server"
 }
 
-variable "analytics_user" {
+variable "archiver_user" {
     type = string
     description = "User to be used to upload archive files for analysis"
 }
@@ -49,7 +49,7 @@ variable "ssh_key_pair" {
   nullable = false
 }
 
-variable "analytics_password" {
+variable "archiver_password" {
     type = string
     description = "Password to be used to upload archive files for analysis"
     default = "yourpasswordhere"

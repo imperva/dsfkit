@@ -87,13 +87,13 @@ module "analitycs_server_group" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   region = var.region
-  analytics_user = local.archiver_user
-  analytics_password = local.archiver_password
+  archiver_user = local.archiver_user
+  archiver_password = local.archiver_password
   admin_server_private_ip = module.dra_admin.private_ip
   admin_server_public_ip = module.dra_admin.public_ip
   vpc_id = module.vpc.vpc_id
   vpc_cidr = var.vpc_cidr
-  ebs = var.analitycs_group_ebs_details
+  # ebs = var.analitycs_group_ebs_details
 }
 
 

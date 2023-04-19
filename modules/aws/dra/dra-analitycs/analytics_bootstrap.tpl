@@ -38,6 +38,6 @@ export ITPBA_HOME=/opt/itpba
 export CATALINA_HOME=/opt/apache-tomcat
 chmod +x /opt/itp_global_conf/auto_deploy.sh
 wait-for-admin
-/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${admin_analytics_registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${analytics_user}" --analytics-password "${analytics_password}" --admin-server-ip "${admin_server_private_ip}"
+/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${admin_analytics_registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${archiver_user}" --analytics-password "${archiver_password}" --admin-server-ip "${admin_server_private_ip}"
 
 
