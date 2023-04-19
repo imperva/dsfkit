@@ -51,7 +51,7 @@ module "key_pair" {
 }
 
 module "dra_admin" {
-  source = "../../../modules/aws/dra-admin"
+  source = "../../../modules/aws/dra/dra-admin"
   admin_analytics_registration_password = local.admin_analytics_registration_password
   admin_ami_id           = var.admin_ami_id
   instance_type = var.instance_type
@@ -68,7 +68,7 @@ module "dra_admin" {
 
 
 module "analitycs_server" {
-  source = "../../../modules/aws/dra-analitycs"
+  source = "../../../modules/aws/dra/dra-analitycs"
   admin_analytics_registration_password = local.admin_analytics_registration_password
   analytics_ami_id           = var.analytics_ami_id
   instance_type = var.instance_type
