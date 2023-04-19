@@ -278,7 +278,7 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
    <td>
       1. First Alpha deployment of Agent Gateway and MX. It can be used with caution.
-      <br>2. Updated DSFKit IAM required permissions.
+      <br>2. Updated DSFKit IAM required permissions. 
    </td>
   </tr>
 
