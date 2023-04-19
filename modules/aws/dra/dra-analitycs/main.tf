@@ -25,7 +25,7 @@ resource "aws_instance" "dra_analytics" {
   ami           = var.analytics_ami_id
   instance_type = var.instance_type
   subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.analytics-server-demo.id}"]
+  vpc_security_group_ids = ["${aws_security_group.analytics-instance.id}"]
   key_name = var.ssh_key_pair.ssh_public_key_name
   user_data = data.template_file.analytics_bootstrap.rendered
   tags = {

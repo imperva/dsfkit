@@ -67,4 +67,5 @@ variable "ebs" {
     throughput       = number
   })
   description = "Compute instance volume attributes"
+  default = null
 }

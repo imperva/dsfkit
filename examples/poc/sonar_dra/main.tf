@@ -61,7 +61,7 @@ module "dra_admin" {
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
   deployment_name = local.deployment_name_salted
-  # vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
+  # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -69,7 +69,7 @@ module "dra_admin" {
   region = var.region
   vpc_id = module.vpc.vpc_id
   vpc_cidr = var.vpc_cidr
-  ebs = var.admin_ebs_details
+  # ebs = var.admin_ebs_details
 }
 
 
@@ -81,7 +81,7 @@ module "analitycs_server_group" {
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]
   deployment_name = local.deployment_name_salted
-  # vpc_security_group_ids = ["${aws_security_group.admin-server-demo.id}"]
+  # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

@@ -1,4 +1,4 @@
-resource "aws_security_group" "analytics-server-demo" {
+resource "aws_security_group" "analytics-instance" {
   vpc_id      = var.vpc_id
   description = "Security Group for Analytics Server"
 

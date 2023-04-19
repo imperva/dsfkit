@@ -1,4 +1,4 @@
-resource "aws_security_group" "admin-server-demo" {
+resource "aws_security_group" "admin-instance" {
   vpc_id      = var.vpc_id
   description = "Security Group for Admin Server"
 
