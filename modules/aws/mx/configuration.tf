@@ -35,7 +35,7 @@ resource "null_resource" "import_configuration" {
   provisioner "local-exec" {
     command = <<-EOF
       timeout ${local.conf_timeout} bash <<\__EOS__
-      ${templatefile("${path.module}/configure.sh", 
+      ${templatefile("${path.module}/configure.sh",
                  {mx_address        = module.mx.public_ip
                   https_auth_header = local.https_auth_header
                   configuration_elements = local.configuration_elements})}
