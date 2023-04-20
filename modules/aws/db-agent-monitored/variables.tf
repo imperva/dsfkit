@@ -40,24 +40,9 @@ variable "subnet_id" {
 #   }
 # }
 
-
-variable "mx_password" {
-  type        = string
-  description = "Password for MX api"
-}
-
 variable "secure_password" {
   type        = string
   description = "Password for agent registration"
-}
-
-variable "management_server_host_for_api_access" {
-  type        = string
-  description = "Management server's hostname or IP address. It is utilized to access the API"
-  validation {
-    condition     = var.management_server_host_for_api_access == null || can(regex("[^0-9.]", var.management_server_host_for_api_access)) || cidrsubnet("${var.management_server_host_for_api_access}/32", 0, 0) == "${var.management_server_host_for_api_access}/32"
-    error_message = "Invalid IPv4 address"
-  }
 }
 
 variable "agent_gateway_host" {
@@ -84,4 +69,24 @@ variable "sg_ssh_cidr" {
   type        = list(string)
   description = "List of allowed ingress CIDR patterns allowing ssh protocols to the ec2 instance"
   default     = []
+}
+
+variable "db_type" {
+  type        = string
+  default     = "PostgreSql"
+  description = "DB type provision on ec2 with an agent, available types are - 'PostgreSql'"
+  validation {
+    condition =  contains(["PostgreSql"], var.db_type)
+    error_message = "Valid values should contain at least one of the following: 'PostgreSql'"
+  }
+}
+
+variable "site" {
+  type        = string
+  description = "MX site"
+}
+
+variable "server_group" {
+  type        = string
+  description = "MX server group"
 }

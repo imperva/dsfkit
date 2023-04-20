@@ -160,3 +160,9 @@ variable "large_scale_mode" {
   description = "Large scale mode"
   default     = false
 }
+
+variable "create_initial_configuration" {
+  type        = bool
+  description = "Create initial configuration to allow automatic agent on boarding"
+  default     = false
+}

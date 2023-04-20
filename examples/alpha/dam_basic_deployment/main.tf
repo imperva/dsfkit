@@ -65,13 +65,13 @@ module "mx" {
   sg_ssh_cidr         = local.workstation_cidr
   sg_web_console_cidr = local.workstation_cidr
   attach_public_ip    = true
-  create_defult_sg    = true
+  create_initial_configuration    = true
 }
 
 module "agent_gw" {
   count                                   = var.gw_count
   source                                  = "../../../modules/aws/agent-gw"
-  friendly_name                           = join("-", [local.deployment_name_salted, "dam"])
+  friendly_name                           = join("-", [local.deployment_name_salted, "dam", count.index])
   dam_version                             = var.dam_version
   subnet_id                               = local.gw_subnet
   key_pair                                = module.key_pair.key_pair.key_pair_name
@@ -84,17 +84,18 @@ module "agent_gw" {
   management_server_host_for_api_access   = module.mx.public_ip
 }
 
-remove Ec2
-add option to tell which db to provision
-
 module "db_agent_monitored" {
+  count = var.agents_count
   source = "../../../modules/aws/db-agent-monitored"
 
-  friendly_name                           = join("-", [local.deployment_name_salted, "dam"])
+  friendly_name                           = join("-", [local.deployment_name_salted, "dam", count.index])
+  db_type = "PostgreSql"
+  site = module.mx.configuration.default_site
+  server_group = module.mx.configuration.default_server_group
+
   subnet_id                               = local.gw_subnet
   key_pair                                = module.key_pair.key_pair.key_pair_name
   secure_password                         = local.web_console_admin_password
-  mx_password                             = local.web_console_admin_password
   sg_ssh_cidr                             = local.workstation_cidr
   agent_gateway_host = module.agent_gw[0].private_ip
 }
