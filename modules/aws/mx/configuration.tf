@@ -1,12 +1,13 @@
 locals {
+  conf_timeout = 60 * 5
   site         = "Default%20Site"
   server_group = "${var.friendly_name}-server-group"
   db_serivces = [
       "PostgreSql",
-      "MySql",
-      "MsSql",
-      "Oracle",
-      "MariaDb",
+      # "MySql",
+      # "MsSql",
+      # "Oracle",
+      # "MariaDB",
   ]
 
   configuration_elements = concat([
@@ -32,15 +33,16 @@ locals {
 
 resource "null_resource" "import_configuration" {
   provisioner "local-exec" {
-    command = templatefile("${path.module}/configure.sh", 
+    command = <<-EOF
+      timeout ${local.conf_timeout} bash <<\__EOS__
+      ${templatefile("${path.module}/configure.sh", 
                  {mx_address        = module.mx.public_ip
                   https_auth_header = local.https_auth_header
-                  configuration_elements = local.configuration_elements})
+                  configuration_elements = local.configuration_elements})}
+      __EOS__
+    EOF
   }
   depends_on = [
     module.mx
   ]
-  triggers = {
-    always_run = "${timestamp()}"
-  }
 }
