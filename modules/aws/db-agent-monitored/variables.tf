@@ -74,10 +74,10 @@ variable "sg_ssh_cidr" {
 variable "db_type" {
   type        = string
   default     = "PostgreSql"
-  description = "DB type provision on ec2 with an agent, available types are - 'PostgreSql'"
+  description = "DB type provision on ec2 with an agent, available types are - ['PostgreSql', 'MySql', 'MariaDB']"
   validation {
-    condition     = contains(["PostgreSql"], var.db_type)
-    error_message = "Valid values should contain at least one of the following: 'PostgreSql'"
+    condition     = contains(["PostgreSql", "MySql", "MariaDB"], var.db_type)
+    error_message = "Valid values should contain at least one of the following: ['PostgreSql', 'MySql', 'MariaDB']"
   }
 }
 
@@ -89,4 +89,18 @@ variable "site" {
 variable "server_group" {
   type        = string
   description = "MX server group"
+}
+
+variable "binaries_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 DSF installation location"
+  default = {
+    s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
+    s3_key = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
+    s3_region = "us-east-1"
+  }
 }

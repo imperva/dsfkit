@@ -7,7 +7,6 @@ provider "aws" {
 module "globals" {
   source = "../../../modules/aws/core/globals"
   # source        = "imperva/dsf-globals/aws"
-  version = "1.4.3" # latest release tag
 }
 
 module "key_pair" {
@@ -84,12 +83,17 @@ module "agent_gw" {
   management_server_host_for_api_access   = module.mx.public_ip
 }
 
+resource "random_shuffle" "db" {
+  count  = var.agents_count
+  input = ["PostgreSql", "MySql", "MariaDB"]
+}
+
 module "db_agent_monitored" {
   count  = var.agents_count
   source = "../../../modules/aws/db-agent-monitored"
 
   friendly_name = join("-", [local.deployment_name_salted, "dam", count.index])
-  db_type       = "PostgreSql"
+  db_type       = random_shuffle.db[count.index].result[0]
   site          = module.mx.configuration.default_site
   server_group  = module.mx.configuration.default_server_group
 

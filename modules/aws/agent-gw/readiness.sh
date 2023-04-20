@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+set -x
 
 sessionid=""
 gateway_exists=false
@@ -9,9 +9,10 @@ cookie_file=$(mktemp)
 
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
+sleep_interval=0s
 while true; do
-  # Wait 1m before trying again
-  sleep 1m
+  sleep $sleep_interval
+  sleep_interval=1m
 
   # Step 1: Extract the session cookies
   if ! grep JSESSIONID $cookie_file &>/dev/null; then

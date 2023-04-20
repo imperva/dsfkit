@@ -1,9 +1,25 @@
-data "aws_region" "current" {}
-
 locals {
-  ami      = local.ami_map[data.aws_region.current.name]
-  ssh_user = "ubuntu"
-  ami_map = {
-    us-east-1 = "ami-08d0c48f430986ca8"
+  ami_owner = "099720109477"
+  ami_name = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+  ami_ssh_user = "ubuntu"
+}
+
+data "aws_ami" "selected-ami" {
+  most_recent = true
+  owners      = [local.ami_owner]
+
+  filter {
+    name   = "name"
+    values = [local.ami_name]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }

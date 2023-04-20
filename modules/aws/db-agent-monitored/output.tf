@@ -13,11 +13,15 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  value = local.ssh_user
+  value = local.ami_ssh_user
 }
 
 output "instance_id" {
   value = aws_instance.agent.id
+}
+
+output "db_type" {
+  value = var.db_type
 }
 
 # output "db_username" {
