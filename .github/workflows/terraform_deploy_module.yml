@@ -41,8 +41,6 @@ jobs:
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
             public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
-          - source_module: "aws/statistics"
-            destination_repo: "terraform-aws-dsf-statistics"
           - source_module: "aws/core/globals"
             destination_repo: "terraform-aws-dsf-globals"
             public_submodule: "aws/core/key_pair"
