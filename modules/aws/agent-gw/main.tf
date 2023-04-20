@@ -1,6 +1,6 @@
 locals {
-  volume_size         = "500"
-  gateway_group_id           = var.gateway_group_id == null ? random_uuid.gateway_group_id.result : var.gateway_group_id
+  volume_size        = "500"
+  gateway_group_id   = var.gateway_group_id == null ? random_uuid.gateway_group_id.result : var.gateway_group_id
   required_tcp_ports = [22, 443, 80, 3792, 7700]
   required_udp_ports = [3792]
   dam_model          = var.gw_model
@@ -29,13 +29,13 @@ locals {
     "ec2:DescribeInstances",
   "ec2:AuthorizeSecurityGroupIngress"]
   https_auth_header = base64encode("admin:${var.mx_password}")
-  timeout          = 60 * 25
+  timeout           = 60 * 25
 
   readiness_commands = templatefile("${path.module}/readiness.sh", {
-    mx_address = "unkown"
-    gateway_group_id = local.gateway_group_id
+    mx_address        = "unkown"
+    gateway_group_id  = local.gateway_group_id
     https_auth_header = local.https_auth_header
-    gateway_id = module.agent_gw.instance_id
+    gateway_id        = module.agent_gw.instance_id
   })
 }
 

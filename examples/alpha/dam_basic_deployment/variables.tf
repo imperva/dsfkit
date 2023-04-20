@@ -21,7 +21,7 @@ variable "gw_count" {
 }
 
 variable "web_console_admin_password" {
-  default     = null # Random
+  default   = null # Random
   sensitive = true
   type      = string
   # default     = null # Random

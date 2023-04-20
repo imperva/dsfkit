@@ -16,10 +16,10 @@ locals {
   ]
 
   https_auth_header = base64encode("admin:${var.mx_password}")
-  timeout          = 60 * 30
+  timeout           = 60 * 30
 
   readiness_commands = templatefile("${path.module}/readiness.sh", {
-    mx_address       = module.mx.public_ip
+    mx_address        = module.mx.public_ip
     https_auth_header = local.https_auth_header
   })
 }

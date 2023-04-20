@@ -34,7 +34,7 @@ variable "key_pair" {
 variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids for the MX instance"
-  default = []
+  default     = []
 }
 
 variable "sg_ingress_cidr" {

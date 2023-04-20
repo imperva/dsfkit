@@ -7,12 +7,12 @@ provider "aws" {
 module "globals" {
   source = "../../../modules/aws/core/globals"
   # source        = "imperva/dsf-globals/aws"
-  # version       = "1.3.10" # latest release tag
+  version = "1.4.3" # latest release tag
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.3.10" # latest release tag
+  version                  = "1.4.3" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -21,7 +21,7 @@ locals {
   workstation_cidr_24        = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
   deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
-  workstation_cidr           = var.workstation_cidr  != null ? var.workstation_cidr : local.workstation_cidr_24
+  workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   mx_subnet                  = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
   gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]

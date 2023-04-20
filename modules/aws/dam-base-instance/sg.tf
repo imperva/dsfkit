@@ -8,9 +8,9 @@ data "aws_subnet" "selected_subnet" {
 
 locals {
   cidr_blocks           = var.sg_ingress_cidr
-  tcp_ingress_ports         = var.internal_ports.tcp
+  tcp_ingress_ports     = var.internal_ports.tcp
   udp_ingress_ports     = var.internal_ports.udp
-  tcp_ingress_ports_map     = { for port in local.tcp_ingress_ports : port => port }
+  tcp_ingress_ports_map = { for port in local.tcp_ingress_ports : port => port }
   udp_ingress_ports_map = { for port in local.udp_ingress_ports : port => port }
 }
 
