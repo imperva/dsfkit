@@ -76,7 +76,7 @@ variable "db_type" {
   default     = "PostgreSql"
   description = "DB type provision on ec2 with an agent, available types are - 'PostgreSql'"
   validation {
-    condition =  contains(["PostgreSql"], var.db_type)
+    condition     = contains(["PostgreSql"], var.db_type)
     error_message = "Valid values should contain at least one of the following: 'PostgreSql'"
   }
 }

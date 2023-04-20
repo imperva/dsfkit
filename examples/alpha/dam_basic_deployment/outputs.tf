@@ -2,9 +2,9 @@ output "dsf_agents" {
   value = {
     for idx, val in module.db_agent_monitored : "agent-${idx}" =>
     {
-      private_ip   = val.private_ip
-      private_dns  = val.private_dns
-      ssh_command  = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx.ssh_user}@${module.mx.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      private_ip  = val.private_ip
+      private_dns = val.private_dns
+      ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx.ssh_user}@${module.mx.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
     }
   }
 }

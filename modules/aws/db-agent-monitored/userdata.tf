@@ -1,5 +1,5 @@
 locals {
-    user_data = <<-EOF
+  user_data = <<-EOF
       #!/bin/bash
       set -x
 
