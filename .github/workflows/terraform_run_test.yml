@@ -198,27 +198,27 @@ jobs:
           printenv
           terraform -chdir=$REMOTE_EXAMPLE_DIR plan
 
-#    - name: Terraform Apply
-#      uses: appleboy/ssh-action@v0.1.8
-#      with:
-#        host: 54.179.25.83
-#        username: ec2-user
-#        key: ${{ env.JUMP_SERVER_KEY }}
-#        port: 22
-#        command_timeout: "2h"
-#        envs: REMOTE_EXAMPLE_DIR
-#        script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
-#
-#    - name: Terraform Output
-#      uses: appleboy/ssh-action@v0.1.8
-#      with:
-#        host: 54.179.25.83
-#        username: ec2-user
-#        key: ${{ env.JUMP_SERVER_KEY }}
-#        port: 22
-#        command_timeout: "2h"
-#        envs: EXAMPLE_DIR
-#        script: terraform -chdir=$EXAMPLE_DIR output -json
+    - name: Terraform Apply
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: REMOTE_EXAMPLE_DIR
+        script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
+
+    - name: Terraform Output
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: EXAMPLE_DIR
+        script: terraform -chdir=$EXAMPLE_DIR output -json
 #
 #    - name: Set Environment Variables
 #      run: |
@@ -242,18 +242,18 @@ jobs:
 #          terraform apply -auto-approve
 
 #
-#    - name: Terraform Destroy
-#    #   if: always()
-#      uses: appleboy/ssh-action@v0.1.8
-#      id: test_audit
-#      with:
-#        host: 54.179.25.83
-#        username: ec2-user
-#        key: ${{ env.JUMP_SERVER_KEY }}
-#        port: 22
-#        command_timeout: "2h"
-#        envs: EXAMPLE_DIR
-#        script: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+    - name: Terraform Destroy
+    #   if: always()
+      uses: appleboy/ssh-action@v0.1.8
+      id: test_audit
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: EXAMPLE_DIR
+        script: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     # Send job failure to Slack
     # - name: Send Slack by action-slack
