@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
-      REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/${{ matrix.example_dir }}
+      REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
       TARGET_DIR: ${{ matrix.target_dir }}
       AWS_REGION: ${{ matrix.aws_region }}
       TF_WORKSPACE: ${{ matrix.workspace }}
@@ -128,7 +128,7 @@ jobs:
       run: cat $EXAMPLE_DIR/terraform.tfvars
 
     - name: Create a ZIP File
-      run: zip -r dsfkit.zip $EXAMPLE_DIR
+      run: zip -r dsfkit.zip ../dsfkit
 
     - name: View The ZIP File
       run: | 
