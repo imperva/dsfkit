@@ -217,7 +217,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: EXAMPLE_DIR
+        envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 #
 #    - name: Set Environment Variables
@@ -252,7 +252,7 @@ jobs:
         key: ${{ env.JUMP_SERVER_KEY }}
         port: 22
         command_timeout: "2h"
-        envs: EXAMPLE_DIR
+        envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
     # Send job failure to Slack
