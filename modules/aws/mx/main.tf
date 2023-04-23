@@ -5,6 +5,7 @@ locals {
   required_udp_ports = []
   dam_model          = "AVM150"
   resource_type      = "mx"
+  mx_api_adderss     = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
 }
 
 locals {
@@ -19,7 +20,7 @@ locals {
   timeout           = 60 * 30
 
   readiness_commands = templatefile("${path.module}/readiness.sh", {
-    mx_address        = module.mx.public_ip
+    mx_address        = local.mx_api_adderss
     https_auth_header = local.https_auth_header
   })
 }

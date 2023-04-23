@@ -1,4 +1,3 @@
-
 # DSF DAM Agent Gateway
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
@@ -9,7 +8,7 @@ The Database Monitoring Gateway performs application and database monitoring, pr
 ## Requirements
 * Terraform v1.3.1.
 * An AWS account.
-* Network access to MX on port 8083 (API and WebConsole)
+* Network access to Management server (MX) on port 8083 (API and WebConsole)
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 

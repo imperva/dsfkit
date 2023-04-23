@@ -11,7 +11,7 @@ resource "aws_instance" "agent" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  iam_instance_profile        = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   user_data                   = local.user_data
   user_data_replace_on_change = true
   tags = {

@@ -5,8 +5,8 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "../../../modules/aws/core/globals"
-  # source        = "imperva/dsf-globals/aws"
+  source  = "imperva/dsf-globals/aws"
+  version = "1.4.3" # latest release tag
 }
 
 module "key_pair" {
@@ -84,7 +84,7 @@ module "agent_gw" {
 }
 
 resource "random_shuffle" "db" {
-  count  = var.agents_count
+  count = var.agents_count
   input = ["PostgreSql", "MySql", "MariaDB"]
 }
 
@@ -93,13 +93,16 @@ module "db_agent_monitored" {
   source = "../../../modules/aws/db-agent-monitored"
 
   friendly_name = join("-", [local.deployment_name_salted, "dam", count.index])
-  db_type       = random_shuffle.db[count.index].result[0]
-  site          = module.mx.configuration.default_site
-  server_group  = module.mx.configuration.default_server_group
+  db_type       = element(random_shuffle.db[count.index].result, 0)
 
-  subnet_id          = local.gw_subnet
-  key_pair           = module.key_pair.key_pair.key_pair_name
-  secure_password    = local.web_console_admin_password
-  sg_ssh_cidr        = local.workstation_cidr
-  agent_gateway_host = module.agent_gw[0].private_ip
+  subnet_id   = local.gw_subnet
+  key_pair    = module.key_pair.key_pair.key_pair_name
+  sg_ssh_cidr = local.workstation_cidr
+
+  registration_params = {
+    agent_gateway_host = module.agent_gw[0].private_ip
+    secure_password    = local.web_console_admin_password
+    server_group       = module.mx.configuration.default_server_group
+    site               = module.mx.configuration.default_site
+  }
 }

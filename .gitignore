@@ -18,4 +18,4 @@ generate_token.sh
 hub_token
 myip-default
 .idea
-examples/alpha/dam_basic_deployment/license.mprv
+*.mprv

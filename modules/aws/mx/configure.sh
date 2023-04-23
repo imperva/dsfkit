@@ -39,8 +39,6 @@ while true; do
 done
 %{ endfor ~}
 
-# exit 1
-
 # {"errors":[{"description":"System is busy. Please try again later.","error-code":"IMP-10001"}]}
 # {"errors":[{"description":"Server Group not found","error-code":"IMP-10008"}]}
 # {"errors":[{"description":"System is busy. Please try again later.","error-code":"IMP-10001"}]}

@@ -20,40 +20,6 @@ variable "subnet_id" {
   }
 }
 
-# variable "username" {
-#   type        = string
-#   description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name can not be a word reserved by the database engine."
-#   default     = "admin"
-#   validation {
-#     condition     = length(var.username) > 1
-#     error_message = "Master username name must be at least 1 characters"
-#   }
-# }
-
-# variable "password" {
-#   type        = string
-#   description = "Master password must contain 8–41 printable ASCII characters, and can not contain /, \", @, or a space."
-#   default     = ""
-#   validation {
-#     condition     = length(var.password) == 0 || length(var.password) > 7
-#     error_message = "Master password name must be at least 8 characters"
-#   }
-# }
-
-variable "secure_password" {
-  type        = string
-  description = "Password for agent registration"
-}
-
-variable "agent_gateway_host" {
-  type        = string
-  description = "Agent gateway hostname or IP address. It is used for agent registration"
-  validation {
-    condition     = var.agent_gateway_host == null || can(regex("[^0-9.]", var.agent_gateway_host)) || cidrsubnet("${var.agent_gateway_host}/32", 0, 0) == "${var.agent_gateway_host}/32"
-    error_message = "Invalid IPv4 address"
-  }
-}
-
 variable "key_pair" {
   type        = string
   description = "Key pair for the ec2 instance"
@@ -81,14 +47,16 @@ variable "db_type" {
   }
 }
 
-variable "site" {
-  type        = string
-  description = "MX site"
-}
-
-variable "server_group" {
-  type        = string
-  description = "MX server group"
+variable "registration_params" {
+  type = object(
+    {
+      agent_gateway_host = string
+      secure_password    = string
+      site               = string
+      server_group       = string
+    }
+  )
+  description = "Regisration parameters for DAM agent."
 }
 
 variable "binaries_location" {
@@ -97,10 +65,10 @@ variable "binaries_location" {
     s3_region = string
     s3_key    = string
   })
-  description = "S3 DSF installation location"
+  description = "S3 DSF DAM agent installation location"
   default = {
     s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-    s3_key = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
+    s3_key    = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
     s3_region = "us-east-1"
   }
 }

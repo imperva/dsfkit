@@ -31,8 +31,8 @@ The following input variables are **required**:
 * `key_pair`: AWS key pair name to attach to the instance
 * `mx_password`: MX password
 * `secure_password`: The password used for communication between the Management Server and the Agent Gateway
-* `license_file`: DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
 * `dam_version`: Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)
+* `license_file`: DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
 

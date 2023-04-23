@@ -1,6 +1,6 @@
 locals {
-  ami_owner = "099720109477"
-  ami_name = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+  ami_owner    = "099720109477" # Amazon
+  ami_name     = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
   ami_ssh_user = "ubuntu"
 }
 
