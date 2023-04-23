@@ -22,7 +22,7 @@ jobs:
   terraform:
 
     strategy:
-      fail-fast: true
+      max-parallel: 1
       matrix:
         include:
           - name: single account
