@@ -28,6 +28,7 @@ jobs:
     strategy:
       matrix:
         include:
+          # Sonar
           - source_module: "aws/hub"
             destination_repo: "terraform-aws-dsf-hub"
             hidden_submodule: "aws/sonar-base-instance"
@@ -41,10 +42,19 @@ jobs:
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
             public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
+
+          # DAM
+          - source_module: "aws/mx"
+            destination_repo: "terraform-aws-dsf-mx"
+            hidden_submodule: "aws/dam-base-instance"
+          - source_module: "aws/agent-gw"
+            destination_repo: "terraform-aws-dsf-agent-gw"
+            hidden_submodule: "aws/dam-base-instance"
+
+          # Globals
           - source_module: "aws/core/globals"
             destination_repo: "terraform-aws-dsf-globals"
             public_submodule: "aws/core/key_pair"
-
     env:
       source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
