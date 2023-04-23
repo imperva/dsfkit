@@ -1,6 +1,7 @@
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
+  default     = "imperva-dsf-hub"
   validation {
     condition     = length(var.friendly_name) >= 3
     error_message = "Must be at least 3 characters long"

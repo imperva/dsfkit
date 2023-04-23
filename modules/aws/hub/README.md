@@ -74,15 +74,15 @@ module "globals" {
 
 module "dsf_hub" {
   source                        = "imperva/dsf-hub/aws"
-  subnet_id                     = "${aws_subnet.example.id}"
+  subnet_id                     = aws_subnet.example.id
 
   ssh_key_pair = {
-    ssh_private_key_file_path   = "${var.ssh_key_path}"
-    ssh_public_key_name         = "${var.ssh_name}"
+    ssh_private_key_file_path   = var.ssh_key_path
+    ssh_public_key_name         = var.ssh_name
   }
 
   ingress_communication = {
-    additional_web_console_access_cidr_list = ["${var.web_console_cidr}"] # ["0.0.0.0/0"]
+    additional_web_console_access_cidr_list = [var.web_console_cidr] # ["0.0.0.0/0"]
     full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
   }
   use_public_ip                 = false

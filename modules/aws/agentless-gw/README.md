@@ -72,11 +72,11 @@ module "globals" {
 
 module "dsf_gw" {
   source                        = "imperva/dsf-agentless-gw/aws"
-  subnet_id                     = "${aws_subnet.example.id}"
+  subnet_id                     = aws_subnet.example.id
 
   ssh_key_pair = {
-    ssh_private_key_file_path   = "${var.ssh_key_path}"
-    ssh_public_key_name         = "${var.ssh_name}"
+    ssh_private_key_file_path   = var.ssh_key_path
+    ssh_public_key_name         = var.ssh_name
   }
 
   ingress_communication = {
