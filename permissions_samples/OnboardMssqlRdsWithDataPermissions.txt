@@ -2,6 +2,14 @@
     "Version": "2012-10-17",
     "Statement": [
         {
+            "Sid": "ec2DeleteENIPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DeleteNetworkInterface"
+            ],
+            "Resource": "*"
+        },
+        {
             "Sid": "rdsOptionGroupPermissions",
             "Effect": "Allow",
             "Action": [

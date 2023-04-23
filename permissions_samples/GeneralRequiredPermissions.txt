@@ -16,9 +16,11 @@
                 "ec2:DescribeInstanceTypes",
                 "ec2:DescribeAddresses",
                 "ec2:DescribeInstanceAttribute",
+                "ec2:DescribeInstanceCreditSpecifications",
                 "ec2:DescribeNetworkInterfaces",
                 "ec2:DescribeTags",
                 "ec2:DescribeSecurityGroups",
+                "ec2:DescribeSecurityGroupRules",
                 "ec2:DescribeImages",
                 "ec2:AllocateAddress",
                 "ec2:AssociateAddress",
@@ -67,13 +69,10 @@
                 "ec2:CreateNetworkInterface"
             ],
             "Resource": [
-                "arn:aws:ec2:*:*:subnet/*"
-            ],
-            "Condition": {
-                "StringLike": {
-                    "ec2:ResourceTag/deployment_name": "imperva-dsf-*"
-                }
-            }
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:network-interface/*"
+            ]
         },
         {
             "Sid": "ec2CreateTagsPermissions",
@@ -193,22 +192,6 @@
             }
         },
         {
-            "Sid": "s3StatisticsPermissions",
-            "Effect": "Allow",
-            "Action": [
-                "s3:PutObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002",
-                "arn:aws:s3:::04274532-55f0-11ed-bdc3-0242ac120002/UsageData/*"
-            ],
-            "Condition": {
-                "StringEquals": {
-                    "s3:ResourceAccount": "112114489393"
-                }
-            }
-        },
-        {
             "Sid": "secretsManagerPermissions",
             "Effect": "Allow",
             "Action": [
@@ -216,14 +199,26 @@
                 "secretsmanager:GetSecretValue",
                 "secretsmanager:DescribeSecret",
                 "secretsmanager:PutSecretValue",
-                "secretsmanager:CreateSecret",
-                "secretsmanager:DeleteSecret",
-                "secretsmanager:TagResource"
+                "secretsmanager:DeleteSecret"
             ],
             "Resource": "*",
             "Condition": {
                 "StringLike": {
                     "secretsmanager:ResourceTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
+            "Sid": "secretsManagerCreatePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:CreateSecret",
+                "secretsmanager:TagResource"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
                 }
             }
         },

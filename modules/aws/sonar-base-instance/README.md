@@ -10,4 +10,4 @@ This Terraform module provisions a DSF node, aka, an DSF Hub or an Agentless Gat
 - 4.9
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.0, inclusive
+* Terraform version between v1.3.1 and v1.4.x, inclusive

@@ -20,7 +20,7 @@ variable "subnet_id" {
 variable "security_group_id" {
   type        = string
   default     = null
-  description = "Security group id for the Agentless GW instance. In case it is not set, a security group will be created automatically."
+  description = "Security group id for the Agentless Gateway instance. In case it is not set, a security group will be created automatically."
   validation {
     condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
     error_message = "Security group id is invalid. Must be sg-********"
@@ -78,7 +78,7 @@ variable "ingress_communication" {
   type = object({
     full_access_cidr_list = list(any) # will be attached to sg.tf:ingress_ports
   })
-  description = "List of allowed ingress cidr patterns for the Agentless gateway instance for ssh and internal protocols"
+  description = "List of allowed ingress CIDR patterns for the Agentless gateway instance for ssh and internal protocols"
   nullable    = false
   validation {
     condition = alltrue([
@@ -187,7 +187,7 @@ variable "skip_instance_health_verification" {
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF agentless GW instance. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the DSF agentless Gateway instance. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
