@@ -5,7 +5,7 @@ locals {
 }
 
 locals {
-  disk_size_app        = 100
+  disk_size_app        = 1010
   ebs_state_disk_type  = "gp3"
   ebs_state_disk_size  = var.ebs == null ? null : var.ebs.disk_size
   ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
@@ -23,6 +23,10 @@ data "template_file" "analytics_bootstrap" {
 }
 resource "aws_instance" "dra_analytics" {
   ami           = var.analytics_ami_id
+  root_block_device {
+    delete_on_termination = true
+    volume_size = local.disk_size_app
+  }
   instance_type = var.instance_type
   subnet_id = var.subnet_id
   vpc_security_group_ids = ["${aws_security_group.analytics-instance.id}"]

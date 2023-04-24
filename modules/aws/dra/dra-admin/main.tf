@@ -1,5 +1,5 @@
 locals {
-  disk_size_app        = 100
+  disk_size_app        = 260
   ebs_state_disk_type  = "gp3"
   ebs_state_disk_size  = var.ebs == null ? null : var.ebs.disk_size
   ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
@@ -14,6 +14,10 @@ data "template_file" "admin_bootstrap" {
 }
 resource "aws_instance" "dra_admin" {
   ami           = var.admin_ami_id
+  root_block_device {
+    delete_on_termination = true
+    volume_size = local.disk_size_app
+  }
   iam_instance_profile = aws_iam_instance_profile.dsf_dra_node_instance_iam_profile.id
   instance_type = var.instance_type
   subnet_id = var.subnet_id
@@ -31,25 +35,25 @@ data "aws_subnet" "selected_subnet" {
   id = var.subnet_id
 }
 
-resource "aws_volume_attachment" "ebs_att" {
-  count = var.ebs == null ? 0 : 1
-  device_name                    = "/dev/sdb"
-  volume_id                      = aws_ebs_volume.ebs_external_data_vol[0].id
-  instance_id                    = aws_instance.dra_admin.id
-  stop_instance_before_detaching = true
-}
+# resource "aws_volume_attachment" "ebs_att" {
+#   count = var.ebs == null ? 0 : 1
+#   device_name                    = "/dev/sdb"
+#   volume_id                      = aws_ebs_volume.ebs_external_data_vol[0].id
+#   instance_id                    = aws_instance.dra_admin.id
+#   stop_instance_before_detaching = true
+# }
 
-resource "aws_ebs_volume" "ebs_external_data_vol" {
-  count = var.ebs == null ? 0 : 1
-  size              = local.ebs_state_disk_size
-  type              = local.ebs_state_disk_type
-  iops              = local.ebs_state_iops
-  throughput        = local.ebs_state_throughput
-  availability_zone = data.aws_subnet.selected_subnet.availability_zone
-  tags = {
-    Name = join("-", [var.deployment_name, "data", "volume", "ebs"])
-  }
-  lifecycle {
-    ignore_changes = [iops]
-  }
-}
+# resource "aws_ebs_volume" "ebs_external_data_vol" {
+#   count = var.ebs == null ? 0 : 1
+#   size              = local.ebs_state_disk_size
+#   type              = local.ebs_state_disk_type
+#   iops              = local.ebs_state_iops
+#   throughput        = local.ebs_state_throughput
+#   availability_zone = data.aws_subnet.selected_subnet.availability_zone
+#   tags = {
+#     Name = join("-", [var.deployment_name, "data", "volume", "ebs"])
+#   }
+#   lifecycle {
+#     ignore_changes = [iops]
+#   }
+# }
