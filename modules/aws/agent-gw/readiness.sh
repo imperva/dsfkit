@@ -41,9 +41,7 @@ while true; do
       continue
     fi
 
-    running=$(echo "$response" | grep -Po 'running.{2}\K[^,{}]*')
-
-    if [[ "$running" != "true" ]]; then
+    if ! echo $response | grep 'running": *true' &>/dev/null; then
       echo "Agent Gateway ${gateway_id} is not running yet."
       continue
     fi

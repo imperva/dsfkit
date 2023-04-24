@@ -33,13 +33,12 @@ locals {
 
 resource "null_resource" "import_configuration" {
   provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
     command = <<-EOF
-      timeout ${local.conf_timeout} bash <<\__EOS__
       ${templatefile("${path.module}/configure.sh",
-        { mx_address        = local.mx_api_adderss
+        { mx_address        = local.mx_address_for_api
           https_auth_header = local.https_auth_header
           configuration_elements = local.configuration_elements })}
-      __EOS__
     EOF
 }
 depends_on = [

@@ -1,7 +1,7 @@
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
-  default     = "imperva-dsf-hub"
+  default     = "imperva-dsf-mx"
   validation {
     condition     = length(var.friendly_name) >= 3
     error_message = "Must be at least 3 characters long"
@@ -164,6 +164,6 @@ variable "large_scale_mode" {
 
 variable "create_initial_configuration" {
   type        = bool
-  description = "Create initial configuration to allow automatic agent on boarding"
+  description = "Create initial configuration to allow automatic agent on-boarding"
   default     = false
 }

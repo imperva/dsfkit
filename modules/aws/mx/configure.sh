@@ -16,7 +16,6 @@ fi
 trap "echo Running trap:; curl -k -s --cookie $cookie_file --request DELETE 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session'; rm -f $cookie_file" EXIT
 
 %{ for config_value in configuration_elements }
-response_file=$(mktemp)
 echo "Setting ${config_value.name}:"
 while true; do
   http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \

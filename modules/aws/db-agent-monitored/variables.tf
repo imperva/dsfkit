@@ -1,6 +1,8 @@
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
+  default="imperva-dsf-agent-monitored-db"
+
   validation {
     condition     = length(var.friendly_name) >= 3
     error_message = "Must be at least 3 characters long"
@@ -40,7 +42,7 @@ variable "sg_ssh_cidr" {
 variable "db_type" {
   type        = string
   default     = "PostgreSql"
-  description = "DB type provision on ec2 with an agent, available types are - ['PostgreSql', 'MySql', 'MariaDB']"
+  description = "DB type to provision on EC2 with an agent, available types are: ['PostgreSql', 'MySql', 'MariaDB']"
   validation {
     condition     = contains(["PostgreSql", "MySql", "MariaDB"], var.db_type)
     error_message = "Valid values should contain at least one of the following: ['PostgreSql', 'MySql', 'MariaDB']"
@@ -56,7 +58,7 @@ variable "registration_params" {
       server_group       = string
     }
   )
-  description = "Regisration parameters for DAM agent."
+  description = "Regisration parameters for DAM agent"
 }
 
 variable "binaries_location" {

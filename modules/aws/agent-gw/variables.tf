@@ -1,7 +1,7 @@
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
-  default     = "imperva-dsf-hub"
+  default     = "imperva-dsf-agent-gw"
   validation {
     condition     = length(var.friendly_name) >= 3
     error_message = "Must be at least 3 characters long"
@@ -134,13 +134,13 @@ variable "agent_listener_port" {
 
 variable "agent_listener_ssl" {
   type        = bool
-  description = "Use SSL encrypted data tunnels (May increase CPU consumption on the Agent host)"
+  description = "Use SSL encrypted data tunnels (May increase CPU consumption on the Agent host)."
   default     = false
 }
 
 variable "management_server_host_for_registration" {
   type        = string
-  description = "Management server's hostname or IP address. Used for registering the Agent Gateway"
+  description = "Management server's hostname or IP address. Used for registering the Agent Gateway."
   validation {
     condition     = can(regex("[^0-9.]", var.management_server_host_for_registration)) || cidrsubnet("${var.management_server_host_for_registration}/32", 0, 0) == "${var.management_server_host_for_registration}/32"
     error_message = "Invalid IPv4 address"
@@ -149,7 +149,7 @@ variable "management_server_host_for_registration" {
 
 variable "management_server_host_for_api_access" {
   type        = string
-  description = "Management server's hostname or IP address. It is utilized to access the API and ensure that the Agent Gateway is operational and ready. Leave empty if you wish to use the same value from management_server_host_for_registration variable"
+  description = "Management server's hostname or IP address. It is utilized to access the API and ensure that the Agent Gateway is operational and ready. Leave empty if you wish to use the same value from management_server_host_for_registration variable."
   validation {
     condition     = var.management_server_host_for_api_access == null || can(regex("[^0-9.]", var.management_server_host_for_api_access)) || cidrsubnet("${var.management_server_host_for_api_access}/32", 0, 0) == "${var.management_server_host_for_api_access}/32"
     error_message = "Invalid IPv4 address"

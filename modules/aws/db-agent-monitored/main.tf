@@ -15,6 +15,6 @@ resource "aws_instance" "agent" {
   user_data                   = local.user_data
   user_data_replace_on_change = true
   tags = {
-    Name = join("-", [var.friendly_name, "db", "with", "agent"])
+    Name = join("-", [var.friendly_name])
   }
 }

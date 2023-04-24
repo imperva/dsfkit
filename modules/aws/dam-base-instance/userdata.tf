@@ -30,6 +30,7 @@ locals {
 resource "null_resource" "readiness" {
   count = var.instance_readiness_params.enable == true ? 1 : 0
   provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
     command = <<-EOF
       ${var.instance_readiness_params.commands}
     EOF

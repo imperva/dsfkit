@@ -43,7 +43,7 @@ locals {
 
 module "agent_gw" {
   source          = "../../../modules/aws/dam-base-instance"
-  name            = join("-", [var.friendly_name, local.resource_type])
+  name            = var.friendly_name
   dam_version     = var.dam_version
   resource_type   = local.resource_type
   dam_model       = local.dam_model

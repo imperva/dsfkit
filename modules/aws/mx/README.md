@@ -1,22 +1,22 @@
-# DSF DAM MX
+# DSF MX
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a DSF DAM Management server (AKA mx) on AWS as an EC2 instance.
+This Terraform module provisions a DSF Management server (AKA mx) on AWS as an EC2 instance.
 
-Imperva’s Management Server Manager is a multi-domain management solution that dramatically improves the operational efficiency of managing SecureSphere deployments with multiple MX Management Servers. Management Server Manager meets the operational scalability demands of large enterprises and Managed Security Service Providers by consolidating the management, visibility and reporting across multiple SecureSphere MX Management Servers, and provides system wide health metrics and statistics. 
+Imperva’s Management Server is the manager for DAM components. This includes Agent Gateways and Agents.
 
 ## Requirements
-* Terraform v1.3.1.
+* Terraform version between v1.3.1 and v1.4.x, inclusive.
 * An AWS account.
 * Network access to port 8083 (API and WebConsole)
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 
 ## Resources Provisioned
-This Terraform module provisions several resources on AWS to create the DSF DAM MX. These resources include:
+This Terraform module provisions several resources on AWS to create the DSF MX. These resources include:
 * An EC2 instance for running the software.
 * An EBS volume for storage.
-* A security groups to allow the required network access to and from the DSF instance.
+* AWS security groups to allow the required network access to and from the DSF instance.
 * An IAM role with relevant policies.
 * An AWS KMS.
 * An AWS Elastic Network Interface (ENI).
@@ -34,21 +34,21 @@ The following input variables are **required**:
 * `dam_version`: Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)
 * `license_file`: DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
 
-Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
 ## Outputs
 
-The following [outputs](outputs.tf) are exported:
+The following [outputs](outputs.tf) are available:
 
 * `public_ip`: public address
 * `private_ip`: private address
 * `public_dns`: public dns
 * `private_dns`: private dns
-* `display_name`: Display name of the instance under DSF portal
+* `display_name`: Display name of the instance under the DSF web console
 * `iam_role`: AWS IAM arn
 * `ssh_user`: SSH user for the instance
-* `instance_id`: AWS ec2 instance id
-* `configuration`: Pre configured site and service group available for use
+* `instance_id`: AWS EC2 instance ID
+* `configuration`: Pre-configured site and service group available for use
 
 ## Usage
 
@@ -88,4 +88,4 @@ API access is required to provision this module. Please make sure to pass the re
 ## Additional Information
 
 For more information about the DSF MX and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm). 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.3).s
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.3).

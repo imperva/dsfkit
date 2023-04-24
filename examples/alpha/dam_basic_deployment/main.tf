@@ -53,7 +53,7 @@ module "vpc" {
 ##############################
 module "mx" {
   source                       = "../../../modules/aws/mx"
-  friendly_name                = join("-", [local.deployment_name_salted, "dam"])
+  friendly_name                = join("-", [local.deployment_name_salted, "mx"])
   dam_version                  = var.dam_version
   subnet_id                    = local.mx_subnet
   license_file                 = var.license_file
@@ -70,7 +70,7 @@ module "mx" {
 module "agent_gw" {
   count                                   = var.gw_count
   source                                  = "../../../modules/aws/agent-gw"
-  friendly_name                           = join("-", [local.deployment_name_salted, "dam", count.index])
+  friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
   subnet_id                               = local.gw_subnet
   key_pair                                = module.key_pair.key_pair.key_pair_name
@@ -84,15 +84,15 @@ module "agent_gw" {
 }
 
 resource "random_shuffle" "db" {
-  count = var.agents_count
+  count = var.agent_count
   input = ["PostgreSql", "MySql", "MariaDB"]
 }
 
 module "db_agent_monitored" {
-  count  = var.agents_count
+  count  = var.agent_count
   source = "../../../modules/aws/db-agent-monitored"
 
-  friendly_name = join("-", [local.deployment_name_salted, "dam", count.index])
+  friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
   db_type       = element(random_shuffle.db[count.index].result, 0)
 
   subnet_id   = local.gw_subnet

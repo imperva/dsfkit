@@ -30,11 +30,11 @@ The following input variables are **required**:
 * `rds_subnet_ids`: List of subnet_ids to make RDS MsSQL available on 
 * `security_group_ingress_cidrs`: List of allowed ingress cidr ranges for access to the RDS MsSQL
 
-Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
 ## Outputs
 
-The following [outputs](outputs.tf) are exported:
+The following [outputs](outputs.tf) are available:
 
 * `db_username`: DB username
 * `db_password`: DB password
