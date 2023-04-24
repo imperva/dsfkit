@@ -9,7 +9,6 @@ locals {
 data "template_file" "admin_bootstrap" {
   template = file("${path.module}/admin_bootstrap.tpl")
   vars = {
-    admin_analytics_registration_password = var.admin_analytics_registration_password
     admin_analytics_registration_password_secret = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
   }
 }
@@ -24,6 +23,8 @@ resource "aws_instance" "dra_admin" {
   tags = {
     Name = join("-", [var.deployment_name, "admin"])
   }
+  disable_api_termination     = true
+  user_data_replace_on_change = true
 }
 
 data "aws_subnet" "selected_subnet" {
