@@ -60,7 +60,7 @@ resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.role_arn != null ? 0 : 1
-  name_prefix         = "${var.name}-${var.resource_type}-role"
+  # name_prefix         = "${var.name}-${var.resource_type}-role"
   description         = "${var.name}-${var.resource_type}-role-${var.name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
