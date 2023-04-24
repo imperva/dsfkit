@@ -76,7 +76,7 @@ module "dra_admin" {
 module "analitycs_server_group" {
   count = 1
   source = "../../../modules/aws/dra/dra-analitycs"
-  admin_analytics_registration_password = local.admin_analytics_registration_password
+  admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   analytics_ami_id           = var.analytics_ami_id
   instance_type = var.instance_type
   subnet_id = module.vpc.public_subnets[0]

@@ -38,6 +38,13 @@ export ITPBA_HOME=/opt/itpba
 export CATALINA_HOME=/opt/apache-tomcat
 chmod +x /opt/itp_global_conf/auto_deploy.sh
 wait-for-admin
-/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "${admin_analytics_registration_password}" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${archiver_user}" --analytics-password "${archiver_password}" --admin-server-ip "${admin_server_private_ip}"
+sed -i 's/^hosts:.*/hosts: files dns/' /etc/nsswitch.conf
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+archiver_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${analytics_archiver_password_secret_arn} --query SecretString --output text)
+admin_analytics_registration_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${admin_analytics_registration_password_arn} --query SecretString --output text)
+
+/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$admin_analytics_registration_password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${archiver_user}" --analytics-password "$archiver_password" --admin-server-ip "${admin_server_private_ip}"
 
 

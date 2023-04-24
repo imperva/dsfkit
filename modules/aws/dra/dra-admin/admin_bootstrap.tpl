@@ -22,5 +22,5 @@ sed -i 's/^hosts:.*/hosts: files dns/' /etc/nsswitch.conf
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
-password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${admin_analytics_registration_password_secret} --query SecretString --output text)
+password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${admin_analytics_registration_password_secret_arn} --query SecretString --output text)
 /opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Admin"

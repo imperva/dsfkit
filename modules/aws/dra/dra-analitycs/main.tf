@@ -15,7 +15,8 @@ locals {
 data "template_file" "analytics_bootstrap" {
   template = file("${path.module}/analytics_bootstrap.tpl")
   vars = {
-    admin_analytics_registration_password = var.admin_analytics_registration_password
+    analytics_archiver_password_secret_arn = aws_secretsmanager_secret.analytics_archiver_password_secret.arn
+    admin_analytics_registration_password_arn = var.admin_analytics_registration_password_arn
     archiver_user = var.archiver_user
     archiver_password = var.archiver_password
     admin_server_private_ip = var.admin_server_private_ip
@@ -23,6 +24,7 @@ data "template_file" "analytics_bootstrap" {
 }
 resource "aws_instance" "dra_analytics" {
   ami           = var.analytics_ami_id
+  iam_instance_profile = aws_iam_instance_profile.dsf-dra-analytics-instance-iam-profile.id
   root_block_device {
     delete_on_termination = true
     volume_size = local.disk_size_app

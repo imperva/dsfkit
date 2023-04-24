@@ -9,7 +9,7 @@ locals {
 data "template_file" "admin_bootstrap" {
   template = file("${path.module}/admin_bootstrap.tpl")
   vars = {
-    admin_analytics_registration_password_secret = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
+    admin_analytics_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
   }
 }
 resource "aws_instance" "dra_admin" {
@@ -18,7 +18,7 @@ resource "aws_instance" "dra_admin" {
     delete_on_termination = true
     volume_size = local.disk_size_app
   }
-  iam_instance_profile = aws_iam_instance_profile.dsf_dra_node_instance_iam_profile.id
+  iam_instance_profile = aws_iam_instance_profile.dsf-dra-admin-instance-iam-profile.id
   instance_type = var.instance_type
   subnet_id = var.subnet_id
   vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]

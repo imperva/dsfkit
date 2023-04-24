@@ -8,7 +8,8 @@ variable "deployment_name" {
     description = "deployment_name"
 }
 
-variable "admin_analytics_registration_password" {
+
+variable "admin_analytics_registration_password_arn" {
     type = string
     description = "Password to be used to register Analtyics server to Admin Server"
 }

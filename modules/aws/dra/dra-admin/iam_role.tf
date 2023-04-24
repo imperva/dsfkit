@@ -35,7 +35,7 @@ locals {
 
 }
 
-resource "aws_iam_instance_profile" "dsf_dra_node_instance_iam_profile" {
+resource "aws_iam_instance_profile" "dsf-dra-admin-instance-iam-profile" {
   name_prefix = "dsf-dra-admin-instance-iam-profile"
   role        = local.role_name
 }
