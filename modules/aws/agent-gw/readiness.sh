@@ -1,5 +1,5 @@
 #!/bin/bash
-# set -x
+set -x
 
 sessionid=""
 gateway_exists=false
@@ -9,9 +9,10 @@ cookie_file=$(mktemp)
 
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
+sleep_interval=0s
 while true; do
-  # Wait 1m before trying again
-  sleep 60
+  sleep $sleep_interval
+  sleep_interval=1m
 
   # Step 1: Extract the session cookies
   if ! grep JSESSIONID $cookie_file &>/dev/null; then
@@ -40,9 +41,12 @@ while true; do
       continue
     fi
 
-    running=$(echo "$response" | grep -Po 'running.{2}\K[^,{}]*')
+    if echo $response | grep 'IMP-10102' &>/dev/null; then
+      echo "Agent Gateway ${gateway_id} doesn't exist yet."
+      continue
+    fi
 
-    if [[ "$running" != "true" ]]; then
+    if ! echo $response | grep 'running": *true' &>/dev/null; then
       echo "Agent Gateway ${gateway_id} is not running yet."
       continue
     fi

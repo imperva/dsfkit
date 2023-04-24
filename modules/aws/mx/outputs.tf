@@ -46,3 +46,13 @@ output "ssh_user" {
 output "instance_id" {
   value = module.mx.instance_id
 }
+
+output "configuration" {
+  value = {
+    default_site         = replace(local.site, "%20", " ")
+    default_server_group = local.server_group
+  }
+  depends_on = [
+    null_resource.import_configuration
+  ]
+}

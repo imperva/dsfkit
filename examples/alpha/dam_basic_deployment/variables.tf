@@ -20,6 +20,12 @@ variable "gw_count" {
   description = "Number of agent gateways"
 }
 
+variable "agent_count" {
+  type        = number
+  default     = 1
+  description = "The number of compute instances to provision, each with a database and a monitoring agent"
+}
+
 variable "web_console_admin_password" {
   default   = null # Random
   sensitive = true

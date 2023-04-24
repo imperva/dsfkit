@@ -5,8 +5,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source = "../../../modules/aws/core/globals"
-  # source        = "imperva/dsf-globals/aws"
+  source  = "imperva/dsf-globals/aws"
   version = "1.4.3" # latest release tag
 }
 
@@ -18,7 +17,7 @@ module "key_pair" {
 }
 
 locals {
-  workstation_cidr_24        = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
+  workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
   deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
@@ -53,31 +52,57 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source              = "../../../modules/aws/mx"
-  friendly_name       = join("-", [local.deployment_name_salted, "dam"])
-  dam_version         = var.dam_version
-  subnet_id           = local.mx_subnet
-  license_file        = var.license_file
-  key_pair            = module.key_pair.key_pair.key_pair_name
-  secure_password     = local.web_console_admin_password
-  mx_password         = local.web_console_admin_password
-  sg_ingress_cidr     = local.workstation_cidr
-  sg_ssh_cidr         = local.workstation_cidr
-  sg_web_console_cidr = local.workstation_cidr
-  attach_public_ip    = true
+  source                       = "../../../modules/aws/mx"
+  friendly_name                = join("-", [local.deployment_name_salted, "mx"])
+  dam_version                  = var.dam_version
+  subnet_id                    = local.mx_subnet
+  license_file                 = var.license_file
+  key_pair                     = module.key_pair.key_pair.key_pair_name
+  secure_password              = local.web_console_admin_password
+  mx_password                  = local.web_console_admin_password
+  sg_ingress_cidr              = local.workstation_cidr
+  sg_ssh_cidr                  = local.workstation_cidr
+  sg_web_console_cidr          = local.workstation_cidr
+  attach_public_ip             = true
+  create_initial_configuration = true
 }
 
 module "agent_gw" {
-  count                  = 1
-  source                 = "../../../modules/aws/agent-gw"
-  friendly_name          = join("-", [local.deployment_name_salted, "dam"])
-  dam_version            = var.dam_version
-  subnet_id              = local.gw_subnet
-  key_pair               = module.key_pair.key_pair.key_pair_name
-  secure_password        = local.web_console_admin_password
-  mx_password            = local.web_console_admin_password
-  sg_ingress_cidr        = local.workstation_cidr
-  sg_agent_cidr          = var.agent_cidr_list
-  sg_ssh_cidr            = local.workstation_cidr
-  management_server_host = module.mx.private_ip
+  count                                   = var.gw_count
+  source                                  = "../../../modules/aws/agent-gw"
+  friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
+  dam_version                             = var.dam_version
+  subnet_id                               = local.gw_subnet
+  key_pair                                = module.key_pair.key_pair.key_pair_name
+  secure_password                         = local.web_console_admin_password
+  mx_password                             = local.web_console_admin_password
+  sg_ingress_cidr                         = local.workstation_cidr
+  sg_agent_cidr                           = var.agent_cidr_list
+  sg_ssh_cidr                             = local.workstation_cidr
+  management_server_host_for_registration = module.mx.private_ip
+  management_server_host_for_api_access   = module.mx.public_ip
+}
+
+resource "random_shuffle" "db" {
+  count = var.agent_count
+  input = ["PostgreSql", "MySql", "MariaDB"]
+}
+
+module "agent_monitored_db" {
+  count  = var.agent_count
+  source = "../../../modules/aws/agent-monitored-db"
+
+  friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
+  db_type       = element(random_shuffle.db[count.index].result, 0)
+
+  subnet_id   = local.gw_subnet
+  key_pair    = module.key_pair.key_pair.key_pair_name
+  sg_ssh_cidr = local.workstation_cidr
+
+  registration_params = {
+    agent_gateway_host = module.agent_gw[0].private_ip
+    secure_password    = local.web_console_admin_password
+    server_group       = module.mx.configuration.default_server_group
+    site               = module.mx.configuration.default_site
+  }
 }

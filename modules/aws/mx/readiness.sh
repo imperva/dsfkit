@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 
 cookie_file=$(mktemp)
 trap "rm -f $cookie_file" EXIT
@@ -12,6 +12,6 @@ while true; do
     curl -k -s --cookie $cookie_file --request DELETE 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session'
     exit 0
   else
-    sleep 60
+    sleep 1m
   fi
 done

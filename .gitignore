@@ -18,3 +18,4 @@ generate_token.sh
 hub_token
 myip-default
 .idea
+*.mprv
