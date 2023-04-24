@@ -35,7 +35,7 @@ resource "null_resource" "import_configuration" {
   provisioner "local-exec" {
     interpreter = ["bash", "-c"]
     command = <<-EOF
-      ${templatefile("${path.module}/configure.sh",
+      ${templatefile("${path.module}/configure.tftpl",
         { mx_address        = local.mx_address_for_api
           https_auth_header = local.https_auth_header
           configuration_elements = local.configuration_elements })}

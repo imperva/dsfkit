@@ -33,7 +33,7 @@ locals {
   https_auth_header = base64encode("admin:${var.mx_password}")
   timeout           = 60 * 25
 
-  readiness_commands = templatefile("${path.module}/readiness.sh", {
+  readiness_commands = templatefile("${path.module}/readiness.tftpl", {
     mx_address        = var.management_server_host_for_api_access
     gateway_group_id  = local.gateway_group_id
     https_auth_header = local.https_auth_header
