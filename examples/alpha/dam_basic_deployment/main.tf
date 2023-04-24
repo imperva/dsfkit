@@ -88,11 +88,11 @@ resource "random_shuffle" "db" {
   input = ["PostgreSql", "MySql", "MariaDB"]
 }
 
-module "db_agent_monitored" {
+module "agent_monitored_db" {
   count  = var.agent_count
-  source = "../../../modules/aws/db-agent-monitored"
+  source = "../../../modules/aws/agent-monitored-db"
 
-  friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
+  friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
   db_type       = element(random_shuffle.db[count.index].result, 0)
 
   subnet_id   = local.gw_subnet
