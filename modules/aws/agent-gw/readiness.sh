@@ -41,6 +41,11 @@ while true; do
       continue
     fi
 
+    if echo $response | grep 'IMP-10102' &>/dev/null; then
+      echo "Agent Gateway ${gateway_id} doesn't exist yet."
+      continue
+    fi
+
     if ! echo $response | grep 'running": *true' &>/dev/null; then
       echo "Agent Gateway ${gateway_id} is not running yet."
       continue

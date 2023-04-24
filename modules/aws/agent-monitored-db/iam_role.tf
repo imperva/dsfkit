@@ -44,7 +44,7 @@ resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
 }
 
 resource "aws_iam_role" "dsf_node_role" {
-  name_prefix         = join("-", [var.friendly_name, "agent", "role"])
+  # name_prefix         = join("-", [var.friendly_name, "agent", "role"])
   description         = join("-", [var.friendly_name, "agent", "role"])
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
