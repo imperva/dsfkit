@@ -48,7 +48,7 @@ The following [outputs](outputs.tf) are available:
 * `iam_role`: AWS IAM arn
 * `ssh_user`: SSH user for the instance
 * `instance_id`: AWS EC2 instance ID
-* `gateway_group_id`: The DSF Agent Group id of the instance
+* `gateway_group_id`: The DSF Agent Group ID of the instance
 
 ## Usage
 
