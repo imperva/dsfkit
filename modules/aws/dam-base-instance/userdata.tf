@@ -32,7 +32,27 @@ resource "null_resource" "readiness" {
   provisioner "local-exec" {
     interpreter = ["bash", "-c"]
     command = <<-EOF
+    TIMEOUT=${var.instance_readiness_params.timeout}
+    START=$(date +%s)
+
+    operation() {
       ${var.instance_readiness_params.commands}
+    }
+
+    # Perform the operation in a loop until the timeout is reached
+    while true; do
+      # Check if the timeout has been reached
+      NOW=$(date +%s)
+      ELAPSED=$((NOW-START))
+      if [ $ELAPSED -gt $TIMEOUT ]; then
+        echo "Timeout reached."
+        exit 1
+      fi
+
+      operation
+
+      sleep 60
+    done
     EOF
   }
   triggers = {

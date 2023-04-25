@@ -77,7 +77,7 @@ module "agent_gw" {
   secure_password                         = local.web_console_admin_password
   mx_password                             = local.web_console_admin_password
   sg_ingress_cidr                         = local.workstation_cidr
-  sg_agent_cidr                           = var.agent_cidr_list
+  sg_agent_cidr                           = concat(var.agent_cidr_list, [var.vpc_ip_range])
   sg_ssh_cidr                             = local.workstation_cidr
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
