@@ -45,7 +45,7 @@ resource "null_resource" "readiness" {
       NOW=$(date +%s)
       ELAPSED=$((NOW-START))
       if [ $ELAPSED -gt $TIMEOUT ]; then
-        echo "Timeout reached."
+        echo "Timeout reached. To obtain additional information, refer to the /var/log/ec2_auto_ftl.log file located on the remote server."
         exit 1
       fi
 
