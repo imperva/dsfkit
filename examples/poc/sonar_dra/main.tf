@@ -19,7 +19,13 @@ locals {
   tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
 }
 
+data "aws_subnet" "selected_subnet" {
+  id = var.subnet_id
+}
+
+
 module "vpc" {
+  count = var.subnet_id == null ? 0 : 1
   source = "terraform-aws-modules/vpc/aws"
   map_public_ip_on_launch = true
   name = join("-", [local.deployment_name_salted, "vpc"])
@@ -42,7 +48,7 @@ module "vpc" {
   }
 
   vpc_tags = {
-    Name = module.vpc.name
+    Name = local.deployment_name_salted
   }
 }
 
@@ -59,7 +65,7 @@ module "dra_admin" {
   admin_analytics_registration_password = local.admin_analytics_registration_password
   admin_ami_id           = var.admin_ami_id
   instance_type = var.instance_type
-  subnet_id = module.vpc.public_subnets[0]
+  subnet_id = var.subnet_id != null ? var.subnet_id : module.vpc.public_subnets[0]
   deployment_name = local.deployment_name_salted
   # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
   ssh_key_pair = {
@@ -67,8 +73,8 @@ module "dra_admin" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   region = var.region
-  vpc_id = module.vpc.vpc_id
-  vpc_cidr = var.vpc_cidr
+  vpc_id = data.aws_subnet.selected_subnet.vpc_id
+  # vpc_cidr = data.aws_subnet.selected_subnet.vpc_cidr
   # ebs = var.admin_ebs_details
 }
 
@@ -79,7 +85,7 @@ module "analitycs_server_group" {
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   analytics_ami_id           = var.analytics_ami_id
   instance_type = var.instance_type
-  subnet_id = module.vpc.public_subnets[0]
+  subnet_id = var.subnet_id != null ? var.subnet_id : module.vpc.public_subnets[0]
   deployment_name = local.deployment_name_salted
   # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
   ssh_key_pair = {
@@ -91,8 +97,8 @@ module "analitycs_server_group" {
   archiver_password = local.archiver_password
   admin_server_private_ip = module.dra_admin.private_ip
   admin_server_public_ip = module.dra_admin.public_ip
-  vpc_id = module.vpc.vpc_id
-  vpc_cidr = var.vpc_cidr
+  vpc_id = data.aws_subnet.selected_subnet.vpc_id
+  # vpc_cidr = data.aws_subnet.selected_subnet.vpc_cidr
   # ebs = var.analitycs_group_ebs_details
 }
 

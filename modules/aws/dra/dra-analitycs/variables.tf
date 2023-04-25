@@ -53,7 +53,6 @@ variable "ssh_key_pair" {
 variable "archiver_password" {
     type = string
     description = "Password to be used to upload archive files for analysis"
-    default = "yourpasswordhere"
 }
 
 variable "vpc_security_group_ids" {
@@ -80,6 +79,7 @@ variable "vpc_id" {
 variable "vpc_cidr" {
     type = string
     description = "vpc_cidr"
+    default = "0.0.0.0/0"
 }
 
 

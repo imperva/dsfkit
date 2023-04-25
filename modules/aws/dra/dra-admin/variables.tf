@@ -58,6 +58,7 @@ variable "vpc_id" {
 variable "vpc_cidr" {
     type = string
     description = "vpc_cidr"
+    default = "0.0.0.0/0"
 }
 
 variable "ebs" {

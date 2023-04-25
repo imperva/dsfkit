@@ -1,6 +1,6 @@
 variable "deployment_name" {
   type        = string
-  default     = "imperva-dsf-dra"
+  default     = "impv-dsf-dra"
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
@@ -78,4 +78,10 @@ variable "admin_ebs_details" {
     provisioned_iops = 0
     throughput       = 125
   }
+}
+
+variable "subnet_id" {
+  type = string
+  default = null
+  
 }
