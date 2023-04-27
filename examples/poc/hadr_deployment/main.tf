@@ -286,6 +286,7 @@ module "db_onboarding" {
   source        = "imperva/dsf-poc-db-onboarder/aws"
   version       = "1.4.3" # latest release tag
   sonar_version = module.globals.tarball_location.version
+  usc_access_token = module.hub.access_tokens.usc
   hub_info = {
     hub_ip_address           = module.hub_primary.public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
