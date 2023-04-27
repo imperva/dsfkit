@@ -46,6 +46,8 @@ module "vpc" {
   azs             = slice(module.globals.availability_zones, 0, 2)
   private_subnets = var.private_subnets_cidr_list
   public_subnets  = var.public_subnets_cidr_list
+
+  map_public_ip_on_launch = true
 }
 
 ##############################
