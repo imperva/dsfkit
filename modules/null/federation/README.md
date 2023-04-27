@@ -4,8 +4,8 @@
 This Terraform module provisions a registration of an Agentless Gateway to an DSF Hub.
 
 ## Sonar versions
-- 4.11
-- 4.10.0.1 (recommended)
+- 4.11 (recommended)
+- 4.10.0.1
 - 4.10
 - 4.9
 
