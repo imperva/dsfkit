@@ -3,10 +3,11 @@
 
 # DSFKit
 
-Imperva DSFKit is the official Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric (DSF Hub & Agentless Gateway) (formerly Sonar).
-The DSF Hub can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
+Imperva DSFKit is the official Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric.
+The DSF can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
 
-In the near future, DSFKit will enable you to deploy the full suite of DSF products, including DAM and DRA, and will support the other major public clouds.
+Currently, the DSFKit supports deployment of the DSF Hub & Agentless Gateway (formerly Sonar), and DAM.
+In the near future, DSFKit will enable you to deploy the full suite of DSF sub-products, including DRA, and will support the other major public clouds.
 
 # About This Guide
 
@@ -97,11 +98,11 @@ This guide references the following information and links, some of which are ava
    </tr>
   <tr>
    <td>
-   <a href="https://docs.imperva.com/howto/ed55ac24">Sonar v4.10</a>
+   <a href="https://docs.imperva.com/howto/ed55ac24">Sonar v4.11</a>
 
-   <a href="https://docs.imperva.com/howto/66707580">DAM v14.10</a>
+   <a href="https://docs.imperva.com/howto/66707580">DAM v14.11</a>
 
-   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.10</a>
+   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.11</a>
    </td>
    <td>DSF Components Overview
    </td>
@@ -281,6 +282,15 @@ The following table lists the released DSFKit versions, their release date and a
       <br>2. Updated DSFKit IAM required permissions. 
    </td>
   </tr>
+  <tr>
+   <td>Coming soon
+   </td>
+   <td>
+   </td>
+   <td>
+      1. Aligned all modules and examples to work with DSF Q1 2023 release by default.
+   </td>
+  </tr>
 
 </table>
 
@@ -343,7 +353,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/poc/basic_deployment/README.md">Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/poc/basic_deployment/README.md">Sonar Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
@@ -353,7 +363,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/poc/hadr_deployment/README.md">HADR Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/poc/hadr_deployment/README.md">Sonar HADR Deployment</a>
       </td>
       <td>Lab/POC
       </td>
@@ -363,7 +373,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/installation/single_account_deployment/README.md">Sonar Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
@@ -373,13 +383,23 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/installation/multi_account_deployment/README.md">Multi Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/installation/multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with an MX, an Agent Gateway, networking and onboarding of an Agent with a randomly selected DB type: PostgreSql, MySql or MariaDB.   
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.3/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip">dam_basic_deployment.zip</a>
       </td>
    </tr>
 </table>
@@ -389,11 +409,28 @@ The examples make use of the building blocks of the DSFKit - the modules, which 
 
 Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to suit your needs. 
 
-## Sonar Binaries Location and Versioning
+## Binaries Location and Versioning
 
-When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar version specified in the Terraform example.
+When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar and DAM versions specified in the Terraform example.
 
-The latest Sonar version, 4.11, is recommended, and Sonar 4.9 and higher are supported.
+The latest DSF version, Q1 2023, is recommended.
+This includes the following version of the DSF sub-products:
+<table>
+  <tr>
+    <td><strong>DSF Sub-Product</strong>
+    </td>
+    <td><strong>Recommended Version</strong>
+    </td>
+    <td><strong>Supported Versions</strong>
+    </td>
+  </tr>
+  <tr>
+    <td>Sonar</td><td>v4.11</td><td>4.9 and higher</td>
+  </tr>
+  <tr>
+    <td>DAM</td><td>v14.11.1.10</td><td>TBD</td>
+  </tr>
+</table>
 
 **For example**: examples/poc/basic_deployment/variables.tf
    ```terraform
@@ -405,8 +442,8 @@ The latest Sonar version, 4.11, is recommended, and Sonar 4.9 and higher are sup
    >>>> Change the Sonar version to the one you want to install
    ```
 
-Make sure that the Sonar version you are using is supported by all the modules which are part of your deployment.
-To see which Sonar versions are supported by each module, refer to the specific module's README. 
+Make sure that the version you are using is supported by all the modules which are part of your deployment.
+To see which versions are supported by each module, refer to the specific module's README. 
 (For example, [DSF Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
 # Deployment 
@@ -672,6 +709,10 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     or
  
     wget https://github.com/imperva/dsfkit/raw/1.4.3/examples/installation/multi_account_deployment/multi_account_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.3/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
     ```
 
 12. Unzip the zip file:

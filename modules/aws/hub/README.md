@@ -4,8 +4,8 @@
 This Terraform module provisions an all-in-one data security and compliance platform, known as the DSF Hub, on AWS as an EC2 instance.
 
 ## Sonar versions
-- 4.11
-- 4.10.0.1 (recommended)
+- 4.11 (recommended)
+- 4.10.0.1
 - 4.10
 - 4.9
 
