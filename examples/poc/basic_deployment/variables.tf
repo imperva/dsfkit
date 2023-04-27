@@ -7,10 +7,10 @@ variable "deployment_name" {
 variable "sonar_version" {
   type        = string
   default     = "4.11"
-  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1', '4.11']"
+  description = "The Sonar version to install. Supported versions are: ['4.11']"
   validation {
-    condition     = contains(["4.9", "4.10", "4.10.0.1", "4.11"], var.sonar_version)
-    error_message = "The sonar_version value must be from the list [\"4.9\", \"4.10\", \"4.10.0.1\", \"4.11\"]"
+    condition     = var.sonar_version == "4.11"
+    error_message = "This example supports Sonar version 4.11"
   }
 }
 

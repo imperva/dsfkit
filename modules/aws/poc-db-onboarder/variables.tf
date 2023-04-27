@@ -1,7 +1,11 @@
 variable "sonar_version" {
   type        = string
-  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1', '4.11']"
+  description = "The Sonar version to install"
   nullable    = false
+  validation {
+    condition     = var.sonar_version == "4.11"
+    error_message = "This module supports Sonar version 4.11"
+  }
 }
 
 variable "hub_info" {
