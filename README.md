@@ -7,7 +7,7 @@ Imperva DSFKit is the official Terraform toolkit designed to automate the deploy
 The DSF can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
 
 Currently, the DSFKit supports deployment of the DSF Hub & Agentless Gateway (formerly Sonar), and DAM.
-In the near future, DSFKit will enable you to deploy the full suite of DSF sub-products, including DRA, and will support the other major public clouds.
+In the near future, DSFKit will enable you to deploy the full suite of the DSF sub-products, including DRA, and will support the other major public clouds.
 
 # About This Guide
 
