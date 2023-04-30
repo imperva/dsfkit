@@ -197,3 +197,9 @@ variable "dam_version" {
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
   }
 }
+
+variable "large_scale_mode" {
+  type        = bool
+  description = "Large scale mode"
+  default     = false
+}

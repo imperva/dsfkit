@@ -1,13 +1,22 @@
 #!/bin/bash
-# set -x
+set -x
 
 cookie_file=$(mktemp)
-trap "rm -f $cookie_file" EXIT
+response_file=$(mktemp)
 
-response=$(curl -k -s --cookie-jar $cookie_file -o /dev/null -w "%%{http_code}" \
+trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session; rm -f $cookie_file $response_file" EXIT
+
+http_code=$(curl -k -s --cookie-jar $cookie_file -o $response_file -w "%%{http_code}" \
   --request POST 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session' \
   --header "Authorization: Basic ${https_auth_header}")
-if [ "$response" -eq 200 ]; then
-  curl -k -s --cookie $cookie_file --request DELETE 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session'
-  exit 0
+if [ "$http_code" -eq 200 ]; then
+  # http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \
+  #   --request GET 'https://${mx_address}:8083/SecureSphere/api/v1/api/status' \
+  #   --header "Authorization: Basic ${https_auth_header}")
+  # if [ "$http_code" -eq 200 ]; then
+    exit 0
+  # fi
+  # echo "MX initialization failed (status code: $http_code):"
+  # cat $response_file
+  # exit 1
 fi

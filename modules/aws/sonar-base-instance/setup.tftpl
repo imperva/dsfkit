@@ -203,6 +203,7 @@ function install_access_tokens() {
         echo Creating hub EDSF admin user
         client_id="EDSF-admin"
         user_id=$(uuidgen)
+        issuer="terraform"
         time=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
         CERT_AS_PASSWD=$(cat "$JSONAR_LOCALDIR"/ssl/client/admin/cert.pem | awk -vORS="\\\n" '1')
@@ -219,7 +220,7 @@ __EOF__
         access_token=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${token_value.secret_name} --query SecretString --output text)
         $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
 use admin
-db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "terraform", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
+db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
 __EOF__
         %{ endfor ~}
     fi

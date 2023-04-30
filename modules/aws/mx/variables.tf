@@ -162,8 +162,19 @@ variable "large_scale_mode" {
   default     = false
 }
 
-variable "create_initial_configuration" {
+variable "create_service_group" {
   type        = bool
   description = "Create initial configuration to allow automatic agent on-boarding"
   default     = false
+}
+
+variable "dra_configuration" {
+  type = object({
+    address         = string
+    port            = number
+    username        = string
+    password        = string
+    remoteDirectory = string
+  })
+  default = null
 }
