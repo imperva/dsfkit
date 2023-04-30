@@ -70,6 +70,7 @@ output "access_tokens" {
     name = val.name
     token = val.token
     scopes = val.scopes
+    secret_name = val.secret_name
   }
   }
 }
