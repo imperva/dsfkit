@@ -18,10 +18,6 @@ variable "gw_count" {
   type        = number
   default     = 1
   description = "Number of agentless gateways"
-  validation {
-    condition     = var.gw_count > 0
-    error_message = "The gw_count value must be greater than 0."
-  }
 }
 
 variable "web_console_admin_password" {

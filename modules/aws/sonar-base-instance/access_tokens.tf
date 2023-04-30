@@ -1,8 +1,12 @@
 locals {
   access_tokens = var.resource_type != "hub" ? [] : [
     {
+      "name": "dam-to-hub",
+      "scopes": jsonencode(["archiver:service:upload"])
+    },
+    {
       "name": "usc",
-      "scopes": "[ \"usc:access\" ]",
+      "scopes": jsonencode(["usc:access"])
     },
   ]
 
