@@ -66,7 +66,8 @@ module "mx" {
   sg_ssh_cidr                  = local.workstation_cidr
   sg_web_console_cidr          = local.workstation_cidr
   attach_public_ip             = true
-  create_initial_configuration = true
+
+  create_service_group = var.agent_count > 0 ? true : false
 }
 
 module "agent_gw" {
