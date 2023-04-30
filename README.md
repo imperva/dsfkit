@@ -728,9 +728,9 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 
 **The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
 
-# IAM Roles
+# IAM Users and Roles
 
-To be able to create AWS resources inside any AWS Account, you need to provide an AWS User with the required permissions in order to run DSFKit Terraform.
+To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSFKit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
 1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/GeneralRequiredPermissions.txt).

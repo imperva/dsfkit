@@ -294,8 +294,8 @@ module "db_onboarding" {
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub_primary.ssh_user
   }
-  assignee_gw   = module.hub_primary.jsonar_uid
-  assignee_role = module.hub_primary.iam_role
+  assignee_gw   = module.agentless_gw_group_primary[0].jsonar_uid
+  assignee_role = module.agentless_gw_group_primary[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password
