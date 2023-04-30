@@ -46,6 +46,11 @@ variable "assignee_role" {
   nullable    = false
 }
 
+variable "usc_access_token" {
+  type        = string
+  description = "DSF Hub access token with USC scope"
+}
+
 variable "database_details" {
   type = object({
     db_username   = string

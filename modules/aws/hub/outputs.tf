@@ -42,3 +42,7 @@ output "display_name" {
 output "ssh_user" {
   value = module.hub_instance.ssh_user
 }
+
+output "access_tokens" {
+  value = module.hub_instance.access_tokens
+}

@@ -20,14 +20,15 @@ locals {
     hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
-    uuid                                   = random_uuid.uuid.result
+    jsonar_uuid                            = random_uuid.jsonar_uuid.result
     additional_install_parameters          = var.additional_install_parameters
+    access_tokens_array                    = local.access_tokens_array
   })
 }
 
 data "aws_region" "current" {}
 
-resource "random_uuid" "uuid" {}
+resource "random_uuid" "jsonar_uuid" {}
 
 resource "null_resource" "wait_for_installation_completion" {
   count = var.skip_instance_health_verification == true ? 0 : 1
