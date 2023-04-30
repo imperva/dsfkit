@@ -1,4 +1,4 @@
-# Single Account Deployment example
+# Sonar Single Account Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 A DSF Hub with HADR and an Agentless Gateway (formerly Sonar) deployment.

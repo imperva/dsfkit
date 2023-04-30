@@ -4,13 +4,13 @@
 This Terraform module provisions an all-in-one data security and compliance platform, known as the DSF Hub, on AWS as an EC2 instance.
 
 ## Sonar versions
-- 4.11
-- 4.10.0.1 (recommended)
+- 4.11 (recommended)
+- 4.10.0.1
 - 4.10
 - 4.9
 
 ## Requirements
-* Terraform v1.3.1.
+* Terraform version between v1.3.1 and v1.4.x, inclusive.
 * An AWS account.
 * SSH access - key and network path to the DSF Hub instance.
 * Access to the tarball containing Sonar binaries. To request access, [click here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
@@ -41,17 +41,17 @@ The following input variables are **required**:
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary DSF Hub output. This variable must only be defined for the secondary DSF Hub.
 * `sonarw_private_key`: Private key of the sonarw user taken from the primary DSF Hub output. This variable must only be defined for the secondary DSF Hub.
 
-Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
 ## Outputs
 
-The following [outputs](outputs.tf) are exported:
+The following [outputs](outputs.tf) are available:
 
-* `public_ip`: public address
-* `private_ip`: private address
-* `public_dns`: public dns
-* `private_dns`: private dns
-* `display_name`: Display name of the instance under DSF portal
+* `public_ip`: Public address
+* `private_ip`: Private address
+* `public_dns`: Public dns
+* `private_dns`: Private dns
+* `display_name`: Display name of the instance under the DSF web console
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
 * `sg_id`: AWS security group id of the instance
@@ -74,15 +74,15 @@ module "globals" {
 
 module "dsf_hub" {
   source                        = "imperva/dsf-hub/aws"
-  subnet_id                     = "${aws_subnet.example.id}"
+  subnet_id                     = aws_subnet.example.id
 
   ssh_key_pair = {
-    ssh_private_key_file_path   = "${var.ssh_key_path}"
-    ssh_public_key_name         = "${var.ssh_name}"
+    ssh_private_key_file_path   = var.ssh_key_path
+    ssh_public_key_name         = var.ssh_name
   }
 
   ingress_communication = {
-    additional_web_console_access_cidr_list = ["${var.web_console_cidr}"] # ["0.0.0.0/0"]
+    additional_web_console_access_cidr_list = [var.web_console_cidr] # ["0.0.0.0/0"]
     full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
   }
   use_public_ip                 = false

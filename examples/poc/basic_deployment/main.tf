@@ -61,6 +61,8 @@ module "vpc" {
   azs             = slice(module.globals.availability_zones, 0, 2)
   private_subnets = var.private_subnets
   public_subnets  = var.public_subnets
+
+  map_public_ip_on_launch = true
 }
 
 ##############################
@@ -152,7 +154,6 @@ module "rds_mysql" {
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
-# create a RDS SQL Server DB
 module "rds_mssql" {
   count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"

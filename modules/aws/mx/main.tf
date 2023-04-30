@@ -5,6 +5,7 @@ locals {
   required_udp_ports = []
   dam_model          = "AVM150"
   resource_type      = "mx"
+  mx_address_for_api     = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
 }
 
 locals {
@@ -18,15 +19,15 @@ locals {
   https_auth_header = base64encode("admin:${var.mx_password}")
   timeout           = 60 * 30
 
-  readiness_commands = templatefile("${path.module}/readiness.sh", {
-    mx_address        = module.mx.public_ip
+  readiness_commands = templatefile("${path.module}/readiness.tftpl", {
+    mx_address        = local.mx_address_for_api
     https_auth_header = local.https_auth_header
   })
 }
 
 module "mx" {
   source          = "../../../modules/aws/dam-base-instance"
-  name            = join("-", [var.friendly_name, local.resource_type])
+  name            = var.friendly_name
   dam_version     = var.dam_version
   resource_type   = local.resource_type
   dam_model       = local.dam_model

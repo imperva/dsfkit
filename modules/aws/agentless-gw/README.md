@@ -4,8 +4,8 @@
 This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 
 ## Sonar versions
-- 4.11
-- 4.10.0.1 (recommended)
+- 4.11 (recommended)
+- 4.10.0.1
 - 4.10
 - 4.9
 
@@ -41,17 +41,17 @@ The following input variables are **required**:
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
 * `sonarw_private_key`: Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
 
-Refer to [variables.tf](variables.tf) for additional variables with default values and additional info
+Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
 ## Outputs
 
-The following [outputs](outputs.tf) are exported:
+The following [outputs](outputs.tf) are available:
 
-* `public_ip`: public address
-* `private_ip`: private address
-* `public_dns`: public dns
-* `private_dns`: private dns
-* `display_name`: Display name of the instance under DSF portal
+* `public_ip`: Public address
+* `private_ip`: Private address
+* `public_dns`: Public dns
+* `private_dns`: Private dns
+* `display_name`: Display name of the instance under the DSF web console
 * `jsonar_uid`: Id of the instance in DSF portal
 * `iam_role`: AWS IAM arn
 * `ssh_user`: SSH user for the instance
@@ -72,11 +72,11 @@ module "globals" {
 
 module "dsf_gw" {
   source                        = "imperva/dsf-agentless-gw/aws"
-  subnet_id                     = "${aws_subnet.example.id}"
+  subnet_id                     = aws_subnet.example.id
 
   ssh_key_pair = {
-    ssh_private_key_file_path   = "${var.ssh_key_path}"
-    ssh_public_key_name         = "${var.ssh_name}"
+    ssh_private_key_file_path   = var.ssh_key_path
+    ssh_public_key_name         = var.ssh_name
   }
 
   ingress_communication = {

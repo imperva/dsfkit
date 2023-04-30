@@ -9,7 +9,7 @@ locals {
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
-  install_script = templatefile("${path.module}/setup.tpl", {
+  install_script = templatefile("${path.module}/setup.tftpl", {
     resource_type                          = var.resource_type
     installation_s3_bucket                 = var.binaries_location.s3_bucket
     installation_s3_region                 = var.binaries_location.s3_region
