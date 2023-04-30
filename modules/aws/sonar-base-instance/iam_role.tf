@@ -25,10 +25,14 @@ locals {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
-        "Resource" : [
+        "Resource" : concat([
           "${local.sonarw_secret_aws_arn}",
           "${local.password_secret_aws_arn}"
-        ]
+          ],
+          [
+            for val in aws_secretsmanager_secret.access_token: val.arn
+          ]
+        )
       }
     ]
     }
