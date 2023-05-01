@@ -77,11 +77,7 @@ jobs:
 
     - name: List S3 buckets
       if: always()
-      run: aws s3 ls
-
-    - name: List S3 buckets
-      if: always()
-      run: pip install awscli
+      run: echo curr_ip=$(ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1') >> $GITHUB_ENV
 
     - name: List S3 buckets
       if: always()
