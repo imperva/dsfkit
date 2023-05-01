@@ -3,7 +3,7 @@ locals {
   dra_all_events_audit_policy = "CounterBreach%20for%20Database%20-%20All%20Events"
   dra_all_logins_audit_policy = "CounterBreach%20for%20Database%20-%20Logins%20Logouts"
 
-  dra_configuration = var.dra_configuration == null ? [] : [
+  dra_configuration = var.dra_details == null ? [] : [
     {
       name     = "send_to_dra_action_set"
       method   = "POST"
@@ -16,11 +16,11 @@ locals {
       url_path = "SecureSphere/api/v1/conf/actionSets/${local.dra_action_set}/scp"
       payload = jsonencode({
         "type" : "ScpArchive",
-        "host" : try(var.dra_configuration.address, null),
-        "port" : try(var.dra_configuration.port, null),
-        "password" : try(var.dra_configuration.password, null),
-        "username" : try(var.dra_configuration.username, null),
-        "remoteDirectory" : try(var.dra_configuration.remoteDirectory, null),
+        "host" : try(var.dra_details.address, null),
+        "port" : try(var.dra_details.port, null),
+        "password" : try(var.dra_details.password, null),
+        "username" : try(var.dra_details.username, null),
+        "remoteDirectory" : try(var.dra_details.remoteDirectory, null),
         "useAuthenticationKey" : false,
         "authenticationKeyPath" : " ",
         "authenticationKeyPassphrase" : " "

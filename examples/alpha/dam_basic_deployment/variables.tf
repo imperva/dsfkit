@@ -97,3 +97,12 @@ variable "subnet_ids" {
     error_message = "Value must either be null or specified for all"
   }
 }
+
+variable "hub_details" {
+  type = object({
+    address      = string
+    port         = number
+    access_token = string
+  })
+  default = null
+}

@@ -168,7 +168,7 @@ variable "create_service_group" {
   default     = false
 }
 
-variable "dra_configuration" {
+variable "dra_details" {
   type = object({
     address         = string
     port            = number
@@ -179,7 +179,7 @@ variable "dra_configuration" {
   default = null
 }
 
-variable "hub_configuration" {
+variable "hub_details" {
   type = object({
     address      = string
     port         = number

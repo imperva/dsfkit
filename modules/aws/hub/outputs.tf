@@ -45,4 +45,5 @@ output "ssh_user" {
 
 output "access_tokens" {
   value = module.hub_instance.access_tokens
+  sensitive = true
 }

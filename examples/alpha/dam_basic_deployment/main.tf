@@ -65,6 +65,7 @@ module "mx" {
   sg_ingress_cidr              = local.workstation_cidr
   sg_ssh_cidr                  = local.workstation_cidr
   sg_web_console_cidr          = local.workstation_cidr
+  hub_details                  = var.hub_details
   attach_public_ip             = true
 
   create_service_group = var.agent_count > 0 ? true : false
