@@ -79,7 +79,7 @@ jobs:
       if: always()
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
 
-    - name: List S3 buckets
+    - name: Set IP in AWS Security Group
       if: always()
       run: aws ec2 authorize-security-group-ingress --group-id sg-0abaf0022b3d32a43 --protocol tcp --port 22 --cidr $curr_ip/32
 
