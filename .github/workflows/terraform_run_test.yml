@@ -77,7 +77,7 @@ jobs:
 
     - name: Get the public ip
       if: always()
-      run: echo curr_ip=$(ip addr get | awk '$1 == "inet" && $NF != "lo" {print $2}' | cut -f1 -d'/') >> $GITHUB_ENV
+      run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
 
     - name: List S3 buckets
       if: always()
