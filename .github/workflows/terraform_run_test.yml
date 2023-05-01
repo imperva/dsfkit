@@ -81,7 +81,7 @@ jobs:
 
     - name: List S3 buckets
       if: always()
-      run: aws --profile innostage ec2 authorize-security-group-ingress --group-id sg-0abaf0022b3d32a43 --protocol tcp --port 22 --cidr $curr_ip/32
+      run: aws ec2 authorize-security-group-ingress --group-id sg-0abaf0022b3d32a43 --protocol tcp --port 22 --cidr $curr_ip/32
 
 #    - name: Change the modules source to local
 #      run: |
