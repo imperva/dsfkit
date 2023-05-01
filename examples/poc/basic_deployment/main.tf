@@ -172,14 +172,15 @@ module "db_onboarding" {
   source        = "imperva/dsf-poc-db-onboarder/aws"
   version       = "1.4.3" # latest release tag
   sonar_version = module.globals.tarball_location.version
+  usc_access_token = module.hub.access_tokens.usc.token
   hub_info = {
     hub_ip_address           = module.hub.public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub.ssh_user
   }
 
-  assignee_gw   = module.hub.jsonar_uid
-  assignee_role = module.hub.iam_role
+  assignee_gw   = module.agentless_gw_group[0].jsonar_uid
+  assignee_role = module.agentless_gw_group[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password

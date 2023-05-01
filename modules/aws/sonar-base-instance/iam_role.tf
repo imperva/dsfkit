@@ -25,10 +25,14 @@ locals {
         "Sid" : "VisualEditor0",
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
-        "Resource" : [
+        "Resource" : concat([
           "${local.sonarw_secret_aws_arn}",
           "${local.password_secret_aws_arn}"
-        ]
+          ],
+          [
+            for val in aws_secretsmanager_secret.access_token: val.arn
+          ]
+        )
       }
     ]
     }
@@ -60,7 +64,6 @@ resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.role_arn != null ? 0 : 1
-  # name_prefix         = "${var.name}-${var.resource_type}-role"
   description         = "${var.name}-${var.resource_type}-role-${var.name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy

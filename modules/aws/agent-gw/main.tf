@@ -12,9 +12,10 @@ locals {
 resource "random_uuid" "gateway_group_id" {}
 
 locals {
+  large_scale_arg = var.large_scale_mode == true ? "--sonar-only-mode" : ""
   user_data_commands = [
     "/opt/SecureSphere/etc/ec2/create_audit_volume --volumesize=${local.volume_size}",
-    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${var.ssh_user} --gateway_group=${local.gateway_group_id} --secure_password=%securePassword% --imperva_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_server_ip=${var.management_server_host_for_registration} --management_interface=eth0 --internal_data_interface=eth0 --external_data_interface=eth0 --check_server_status --check_gateway_received_configuration --register --initiate_services --set_sniffing --listener_port=${var.agent_listener_port} --agent_listener_ssl=${var.agent_listener_ssl} --cluster-enabled --cluster-port=3792 --product=DAM --waitForServer"
+    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode  --user=${var.ssh_user} --gateway_group=${local.gateway_group_id} --secure_password=%securePassword% --imperva_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_server_ip=${var.management_server_host_for_registration} --management_interface=eth0 --internal_data_interface=eth0 --external_data_interface=eth0 --check_server_status --check_gateway_received_configuration --register --initiate_services --set_sniffing --listener_port=${var.agent_listener_port} --agent_listener_ssl=${var.agent_listener_ssl} --cluster-enabled --cluster-port=3792 --product=DAM --waitForServer ${local.large_scale_arg}"
   ]
   iam_actions = ["ec2:DescribeSecurityGroups",
     "elasticloadbalancing:DescribeLoadBalancers",

@@ -162,7 +162,7 @@ function setup() {
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
-        --jsonar-uid ${uuid} \
+        --jsonar-uid ${jsonar_uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
         $(test "${resource_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
 }
@@ -173,6 +173,7 @@ function set_environment_vars() {
         sudo cat /etc/sysconfig/jsonar /data_vol/sonar-dsf/jsonar/local/sonarg/sysconfig/machine | \
             sed -e 's/^/'"export "'/' | sudo tee /etc/profile.d/jsonar.sh
     fi
+    . /etc/sysconfig/jsonar
 }
 
 function install_ssh_keys() {
@@ -197,6 +198,34 @@ function install_ssh_keys() {
     chmod 700 /home/sonarw/.ssh
 }
 
+function install_access_tokens() {
+    if [ "${resource_type}" == "hub" ]; then
+        echo Creating hub EDSF admin user
+        client_id="EDSF-admin"
+        user_id=$(uuidgen)
+        issuer="terraform"
+        time=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
+
+        CERT_AS_PASSWD=$(cat "$JSONAR_LOCALDIR"/ssl/client/admin/cert.pem | awk -vORS="\\\n" '1')
+
+        $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
+use admin
+db.system.users.save({ "_id" : "admin.$client_id", "user" : "$client_id", "db" : "admin", "userId" : "$user_id", "roles" : [ { "db" : "admin", "role" : "root" } ] })
+__EOF__
+
+        %{ for token_value in access_tokens_array }
+        echo 'Creating ${token_value.name} token:'
+        reason='${token_value.name}'
+        scopes='${token_value.scopes}'
+        access_token=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${token_value.secret_name} --query SecretString --output text)
+        $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
+use admin
+db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
+__EOF__
+        %{ endfor ~}
+    fi
+}
+
 install_deps
 create_users_and_groups
 attach_disk
@@ -214,3 +243,4 @@ fi
 
 set_environment_vars
 install_ssh_keys
+install_access_tokens
