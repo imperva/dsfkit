@@ -178,3 +178,12 @@ variable "dra_configuration" {
   })
   default = null
 }
+
+variable "hub_configuration" {
+  type = object({
+    address      = string
+    port         = number
+    access_token = string
+  })
+  default = null
+}
