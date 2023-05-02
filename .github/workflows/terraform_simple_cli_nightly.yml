@@ -151,7 +151,7 @@ jobs:
         command_timeout: "2h"
         script: |
           sleep 35m
-          for run in {1..5}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
+          for run in {1..8}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
           if [ $res -le 0 ]; then exit 1; fi
 
     - name: Terraform Destroy
@@ -162,8 +162,8 @@ jobs:
     - name: Send Slack When Failure
       run: |
         if [ ${{ inputs.branch }} == 'master' ]; then 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         fi
       if: ${{ failure() }}

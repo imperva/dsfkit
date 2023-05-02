@@ -1,10 +1,28 @@
-name: 'Terraform Run Test'
+name: 'Terraform Installation'
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
 #  push:
 #    branches:
 #      - 'add_tests'
+  workflow_call:
+    inputs:
+      branch:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID_STAGE:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STAGE:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      JUMP_SERVER_KEY:
+        required: true
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -44,7 +62,7 @@ jobs:
             subnet_gw: subnet-0c5ade55a259105e6
             target_dir: multi_account
 
-    name: '${{ matrix.name }}'
+    name: '${{ matrix.name }} ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
@@ -73,7 +91,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: dev
+        ref: ${{ inputs.branch }}
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
@@ -239,35 +257,16 @@ jobs:
         envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
-#     Send job failure to Slack
-#     - name: Send Slack by action-slack
-#       uses: 8398a7/action-slack@v3
-#       with:
-#         status: ${{ job.status }}
-#         fields: message,author,action,eventName,ref,workflow,job,pullRequest
-#       env:
-#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-#       if: ${{ failure() }}
-
-#     - name: Slack Notification - Slack Notify
-#       uses: rtCamp/action-slack-notify@v2
-#       env:
-#         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-#       if: ${{ failure() }}
-
     - name: Delete Security Group
       if: always()
       run: aws ec2 revoke-security-group-ingress --group-id sg-0abaf0022b3d32a43 --security-group-rule-ids ${{ env.sg_id }}
 
-    # - name: Send GitHub Action trigger data to Slack workflow
-    #   id: slack
-    #   uses: slackapi/slack-github-action@v1.23.0
-    #   with:
-    #     payload: |
-    #       {
-    #         "key": "value",
-    #         "foo": "bar"
-    #       }
-    #   env:
-    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-    #   if: ${{ always() }}
+      # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ]; then 
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else 
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
+      if: ${{ failure() }}
