@@ -30,7 +30,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_installation:
-    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@add_tests
+    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@dev
     with:
       branch: dev
     secrets:
@@ -41,7 +41,7 @@ jobs:
 
   master_installation:
     needs: dev_installation
-    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@add_tests
+    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@master
     with:
       branch: master
     secrets:
