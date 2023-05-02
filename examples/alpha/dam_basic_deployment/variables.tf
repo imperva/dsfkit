@@ -106,3 +106,9 @@ variable "hub_details" {
   })
   default = null
 }
+
+variable "large_scale_mode" {
+  type = bool
+  description = "DAM large scale mode"
+  default = false
+}
