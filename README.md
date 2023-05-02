@@ -283,12 +283,13 @@ The following table lists the released DSFKit versions, their release date and a
    </td>
   </tr>
   <tr>
-   <td>Coming soon
+   <td>2 May 2023
+   </td>
+   <td>1.4.4
    </td>
    <td>
-   </td>
-   <td>
-      1. Aligned all modules and examples to work with DSF Q1 2023 release by default.
+      1. Minimum supported Sonar version is now 4.11. To deploy earlier versions, work with earlier DSFKit versions.
+      <br>2. In the POC examples, onboarded the demo databases to the Agentless Gateway instead of the DSF Hub.
    </td>
   </tr>
 
