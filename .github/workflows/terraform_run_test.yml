@@ -256,6 +256,7 @@ jobs:
 #       if: ${{ failure() }}
 
     - name: Delete Security Group
+      if: always()
       run: aws ec2 revoke-security-group-ingress --group-id sg-0abaf0022b3d32a43 --security-group-rule-ids ${{ env.sg_id }}
 
     # - name: Send GitHub Action trigger data to Slack workflow
