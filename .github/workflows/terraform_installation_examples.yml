@@ -15,9 +15,9 @@ on:
         required: true
         type: string
     secrets:
-      AWS_ACCESS_KEY_ID:
+      AWS_ACCESS_KEY_ID_STAGE:
         required: true
-      AWS_SECRET_ACCESS_KEY:
+      AWS_SECRET_ACCESS_KEY_STAGE:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
