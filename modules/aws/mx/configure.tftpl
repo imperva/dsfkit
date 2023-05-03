@@ -21,6 +21,7 @@ while true; do
     --request GET 'https://${mx_address}:8083/SecureSphere/api/v1/administration/adc/timestamp')
   if [ "$http_code" -ne 200 ]; then
     echo "Failed to get last ADC content update: http_code: $http_code"
+    cat $response_file
     exit 1
   fi
   

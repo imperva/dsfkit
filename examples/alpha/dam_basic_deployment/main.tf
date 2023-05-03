@@ -54,18 +54,20 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source              = "../../../modules/aws/mx"
-  friendly_name       = join("-", [local.deployment_name_salted, "mx"])
-  dam_version         = var.dam_version
-  subnet_id           = local.mx_subnet
-  license_file        = var.license_file
-  key_pair            = module.key_pair.key_pair.key_pair_name
-  secure_password     = local.web_console_admin_password
-  mx_password         = local.web_console_admin_password
-  sg_ingress_cidr     = local.workstation_cidr
-  sg_ssh_cidr         = local.workstation_cidr
-  sg_web_console_cidr = local.workstation_cidr
-  attach_public_ip    = true
+  source                       = "../../../modules/aws/mx"
+  friendly_name                = join("-", [local.deployment_name_salted, "mx"])
+  dam_version                  = var.dam_version
+  subnet_id                    = local.mx_subnet
+  license_file                 = var.license_file
+  key_pair                     = module.key_pair.key_pair.key_pair_name
+  secure_password              = local.web_console_admin_password
+  mx_password                  = local.web_console_admin_password
+  sg_ingress_cidr              = local.workstation_cidr
+  sg_ssh_cidr                  = local.workstation_cidr
+  sg_web_console_cidr          = local.workstation_cidr
+  hub_details                  = var.hub_details
+  attach_public_ip             = true
+  large_scale_mode             = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
 }
@@ -84,6 +86,7 @@ module "agent_gw" {
   sg_ssh_cidr                             = local.workstation_cidr
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
+  large_scale_mode                        = var.large_scale_mode
 }
 
 resource "random_shuffle" "db" {

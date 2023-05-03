@@ -66,11 +66,11 @@ output "ssh_user" {
 }
 
 output "access_tokens" {
-  value = { for val in local.access_tokens_array : val.name => {
-    name        = val.name
-    token       = val.token
-    scopes      = val.scopes
+  value = { for val in local.access_tokens_array: val.name => {
+    name = val.name
+    token = val.token
     secret_name = val.secret_name
     }
   }
+  sensitive = true
 }
