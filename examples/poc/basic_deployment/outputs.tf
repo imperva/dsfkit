@@ -60,13 +60,13 @@ output "mssql_db_details" {
 
 output "generated_network" {
   value = try({
-    vpc = module.vpc[0].vpc_id
-    public_subnets = module.vpc[0].public_subnets
+    vpc             = module.vpc[0].vpc_id
+    public_subnets  = module.vpc[0].public_subnets
     private_subnets = module.vpc[0].private_subnets
   }, null)
 }
 
 output "tokens" {
-  value = module.hub.access_tokens
+  value     = module.hub.access_tokens
   sensitive = true
 }

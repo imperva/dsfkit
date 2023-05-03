@@ -54,27 +54,31 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source                       = "../../../modules/aws/mx"
-  friendly_name                = join("-", [local.deployment_name_salted, "mx"])
-  dam_version                  = var.dam_version
-  subnet_id                    = local.mx_subnet
-  license_file                 = var.license_file
-  key_pair                     = module.key_pair.key_pair.key_pair_name
-  secure_password              = local.web_console_admin_password
-  mx_password                  = local.web_console_admin_password
-  sg_ingress_cidr              = local.workstation_cidr
-  sg_ssh_cidr                  = local.workstation_cidr
-  sg_web_console_cidr          = local.workstation_cidr
-  hub_details                  = var.hub_details
-  attach_public_ip             = true
-  large_scale_mode             = var.large_scale_mode
+  source  = "imperva/dsf-mx/aws"
+  version = "1.4.4" # latest release tag
+
+  friendly_name       = join("-", [local.deployment_name_salted, "mx"])
+  dam_version         = var.dam_version
+  subnet_id           = local.mx_subnet
+  license_file        = var.license_file
+  key_pair            = module.key_pair.key_pair.key_pair_name
+  secure_password     = local.web_console_admin_password
+  mx_password         = local.web_console_admin_password
+  sg_ingress_cidr     = local.workstation_cidr
+  sg_ssh_cidr         = local.workstation_cidr
+  sg_web_console_cidr = local.workstation_cidr
+  hub_details         = var.hub_details
+  attach_public_ip    = true
+  large_scale_mode    = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
 }
 
 module "agent_gw" {
-  count                                   = var.gw_count
-  source                                  = "../../../modules/aws/agent-gw"
+  source  = "imperva/dsf-agent-gw/aws"
+  version = "1.4.4" # latest release tag
+  count   = var.gw_count
+
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
   subnet_id                               = local.gw_subnet
@@ -95,8 +99,8 @@ resource "random_shuffle" "db" {
 }
 
 module "agent_monitored_db" {
-  count  = var.agent_count
   source = "../../../modules/aws/agent-monitored-db"
+  count  = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
   db_type       = element(random_shuffle.db[count.index].result, 0)

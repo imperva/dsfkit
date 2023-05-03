@@ -108,7 +108,7 @@ variable "hub_details" {
 }
 
 variable "large_scale_mode" {
-  type = bool
+  type        = bool
   description = "DAM large scale mode"
-  default = false
+  default     = false
 }
