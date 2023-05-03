@@ -28,13 +28,13 @@ on:
 #      - 'master'
 #      - 'dev'
     
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
+#  pull_request:
+#    types:
+#      - 'opened'
+#      - 'reopened'
+#    branches:
+#      - 'master'
+#      - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
