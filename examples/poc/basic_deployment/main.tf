@@ -70,8 +70,9 @@ module "vpc" {
 ##############################
 
 module "hub" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.4.4" # latest release tag
+  source  = "imperva/dsf-hub/aws"
+  version = "1.4.4" # latest release tag
+
   friendly_name              = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                  = local.hub_subnet
   binaries_location          = local.tarball_location
@@ -93,9 +94,10 @@ module "hub" {
 }
 
 module "agentless_gw_group" {
-  count                      = var.gw_count
-  source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.4.4" # latest release tag
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.4.4" # latest release tag
+  count   = var.gw_count
+
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                  = local.gw_subnet
   ebs                        = var.gw_group_ebs_details
@@ -122,9 +124,10 @@ module "agentless_gw_group" {
 }
 
 module "federation" {
-  for_each = { for idx, val in module.agentless_gw_group : idx => val }
   source   = "imperva/dsf-federation/null"
   version  = "1.4.4" # latest release tag
+  for_each = { for idx, val in module.agentless_gw_group : idx => val }
+
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -147,17 +150,19 @@ module "federation" {
 }
 
 module "rds_mysql" {
-  count                        = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version                      = "1.4.4" # latest release tag
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
+  version = "1.4.4" # latest release tag
+  count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
+
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
 module "rds_mssql" {
-  count                        = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
-  source                       = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version                      = "1.4.4" # latest release tag
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  version = "1.4.4" # latest release tag
+  count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
+
   rds_subnet_ids               = local.db_subnets
   security_group_ingress_cidrs = local.workstation_cidr
 
@@ -168,9 +173,10 @@ module "rds_mssql" {
 }
 
 module "db_onboarding" {
-  for_each         = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
-  source           = "imperva/dsf-poc-db-onboarder/aws"
-  version          = "1.4.4" # latest release tag
+  source   = "imperva/dsf-poc-db-onboarder/aws"
+  version  = "1.4.4" # latest release tag
+  for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
+
   sonar_version    = module.globals.tarball_location.version
   usc_access_token = module.hub.access_tokens.usc.token
   hub_info = {
