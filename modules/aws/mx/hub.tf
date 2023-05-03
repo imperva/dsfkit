@@ -1,5 +1,6 @@
 locals {
-  hub_action_set        = "Send%20to%20DSF%20Hub"
+  default_audit_policy  = "Default Rule - All Events"
+  hub_action_set        = "Send to DSF Hub"
   hub_action_set_action = local.hub_action_set
 
   hub_configuration = var.hub_details == null ? [] : concat([{
@@ -16,7 +17,42 @@ locals {
       "strictCertificateChecking" : false
       }
     )
-    }
-    ]
+    }]
+    ,
+    var.large_scale_mode == true ? [] : [{
+      name     = "archive_default_audit_policy_to_hub"
+      method   = "PUT"
+      url_path = "SecureSphere/api/v1/conf/auditPolicies/${local.default_audit_policy}"
+      payload = jsonencode({
+        "policy-type": "db-service",
+        "archiving-action-set" : local.hub_action_set,
+        "archiving-settings" : "Default Archiving Settings",
+        "match-criteria": [
+          {
+            "type": "simple",
+            "name": "Event Type",
+            "operation": "Equals",
+            "values": [
+              {
+                "value": "Login"
+              },
+              {
+                "value": "Query"
+              },
+              {
+                "value": "Logout"
+              }
+            ],
+            "handle-unknown-values": false
+          }
+        ],
+        "archive-scheduling": {
+          "occurs": "none"
+        },
+        "user-defined-values": [],
+        "data-collection-db-response": false
+      }
+    )
+    }]
   )
 }

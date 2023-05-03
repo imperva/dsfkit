@@ -1,5 +1,5 @@
 locals {
-  site         = "Default%20Site"
+  site         = "Default Site"
   server_group = "${var.friendly_name}-server-group"
 
   db_serivces = [

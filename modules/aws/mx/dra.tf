@@ -1,7 +1,7 @@
 locals {
-  dra_action_set              = "Send%20to%20DRA%20Behavior%20Analytics"
-  dra_all_events_audit_policy = "CounterBreach%20for%20Database%20-%20All%20Events"
-  dra_all_logins_audit_policy = "CounterBreach%20for%20Database%20-%20Logins%20Logouts"
+  dra_action_set              = "Send to DRA Behavior Analytics"
+  dra_all_events_audit_policy = "CounterBreach for Database - All Events"
+  dra_all_logins_audit_policy = "CounterBreach for Database - Logins Logouts"
 
   dra_configuration = var.dra_details == null ? [] : [
     {
@@ -30,7 +30,7 @@ locals {
     {
       name     = "dra_all_events_audit_policy"
       method   = "PUT"
-      url_path = "SecureSphere/SecureSphere/api/v1/conf/auditPolicies/${local.dra_all_events_audit_policy}"
+      url_path = "SecureSphere/api/v1/conf/auditPolicies/${local.dra_all_events_audit_policy}"
       payload = jsonencode({
         "counterbreach-policy-enabled" : true,
         "archiving-action-set" : local.dra_action_set,

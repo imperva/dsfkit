@@ -49,7 +49,7 @@ output "instance_id" {
 
 output "configuration" {
   value = {
-    default_site         = replace(local.site, "%20", " ")
+    default_site         = local.site
     default_server_group = local.server_group
   }
   depends_on = [

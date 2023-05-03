@@ -13,7 +13,7 @@ if [ $http_code -ne 200 ]; then
   exit 1
 fi
 
-trap "echo Running trap:; curl -k -s --cookie $cookie_file --request DELETE 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session'; rm -f $cookie_file $response_file" EXIT
+trap "echo Running trap:; curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session; rm -f $cookie_file $response_file" EXIT
 
 echo "Waiting for first ADC content update:"
 while true; do
@@ -37,8 +37,11 @@ done
 %{ for config_value in configuration_elements }
 echo "Setting ${config_value.name}:"
 while true; do
+  url='${config_value.url_path}'
+  url=$${url// /%20} # encode uel spaces as %20
+
   http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \
-    --request ${config_value.method} 'https://${mx_address}:8083/${config_value.url_path}' \
+    --request ${config_value.method} 'https://${mx_address}:8083/'$url \
     --header 'Content-Type: application/json' \
     --data-raw '${config_value.payload}')
   if [ "$http_code" -eq 200 ]; then
