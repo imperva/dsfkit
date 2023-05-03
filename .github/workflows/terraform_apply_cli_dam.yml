@@ -118,6 +118,8 @@ jobs:
       uses: sergeysova/jq-action@v2
 
     - name: Create License File
+      env:
+        MY_SECRET: ${{ secrets.DAM_LICENSE }}
       run: |
         echo "${{ secrets.DAM_LICENSE }}" > $EXAMPLE_DIR/license.mprv
         vi $EXAMPLE_DIR/license.mprv
