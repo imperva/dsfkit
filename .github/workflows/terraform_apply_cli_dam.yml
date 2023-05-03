@@ -23,18 +23,18 @@ on:
         type: boolean
         required: false
 
-  push:
-    branches:
-      - 'master'
-      - 'dev'
+#  push:
+#    branches:
+#      - 'master'
+#      - 'dev'
     
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
+#  pull_request:
+#    types:
+#      - 'opened'
+#      - 'reopened'
+#    branches:
+#      - 'master'
+#      - 'dev'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
@@ -118,9 +118,10 @@ jobs:
       uses: sergeysova/jq-action@v2
 
     - name: Create License File
+      env:
+        MY_SECRET: ${{ secrets.DAM_LICENSE }}
       run: |
         echo "${{ secrets.DAM_LICENSE }}" > $EXAMPLE_DIR/license.mprv
-        vi $EXAMPLE_DIR/license.mprv
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -138,16 +139,16 @@ jobs:
     - name: Terraform Plan
       run: |
         terraform -chdir=$EXAMPLE_DIR workspace list
-        terraform -chdir=$EXAMPLE_DIR plan -var license_file=$EXAMPLE_DIR/license.mprv
+        terraform -chdir=$EXAMPLE_DIR plan -var license_file=license.mprv
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-#    - name: Terraform Apply
-#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-#      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=$EXAMPLE_DIR/license.mprv -auto-approve
-#
-#    - name: Terraform Output
-#      run: terraform -chdir=$EXAMPLE_DIR output -json
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
+
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output -json
 
 #    - name: Set Environment Variables
 #      run: |
@@ -169,16 +170,16 @@ jobs:
 #        port: 22
 #        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
-#    - name: Terraform Destroy
-#      id: destroy
-#      if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=$EXAMPLE_DIR/license.mprv -auto-approve
+    - name: Terraform Destroy
+      id: destroy
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
       if: always()
       run: |
         if [ '${{ steps.destroy.conclusion }}' = 'success' ]
-        then 
+        then
         terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
         fi
       env:
