@@ -1,7 +1,7 @@
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
-  default="imperva-dsf-agent-monitored-db"
+  default     = "imperva-dsf-agent-monitored-db"
 
   validation {
     condition     = length(var.friendly_name) >= 3

@@ -52,13 +52,13 @@ resource "aws_secretsmanager_secret_version" "password_ver" {
 }
 
 resource "aws_secretsmanager_secret" "access_token" {
-  count = length(local.access_tokens)
+  count       = length(local.access_tokens)
   name_prefix = "${var.name}-${local.access_tokens[count.index].name}-access-token"
   description = "Imperva EDSF ${local.access_tokens[count.index].name} access token"
 }
 
 resource "aws_secretsmanager_secret_version" "token_ver" {
-  count = length(local.access_tokens)
+  count         = length(local.access_tokens)
   secret_id     = aws_secretsmanager_secret.access_token[count.index].id
   secret_string = random_uuid.access_tokens[count.index].result
 }

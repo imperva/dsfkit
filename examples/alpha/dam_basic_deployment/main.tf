@@ -6,12 +6,12 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.4.3" # latest release tag
+  version = "1.4.4" # latest release tag
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.3" # latest release tag
+  version                  = "1.4.4" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }
@@ -54,18 +54,18 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source                       = "../../../modules/aws/mx"
-  friendly_name                = join("-", [local.deployment_name_salted, "mx"])
-  dam_version                  = var.dam_version
-  subnet_id                    = local.mx_subnet
-  license_file                 = var.license_file
-  key_pair                     = module.key_pair.key_pair.key_pair_name
-  secure_password              = local.web_console_admin_password
-  mx_password                  = local.web_console_admin_password
-  sg_ingress_cidr              = local.workstation_cidr
-  sg_ssh_cidr                  = local.workstation_cidr
-  sg_web_console_cidr          = local.workstation_cidr
-  attach_public_ip             = true
+  source              = "../../../modules/aws/mx"
+  friendly_name       = join("-", [local.deployment_name_salted, "mx"])
+  dam_version         = var.dam_version
+  subnet_id           = local.mx_subnet
+  license_file        = var.license_file
+  key_pair            = module.key_pair.key_pair.key_pair_name
+  secure_password     = local.web_console_admin_password
+  mx_password         = local.web_console_admin_password
+  sg_ingress_cidr     = local.workstation_cidr
+  sg_ssh_cidr         = local.workstation_cidr
+  sg_web_console_cidr = local.workstation_cidr
+  attach_public_ip    = true
 
   create_service_group = var.agent_count > 0 ? true : false
 }
