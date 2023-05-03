@@ -23,10 +23,10 @@ on:
         type: boolean
         required: false
 
-  push:
-    branches:
-      - 'master'
-      - 'dev'
+#  push:
+#    branches:
+#      - 'master'
+#      - 'dev'
     
   pull_request:
     types:
