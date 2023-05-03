@@ -1,6 +1,6 @@
 variable "sonar_version" {
-  type    = string
-  default = "4.11"
+  type        = string
+  default     = "4.11"
   description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1', '4.11']"
   validation {
     condition     = contains(["4.9", "4.10", "4.10.0.1", "4.11"], var.sonar_version)

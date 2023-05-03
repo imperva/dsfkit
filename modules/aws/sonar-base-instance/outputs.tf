@@ -70,7 +70,7 @@ output "access_tokens" {
     name = val.name
     token = val.token
     secret_name = val.secret_name
-  }
+    }
   }
   sensitive = true
 }

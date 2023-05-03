@@ -6,12 +6,12 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.4.3" # latest release tag
+  version = "1.4.4" # latest release tag
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.3" # latest release tag
+  version                  = "1.4.4" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
 }

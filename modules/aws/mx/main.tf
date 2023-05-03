@@ -5,7 +5,7 @@ locals {
   required_udp_ports = []
   dam_model          = "AVM150"
   resource_type      = "mx"
-  mx_address_for_api     = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
+  mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
 }
 
 locals {
