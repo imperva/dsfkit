@@ -180,10 +180,10 @@ jobs:
     - name: Terraform Delete Workspace
       if: always()
       run: |
-#        if [ '${{ steps.destroy.conclusion }}' = 'success' ]
-#        then
+        if [ '${{ steps.destroy.conclusion }}' = 'success' ]
+        then
         terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
-#        fi
+        fi
       env:
         TF_WORKSPACE: default
 
