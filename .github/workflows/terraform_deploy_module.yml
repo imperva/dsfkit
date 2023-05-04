@@ -50,6 +50,9 @@ jobs:
           - source_module: "aws/agent-gw"
             destination_repo: "terraform-aws-dsf-agent-gw"
             hidden_submodule: "aws/dam-base-instance"
+          - source_module: "aws/db-with-agent"
+            destination_repo: "terraform-aws-dsf-db-with-agent"
+
 
           # Globals
           - source_module: "aws/core/globals"

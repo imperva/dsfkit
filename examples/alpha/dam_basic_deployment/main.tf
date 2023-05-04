@@ -99,7 +99,7 @@ resource "random_shuffle" "db" {
 }
 
 module "agent_monitored_db" {
-  source = "../../../modules/aws/agent-monitored-db"
+  source = "../../../modules/aws/db-with-agent"
   count  = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
