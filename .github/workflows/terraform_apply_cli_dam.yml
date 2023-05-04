@@ -172,7 +172,7 @@ jobs:
 
     - name: Terraform Destroy
       id: destroy
-      if: always()
+#      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
