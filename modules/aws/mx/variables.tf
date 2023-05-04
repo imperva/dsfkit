@@ -169,6 +169,7 @@ variable "create_service_group" {
 }
 
 variable "dra_details" {
+  description = "Details of the DRA for sending audit logs"
   type = object({
     address         = string
     port            = number
@@ -180,6 +181,7 @@ variable "dra_details" {
 }
 
 variable "hub_details" {
+  description = "Details of the DSF hub for sending audit logs"
   type = object({
     address      = string
     port         = number

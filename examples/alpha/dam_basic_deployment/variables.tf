@@ -99,6 +99,7 @@ variable "subnet_ids" {
 }
 
 variable "hub_details" {
+  description = "Details of the DSF hub for sending audit logs"
   type = object({
     address      = string
     port         = number
