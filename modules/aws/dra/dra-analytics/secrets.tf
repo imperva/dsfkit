@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "analytics_archiver_password_secret" {
-  name_prefix = "${var.deployment_name}-analytics-archiver-password"
+  name_prefix = "${var.friendly_name}-analytics-archiver-password"
   description = "analytics-archiver-passwordd"
 }
 

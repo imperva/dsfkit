@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "admin_analytics_registration_password_secret" {
-  name_prefix = "${var.deployment_name}-admin-analytics-registration-password"
+  name_prefix = "${var.friendly_name}-admin-analytics-registration-password"
   description = "DRA admin_analytics_registration_password"
 }
 

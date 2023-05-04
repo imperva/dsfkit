@@ -1,12 +1,11 @@
-variable "region" {
-    type = string
-    description = "AWS region for placement of VPC"
-}
-
-
-variable "deployment_name" {
-    type = string
-    description = "deployment_name"
+variable "friendly_name" {
+  type        = string
+  default     = "imperva-dsf-dra-admin"
+  description = "Friendly name, EC2 Instance Name"
+  validation {
+    condition     = length(var.friendly_name) > 3
+    error_message = "Deployment name must be at least 3 characters"
+  }
 }
 
 variable "instance_type" {
@@ -24,7 +23,6 @@ variable "ssh_key_pair" {
   nullable = false
 }
 
-
 variable "admin_ami_id" {
     type = string
     description = "DRA admin AMI ID in region"
@@ -41,24 +39,10 @@ variable "subnet_id" {
     description = "subnet_id"
 }
 
-
-variable "vpc_security_group_ids" {
+variable "security_group_ids" {
     type = list(string)
-    description = "vpc_security_group_ids"
+    description = "security_group_ids"
     default     = null
-}
-
-
-variable "vpc_id" {
-    type = string
-    description = "vpc_id"
-}
-
-
-variable "vpc_cidr" {
-    type = string
-    description = "vpc_cidr"
-    default = "0.0.0.0/0"
 }
 
 variable "ebs" {
@@ -70,7 +54,6 @@ variable "ebs" {
   description = "Compute instance volume attributes"
   default = null
 }
-
 
 variable "role_arn" {
   type        = string

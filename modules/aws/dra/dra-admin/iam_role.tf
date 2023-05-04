@@ -32,10 +32,9 @@ locals {
     ]
     }
   )
-
 }
 
-resource "aws_iam_instance_profile" "dsf-dra-admin-instance-iam-profile" {
+resource "aws_iam_instance_profile" "dsf_dra_admin_instance_iam_profile" {
   name_prefix = "dsf-dra-admin-instance-iam-profile"
   role        = local.role_name
 }
@@ -43,7 +42,7 @@ resource "aws_iam_instance_profile" "dsf-dra-admin-instance-iam-profile" {
 resource "aws_iam_role" "dsf_dra_admin_node_role" {
   count               = var.role_arn != null ? 0 : 1
   name_prefix         = "imperva-dsf-dra-admin-role"
-  description         = "imperva-dsf-dra-admin-role-${var.deployment_name}"
+  description         = "imperva-dsf-dra-admin-role-${var.friendly_name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {

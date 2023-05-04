@@ -12,28 +12,37 @@ data "template_file" "admin_bootstrap" {
     admin_analytics_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
   }
 }
+
 resource "aws_instance" "dra_admin" {
   ami           = var.admin_ami_id
-  root_block_device {
-    delete_on_termination = true
-    volume_size = local.disk_size_app
-  }
-  iam_instance_profile = aws_iam_instance_profile.dsf-dra-admin-instance-iam-profile.id
   instance_type = var.instance_type
-  subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
-  key_name = var.ssh_key_pair.ssh_public_key_name
-  user_data = data.template_file.admin_bootstrap.rendered
+  key_name      = var.ssh_key_pair.ssh_public_key_name
+  user_data     = data.template_file.admin_bootstrap.rendered
+  root_block_device {
+    volume_size           = local.disk_size_app
+    delete_on_termination = true
+  }
+  iam_instance_profile = aws_iam_instance_profile.dsf_dra_admin_instance_iam_profile.id
+  network_interface {
+    network_interface_id = aws_network_interface.eni.id
+    device_index         = 0
+  }
   tags = {
-    Name = join("-", [var.deployment_name, "admin"])
+    Name = var.friendly_name
   }
   disable_api_termination     = true
   user_data_replace_on_change = true
 }
 
-data "aws_subnet" "selected_subnet" {
-  id = var.subnet_id
+# Create a network interface for the admin instance
+resource "aws_network_interface" "eni" {
+  subnet_id       = var.subnet_id
+  security_groups = [aws_security_group.admin-instance.id]
 }
+
+#data "aws_subnet" "selected_subnet" {
+#  id = var.subnet_id
+#}
 
 # resource "aws_volume_attachment" "ebs_att" {
 #   count = var.ebs == null ? 0 : 1

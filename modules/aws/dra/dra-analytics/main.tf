@@ -24,19 +24,29 @@ data "template_file" "analytics_bootstrap" {
 }
 resource "aws_instance" "dra_analytics" {
   ami           = var.analytics_ami_id
-  iam_instance_profile = aws_iam_instance_profile.dsf-dra-analytics-instance-iam-profile.id
-  root_block_device {
-    delete_on_termination = true
-    volume_size = local.disk_size_app
-  }
   instance_type = var.instance_type
-  subnet_id = var.subnet_id
-  vpc_security_group_ids = ["${aws_security_group.analytics-instance.id}"]
-  key_name = var.ssh_key_pair.ssh_public_key_name
-  user_data = data.template_file.analytics_bootstrap.rendered
-  tags = {
-     Name = join("-", [var.deployment_name, "analytics"])
+  key_name      = var.ssh_key_pair.ssh_public_key_name
+  user_data     = data.template_file.analytics_bootstrap.rendered
+  root_block_device {
+    volume_size           = local.disk_size_app
+    delete_on_termination = true
   }
+  iam_instance_profile = aws_iam_instance_profile.dsf_dra_analytics_instance_iam_profile.id
+  network_interface {
+    network_interface_id = aws_network_interface.eni.id
+    device_index         = 0
+  }
+  tags = {
+     Name = var.friendly_name
+  }
+  disable_api_termination     = true
+  user_data_replace_on_change = true
+}
+
+# Create a network interface for the analytics instance
+resource "aws_network_interface" "eni" {
+  subnet_id       = var.subnet_id
+  security_groups = [aws_security_group.analytics-instance.id]
 }
 
 resource "null_resource" "waiter_cmds" {
@@ -54,7 +64,7 @@ data "aws_subnet" "selected_subnet" {
 }
 
 resource "aws_volume_attachment" "ebs_att" {
-  count = var.ebs == null ? 0 : 1
+  count                          = var.ebs == null ? 0 : 1
   device_name                    = "/dev/sdb"
   volume_id                      = aws_ebs_volume.ebs_external_data_vol[0].id
   instance_id                    = aws_instance.dra_analytics.id
@@ -62,14 +72,14 @@ resource "aws_volume_attachment" "ebs_att" {
 }
 
 resource "aws_ebs_volume" "ebs_external_data_vol" {
-  count = var.ebs == null ? 0 : 1
+  count             = var.ebs == null ? 0 : 1
   size              = local.ebs_state_disk_size
   type              = local.ebs_state_disk_type
   iops              = local.ebs_state_iops
   throughput        = local.ebs_state_throughput
   availability_zone = data.aws_subnet.selected_subnet.availability_zone
   tags = {
-    Name = join("-", [var.deployment_name, "data", "volume", "ebs"])
+    Name = join("-", [var.friendly_name, "data", "volume", "ebs"])
   }
   lifecycle {
     ignore_changes = [iops]

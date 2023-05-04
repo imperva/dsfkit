@@ -1,13 +1,7 @@
-variable "region" {
+variable "friendly_name" {
     type = string
-    description = "AWS region for placement of VPC"
+    description = "friendly_name"
 }
-
-variable "deployment_name" {
-    type = string
-    description = "deployment_name"
-}
-
 
 variable "admin_analytics_registration_password_arn" {
     type = string
@@ -61,27 +55,10 @@ variable "vpc_security_group_ids" {
     default     = null
 }
 
-
-
 variable "subnet_id" {
     type = string
     description = "subnet_id"
 }
-
-
-variable "vpc_id" {
-    type = string
-    description = "vpc_id"
-}
-
-
-
-variable "vpc_cidr" {
-    type = string
-    description = "vpc_cidr"
-    default = "0.0.0.0/0"
-}
-
 
 variable "ebs" {
   type = object({
