@@ -7,4 +7,7 @@ s;imperva/dsf-federation/null;../../../modules/null/federation;
 s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db;../../../modules/aws/rds-mysql-db;
 s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db;../../../modules/aws/rds-mssql-db;
 s;imperva/dsf-poc-db-onboarder/aws;../../../modules/aws/poc-db-onboarder;
+s;imperva/dsf-mx/aws;../../../modules/aws/mx;
+s;imperva/dsf-agent-gw/aws;../../../modules/aws/agent-gw;
+s;imperva/dsf-db-with-agent/aws;../../../modules/aws/db-with-agent;
 /latest release tag/c\

@@ -164,7 +164,7 @@ variable "gw_model" {
   validation {
     condition     = contains(["AV2500", "AV6500"], var.gw_model)
     error_message = <<EOF
-     Allowed values for DSF Agent Gateway: "AV2500", "AV6500"
+     Allowed values for DSF Agent Gateway: "AV2500", "AV6500". More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf
 EOF
   }
 }
