@@ -56,7 +56,7 @@ resource "null_resource" "exec_hadr_secondary" {
 }
 
 resource "time_sleep" "sleep" {
-  create_duration = "120s"
+  create_duration = "10m"
   depends_on = [
     null_resource.exec_hadr_secondary
   ]
