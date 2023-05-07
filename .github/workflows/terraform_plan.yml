@@ -109,21 +109,28 @@ jobs:
 
       - name: Configure AWS credentials - innodev
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-1
-          role-session-name: innodev
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: ap-southeast-1
+#          role-session-name: innodev
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile innodev
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile innodev
+        
 
       - name: Configure AWS credentials - innostage
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-          aws-region: ap-southeast-1
-          role-session-name: innostage
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#          aws-region: ap-southeast-1
+#          role-session-name: innostage
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }} --profile innostage
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }} --profile innostage
 
       - name: Get AWS credentials
         run: |
