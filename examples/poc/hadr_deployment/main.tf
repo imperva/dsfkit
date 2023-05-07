@@ -36,19 +36,27 @@ locals {
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  primary_hub_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
-  secondary_hub_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
-  primary_gws_subnet         = var.subnet_ids != null ? var.subnet_ids.primary_gws_subnet_id : module.vpc[0].private_subnets[0]
-  secondary_gws_subnet       = var.subnet_ids != null ? var.subnet_ids.secondary_gws_subnet_id : module.vpc[0].private_subnets[1]
-  db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
+  primary_hub_subnet_id         = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
+  secondary_hub_subnet_id       = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
+  primary_gws_subnet_id         = var.subnet_ids != null ? var.subnet_ids.primary_gws_subnet_id : module.vpc[0].private_subnets[0]
+  secondary_gws_subnet_id       = var.subnet_ids != null ? var.subnet_ids.secondary_gws_subnet_id : module.vpc[0].private_subnets[1]
+  db_subnet_ids                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
-data "aws_subnet" "primary_gws_subnet" {
-  id = local.primary_gws_subnet
+data "aws_subnet" "primary_hub" {
+  id = local.primary_hub_subnet_id
 }
 
-data "aws_subnet" "secondary_gws_subnet" {
-  id = local.secondary_gws_subnet
+data "aws_subnet" "secondary_hub" {
+  id = local.secondary_hub_subnet_id
+}
+
+data "aws_subnet" "primary_gw" {
+  id = local.primary_gws_subnet_id
+}
+
+data "aws_subnet" "secondary_gw" {
+  id = local.secondary_gws_subnet_id
 }
 
 ##############################
@@ -83,7 +91,7 @@ module "hub_primary" {
   version = "1.4.4" # latest release tag
 
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                  = local.primary_hub_subnet
+  subnet_id                  = local.primary_hub_subnet_id
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
@@ -92,10 +100,10 @@ module "hub_primary" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
-  }
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_hadr_console_cidrs = [data.aws_subnet.secondary_hub.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   use_public_ip = true
   depends_on = [
     module.vpc
@@ -107,7 +115,7 @@ module "hub_secondary" {
   version = "1.4.4" # latest release tag
 
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                  = local.secondary_hub_subnet
+  subnet_id                  = local.secondary_hub_subnet_id
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
@@ -119,10 +127,9 @@ module "hub_secondary" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block], [data.aws_subnet.secondary_gws_subnet.cidr_block])
-  }
+  allowed_hadr_console_cidrs = [data.aws_subnet.primary_hub.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   use_public_ip = true
   depends_on = [
     module.vpc
@@ -135,7 +142,7 @@ module "agentless_gw_group_primary" {
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                  = local.primary_gws_subnet
+  subnet_id                  = local.primary_gws_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
@@ -145,9 +152,9 @@ module "agentless_gw_group_primary" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.secondary_gws_subnet.cidr_block])
-  }
+  allowed_hadr_console_cidrs = [data.aws_subnet.secondary_gw.cidr_block]
+  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.public_ip
@@ -165,7 +172,7 @@ module "agentless_gw_group_secondary" {
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
-  subnet_id                  = local.secondary_gws_subnet
+  subnet_id                  = local.secondary_gws_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
@@ -178,9 +185,9 @@ module "agentless_gw_group_secondary" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.primary_gws_subnet.cidr_block])
-  }
+  allowed_hadr_console_cidrs = [data.aws_subnet.primary_gw.cidr_block]
+  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.public_ip
@@ -273,7 +280,7 @@ module "rds_mysql" {
   version = "1.4.4" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
-  rds_subnet_ids               = local.db_subnets
+  rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
@@ -283,7 +290,7 @@ module "rds_mssql" {
   version = "1.4.4" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
-  rds_subnet_ids               = local.db_subnets
+  rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
 
   providers = {

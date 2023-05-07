@@ -15,7 +15,7 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  description = "Public dns of elastic IP address of the DSF base instance"
+  description = "Public DNS of the elastic IP address of the DSF base instance"
   value       = try(aws_eip.dsf_instance_eip[0].public_dns, null)
   depends_on = [
     aws_eip_association.eip_assoc
@@ -23,21 +23,11 @@ output "public_dns" {
 }
 
 output "private_dns" {
-  description = "Private dns address of the DSF base instance"
+  description = "Private DNS of the elastic IP address of the DSF base instance"
   value       = aws_network_interface.eni.private_dns_name
   depends_on = [
     aws_eip_association.eip_assoc
   ]
-}
-
-output "sg_id" {
-  description = "Security group on DSF base instance"
-  value       = local.security_group_id
-}
-
-output "ingress_ports" {
-  value       = local.ingress_ports
-  description = "The ingress ports of the security group on the DSF node EC2"
 }
 
 output "iam_role" {
@@ -66,9 +56,9 @@ output "ssh_user" {
 }
 
 output "access_tokens" {
-  value = { for val in local.access_tokens_array: val.name => {
-    name = val.name
-    token = val.token
+  value = { for val in local.access_tokens_array : val.name => {
+    name        = val.name
+    token       = val.token
     secret_name = val.secret_name
     }
   }

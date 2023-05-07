@@ -1,7 +1,7 @@
 locals {
   security_group_ids = concat(
-    [aws_security_group.dsf_base_sg.id],
-    [aws_security_group.dsf_ssh_sg.id],
+    [aws_security_group.dsf_base_sg_out.id],
+    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
   var.security_group_ids)
 
   secure_password           = var.secure_password
@@ -21,8 +21,6 @@ locals {
     }
   }
 }
-
-data "aws_region" "current" {}
 
 resource "aws_eip" "dsf_instance_eip" {
   count = var.attach_public_ip ? 1 : 0

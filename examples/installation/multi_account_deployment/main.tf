@@ -68,6 +68,10 @@ locals {
   gw_public_key_name            = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
+data "aws_subnet" "subnet_hub" {
+  id       = var.subnet_hub
+}
+
 data "aws_subnet" "subnet_gw" {
   id       = var.subnet_gw
   provider = aws.gw
@@ -93,10 +97,10 @@ module "hub" {
     ssh_private_key_file_path = local.hub_private_key_pem_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, [data.aws_subnet.subnet_gw.cidr_block])
-  }
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
+
   use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
@@ -120,9 +124,8 @@ module "agentless_gw_group" {
     ssh_private_key_file_path = local.gw_private_key_pem_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
-  }
+  allowed_hub_gw_cidrs = [data.aws_subnet.subnet_hub.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.private_ip

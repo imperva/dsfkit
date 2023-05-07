@@ -17,7 +17,7 @@ variable "dam_version" {
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of agent gateways"
+  description = "Number of DSF Agent Gateways"
 }
 
 variable "agent_count" {

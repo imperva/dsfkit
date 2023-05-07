@@ -4,24 +4,12 @@ variable "name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF DAM instance"
+  description = "Subnet id for the DSF base instance"
   validation {
     condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
 }
-
-variable "security_group_ids" {
-  type        = list(string)
-  description = "Additional Security group ids for the ec2 instance"
-  default     = []
-}
-
-# variable "ec2_instance_type" {
-#   type        = string
-#   description = "Ec2 instance type for the DSF base instance"
-#   default     = "m4.xlarge" # remove this default
-# }
 
 variable "attach_public_ip" {
   type        = bool
@@ -30,42 +18,27 @@ variable "attach_public_ip" {
 
 variable "key_pair" {
   type        = string
-  description = "Key pair for the DSF DAM instance"
+  description = "Key pair for the DSF base instance"
 }
-
-variable "sg_ingress_cidr" {
-  type        = list(string)
-  description = "List of allowed ingress CIDR patterns allowing ssh and internal protocols to the DSF DAM instance"
-}
-
-variable "sg_ssh_cidr" {
-  type        = list(string)
-  description = "List of allowed ingress CIDR patterns allowing ssh protocols to the DSF DAM instance"
-}
-
-# variable "ami" {
-#   type        = string
-#   description = "Aws machine image"
-# }
 
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF DAM instance. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF base instance. Keep empty if you wish to create a new role."
 }
 
 variable "resource_type" {
   type = string
   validation {
     condition     = contains(["mx", "agent-gw"], var.resource_type)
-    error_message = "Allowed values for DSF DAM node type: \"mx\", \"agent-gw\""
+    error_message = "Allowed values for DSF node type: \"mx\", \"agent-gw\""
   }
   nullable = false
 }
 
 variable "dam_model" {
   type        = string
-  description = "Enter the Agent Gateway/MX Model"
+  description = "Enter the Agent Gateway/MX Model. More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
   validation {
     condition     = contains(["AV2500", "AV6500", "AVM150"], var.dam_model)
     error_message = <<EOF
@@ -149,12 +122,20 @@ variable "user_data_commands" {
   description = "Commands that run on instance startup. Should contain at least the FTL command"
 }
 
-variable "internal_ports" {
-  description = "Ports needed for internal communication"
-  type = object({
-    tcp = list(string)
-    udp = list(string)
-  })
+variable "security_groups_config" {
+  description = "Security groups config"
+  type = list(object({
+    name  = list(string)
+    udp   = list(number)
+    tcp   = list(number)
+    cidrs = list(string)
+  }))
+}
+
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids for the ec2 instance"
+  default     = []
 }
 
 variable "dam_version" {

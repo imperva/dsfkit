@@ -14,10 +14,6 @@ output "private_dns" {
   value = module.hub_instance.private_dns
 }
 
-output "sg_id" {
-  value = module.hub_instance.sg_id
-}
-
 output "iam_role" {
   description = "IAM Role ARN of the DSF Hub node"
   value       = module.hub_instance.iam_role
@@ -44,6 +40,6 @@ output "ssh_user" {
 }
 
 output "access_tokens" {
-  value = module.hub_instance.access_tokens
+  value     = module.hub_instance.access_tokens
   sensitive = true
 }

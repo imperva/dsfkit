@@ -27,6 +27,8 @@ locals {
   EOF
 }
 
+data "aws_region" "current" {}
+
 resource "null_resource" "readiness" {
   count = var.instance_readiness_params.enable == true ? 1 : 0
   provisioner "local-exec" {

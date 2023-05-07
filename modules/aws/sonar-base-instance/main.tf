@@ -5,7 +5,10 @@ locals {
   ebs_state_iops       = var.ebs_details.provisioned_iops
   ebs_state_throughput = var.ebs_details.throughput
 
-  security_group_id = length(aws_security_group.dsf_base_sg) > 0 ? element(aws_security_group.dsf_base_sg.*.id, 0) : var.security_group_id
+  security_group_ids = concat(
+    [aws_security_group.dsf_base_sg_out.id],
+    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+  var.security_group_ids)
 
   # ami
   ami_default = {
@@ -79,11 +82,6 @@ resource "aws_instance" "dsf_base_instance" {
   user_data_replace_on_change = true
 }
 
-# Attach an additional storage device to DSF base instance
-data "aws_subnet" "selected_subnet" {
-  id = var.subnet_id
-}
-
 resource "aws_volume_attachment" "ebs_att" {
   device_name                    = "/dev/sdb"
   volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
@@ -105,8 +103,7 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   }
 }
 
-# Create a network interface for DSF base instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
-  security_groups = [local.security_group_id]
+  security_groups = local.security_group_ids
 }

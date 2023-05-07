@@ -24,35 +24,35 @@ locals {
       method   = "PUT"
       url_path = "SecureSphere/api/v1/conf/auditPolicies/${local.default_audit_policy}"
       payload = jsonencode({
-        "policy-type": "db-service",
+        "policy-type" : "db-service",
         "archiving-action-set" : local.hub_action_set,
         "archiving-settings" : "Default Archiving Settings",
-        "match-criteria": [
+        "match-criteria" : [
           {
-            "type": "simple",
-            "name": "Event Type",
-            "operation": "Equals",
-            "values": [
+            "type" : "simple",
+            "name" : "Event Type",
+            "operation" : "Equals",
+            "values" : [
               {
-                "value": "Login"
+                "value" : "Login"
               },
               {
-                "value": "Query"
+                "value" : "Query"
               },
               {
-                "value": "Logout"
+                "value" : "Logout"
               }
             ],
-            "handle-unknown-values": false
+            "handle-unknown-values" : false
           }
         ],
-        "archive-scheduling": {
-          "occurs": "none"
+        "archive-scheduling" : {
+          "occurs" : "none"
         },
-        "user-defined-values": [],
-        "data-collection-db-response": false
-      }
-    )
+        "user-defined-values" : [],
+        "data-collection-db-response" : false
+        }
+      )
     }]
   )
 }

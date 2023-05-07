@@ -21,44 +21,53 @@ variable "subnet_id" {
   }
 }
 
-# variable "ec2_instance_type" {
-#   type        = string
-#   description = "Ec2 instance type for the DSF base instance"
-#   default     = "m4.xlarge" # remove this default
-# }
-
-variable "attach_public_ip" {
-  type        = bool
-  description = "Create and attach elastic public IP for the instance"
-  default     = false
-}
-
-variable "key_pair" {
-  type        = string
-  description = "Key pair for the DSF MX instance"
-}
-
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids for the MX instance"
+  description = "Additional Security group ids to attach to the MX instance"
+  validation {
+    condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+    error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
+  }
   default     = []
 }
 
-variable "sg_ingress_cidr" {
+variable "allowed_agent_gw_cidrs" {
   type        = list(string)
-  description = "List of allowed ingress CIDR patterns allowing ssh and internal protocols to the DSF MX instance. This list should represent the agent gateways that are allowed to access the DSF MX instance via SSH and internal protocols"
+  description = "List of ingress CIDR patterns allowing Agent Gateways to access the DSF MX instance"
+  validation {
+    condition = alltrue([for item in var.allowed_agent_gw_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
   default     = []
 }
 
-variable "sg_ssh_cidr" {
+variable "allowed_ssh_cidrs" {
   type        = list(string)
-  description = "List of allowed ingress CIDR patterns allowing ssh protocols to the DSF MX instance"
+  description = "List of ingress CIDR patterns allowing ssh access"
+  validation {
+    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
   default     = []
 }
 
-variable "sg_web_console_cidr" {
+variable "allowed_web_console_cidrs" {
   type        = list(string)
-  description = "List of allowed ingress CIDR patterns allowing web console access to the DSF MX instance"
+  description = "List of ingress CIDR patterns allowing web console access"
+  validation {
+    condition = alltrue([for item in var.allowed_web_console_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_all_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
+  validation {
+    condition = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
   default     = []
 }
 
@@ -145,6 +154,17 @@ variable "timezone" {
 variable "ssh_user" {
   type    = string
   default = "ec2-user"
+}
+
+variable "attach_public_ip" {
+  type        = bool
+  description = "Create and attach elastic public IP for the instance"
+  default     = false
+}
+
+variable "key_pair" {
+  type        = string
+  description = "Key pair for the DSF MX instance"
 }
 
 variable "dam_version" {

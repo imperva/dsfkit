@@ -26,6 +26,14 @@ locals {
   gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
 }
 
+data "aws_vpc" "selected" {
+  id = data.aws_subnet.selected_subnet.vpc_id
+}
+
+data "aws_subnet" "selected_subnet" {
+  id = local.mx_subnet
+}
+
 ##############################
 # Generating network
 ##############################
@@ -56,20 +64,19 @@ module "vpc" {
 module "mx" {
   source  = "imperva/dsf-mx/aws"
   version = "1.4.4" # latest release tag
-
-  friendly_name       = join("-", [local.deployment_name_salted, "mx"])
-  dam_version         = var.dam_version
-  subnet_id           = local.mx_subnet
-  license_file        = var.license_file
-  key_pair            = module.key_pair.key_pair.key_pair_name
-  secure_password     = local.web_console_admin_password
-  mx_password         = local.web_console_admin_password
-  sg_ingress_cidr     = local.workstation_cidr
-  sg_ssh_cidr         = local.workstation_cidr
-  sg_web_console_cidr = local.workstation_cidr
-  hub_details         = var.hub_details
-  attach_public_ip    = true
-  large_scale_mode    = var.large_scale_mode
+  friendly_name             = join("-", [local.deployment_name_salted, "mx"])
+  dam_version               = var.dam_version
+  subnet_id                 = local.mx_subnet
+  license_file              = var.license_file
+  key_pair                  = module.key_pair.key_pair.key_pair_name
+  secure_password           = local.web_console_admin_password
+  mx_password               = local.web_console_admin_password
+  allowed_ssh_cidrs         = local.workstation_cidr
+  allowed_web_console_cidrs = local.workstation_cidr
+  allowed_all_cidrs         = [data.aws_vpc.selected.cidr_block]
+  hub_details               = var.hub_details
+  attach_public_ip          = true
+  large_scale_mode          = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
 }
@@ -85,9 +92,9 @@ module "agent_gw" {
   key_pair                                = module.key_pair.key_pair.key_pair_name
   secure_password                         = local.web_console_admin_password
   mx_password                             = local.web_console_admin_password
-  sg_ingress_cidr                         = local.workstation_cidr
-  sg_agent_cidr                           = concat(var.agent_cidr_list, [var.vpc_ip_range])
-  sg_ssh_cidr                             = local.workstation_cidr
+  allowed_agent_cidrs                     = var.agent_cidr_list
+  allowed_ssh_cidrs                       = local.workstation_cidr
+  allowed_all_cidrs                       = [data.aws_vpc.selected.cidr_block]
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
@@ -105,9 +112,9 @@ module "agent_monitored_db" {
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
   db_type       = element(random_shuffle.db[count.index].result, 0)
 
-  subnet_id   = local.gw_subnet
-  key_pair    = module.key_pair.key_pair.key_pair_name
-  sg_ssh_cidr = local.workstation_cidr
+  subnet_id         = local.gw_subnet
+  key_pair          = module.key_pair.key_pair.key_pair_name
+  allowed_ssh_cidrs = local.workstation_cidr
 
   registration_params = {
     agent_gateway_host = module.agent_gw[0].private_ip

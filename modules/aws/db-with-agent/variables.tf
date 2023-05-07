@@ -33,7 +33,7 @@ variable "security_group_ids" {
   default     = []
 }
 
-variable "sg_ssh_cidr" {
+variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "List of allowed ingress CIDR patterns allowing ssh protocols to the ec2 instance"
   default     = []
