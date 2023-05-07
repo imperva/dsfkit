@@ -52,7 +52,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment']
+        example: ['./examples/poc/basic_deployment', './examples/poc/hadr_deployment', './examples/installation/single_account_deployment', './examples/installation/multi_account_deployment']
 
     steps:
       - name: Pick ref
