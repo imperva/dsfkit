@@ -38,17 +38,8 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-The following [outputs](outputs.tf) are available:
+Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-agent-gw/aws/latest?tab=outputs
 
-* `public_ip`: Public address
-* `private_ip`: Private address
-* `public_dns`: Public dns
-* `private_dns`: Private dns
-* `display_name`: Display name of the instance under the DSF web console
-* `iam_role`: AWS IAM arn
-* `ssh_user`: SSH user for the instance
-* `instance_id`: AWS EC2 instance ID
-* `gateway_group_id`: The DSF Agent Group ID of the instance
 
 ## Usage
 
@@ -66,6 +57,7 @@ module "agent-gw" {
   secure_password                                          = var.secure_password
   dam_version                                              = var.dam_version
   management_server_host_for_registration                  = var.management_server_host_for_registration
+  allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 }```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.

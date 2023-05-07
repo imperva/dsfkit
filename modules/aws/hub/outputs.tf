@@ -24,7 +24,7 @@ output "iam_role" {
 }
 
 output "display_name" {
-  description = "Display name"
+  description = "Display name of the instance under the DSF web console"
   value = module.hub_instance.display_name
 }
 
@@ -38,20 +38,19 @@ output "instance_id" {
 }
 
 output "sonarw_public_key" {
-  description = "Sonarw user public key (used for federation, hadr, and more)"
+  description = "The public key (also known as the sonarw public SSH key) should be used for federation and for connecting an Agentless Gateway"
   value = module.hub_instance.sonarw_public_key
 }
 
 output "sonarw_private_key" {
-  description = "Sonarw user private key (used for federation, hadr, and more)"
+  description = "The private key (also known as the sonarw private SSH key) should be used for federation and for connecting secondary hadr DSF Hub"
   value = module.hub_instance.sonarw_private_key
 }
 
 output "jsonar_uid" {
-  description = "Sonar node id"
+  description = "Id of the instance in DSF portal"
   value = module.hub_instance.jsonar_uid
 }
-
 
 output "access_tokens" {
   value     = module.hub_instance.access_tokens

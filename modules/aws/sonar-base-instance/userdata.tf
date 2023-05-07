@@ -15,7 +15,7 @@ locals {
     display-name                           = local.display_name
     password_secret                        = aws_secretsmanager_secret.password_secret.name
     ssh_key_path                           = var.ssh_key_path
-    hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
+    hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
     jsonar_uuid                            = random_uuid.jsonar_uuid.result

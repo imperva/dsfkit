@@ -111,7 +111,6 @@ module "agentless_gw_group" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub.sonarw_public_key
-  attach_public_ip           = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

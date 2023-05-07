@@ -50,6 +50,7 @@ output "instance_id" {
 }
 
 output "configuration" {
+  description = "Pre-configured site and service group available for use"
   value = {
     default_site         = local.site
     default_server_group = local.server_group
