@@ -71,6 +71,7 @@ module "mx" {
   key_pair                  = module.key_pair.key_pair.key_pair_name
   secure_password           = local.web_console_admin_password
   mx_password               = local.web_console_admin_password
+  
   allowed_web_console_cidrs = local.workstation_cidr
   allowed_agent_gw_cidrs    = [data.aws_subnet.gw.cidr_block]
   hub_details               = var.hub_details
