@@ -27,14 +27,6 @@ on:
       - '!master'
       - '!dev'
 
-env:
-  TF_WARN_OUTPUT_ERRORS: 1
-  TF_CLI_ARGS: "-no-color"
-  TF_INPUT: 0
-  AWS_REGION: us-west-2
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 permissions:
   contents: read
 
@@ -73,6 +65,23 @@ jobs:
             subnet_gw: subnet-0c5ade55a259105e6
 
     name: '${{ matrix.name }}'
+    env:
+      TF_WARN_OUTPUT_ERRORS: 1
+      TF_CLI_ARGS: "-no-color"
+      TF_INPUT: 0
+      AWS_REGION: us-west-2
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_aws_profile: ${{ matrix.aws_profile }}
+      TF_VAR_aws_profile_hub: ${{ matrix.aws_profile }}
+      TF_VAR_aws_profile_gw: ${{ matrix.aws_profile_gw }}
+      TF_VAR_subnet_hub: ${{ matrix.subnet_hub }}
+      TF_VAR_subnet_gw: ${{ matrix.subnet_gw }}
+      TF_VAR_subnet_hub_secondary: ${{ matrix.subnet_hub_secondary }}
+      TF_VAR_aws_region: ${{ matrix.aws_region }}
+      TF_VAR_aws_region_hub: ${{ matrix.aws_region }}
+      TF_VAR_aws_region_gw: ${{ matrix.aws_region }}
+
     steps:
       - name: Pick ref
         run: |
@@ -137,17 +146,6 @@ jobs:
           EXAMPLE_DIR: ./${{ matrix.example_dir }}
           REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
           TARGET_DIR: ${{ matrix.target_dir }}
-          AWS_REGION: ${{ matrix.aws_region }}
-          TF_WORKSPACE: ${{ matrix.workspace }}
-          TF_VAR_aws_profile: ${{ matrix.aws_profile }}
-          TF_VAR_aws_profile_hub: ${{ matrix.aws_profile }}
-          TF_VAR_aws_profile_gw: ${{ matrix.aws_profile_gw }}
-          TF_VAR_subnet_hub: ${{ matrix.subnet_hub }}
-          TF_VAR_subnet_gw: ${{ matrix.subnet_gw }}
-          TF_VAR_subnet_hub_secondary: ${{ matrix.subnet_hub_secondary }}
-          TF_VAR_aws_region: ${{ matrix.aws_region }}
-          TF_VAR_aws_region_hub: ${{ matrix.aws_region }}
-          TF_VAR_aws_region_gw: ${{ matrix.aws_region }}
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
         run: |
           cat << EOF > ${{ matrix.example }}/terraform.tfvars
