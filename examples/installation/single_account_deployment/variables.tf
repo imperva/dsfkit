@@ -49,16 +49,16 @@ variable "subnet_gw" {
   description = "Aws subnet id for the primary Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "security_group_id_hub" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+variable "security_group_ids_hub" {
+  type        = list(string)
+  default     = []
+  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
-variable "security_group_id_gw" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+variable "security_group_ids_gw" {
+  type        = list(string)
+  default     = []
+  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "gw_count" {
