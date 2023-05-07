@@ -77,7 +77,7 @@ module "hub_primary" {
   version                    = "1.4.4" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = var.subnet_hub_primary
-  security_group_id          = var.security_group_id_hub
+  security_group_ids         = var.security_group_id_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   instance_type              = var.hub_instance_type
