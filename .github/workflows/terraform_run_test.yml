@@ -126,7 +126,7 @@ jobs:
         aws_region="$TF_VAR_aws_region"
         aws_region_hub="$TF_VAR_aws_region"
         aws_region_gw="$TF_VAR_aws_region"
-        subnet_hub="$TF_VAR_subnet_hub"
+        subnet_hub_primary="$TF_VAR_subnet_hub_primary"
         subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
         subnet_gw="$TF_VAR_subnet_gw"
         EOF
