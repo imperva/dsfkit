@@ -87,7 +87,7 @@ module "hub" {
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
   attach_persistent_public_ip           = true
-  use_public_ip =true
+  use_public_ip = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -95,7 +95,6 @@ module "hub" {
   allowed_web_console_cidrs = var.web_console_cidr
   allowed_agentless_gw_cidrs = [data.aws_subnet.gw.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  use_public_ip = true
   depends_on = [
     module.vpc
   ]
@@ -119,7 +118,6 @@ module "agentless_gw_group" {
   }
   allowed_hub_cidrs = [data.aws_subnet.hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
