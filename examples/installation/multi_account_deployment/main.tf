@@ -97,12 +97,12 @@ module "hub" {
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_cidrs = var.web_console_cidr
-  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
-  allowed_all_cidrs = local.workstation_cidr
+  allowed_all_cidrs = concat(local.workstation_cidr, [data.aws_subnet.subnet_gw.cidr_block])
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
 }
+
 
 module "agentless_gw_group" {
   count                      = var.gw_count
