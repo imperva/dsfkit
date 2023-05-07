@@ -21,6 +21,12 @@ variable "subnet_id" {
   }
 }
 
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the DSF MX. Keep empty if you wish to create a new role."
+}
+
 variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids to attach to the MX instance"
@@ -71,10 +77,9 @@ variable "allowed_all_cidrs" {
   default     = []
 }
 
-variable "role_arn" {
+variable "key_pair" {
   type        = string
-  default     = null
-  description = "IAM role to assign to the DSF MX. Keep empty if you wish to create a new role."
+  description = "Key pair for the DSF MX instance"
 }
 
 variable "mx_password" {
@@ -137,15 +142,6 @@ variable "secure_password" {
   }
 }
 
-variable "license_file" {
-  type        = string
-  description = "DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time"
-  validation {
-    condition     = fileexists(var.license_file)
-    error_message = "No such file on disk (${var.license_file})"
-  }
-}
-
 variable "timezone" {
   type    = string
   default = "UTC"
@@ -154,17 +150,6 @@ variable "timezone" {
 variable "ssh_user" {
   type    = string
   default = "ec2-user"
-}
-
-variable "attach_public_ip" {
-  type        = bool
-  description = "Create and attach elastic public IP for the instance"
-  default     = false
-}
-
-variable "key_pair" {
-  type        = string
-  description = "Key pair for the DSF MX instance"
 }
 
 variable "dam_version" {
@@ -181,6 +166,23 @@ variable "large_scale_mode" {
   description = "Large scale mode"
   default     = false
 }
+
+variable "license_file" {
+  type        = string
+  description = "DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time"
+  validation {
+    condition     = fileexists(var.license_file)
+    error_message = "No such file on disk (${var.license_file})"
+  }
+}
+
+
+variable "attach_public_ip" {
+  type        = bool
+  description = "Create and attach elastic public IP for the instance"
+  default     = false
+}
+
 
 variable "create_service_group" {
   type        = bool

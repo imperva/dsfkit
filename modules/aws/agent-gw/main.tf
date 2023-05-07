@@ -75,10 +75,10 @@ module "agent_gw" {
   dam_model              = local.dam_model
   mx_password            = var.mx_password
   secure_password        = var.secure_password
+  security_groups_config = local.security_groups_config
+  security_group_ids     = var.security_group_ids
   subnet_id              = var.subnet_id
   user_data_commands     = local.user_data_commands
-  security_group_ids     = var.security_group_ids
-  security_groups_config = local.security_groups_config
   iam_actions            = local.iam_actions
   key_pair               = var.key_pair
   attach_public_ip       = false

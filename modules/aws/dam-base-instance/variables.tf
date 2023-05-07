@@ -11,6 +11,31 @@ variable "subnet_id" {
   }
 }
 
+variable "resource_type" {
+  type = string
+  validation {
+    condition     = contains(["mx", "agent-gw"], var.resource_type)
+    error_message = "Allowed values for DSF node type: \"mx\", \"agent-gw\""
+  }
+  nullable = false
+}
+
+variable "security_groups_config" {
+  description = "Security groups config"
+  type = list(object({
+    name  = list(string)
+    udp   = list(number)
+    tcp   = list(number)
+    cidrs = list(string)
+  }))
+}
+
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids for the ec2 instance"
+  default     = []
+}
+
 variable "attach_public_ip" {
   type        = bool
   description = "Create and attach elastic public IP for the instance"
@@ -27,14 +52,7 @@ variable "role_arn" {
   description = "IAM role to assign to the DSF base instance. Keep empty if you wish to create a new role."
 }
 
-variable "resource_type" {
-  type = string
-  validation {
-    condition     = contains(["mx", "agent-gw"], var.resource_type)
-    error_message = "Allowed values for DSF node type: \"mx\", \"agent-gw\""
-  }
-  nullable = false
-}
+
 
 variable "dam_model" {
   type        = string
@@ -120,22 +138,6 @@ variable "instance_readiness_params" {
 variable "user_data_commands" {
   type        = list(string)
   description = "Commands that run on instance startup. Should contain at least the FTL command"
-}
-
-variable "security_groups_config" {
-  description = "Security groups config"
-  type = list(object({
-    name  = list(string)
-    udp   = list(number)
-    tcp   = list(number)
-    cidrs = list(string)
-  }))
-}
-
-variable "security_group_ids" {
-  type        = list(string)
-  description = "Additional Security group ids for the ec2 instance"
-  default     = []
 }
 
 variable "dam_version" {

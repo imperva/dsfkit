@@ -21,6 +21,12 @@ variable "subnet_id" {
   }
 }
 
+variable "role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the DSF hub. Keep empty if you wish to create a new role."
+}
+
 variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids to attach to the hub instance"
@@ -195,12 +201,6 @@ EOF
     condition     = var.ami == null || try(var.ami.username != null, false)
     error_message = "ami username mustn't be null"
   }
-}
-
-variable "role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the DSF hub. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

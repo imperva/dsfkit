@@ -28,7 +28,7 @@ resource "random_string" "gw_id" {
 
 module "gw_instance" {
   source                        = "../../../modules/aws/sonar-base-instance"
-  resource_type                 = "gw"
+  resource_type                 = "agentless-gw"
   name                          = var.friendly_name
   subnet_id                     = var.subnet_id
   key_pair                      = var.ssh_key_pair.ssh_public_key_name

@@ -6,6 +6,8 @@ locals {
   #   "echo Barbapapa12# | passwd --stdin root",
   #   "systemctl restart sshd"
   # ]
+  display_name     = aws_instance.dsf_base_instance.tags.Name
+
   commands = jsonencode({
     "commands" : var.user_data_commands
     }
@@ -57,6 +59,7 @@ resource "null_resource" "readiness" {
     done
     EOF
   }
+
   triggers = {
     instance_id = aws_instance.dsf_base_instance.id
     commands    = var.instance_readiness_params.commands

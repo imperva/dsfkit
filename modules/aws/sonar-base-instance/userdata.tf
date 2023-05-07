@@ -59,7 +59,7 @@ resource "null_resource" "wait_for_installation_completion" {
   }
 
   triggers = {
-    installation_file = aws_instance.dsf_base_instance.arn
+    instance_id = aws_instance.dsf_base_instance.id
   }
 
   depends_on = [

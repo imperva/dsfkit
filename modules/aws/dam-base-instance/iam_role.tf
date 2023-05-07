@@ -1,5 +1,5 @@
 #################################
-# DSF DAM node IAM role
+# DSF node IAM role
 #################################
 
 locals {

@@ -27,9 +27,6 @@ security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-install
   ]
 }
 
-#################################
-# Actual Hub instance
-#################################
 
 module "hub_instance" {
   source                        = "../../../modules/aws/sonar-base-instance"

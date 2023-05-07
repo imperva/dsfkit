@@ -164,7 +164,7 @@ function setup() {
         --jsonar-logdir=$STATE_DIR/logs \
         --jsonar-uid ${jsonar_uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
-        $(test "${resource_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
+        $(test "${resource_type}" == "agentless-gw" && echo "--remote-machine") ${additional_install_parameters}
 }
 
 function set_environment_vars() {
@@ -189,7 +189,7 @@ function install_ssh_keys() {
     grep -q "${primary_node_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${primary_node_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
 
     # enable communication between the the primary/secondary hub and the Gateway
-    if [ "${resource_type}" == "gw" ]; then
+    if [ "${resource_type}" == "agentless-gw" ]; then
         grep -q "${hub_sonarw_public_key}" /home/sonarw/.ssh/authorized_keys || echo "${hub_sonarw_public_key}" | tee -a /home/sonarw/.ssh/authorized_keys > /dev/null
     fi
 

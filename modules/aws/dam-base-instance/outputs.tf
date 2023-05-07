@@ -36,11 +36,7 @@ output "iam_role" {
 }
 
 output "display_name" {
-  value = aws_instance.dsf_base_instance.tags.Name
-}
-
-output "eni_id" {
-  value = aws_network_interface.eni.id
+  value = local.display_name
 }
 
 output "instance_id" {

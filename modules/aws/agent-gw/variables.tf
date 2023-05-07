@@ -32,8 +32,9 @@ variable "security_group_ids" {
   validation {
     condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
     error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
+  }
+  default     = []
 }
-
 
 variable "allowed_mx_cidrs" {
   type        = list(string)
@@ -151,6 +152,31 @@ variable "secure_password" {
   }
 }
 
+variable "timezone" {
+  type    = string
+  default = "UTC"
+}
+
+variable "ssh_user" {
+  type    = string
+  default = "ec2-user"
+}
+
+variable "dam_version" {
+  description = "DAM version"
+  type        = string
+  validation {
+    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
+  }
+}
+
+variable "large_scale_mode" {
+  type        = bool
+  description = "Large scale mode"
+  default     = false
+}
+
 variable "agent_listener_port" {
   type        = number
   description = "Enter listener's port number."
@@ -206,29 +232,4 @@ variable "gateway_group_id" {
     condition     = var.gateway_group_id == null || try(length(var.gateway_group_id) >= 3, false)
     error_message = "Id must be at least 3 chrachters long"
   }
-}
-
-variable "timezone" {
-  type    = string
-  default = "UTC"
-}
-
-variable "ssh_user" {
-  type    = string
-  default = "ec2-user"
-}
-
-variable "dam_version" {
-  description = "DAM version"
-  type        = string
-  validation {
-    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
-    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
-  }
-}
-
-variable "large_scale_mode" {
-  type        = bool
-  description = "Large scale mode"
-  default     = false
 }

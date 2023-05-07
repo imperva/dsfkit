@@ -55,6 +55,10 @@ output "ssh_user" {
   value = local.ami_username
 }
 
+output "instance_id" {
+  value = aws_instance.dsf_base_instance.id
+}
+
 output "access_tokens" {
   value = { for val in local.access_tokens_array : val.name => {
     name        = val.name
