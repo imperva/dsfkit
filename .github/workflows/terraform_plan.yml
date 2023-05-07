@@ -125,7 +125,9 @@ jobs:
           aws-region: ap-southeast-1
           role-session-name: innostage
 
-#
+      - name: Get AWS credentials
+        run: |
+          aws sts get-caller-identity
 #
 #      - name: Create AWS Profiles
 #        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
