@@ -99,9 +99,9 @@ jobs:
           terraform_version: ~1.4.0
 
       - name: Create tfvars File
-        if: ${{ matrix.name }} == 'single account' || ${{ matrix.name }} == 'multi account'
+        if: contains(matrix.name, 'single account')
         run: |
-          cat << EOF > $EXAMPLE_DIR/terraform.tfvars
+          cat << EOF > ${{ matrix.example }}/terraform.tfvars
           aws_profile="$TF_VAR_aws_profile"
           aws_profile_hub="$TF_VAR_aws_profile_hub"
           aws_profile_gw="$TF_VAR_aws_profile_gw"
