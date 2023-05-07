@@ -114,7 +114,7 @@ jobs:
           TF_VAR_aws_region: ${{ matrix.aws_region }}
           TF_VAR_aws_region_hub: ${{ matrix.aws_region }}
           TF_VAR_aws_region_gw: ${{ matrix.aws_region }}
-        if: contains(matrix.name, 'single account') or contains(matrix.name, 'multi account')
+        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
         run: |
           cat << EOF > ${{ matrix.example }}/terraform.tfvars
           aws_profile="$TF_VAR_aws_profile"
@@ -129,7 +129,7 @@ jobs:
           EOF
 
       - name: View The Vars
-        if: contains(matrix.name, 'single account') or contains(matrix.name, 'multi account')
+        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
         run: cat ${{ matrix.example }}/terraform.tfvars
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
