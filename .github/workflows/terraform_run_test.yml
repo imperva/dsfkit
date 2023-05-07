@@ -55,6 +55,7 @@ jobs:
       TF_VAR_aws_profile: ${{ matrix.aws_profile }}
       TF_VAR_aws_profile_hub: ${{ matrix.aws_profile }}
       TF_VAR_aws_profile_gw: ${{ matrix.aws_profile_gw }}
+      TF_VAR_subnet_hub: ${{ matrix.subnet_hub }}
       TF_VAR_subnet_hub_primary: ${{ matrix.subnet_hub }}
       TF_VAR_subnet_gw: ${{ matrix.subnet_gw }}
       TF_VAR_subnet_hub_secondary: ${{ matrix.subnet_hub_secondary }}
