@@ -82,7 +82,6 @@ module "hub_primary" {
   web_console_admin_password = local.web_console_admin_password
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
-  attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_private_key_pem_file_path
@@ -93,7 +92,6 @@ module "hub_primary" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   
-  use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
 }
@@ -108,7 +106,6 @@ module "hub_secondary" {
   web_console_admin_password = local.web_console_admin_password
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
-  attach_public_ip           = false
   ami                        = var.ami
   hadr_secondary_node        = true
   sonarw_public_key          = module.hub_primary.sonarw_public_key
@@ -122,7 +119,6 @@ module "hub_secondary" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
 
-  use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
 }
@@ -139,7 +135,6 @@ module "agentless_gw_group" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
-  attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_private_key_pem_file_path
@@ -148,7 +143,6 @@ module "agentless_gw_group" {
   allowed_web_console_cidrs = var.web_console_cidr
   allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  use_public_ip = false
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_pem_file_path

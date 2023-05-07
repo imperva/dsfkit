@@ -81,10 +81,11 @@ module "agent_gw" {
   user_data_commands     = local.user_data_commands
   iam_actions            = local.iam_actions
   key_pair               = var.key_pair
-  attach_public_ip       = false
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true
     timeout  = local.timeout
   }
+  use_public_ip = false
+  attach_persistent_public_ip = false
 }

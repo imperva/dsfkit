@@ -75,7 +75,7 @@ module "mx" {
   allowed_web_console_cidrs = local.workstation_cidr
   allowed_all_cidrs         = [data.aws_vpc.selected.cidr_block]
   hub_details               = var.hub_details
-  attach_public_ip          = true
+  attach_persistent_public_ip          = true
   large_scale_mode          = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false

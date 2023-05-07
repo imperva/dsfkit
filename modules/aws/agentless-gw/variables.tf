@@ -106,18 +106,6 @@ variable "ingress_communication_via_proxy" {
   }
 }
 
-variable "attach_public_ip" {
-  type        = bool
-  default     = true
-  description = "Create public elastic IP for the instance"
-}
-
-variable "use_public_ip" {
-  type        = bool
-  default     = false
-  description = "Whether to use the DSF instance's public or private IP to check the instance's health"
-}
-
 variable "binaries_location" {
   type = object({
     s3_bucket = string

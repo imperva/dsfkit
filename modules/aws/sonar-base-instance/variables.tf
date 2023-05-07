@@ -36,7 +36,7 @@ variable "security_group_ids" {
   default     = []
 }
 
-variable "attach_public_ip" {
+variable "attach_persistent_public_ip" {
   type        = bool
   description = "Create and attach elastic public IP for the instance"
 }

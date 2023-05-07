@@ -82,7 +82,6 @@ module "dsf_gw" {
   ingress_communication = {
     full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
   }
-  use_public_ip                 = false
 
   web_console_admin_password    = random_password.pass.result
   ebs                           = {

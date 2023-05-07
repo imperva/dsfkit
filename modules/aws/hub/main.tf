@@ -40,7 +40,7 @@ module "hub_instance" {
   security_groups_config        = local.security_groups_config
   security_group_ids            = var.security_group_ids
   role_arn                      = var.role_arn
-  attach_public_ip              = var.attach_public_ip
+  attach_persistent_public_ip              = var.attach_persistent_public_ip
   use_public_ip                 = var.use_public_ip
   additional_install_parameters = var.additional_install_parameters
   web_console_admin_password    = var.web_console_admin_password

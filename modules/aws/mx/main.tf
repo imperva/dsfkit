@@ -76,7 +76,7 @@ module "mx" {
   user_data_commands     = local.user_data_commands
   iam_actions            = local.iam_actions
   key_pair               = var.key_pair
-  attach_public_ip       = var.attach_public_ip
+  attach_persistent_public_ip       = var.attach_persistent_public_ip
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true

@@ -1,6 +1,6 @@
 output "public_ip" {
   description = "Public elastic IP address of the DSF base instance"
-  value       = try(aws_eip.dsf_instance_eip[0].public_ip, null)
+  value       = local.public_ip
   depends_on = [
     aws_eip_association.eip_assoc
   ]
@@ -8,7 +8,7 @@ output "public_ip" {
 
 output "private_ip" {
   description = "Private IP address of the DSF base instance"
-  value       = tolist(aws_network_interface.eni.private_ips)[0]
+  value       = local.private_ip
   depends_on = [
     aws_eip_association.eip_assoc
   ]
@@ -16,7 +16,7 @@ output "private_ip" {
 
 output "public_dns" {
   description = "Public DNS of the elastic IP address of the DSF base instance"
-  value       = try(aws_eip.dsf_instance_eip[0].public_dns, null)
+  value       = local.public_dns
   depends_on = [
     aws_eip_association.eip_assoc
   ]
