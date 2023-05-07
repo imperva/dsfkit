@@ -176,7 +176,6 @@ variable "license_file" {
   }
 }
 
-
 variable "attach_persistent_public_ip" {
   type        = bool
   description = "Create and attach elastic public IP for the instance"
