@@ -98,6 +98,20 @@ jobs:
         with:
           terraform_version: ~1.4.0
 
+      - name: Create AWS Profiles
+        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
+        run: |
+          cat << EOF > ~/.aws/credentials
+          [innodev]
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+          region=ap-southeast-1
+          [innostage]
+          aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+          region=ap-southeast-1
+          EOF
+
       - name: Create tfvars File
         env:
           EXAMPLE_DIR: ./${{ matrix.example_dir }}
