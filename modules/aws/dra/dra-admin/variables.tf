@@ -39,10 +39,20 @@ variable "subnet_id" {
     description = "subnet_id"
 }
 
-variable "security_group_ids" {
-    type = list(string)
-    description = "security_group_ids"
-    default     = null
+variable "security_group_id" {
+  type        = string
+  default     = null
+  description = "Security group id for the DRA Admin instance. In case it is not set, a security group will be created automatically."
+  validation {
+    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
+    error_message = "Security group id is invalid. Must be sg-********"
+  }
+}
+
+variable "attach_public_ip" {
+  type        = bool
+  default     = false
+  description = "Create public IP for the instance"
 }
 
 variable "ebs" {
@@ -59,4 +69,9 @@ variable "role_arn" {
   type        = string
   default     = null
   description = "IAM role to assign to the DRA Admin. Keep empty if you wish to create a new role."
+}
+
+variable "ssh_user" {
+  type    = string
+  default = "ec2-user"
 }

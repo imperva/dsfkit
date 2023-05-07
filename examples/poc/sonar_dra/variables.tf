@@ -37,6 +37,18 @@ variable "subnet_ids" {
   }
 }
 
+variable "security_group_id_admin" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the DRA Admin (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+}
+
+variable "security_group_id_analytics" {
+  type        = string
+  default     = null
+  description = "Aws security group id for the DRA Analytics (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+}
+
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip

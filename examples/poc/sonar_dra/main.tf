@@ -6,7 +6,7 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.4.2" # latest release tag
+  version       = "1.4.4" # latest release tag
 }
 
 locals {
@@ -43,7 +43,7 @@ module "vpc" {
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.2" # latest release tag
+  version                  = "1.4.4" # latest release tag
   key_name_prefix          = "imperva-dsf-dra-"
   private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
 }
@@ -52,10 +52,11 @@ module "dra_admin" {
   source                                = "../../../modules/aws/dra/dra-admin"
   friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                             = local.admin_subnet
+  security_group_id                     = var.security_group_id_admin
   admin_ami_id                          = var.admin_ami_id
   admin_analytics_registration_password = local.admin_analytics_registration_password
   instance_type                         = var.admin_instance_type
-  # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
+  attach_public_ip                      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -69,12 +70,12 @@ module "dra_admin" {
 module "analytics_server_group" {
   count                                     = var.analytics_server_count
   source                                    = "../../../modules/aws/dra/dra-analytics"
-  friendly_name                           = join("-", [local.deployment_name_salted, "analytics-server", count.index])
+  friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                                 = local.analytics_subnet
+  security_group_id                         = var.security_group_id_analytics
   analytics_ami_id                          = var.analytics_ami_id
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   instance_type                             = var.analytics_instance_type
-  # vpc_security_group_ids = ["${aws_security_group.admin-instance.id}"]
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

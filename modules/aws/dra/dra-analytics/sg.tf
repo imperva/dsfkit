@@ -2,9 +2,14 @@ data "aws_subnet" "subnet" {
   id = var.subnet_id
 }
 
-resource "aws_security_group" "analytics-instance" {
+locals {
+  create_security_group_count = var.security_group_id == null ? 1 : 0
+}
+
+resource "aws_security_group" "analytics_instance" {
+  count       = local.create_security_group_count
   vpc_id      = data.aws_subnet.subnet.vpc_id
-  description = "Security Group for Analytics Server"
+  description = "Security Group for the Analytics Server"
 
   ingress {
     from_port   = 8443

@@ -10,23 +10,23 @@ locals {
   ebs_state_disk_size  = var.ebs == null ? null : var.ebs.disk_size
   ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
   ebs_state_throughput = var.ebs == null ? null : var.ebs.throughput
+
+  security_group_id = length(aws_security_group.analytics_instance) > 0 ? element(aws_security_group.analytics_instance.*.id, 0) : var.security_group_id
+
+  install_script = templatefile("${path.module}/setup.tftpl", {
+    analytics_archiver_password_secret_arn    = aws_secretsmanager_secret.analytics_archiver_password_secret.arn
+    admin_analytics_registration_password_arn = var.admin_analytics_registration_password_arn
+    archiver_user                             = var.archiver_user
+    archiver_password                         = var.archiver_password
+    admin_server_private_ip                   = var.admin_server_private_ip
+  })
 }
 
-data "template_file" "analytics_bootstrap" {
-  template = file("${path.module}/analytics_bootstrap.tpl")
-  vars = {
-    analytics_archiver_password_secret_arn = aws_secretsmanager_secret.analytics_archiver_password_secret.arn
-    admin_analytics_registration_password_arn = var.admin_analytics_registration_password_arn
-    archiver_user = var.archiver_user
-    archiver_password = var.archiver_password
-    admin_server_private_ip = var.admin_server_private_ip
-  }
-}
 resource "aws_instance" "dra_analytics" {
   ami           = var.analytics_ami_id
   instance_type = var.instance_type
   key_name      = var.ssh_key_pair.ssh_public_key_name
-  user_data     = data.template_file.analytics_bootstrap.rendered
+  user_data     = local.install_script
   root_block_device {
     volume_size           = local.disk_size_app
     delete_on_termination = true
@@ -46,7 +46,7 @@ resource "aws_instance" "dra_analytics" {
 # Create a network interface for the analytics instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
-  security_groups = [aws_security_group.analytics-instance.id]
+  security_groups = [local.security_group_id]
 }
 
 resource "null_resource" "waiter_cmds" {

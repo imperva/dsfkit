@@ -1,3 +1,4 @@
+# todo - consider remove this output since the analytics shouldn't have a public ip
 output "analytics_public_ip" {
   value = aws_instance.dra_analytics.public_ip
 }
@@ -13,4 +14,8 @@ output "archiver_user" {
 output "archiver_password" {
   sensitive = true
   value = var.archiver_password
+}
+
+output "ssh_user" {
+  value = var.ssh_user
 }
