@@ -1,10 +1,14 @@
 variable "friendly_name" {
   type        = string
+  description = "Friendly name to identify all resources"
   default     = "imperva-dsf-hub"
-  description = "Friendly name, EC2 Instance Name"
   validation {
-    condition     = length(var.friendly_name) > 3
-    error_message = "Deployment name must be at least 3 characters"
+    condition     = length(var.friendly_name) >= 3
+    error_message = "Must be at least 3 characters long"
+  }
+  validation {
+    condition     = can(regex("^\\p{L}.*", var.friendly_name))
+    error_message = "Must start with a letter"
   }
 }
 
@@ -12,19 +16,75 @@ variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF hub instance"
   validation {
-    condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
+    condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
 }
 
-variable "security_group_id" {
+variable "role_arn" {
   type        = string
   default     = null
-  description = "Security group id for the DSF Hub instance. In case it is not set, a security group will be created automatically."
+  description = "IAM role to assign to the DSF hub. Keep empty if you wish to create a new role."
+}
+
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids to attach to the hub instance"
   validation {
-    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
-    error_message = "Security group id is invalid. Must be sg-********"
+    condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+    error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
+  default     = []
+}
+
+variable "allowed_agentless_gw_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing DSF Agentless Gateways to access the DSF hub instance"
+  validation {
+    condition = alltrue([for item in var.allowed_agentless_gw_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing ssh access"
+  validation {
+    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_web_console_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing web console access"
+  validation {
+    condition = alltrue([for item in var.allowed_web_console_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_hadr_console_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing hadr access (replica set members)"
+  validation {
+    condition = alltrue([for item in var.allowed_hadr_console_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_all_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
+  validation {
+    condition = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
 }
 
 variable "instance_type" {
@@ -56,9 +116,9 @@ variable "ingress_communication_via_proxy" {
   }
 }
 
-variable "attach_public_ip" {
+variable "attach_persistent_public_ip" {
   type        = bool
-  default     = true
+  default     = false
   description = "Create public elastic IP for the instance"
 }
 
@@ -66,27 +126,6 @@ variable "use_public_ip" {
   type        = bool
   default     = false
   description = "Whether to use the DSF instance's public or private IP to check the instance's health"
-}
-
-variable "ingress_communication" {
-  type = object({
-    full_access_cidr_list                   = list(any) # will be attached to sg.tf:ingress_ports
-    additional_web_console_access_cidr_list = list(any) # will be attached to port 8443
-  })
-  description = "List of allowed ingress CIDR patterns for the DSF Hub instance for ssh and internal protocols"
-  nullable    = false
-  validation {
-    condition = alltrue([
-      for address in var.ingress_communication.full_access_cidr_list : can(cidrnetmask(address))
-    ]) && (length(var.ingress_communication.full_access_cidr_list) > 0)
-    error_message = "Each item of the 'full_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
-  }
-  validation {
-    condition = alltrue([
-      for address in var.ingress_communication.additional_web_console_access_cidr_list : can(cidrnetmask(address))
-    ]) && (length(var.ingress_communication.additional_web_console_access_cidr_list) > 0)
-    error_message = "Each item of the 'additional_web_console_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
-  }
 }
 
 variable "binaries_location" {
@@ -162,12 +201,6 @@ EOF
     condition     = var.ami == null || try(var.ami.username != null, false)
     error_message = "ami username mustn't be null"
   }
-}
-
-variable "role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the DSF Hub. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

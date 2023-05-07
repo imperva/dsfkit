@@ -1,10 +1,35 @@
 locals {
-  volume_size        = "500"
-  gateway_group_id   = var.gateway_group_id == null ? random_uuid.gateway_group_id.result : var.gateway_group_id
-  required_tcp_ports = [22, 443, 80, 3792, 7700]
-  required_udp_ports = [3792]
-  dam_model          = var.gw_model
-  resource_type      = "agent-gw"
+  volume_size      = "500"
+  gateway_group_id = var.gateway_group_id == null ? random_uuid.gateway_group_id.result : var.gateway_group_id
+  dam_model        = var.gw_model
+  resource_type    = "agent-gw"
+
+  security_groups_config = [
+    {
+      name  = ["agent"]
+      udp   = []
+      tcp   = [443, var.agent_listener_port]
+      cidrs = concat(var.allowed_agent_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["mx"]
+      udp   = []
+      tcp   = [443]
+      cidrs = concat(var.allowed_mx_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["ssh"]
+      udp   = []
+      tcp   = [22]
+      cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["agent", "gateway", "clusters"]
+      udp   = [3792]
+      tcp   = [3792, 7700]
+      cidrs = concat(var.allowed_gw_clusters_cidrs, var.allowed_all_cidrs)
+    }
+  ]
 
   management_server_host_for_api_access = var.management_server_host_for_api_access != null ? var.management_server_host_for_api_access : var.management_server_host_for_registration
 }
@@ -43,28 +68,23 @@ locals {
 }
 
 module "agent_gw" {
-  source          = "../../../modules/aws/dam-base-instance"
-  name            = var.friendly_name
-  dam_version     = var.dam_version
-  resource_type   = local.resource_type
-  dam_model       = local.dam_model
-  mx_password     = var.mx_password
-  secure_password = var.secure_password
-  internal_ports = {
-    tcp = local.required_tcp_ports
-    udp = local.required_udp_ports
-  }
-  subnet_id          = var.subnet_id
-  user_data_commands = local.user_data_commands
-  sg_ingress_cidr    = var.sg_ingress_cidr
-  sg_ssh_cidr        = var.sg_ssh_cidr
-  security_group_ids = concat(var.security_group_ids, [aws_security_group.dsf_agent_sg.id])
-  iam_actions        = local.iam_actions
-  key_pair           = var.key_pair
-  attach_public_ip   = false
+  source                 = "../../../modules/aws/dam-base-instance"
+  name                   = var.friendly_name
+  dam_version            = var.dam_version
+  resource_type          = local.resource_type
+  dam_model              = local.dam_model
+  mx_password            = var.mx_password
+  secure_password        = var.secure_password
+  security_groups_config = local.security_groups_config
+  security_group_ids     = var.security_group_ids
+  subnet_id              = var.subnet_id
+  user_data_commands     = local.user_data_commands
+  iam_actions            = local.iam_actions
+  key_pair               = var.key_pair
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true
     timeout  = local.timeout
   }
+  attach_persistent_public_ip = false
 }

@@ -1,7 +1,11 @@
 locals {
+  public_ip = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.dsf_base_instance.public_ip
+  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.dsf_base_instance.public_dns
+  private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+
   security_group_ids = concat(
-    [aws_security_group.dsf_base_sg.id],
-    [aws_security_group.dsf_ssh_sg.id],
+    [aws_security_group.dsf_base_sg_out.id],
+    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
   var.security_group_ids)
 
   secure_password           = var.secure_password
@@ -22,15 +26,13 @@ locals {
   }
 }
 
-data "aws_region" "current" {}
-
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_public_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   vpc   = true
 }
 
 resource "aws_eip_association" "eip_assoc" {
-  count         = var.attach_public_ip ? 1 : 0
+  count         = var.attach_persistent_public_ip ? 1 : 0
   instance_id   = aws_instance.dsf_base_instance.id
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }

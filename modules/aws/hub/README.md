@@ -24,7 +24,6 @@ This Terraform module provisions several resources on AWS to create the DSF Hub.
 * A security group to allow the required network access to and from the DSF Hub instance.
 * An IAM role with relevant policies.
 * An AWS secret containing the secret required for attaching new Agentless Gateways.
-* An AWS Elastic Network Interface (ENI).
 
 The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Hub software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The AWS secret is used in the process of attaching a new Agentless Gateway to the DSF Hub.
 
@@ -35,7 +34,6 @@ The following input variables are **required**:
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `web_console_admin_password`: Admin password
-* `ingress_communication`: List of allowed ingress CIDR patterns for the Agentless Gateway instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary DSF Hub output. This variable must only be defined for the secondary DSF Hub.
@@ -45,20 +43,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-The following [outputs](outputs.tf) are available:
-
-* `public_ip`: Public address
-* `private_ip`: Private address
-* `public_dns`: Public dns
-* `private_dns`: Private dns
-* `display_name`: Display name of the instance under the DSF web console
-* `jsonar_uid`: Id of the instance in DSF portal
-* `iam_role`: AWS IAM arn
-* `sg_id`: AWS security group id of the instance
-* `ssh_user`: SSH user for the instance
-* `sonarw_public_key`: The public key (also known as the sonarw public SSH key) should be used when connecting an Agentless Gateway
-* `sonarw_private_key`: The private key (also known as the sonarw private SSH key) should be used when connecting secondary hadr DSF Hub
-* `sonarw_secret`: AWS secret details. Should be used when deploying a second DSF Hub for HADR
+Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs
 
 ## Usage
 
@@ -81,11 +66,7 @@ module "dsf_hub" {
     ssh_public_key_name         = var.ssh_name
   }
 
-  ingress_communication = {
-    additional_web_console_access_cidr_list = [var.web_console_cidr] # ["0.0.0.0/0"]
-    full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
-  }
-  use_public_ip                 = false
+  allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 
   web_console_admin_password    = random_password.pass.result
   ebs                           = {

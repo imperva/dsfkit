@@ -1,5 +1,5 @@
 #################################
-# DSF DAM node IAM role
+# DSF node IAM role
 #################################
 
 locals {
@@ -45,22 +45,21 @@ locals {
 }
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
-  name_prefix = "dsf-${var.resource_type}-instance-iam-profile"
+  name_prefix = "${var.name}-${var.resource_type}-instance-iam-profile"
   role        = local.role_name
 }
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.role_arn != null ? 0 : 1
-  name_prefix         = "imperva-dsf-${var.resource_type}-role"
-  description         = "imperva-dsf-${var.resource_type}-role-${var.name}"
+  description         = "${var.name}-${var.resource_type}-role-${var.name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
-    name   = "imperva-dsf-dam-base"
+    name   = "${var.name}-dam-base"
     policy = local.inline_policy
   }
   inline_policy {
-    name   = "imperva-dsf-kms-decrypt-access"
+    name   = "${var.name}-kms-decrypt-access"
     policy = local.inline_policy_kms
   }
 }

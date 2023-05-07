@@ -1,30 +1,74 @@
 variable "friendly_name" {
   type        = string
+  description = "Friendly name to identify all resources"
   default     = "imperva-dsf-agentless-gw"
-  description = "Friendly name, EC2 Instace Name"
   validation {
-    condition     = length(var.friendly_name) > 3
-    error_message = "Deployment name must be at least 3 characters"
+    condition     = length(var.friendly_name) >= 3
+    error_message = "Must be at least 3 characters long"
+  }
+  validation {
+    condition     = can(regex("^\\p{L}.*", var.friendly_name))
+    error_message = "Must start with a letter"
   }
 }
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF agentless gw instance"
+  description = "Subnet id for the DSF Agentless Gateway instance"
   validation {
-    condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
+    condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
 }
 
-variable "security_group_id" {
-  type        = string
-  default     = null
-  description = "Security group id for the Agentless Gateway instance. In case it is not set, a security group will be created automatically."
+variable "security_group_ids" {
+  type        = list(string)
+  description = "Additional Security group ids to attach to the Agentless Gateway instance"
   validation {
-    condition     = var.security_group_id == null ? true : (substr(var.security_group_id, 0, 3) == "sg-")
-    error_message = "Security group id is invalid. Must be sg-********"
+    condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+    error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
+  default     = []
+}
+
+variable "allowed_hub_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing hub to access the DSF Agentless Gateway instance"
+  validation {
+    condition = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing ssh access"
+  validation {
+    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_hadr_console_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing hadr access (replica set members)"
+  validation {
+    condition = alltrue([for item in var.allowed_hadr_console_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_all_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
+  validation {
+    condition = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
 }
 
 variable "public_ip" {
@@ -36,7 +80,7 @@ variable "public_ip" {
 variable "instance_type" {
   type        = string
   default     = "r6i.xlarge"
-  description = "Ec2 instance type for the DSF agentless gw"
+  description = "Ec2 instance type for the DSF Agentless Gateway"
 }
 
 variable "ebs" {
@@ -54,48 +98,12 @@ variable "ingress_communication_via_proxy" {
     proxy_private_ssh_key_path = string
     proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private gw (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private DSF Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default = {
     proxy_address              = null
     proxy_private_ssh_key_path = null
     proxy_ssh_user             = null
   }
-}
-
-variable "attach_public_ip" {
-  type        = bool
-  default     = true
-  description = "Create public elastic IP for the instance"
-}
-
-variable "use_public_ip" {
-  type        = bool
-  default     = false
-  description = "Whether to use the DSF instance's public or private IP to check the instance's health"
-}
-
-variable "ingress_communication" {
-  type = object({
-    full_access_cidr_list = list(any) # will be attached to sg.tf:ingress_ports
-  })
-  description = "List of allowed ingress CIDR patterns for the Agentless gateway instance for ssh and internal protocols"
-  nullable    = false
-  validation {
-    condition = alltrue([
-      for address in var.ingress_communication.full_access_cidr_list : can(cidrnetmask(address))
-    ]) && (length(var.ingress_communication.full_access_cidr_list) > 0)
-    error_message = "Each item of the 'full_access_cidr_list' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
-  }
-}
-
-variable "ssh_key_pair" {
-  type = object({
-    ssh_public_key_name       = string
-    ssh_private_key_file_path = string
-  })
-  description = "SSH materials to access machine"
-
-  nullable = false
 }
 
 variable "binaries_location" {
@@ -122,13 +130,13 @@ variable "hub_sonarw_public_key" {
 
 variable "sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  description = "Public key of the sonarw user taken from the primary agentless Gateway output. This variable must only be defined for the secondary Gateway."
   default     = null
 }
 
 variable "sonarw_private_key" {
   type        = string
-  description = "Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway."
+  description = "Private key of the sonarw user taken from the primary agentless Gateway output. This variable must only be defined for the secondary Gateway."
   default     = null
 }
 
@@ -140,6 +148,17 @@ variable "web_console_admin_password" {
     condition     = length(var.web_console_admin_password) > 8
     error_message = "Admin password must be at least 8 characters" # todo explain why we have here admin console
   }
+  nullable = false
+}
+
+
+variable "ssh_key_pair" {
+  type = object({
+    ssh_public_key_name       = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
   nullable = false
 }
 
@@ -172,7 +191,7 @@ EOF
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF Gateway. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the DSF agentless Gateway. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

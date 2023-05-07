@@ -57,6 +57,14 @@ locals {
   gw_public_key_name            = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
+data "aws_subnet" "primary_hub" {
+  id = var.subnet_hub_primary
+}
+
+data "aws_subnet" "secondary_hub" {
+  id = var.subnet_hub_secondary
+}
+
 data "aws_subnet" "subnet_gw" {
   id = var.subnet_gw
 }
@@ -68,23 +76,22 @@ module "hub_primary" {
   source                     = "imperva/dsf-hub/aws"
   version                    = "1.4.4" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                  = var.subnet_hub
+  subnet_id                  = var.subnet_hub_primary
   security_group_id          = var.security_group_id_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
-  attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_private_key_pem_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_secondary.private_ip}/32"], [data.aws_subnet.subnet_gw.cidr_block])
-  }
-  use_public_ip                     = false
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_hadr_console_cidrs = [data.aws_subnet.secondary_hub.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
+  
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
 }
@@ -99,7 +106,6 @@ module "hub_secondary" {
   web_console_admin_password = local.web_console_admin_password
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
-  attach_public_ip           = false
   ami                        = var.ami
   hadr_secondary_node        = true
   sonarw_public_key          = module.hub_primary.sonarw_public_key
@@ -108,11 +114,11 @@ module "hub_secondary" {
     ssh_private_key_file_path = local.hub_private_key_pem_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32"], [data.aws_subnet.subnet_gw.cidr_block])
-  }
-  use_public_ip                     = false
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_hadr_console_cidrs = [data.aws_subnet.primary_hub.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
+
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
 }
@@ -129,16 +135,14 @@ module "agentless_gw_group" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
-  attach_public_ip           = false
   ami                        = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_private_key_pem_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub_primary.private_ip}/32", "${module.hub_secondary.private_ip}/32"])
-  }
-  use_public_ip = false
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_pem_file_path

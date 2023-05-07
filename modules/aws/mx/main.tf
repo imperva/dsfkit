@@ -1,11 +1,47 @@
 locals {
   license_passphrase = random_password.passphrase.result
   encrypted_license  = data.external.encrypted_license.result.cipher_text
-  required_tcp_ports = [443, 514, 2812, 8081, 8083, 8084, 8085]
-  required_udp_ports = []
   dam_model          = "AVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
+  security_groups_config = [ # https://docs.imperva.com/bundle/v14.11-dam-on-amazon-aws-byol-installation-guide/page/78113.htm
+    {
+      name  = ["web", "console"]
+      udp   = []
+      tcp   = [8083]
+      cidrs = concat(var.allowed_web_console_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["ssh"]
+      udp   = []
+      tcp   = [22]
+      cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["agent", "gateway"]
+      udp   = []
+      tcp   = [8083, 8085]
+      cidrs = concat(var.allowed_agent_gw_cidrs, var.allowed_all_cidrs)
+    },
+    # {
+    #   name = ["som"]
+    #   udp = []
+    #   tcp = [8083, 8084, 8085]
+    #   cidrs = []
+    # },
+    # {
+    #   name = ["syslog"]
+    #   udp = [514]
+    #   tcp = []
+    #   cidrs = []
+    # },
+    # {
+    #   name = ["service", "monitor"]
+    #   udp = []
+    #   tcp = [2812]
+    #   cidrs = []
+    # },
+  ]
 }
 
 locals {
@@ -27,25 +63,20 @@ locals {
 }
 
 module "mx" {
-  source          = "../../../modules/aws/dam-base-instance"
-  name            = var.friendly_name
-  dam_version     = var.dam_version
-  resource_type   = local.resource_type
-  dam_model       = local.dam_model
-  mx_password     = var.mx_password
-  secure_password = var.secure_password
-  internal_ports = {
-    tcp = local.required_tcp_ports
-    udp = local.required_udp_ports
-  }
-  subnet_id          = var.subnet_id
-  user_data_commands = local.user_data_commands
-  sg_ingress_cidr    = var.sg_ingress_cidr
-  sg_ssh_cidr        = var.sg_ssh_cidr
-  security_group_ids = concat(var.security_group_ids, [aws_security_group.dsf_web_console_sg.id])
-  iam_actions        = local.iam_actions
-  key_pair           = var.key_pair
-  attach_public_ip   = var.attach_public_ip
+  source                 = "../../../modules/aws/dam-base-instance"
+  name                   = var.friendly_name
+  dam_version            = var.dam_version
+  resource_type          = local.resource_type
+  dam_model              = local.dam_model
+  mx_password            = var.mx_password
+  secure_password        = var.secure_password
+  security_groups_config = local.security_groups_config
+  security_group_ids     = var.security_group_ids
+  subnet_id              = var.subnet_id
+  user_data_commands     = local.user_data_commands
+  iam_actions            = local.iam_actions
+  key_pair               = var.key_pair
+  attach_persistent_public_ip       = var.attach_persistent_public_ip
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true

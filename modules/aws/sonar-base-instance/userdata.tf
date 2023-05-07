@@ -3,8 +3,6 @@ locals {
   bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
   bastion_user        = var.proxy_info.proxy_ssh_user
 
-  public_ip        = length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null
-  private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"
 
@@ -17,7 +15,7 @@ locals {
     display-name                           = local.display_name
     password_secret                        = aws_secretsmanager_secret.password_secret.name
     ssh_key_path                           = var.ssh_key_path
-    hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
+    hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
     jsonar_uuid                            = random_uuid.jsonar_uuid.result
@@ -59,11 +57,10 @@ resource "null_resource" "wait_for_installation_completion" {
   }
 
   triggers = {
-    installation_file = aws_instance.dsf_base_instance.arn
+    instance_id = aws_instance.dsf_base_instance.id
   }
 
   depends_on = [
-    aws_eip_association.eip_assoc,
-    aws_security_group_rule.sg_cidr_ingress
+    aws_eip_association.eip_assoc
   ]
 }

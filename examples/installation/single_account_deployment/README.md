@@ -16,7 +16,7 @@ It is mandatory to provide as input to this example the subnets to deploy the DS
 They can be in the same or in different subnets.<br/>
 
 #### Running terraform with variables
-In the current example setting AWS profile, AWS region and the subnets of the DSF Hub and the Agentless gateway are mandatory.<br/>
+In the current example setting AWS profile, AWS region and the subnets of the DSF Hub and the Agentless Gateway are mandatory.<br/>
 
 This example contains variables with default values. In order to customize the variables, you can use the following:
 * Run terraform with variables in a command line. For example, to run this example and specify a desired workstation CIDR that allows SSH and debugging access to the DSF Hub instead of using the default workstation CIDR where the installation is running from, run the following:

@@ -17,7 +17,7 @@ variable "sonar_version" {
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of agentless gateways"
+  description = "Number of DSF Agentless Gateways"
 }
 
 variable "web_console_admin_password" {
@@ -102,7 +102,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 75
     provisioned_iops = 0

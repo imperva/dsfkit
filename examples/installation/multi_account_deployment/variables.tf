@@ -43,17 +43,17 @@ variable "security_group_id_hub" {
 
 variable "aws_profile_gw" {
   type        = string
-  description = "Aws profile name for the DSF agentless gw account"
+  description = "Aws profile name for the DSF Agentless Gateway account"
 }
 
 variable "aws_region_gw" {
   type        = string
-  description = "Aws region for the DSF agentless gw (e.g us-east-1)"
+  description = "Aws region for the DSF Agentless Gateway (e.g us-east-1)"
 }
 
 variable "subnet_gw" {
   type        = string
-  description = "Aws subnet id for the DSF agentless gw (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the DSF Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "security_group_id_gw" {
@@ -65,7 +65,7 @@ variable "security_group_id_gw" {
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of agentless gateways"
+  description = "Number of DSF Agentless Gateways"
 }
 
 variable "web_console_admin_password" {
@@ -112,7 +112,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
@@ -129,7 +129,7 @@ variable "hub_instance_type" {
 variable "gw_instance_type" {
   type        = string
   default     = "r6i.xlarge"
-  description = "Ec2 instance type for the DSF gw"
+  description = "Ec2 instance type for the DSF Agentless Gateway"
 }
 
 variable "ami" {
@@ -189,7 +189,7 @@ variable "hub_skip_instance_health_verification" {
 
 variable "gw_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "terraform_script_path_folder" {

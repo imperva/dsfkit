@@ -36,7 +36,7 @@ variable "hub_proxy_info" {
 
 variable "assignee_gw" {
   type        = string
-  description = "jsonar uid of the assignee gw"
+  description = "jsonar uid of the assignee DSF Agentless Gateway"
   nullable    = false
   validation {
     condition     = length(var.assignee_gw) >= 35

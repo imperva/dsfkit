@@ -15,7 +15,7 @@ if ! grep JSESSIONID $cookie_file &>/dev/null; then
     --header "Authorization: Basic ${https_auth_header}"
 fi
 
-# Step 2: Verify gateway group "gateway-group" exists
+# Step 2: Verify agent gateway group "gateway-group" exists
 if ! $gateway_exists; then
   response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_id}")
 

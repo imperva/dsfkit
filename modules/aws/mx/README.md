@@ -38,17 +38,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-The following [outputs](outputs.tf) are available:
-
-* `public_ip`: public address
-* `private_ip`: private address
-* `public_dns`: public dns
-* `private_dns`: private dns
-* `display_name`: Display name of the instance under the DSF web console
-* `iam_role`: AWS IAM arn
-* `ssh_user`: SSH user for the instance
-* `instance_id`: AWS EC2 instance ID
-* `configuration`: Pre-configured site and service group available for use
+Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-mx/aws/latest?tab=outputs
 
 ## Usage
 
@@ -66,6 +56,7 @@ module "mx" {
   secure_password              = var.secure_password
   dam_version                  = var.dam_version
   license_file                 = var.license_file
+  allowed_all_cidrs            = [data.aws_vpc.selected.cidr_block]
 }```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.

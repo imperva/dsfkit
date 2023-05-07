@@ -153,7 +153,7 @@ jobs:
 #    - name: Set Environment Variables
 #      run: |
 #        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $HUB_OUTPUT) >> $GITHUB_ENV
-#        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $GW_OUTPUT) >> $GITHUB_ENV
+#        echo agent_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $GW_OUTPUT) >> $GITHUB_ENV
 #        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
@@ -164,7 +164,7 @@ jobs:
 #        proxy_username: ec2-user
 #        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
 #        proxy_port: 22
-#        host: ${{ env.gw_ip }}
+#        host: ${{ env.agent_gw_ip }}
 #        username: ec2-user
 #        key_path: ${{ env.dsf_ssh_key_file_name }}
 #        port: 22

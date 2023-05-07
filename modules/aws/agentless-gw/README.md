@@ -45,18 +45,8 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-The following [outputs](outputs.tf) are available:
+Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-agentless-gw/aws/latest?tab=outputs
 
-* `public_ip`: Public address
-* `private_ip`: Private address
-* `public_dns`: Public dns
-* `private_dns`: Private dns
-* `display_name`: Display name of the instance under the DSF web console
-* `jsonar_uid`: Id of the instance in DSF portal
-* `iam_role`: AWS IAM arn
-* `ssh_user`: SSH user for the instance
-* `sonarw_public_key`: Public key of the sonarw user
-* `sonarw_private_key`: Private key of the sonarw user
 
 ## Usage
 
@@ -79,10 +69,7 @@ module "dsf_gw" {
     ssh_public_key_name         = var.ssh_name
   }
 
-  ingress_communication = {
-    full_access_cidr_list                   = ["${module.globals.my_ip}/32"] # [terraform-runner-ip-address] to allow ssh
-  }
-  use_public_ip                 = false
+  allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 
   web_console_admin_password    = random_password.pass.result
   ebs                           = {
@@ -103,7 +90,7 @@ See available released versions in the main repo README [here](https://github.co
 Specify the module's version by adding the version parameter. For example:
 
 ```
-module "dsf_gw" {
+module "dsf_agentless_gw" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "x.y.z"
 }

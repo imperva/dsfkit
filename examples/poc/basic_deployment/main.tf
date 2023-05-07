@@ -36,9 +36,9 @@ locals {
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  hub_subnet                 = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
-  gw_subnet                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
-  db_subnets                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
+  hub_subnet_id                 = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
+  gw_subnet_id                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  db_subnet_ids                 = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
 }
 
 ##############################
@@ -65,6 +65,14 @@ module "vpc" {
   map_public_ip_on_launch = true
 }
 
+data "aws_subnet" "hub" {
+  id = local.hub_subnet_id
+}
+
+data "aws_subnet" "gw" {
+  id = local.gw_subnet_id
+}
+
 ##############################
 # Generating deployment
 ##############################
@@ -74,20 +82,19 @@ module "hub" {
   version = "1.4.4" # latest release tag
 
   friendly_name              = join("-", [local.deployment_name_salted, "hub"])
-  subnet_id                  = local.hub_subnet
+  subnet_id                  = local.hub_subnet_id
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_public_ip           = true
+  attach_persistent_public_ip           = true
+  use_public_ip = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    additional_web_console_access_cidr_list = var.web_console_cidr
-    full_access_cidr_list                   = concat(local.workstation_cidr, [var.private_subnets[0]])
-  }
-  use_public_ip = true
+  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_agentless_gw_cidrs = [data.aws_subnet.gw.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   depends_on = [
     module.vpc
   ]
@@ -99,20 +106,17 @@ module "agentless_gw_group" {
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
-  subnet_id                  = local.gw_subnet
+  subnet_id                  = local.gw_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   hub_sonarw_public_key      = module.hub.sonarw_public_key
-  attach_public_ip           = false
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  ingress_communication = {
-    full_access_cidr_list = concat(local.workstation_cidr, ["${module.hub.private_ip}/32"])
-  }
-  use_public_ip = false
+  allowed_hub_cidrs = [data.aws_subnet.hub.cidr_block]
+  allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -154,7 +158,7 @@ module "rds_mysql" {
   version = "1.4.4" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
-  rds_subnet_ids               = local.db_subnets
+  rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
 }
 
@@ -163,7 +167,7 @@ module "rds_mssql" {
   version = "1.4.4" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
-  rds_subnet_ids               = local.db_subnets
+  rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
 
   providers = {
