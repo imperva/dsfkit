@@ -16,7 +16,8 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "../../../modules/aws/core/globals"
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.4.4" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -43,14 +44,16 @@ locals {
 
 module "key_pair_hub" {
   count                    = local.should_create_hub_key_pair ? 1 : 0
-  source                   = "../../../modules/aws/core/key_pair"
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.4" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
 module "key_pair_gw" {
   count                    = local.should_create_gw_key_pair ? 1 : 0
-  source                   = "../../../modules/aws/core/key_pair"
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.4" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   providers = {
@@ -79,7 +82,8 @@ data "aws_subnet" "subnet_gw" {
 ##############################
 
 module "hub" {
-  source                     = "../../../modules/aws/hub"
+  source                     = "imperva/dsf-hub/aws"
+  version                    = "1.4.4" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = var.subnet_hub
   security_group_ids         = var.security_group_ids_hub
@@ -102,7 +106,8 @@ module "hub" {
 
 module "agentless_gw_group" {
   count                      = var.gw_count
-  source                     = "../../../modules/aws/agentless-gw"
+  source                     = "imperva/dsf-agentless-gw/aws"
+  version                    = "1.4.4" # latest release tag
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
   instance_type              = var.gw_instance_type
   ami                        = var.ami
@@ -116,7 +121,7 @@ module "agentless_gw_group" {
     ssh_private_key_file_path = local.gw_private_key_pem_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  allowed_hub_gw_cidrs = [data.aws_subnet.subnet_hub.cidr_block]
+  allowed_hub_cidrs = [data.aws_subnet.subnet_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.private_ip
@@ -132,7 +137,8 @@ module "agentless_gw_group" {
 
 module "federation" {
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
-  source   = "../../../modules/null/federation"
+  source   = "imperva/dsf-federation/null"
+  version  = "1.4.4" # latest release tag
   gw_info = {
     gw_ip_address           = each.value.private_ip
     gw_private_ssh_key_path = local.gw_private_key_pem_file_path
