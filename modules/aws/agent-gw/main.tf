@@ -86,6 +86,5 @@ module "agent_gw" {
     enable   = true
     timeout  = local.timeout
   }
-  use_public_ip = false
   attach_persistent_public_ip = false
 }
