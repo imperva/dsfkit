@@ -7,8 +7,7 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "imperva/dsf-globals/aws"
-  version       = "1.4.4" # latest release tag
+  source        = "../../../modules/aws/core/globals"
   sonar_version = var.sonar_version
 }
 
@@ -36,16 +35,14 @@ locals {
 ##############################
 module "key_pair_hub" {
   count                    = local.should_create_hub_key_pair ? 1 : 0
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.4" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
 }
 
 module "key_pair_gw" {
   count                    = local.should_create_gw_key_pair ? 1 : 0
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.4" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
 }
@@ -73,8 +70,7 @@ data "aws_subnet" "subnet_gw" {
 # Generating deployment
 ##############################
 module "hub_primary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.4.4" # latest release tag
+  source                     = "../../../modules/aws/hub"
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                  = var.subnet_hub_primary
   security_group_ids         = var.security_group_ids_hub
@@ -97,8 +93,7 @@ module "hub_primary" {
 }
 
 module "hub_secondary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.4.4" # latest release tag
+  source                     = "../../../modules/aws/hub"
   friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                  = var.subnet_hub_secondary
   security_group_ids         = var.security_group_ids_hub
@@ -125,8 +120,7 @@ module "hub_secondary" {
 
 module "agentless_gw_group" {
   count                      = var.gw_count
-  source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.4.4" # latest release tag
+  source                     = "../../../modules/aws/agentless-gw"
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                  = var.subnet_gw
   security_group_ids         = var.security_group_ids_gw
@@ -162,8 +156,7 @@ locals {
 
 module "federation" {
   count   = length(local.hub_gw_combinations)
-  source  = "imperva/dsf-federation/null"
-  version = "1.4.4" # latest release tag
+  source  = "../../../modules/null/federation"
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = local.gw_private_key_pem_file_path
@@ -187,8 +180,7 @@ module "federation" {
 }
 
 module "hub_hadr" {
-  source                       = "imperva/dsf-hadr/null"
-  version                      = "1.4.4" # latest release tag
+  source                       = "../../../modules/null/hadr"
   sonar_version                = module.globals.tarball_location.version
   dsf_primary_ip               = module.hub_primary.private_ip
   dsf_primary_private_ip       = module.hub_primary.private_ip
