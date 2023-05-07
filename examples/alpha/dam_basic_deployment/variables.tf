@@ -40,12 +40,6 @@ variable "web_console_cidr_list" {
   description = "DAM web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF DAM web console as a public website. It is recommended to specify a more restricted IP and CIDR range"
 }
 
-variable "agent_cidr_list" {
-  type        = list(string)
-  default     = []
-  description = "Agents CIDR list range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
-}
-
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
