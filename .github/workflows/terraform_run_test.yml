@@ -132,7 +132,7 @@ jobs:
         subnet_hub_primary="$TF_VAR_subnet_hub_primary"
         subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
         subnet_gw="$TF_VAR_subnet_gw"
-        workstation_cidr="$TF_VAR_workstation_cidr"
+        workstation_cidr=$TF_VAR_workstation_cidr
         EOF
 
     - name: View The Vars
