@@ -45,18 +45,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: basic
+          - name: Sonar Basic
             example: ./examples/poc/basic_deployment
-          - name: hadr
+          - name: Sonar HADR
             example: ./examples/poc/hadr_deployment
-          - name: single account
+          - name: Sonar Single Account
             example: ./examples/installation/single_account_deployment
             aws_region: ap-southeast-1
             subnet_hub: subnet-01eb3ee7b2a93a856
             aws_profile: innostage
             subnet_gw: subnet-01eb3ee7b2a93a856
             subnet_hub_secondary: subnet-01eb3ee7b2a93a856
-          - name: multi account
+          - name: Sonar Multi Account
             example: ./examples/installation/multi_account_deployment
             aws_region: ap-southeast-1
             subnet_hub: subnet-01eb3ee7b2a93a856
