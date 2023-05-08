@@ -62,6 +62,7 @@ jobs:
       TF_VAR_aws_region: ${{ matrix.aws_region }}
       TF_VAR_aws_region_hub: ${{ matrix.aws_region }}
       TF_VAR_aws_region_gw: ${{ matrix.aws_region }}
+      TF_VAR_workstation_cidr: '["10.0.102.52/32", "54.179.25.83/32"]'
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -131,6 +132,7 @@ jobs:
         subnet_hub_primary="$TF_VAR_subnet_hub_primary"
         subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
         subnet_gw="$TF_VAR_subnet_gw"
+        workstation_cidr="$TF_VAR_workstation_cidr"
         EOF
 
     - name: View The Vars

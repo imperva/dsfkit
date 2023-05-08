@@ -17,7 +17,7 @@ variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF MX instance"
   validation {
-    condition     = length(var.subnet_id) >= 16 && substr(var.subnet_id, 0, 7) == "subnet-"
+    condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
 }
