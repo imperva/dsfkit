@@ -12,7 +12,7 @@ locals {
 
   # Assign token ID per token:
   access_tokens_array = [
-    for i in range(0, length(local.access_tokens)) : {
+    for i in range(0, 0) : {
       index       = i,
       name        = local.access_tokens[i].name,
       scopes      = local.access_tokens[i].scopes,

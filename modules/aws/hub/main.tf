@@ -32,8 +32,6 @@ module "hub_instance" {
   }
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_hub_private_key_secret_name = var.internal_hub_private_key_secret_name
-  internal_hub_public_key = var.internal_hub_public_key
-  internal_gw_private_key_secret_name = var.internal_gw_private_key_secret_name
-  internal_gw_public_key = var.internal_gw_public_key
+  internal_private_key_secret_name = var.internal_private_key_secret_name
+  internal_public_key = var.internal_public_key
 }

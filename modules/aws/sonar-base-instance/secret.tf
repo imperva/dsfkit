@@ -19,13 +19,11 @@
 data "aws_secretsmanager_secret" "sonarw_private_key_secret_data" {
   count = var.internal_private_key_secret_name != null ? 1 : 0
   name = var.internal_private_key_secret_name
-  description = "Imperva DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 data "aws_secretsmanager_secret" "password_secret_data" {
   count = var.web_console_admin_password_secret_name != null ? 1 : 0
   name = var.web_console_admin_password_secret_name
-  description = "Imperva DSF node password"
 }
 
 resource "tls_private_key" "sonarw_private_key" {
@@ -35,12 +33,13 @@ resource "tls_private_key" "sonarw_private_key" {
 }
 
 locals {
-  primary_node_sonarw_public_key  = var.internal_public_key != null ? var.internal_public_key : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.sonarw_public_key)
-  primary_node_sonarw_private_key = var.internal_private_key_secret_name != null ? var.internal_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.sonarw_private_key)
-  sonarw_secret_aws_arn           = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret.arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data.arn
-  sonarw_secret_aws_name          = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret.name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data.name
+  primary_node_sonarw_public_key  = var.internal_public_key != null ? var.internal_public_key : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.sonarw_public_key)
+  primary_node_sonarw_private_key = var.internal_private_key_secret_name != null ? var.internal_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.sonarw_private_key)
+  sonarw_secret_aws_arn           = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].arn
+  sonarw_secret_aws_name          = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
 
-  password_secret_aws_arn = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret.arn : data.aws_secretsmanager_secret.password_secret_data.arn
+  password_secret_aws_arn = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
+  password_secret_name = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.web_console_admin_password_secret_name
 }
 
 # generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
@@ -52,7 +51,7 @@ resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
 
 resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
   count = var.internal_private_key_secret_name == null ? 1 : 0
-  secret_id     = aws_secretsmanager_secret.sonarw_private_key_secret.id
+  secret_id     = aws_secretsmanager_secret.sonarw_private_key_secret[0].id
   secret_string = chomp(local.primary_node_sonarw_private_key)
 }
 
@@ -64,7 +63,7 @@ resource "aws_secretsmanager_secret" "password_secret" {
 
 resource "aws_secretsmanager_secret_version" "password_ver" {
   count = var.web_console_admin_password_secret_name == null ? 1 : 0
-  secret_id     = aws_secretsmanager_secret.password_secret.id
+  secret_id     = aws_secretsmanager_secret.password_secret[0].id
   secret_string = var.web_console_admin_password
 }
 
