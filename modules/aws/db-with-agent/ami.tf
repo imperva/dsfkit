@@ -1,7 +1,7 @@
 locals {
-  ami_owner    = "099720109477" # Amazon
-  ami_name     = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
-  ami_ssh_user = "ubuntu"
+  ami_owner    = local.os_params[local.os_type].ami_owner
+  ami_name     = local.os_params[local.os_type].ami_name
+  ami_ssh_user = local.os_params[local.os_type].ami_ssh_user
 }
 
 data "aws_ami" "selected-ami" {

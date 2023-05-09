@@ -29,8 +29,8 @@ locals {
           "s3:ListBucket"
         ]
         "Resource" : [
-          "arn:aws:s3:::${var.binaries_location.s3_bucket}",
-          "arn:aws:s3:::${var.binaries_location.s3_bucket}/*",
+          "arn:aws:s3:::${local.binaries_location.s3_bucket}",
+          "arn:aws:s3:::${local.binaries_location.s3_bucket}/*",
         ]
       }
     ]

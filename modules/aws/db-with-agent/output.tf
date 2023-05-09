@@ -21,5 +21,9 @@ output "instance_id" {
 }
 
 output "db_type" {
-  value = var.db_type
+  value = local.db_type
+}
+
+output "os_type" {
+  value = local.os_type
 }

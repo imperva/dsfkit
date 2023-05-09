@@ -73,6 +73,7 @@ module "mx" {
   mx_password               = local.web_console_admin_password
   allowed_web_console_cidrs = local.workstation_cidr
   allowed_agent_gw_cidrs    = [data.aws_subnet.gw.cidr_block]
+  allowed_ssh_cidrs         = local.workstation_cidr
   hub_details               = var.hub_details
   attach_persistent_public_ip          = true
   large_scale_mode          = var.large_scale_mode
@@ -93,14 +94,10 @@ module "agent_gw" {
   mx_password                             = local.web_console_admin_password
   allowed_agent_cidrs                     = [data.aws_subnet.gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
+  allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
-}
-
-resource "random_shuffle" "db" {
-  count = var.agent_count
-  input = ["PostgreSql", "MySql", "MariaDB"]
 }
 
 module "agent_monitored_db" {
@@ -108,11 +105,10 @@ module "agent_monitored_db" {
   count  = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
-  db_type       = element(random_shuffle.db[count.index].result, 0)
 
   subnet_id         = local.gw_subnet_id
   key_pair          = module.key_pair.key_pair.key_pair_name
-  allowed_ssh_cidrs = local.workstation_cidr
+  allowed_ssh_cidrs = [format("%s/32", module.mx.private_ip)]
 
   registration_params = {
     agent_gateway_host = module.agent_gw[0].private_ip

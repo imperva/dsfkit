@@ -4,7 +4,7 @@ locals {
   hub_action_set_action = local.hub_action_set
 
   hub_configuration = var.hub_details == null ? [] : concat([{
-    name     = "send_to_hub_action_set"
+    name     = "send_to_hub_action_set" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78508.htm
     method   = "PUT"
     url_path = "SecureSphere/api/v1/conf/actionSets/${local.hub_action_set}/${local.hub_action_set_action}"
     payload = jsonencode({
@@ -20,7 +20,7 @@ locals {
     }]
     ,
     var.large_scale_mode == true ? [] : [{
-      name     = "archive_default_audit_policy_to_hub"
+      name     = "archive_default_audit_policy_to_hub" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78508.htm
       method   = "PUT"
       url_path = "SecureSphere/api/v1/conf/auditPolicies/${local.default_audit_policy}"
       payload = jsonencode({
@@ -51,6 +51,15 @@ locals {
         },
         "user-defined-values" : [],
         "data-collection-db-response" : false
+        }
+      )
+    },
+    {
+      name     = "send_incidents_to_hub" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78509.htm
+      method   = "PUT"
+      url_path = "SecureSphere/api/v1/conf/systemDefinitions/send-alerts-to-sonar"
+      payload = jsonencode({
+        "value" : true
         }
       )
     }]
