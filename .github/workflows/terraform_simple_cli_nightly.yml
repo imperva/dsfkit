@@ -1,4 +1,4 @@
-name: 'CLI (basic) Nightly'
+name: 'Cli (basic) Nightly'
 
 on:
   workflow_dispatch:
@@ -12,6 +12,12 @@ on:
         options:
           - simple_cli_dev_nightly
           - simple_cli_master_nightly
+          - multi_account
+      example_dir:
+        type: choice
+        options:
+          - ./examples/poc/basic_deployment
+          - ./examples/installation/multi_account_deployment
 
   workflow_call:
     inputs:
@@ -21,6 +27,10 @@ on:
       workspace:
         required: true
         type: string
+      example_dir:
+        type: string
+        required: false
+        default: ./examples/poc/basic_deployment
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -33,8 +43,8 @@ env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  TF_VAR_gw_count: 1
-  EXAMPLE_DIR: ./examples/poc/basic_deployment
+  TF_VAR_gw_count: 2
+  EXAMPLE_DIR: ${{ inputs.example_dir }}
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -45,7 +55,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform ${{ inputs.branch }}'
+    name: ' ${{ job.job_name }} ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     environment: test
   
@@ -123,7 +133,7 @@ jobs:
     - name: Set Environment Variables
       run: |
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
-        echo agentless_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."agentless-gw-0".private_dns') >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
         echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
@@ -134,7 +144,7 @@ jobs:
         proxy_username: ec2-user
         proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
         proxy_port: 22
-        host: ${{ env.agentless_gw_ip }}
+        host: ${{ env.gw_ip }}
         username: ec2-user
         key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
@@ -158,21 +168,12 @@ jobs:
       # if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
-    - name: Check how was the workflow run
-      id: check-trigger
-      run: |
-        if [ "${{ github.event_name }}" = "schedule" ]; then
-          echo "run-by=Automation" >> $GITHUB_OUTPUT
-        else
-          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-        fi
-
     # Send job failure to Slack
     - name: Send Slack When Failure
       run: |
         if [ ${{ inputs.branch }} == 'master' ]; then 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         fi
       if: ${{ failure() }}
