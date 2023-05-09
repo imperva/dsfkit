@@ -101,7 +101,7 @@ module "hub_primary" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  allowed_web_console_cidrs = var.web_console_cidr
+  allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hadr_console_cidrs = [data.aws_subnet.secondary_hub.cidr_block]
   allowed_agentless_gw_cidrs = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
   allowed_all_cidrs = local.workstation_cidr

@@ -57,11 +57,11 @@ variable "allowed_ssh_cidrs" {
   default     = []
 }
 
-variable "allowed_web_console_cidrs" {
+variable "allowed_web_console_and_api_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing web console access"
   validation {
-    condition = alltrue([for item in var.allowed_web_console_cidrs : can(cidrnetmask(item))])
+    condition = alltrue([for item in var.allowed_web_console_and_api_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default     = []

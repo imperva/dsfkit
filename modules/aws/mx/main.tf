@@ -6,10 +6,10 @@ locals {
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
   security_groups_config = [ # https://docs.imperva.com/bundle/v14.11-dam-on-amazon-aws-byol-installation-guide/page/78113.htm
     {
-      name  = ["web", "console"]
+      name  = ["web", "console", "and", "api"]
       udp   = []
       tcp   = [8083]
-      cidrs = concat(var.allowed_web_console_cidrs, var.allowed_all_cidrs)
+      cidrs = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["ssh"]

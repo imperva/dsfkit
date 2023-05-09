@@ -1,10 +1,10 @@
 locals {
 security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
     {
-      name  = ["web", "console"]
+      name  = ["web", "console", "and", "api"]
       udp   = []
       tcp   = [8443]
-      cidrs = concat(var.allowed_web_console_cidrs, var.allowed_all_cidrs)
+      cidrs = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["ssh"]
