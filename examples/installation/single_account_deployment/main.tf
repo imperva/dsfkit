@@ -28,6 +28,7 @@ locals {
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
   should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
+  admin_password_or_secret_name = var.web_console_admin_password_secret_name != null ? "See secret by the name of '${var.web_console_admin_password_secret_name}' in your AWS secret manager" : local.web_console_admin_password
 }
 
 ##############################
