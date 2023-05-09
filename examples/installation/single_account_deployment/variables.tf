@@ -4,11 +4,6 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
-variable "aws_profile" {
-  type        = string
-  description = "Aws profile name for the deployed resources"
-}
-
 variable "aws_region" {
   type        = string
   description = "Aws region for the deployed resources (e.g us-east-2)"
@@ -26,8 +21,14 @@ variable "sonar_version" {
 
 variable "additional_tags" {
   type        = list(string)
-  default     = null
+  default     = []
   description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+  validation {
+    condition = alltrue([
+      for tag_pair in var.additional_tags : can(regex("^[a-zA-Z0-9_]+=[a-zA-Z0-9_]+$", tag_pair))
+    ])
+    error_message = "All values should be in the format of 'key=value'"
+  }
 }
 
 variable "tarball_location" {
