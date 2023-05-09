@@ -1,3 +1,20 @@
+locals {
+  db_types = ["PostgreSql", "MySql", "MariaDB"]
+  os_types = keys(local.os_params)
+
+  db_type = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
+  os_type = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
+  binaries_location     = var.binaries_location != null ? var.binaries_location : local.os_params[local.os_type].binaries_location
+}
+
+resource "random_shuffle" "db" {
+  input = local.db_types
+}
+
+resource "random_shuffle" "os" {
+  input = local.os_types
+}
+
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = concat(var.security_group_ids, [aws_security_group.dsf_agent_sg.id])

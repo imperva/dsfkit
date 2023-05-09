@@ -41,11 +41,21 @@ variable "allowed_ssh_cidrs" {
 
 variable "db_type" {
   type        = string
-  default     = "PostgreSql"
+  default     = null
   description = "DB type to provision on EC2 with an agent, available types are: ['PostgreSql', 'MySql', 'MariaDB']"
   validation {
-    condition     = contains(["PostgreSql", "MySql", "MariaDB"], var.db_type)
+    condition     = var.db_type == null || try(contains(["PostgreSql", "MySql", "MariaDB"], var.db_type), false)
     error_message = "Valid values should contain at least one of the following: ['PostgreSql', 'MySql', 'MariaDB']"
+  }
+}
+
+variable "os_type" {
+  type        = string
+  default     = null
+  description = "Os type to provision as EC2"
+  validation {
+    condition     = var.os_type == null || try(contains(["Red Hat", "Ubuntu"], var.os_type), false)
+    error_message = "Valid values should contain at least one of the following: 'Red Hat', 'Ubuntu']"
   }
 }
 
@@ -68,9 +78,5 @@ variable "binaries_location" {
     s3_key    = string
   })
   description = "S3 DSF DAM agent installation location"
-  default = {
-    s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-    s3_key    = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
-    s3_region = "us-east-1"
-  }
+  default = null
 }
