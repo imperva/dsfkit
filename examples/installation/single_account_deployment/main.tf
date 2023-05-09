@@ -25,7 +25,8 @@ locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
-  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
+  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
   should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
 }

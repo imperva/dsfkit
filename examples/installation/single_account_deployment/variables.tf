@@ -24,6 +24,12 @@ variable "sonar_version" {
   }
 }
 
+variable "additional_tags" {
+  type        = list(string)
+  default     = null
+  description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+}
+
 variable "tarball_location" {
   type = object({
     s3_bucket = string
