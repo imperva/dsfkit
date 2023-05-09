@@ -19,6 +19,7 @@ module "hub_instance" {
   use_public_ip                 = var.use_public_ip
   additional_install_parameters = var.additional_install_parameters
   web_console_admin_password    = var.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   ssh_key_path                  = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location             = var.binaries_location
   hadr_secondary_node           = var.hadr_secondary_node
@@ -31,4 +32,8 @@ module "hub_instance" {
   }
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_hub_private_key_secret_name = var.internal_hub_private_key_secret_name
+  internal_hub_public_key = var.internal_hub_public_key
+  internal_gw_private_key_secret_name = var.internal_gw_private_key_secret_name
+  internal_gw_public_key = var.internal_gw_public_key
 }

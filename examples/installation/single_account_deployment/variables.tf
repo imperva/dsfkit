@@ -80,8 +80,14 @@ variable "gw_count" {
 variable "web_console_admin_password" {
   sensitive   = true
   type        = string
-  default     = null # Random
-  description = "Admin password (Random generated if not set)"
+  default     = null
+  description = "Admin user password. If not set, and web_console_admin_password_secret_name is also not set, random value is generated."
+}
+
+variable "web_console_admin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, web_console_admin_password is used."
 }
 
 variable "web_console_cidr" {
@@ -204,4 +210,28 @@ variable "terraform_script_path_folder" {
     condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
+}
+
+variable "internal_hub_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_hub_public_key" {
+  type        = string
+  default     = null
+  description = "The DSF Hub sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_public_key" {
+  type        = string
+  default     = null
+  description = "The Agentless Gateway sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
 }

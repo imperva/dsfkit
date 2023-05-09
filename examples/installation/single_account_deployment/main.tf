@@ -22,7 +22,7 @@ locals {
 }
 
 locals {
-  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
+  web_console_admin_password = var.web_console_admin_password_secret_name != null ? null : (var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password)
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
@@ -69,6 +69,7 @@ module "hub_primary" {
   security_group_id          = var.security_group_id_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   attach_public_ip           = false
@@ -84,6 +85,8 @@ module "hub_primary" {
   use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name = var.internal_hub_private_key_secret_name
+  internal_public_key = var.internal_hub_public_key
 }
 
 module "hub_secondary" {
@@ -93,6 +96,7 @@ module "hub_secondary" {
   security_group_id          = var.security_group_id_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   attach_public_ip           = false
@@ -111,6 +115,8 @@ module "hub_secondary" {
   use_public_ip                     = false
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name = var.internal_hub_private_key_secret_name
+  internal_public_key = var.internal_hub_public_key
 }
 
 module "agentless_gw_group" {
@@ -123,6 +129,7 @@ module "agentless_gw_group" {
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   attach_public_ip           = false
   ami                        = var.ami
@@ -141,6 +148,8 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name = var.internal_gw_private_key_secret_name
+  internal_public_key = var.internal_gw_public_key
 }
 
 locals {
