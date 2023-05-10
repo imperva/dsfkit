@@ -59,7 +59,7 @@ permissions:
 
 jobs:
   terraform:
-    name: ' ${{ job.job_name }} ${{ inputs.branch }}'
+    name: '${{ inputs.branch }}'
     runs-on: ubuntu-latest
     environment: test
   
