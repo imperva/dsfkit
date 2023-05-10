@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  dev_poc:
+  dev_basic_poc:
     uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@dev
     with:
       branch: dev
@@ -19,7 +19,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  master_poc:
+  master_basic_poc:
     uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@master
     with:
       branch: master
