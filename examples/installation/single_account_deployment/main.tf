@@ -152,6 +152,22 @@ module "agentless_gw_group" {
   internal_public_key = try(trimspace(file(var.internal_gw_public_key_file_path)), "")
 }
 
+module "hub_hadr" {
+  source                       = "../../../modules/null/hadr"
+  sonar_version                = module.globals.tarball_location.version
+  dsf_primary_ip               = module.hub_primary.private_ip
+  dsf_primary_private_ip       = module.hub_primary.private_ip
+  dsf_secondary_ip             = module.hub_secondary.private_ip
+  dsf_secondary_private_ip     = module.hub_secondary.private_ip
+  ssh_key_path                 = local.hub_private_key_pem_file_path
+  ssh_user                     = module.hub_primary.ssh_user
+  terraform_script_path_folder = var.terraform_script_path_folder
+  depends_on = [
+    module.hub_primary,
+    module.hub_secondary
+  ]
+}
+
 locals {
   hub_gw_combinations = setproduct(
     [module.hub_primary, module.hub_secondary],
@@ -180,23 +196,7 @@ module "federation" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary,
+    module.hub_hadr,
     module.agentless_gw_group
-  ]
-}
-
-module "hub_hadr" {
-  source                       = "../../../modules/null/hadr"
-  sonar_version                = module.globals.tarball_location.version
-  dsf_primary_ip               = module.hub_primary.private_ip
-  dsf_primary_private_ip       = module.hub_primary.private_ip
-  dsf_secondary_ip             = module.hub_secondary.private_ip
-  dsf_secondary_private_ip     = module.hub_secondary.private_ip
-  ssh_key_path                 = local.hub_private_key_pem_file_path
-  ssh_user                     = module.hub_primary.ssh_user
-  terraform_script_path_folder = var.terraform_script_path_folder
-  depends_on = [
-    module.federation
   ]
 }
