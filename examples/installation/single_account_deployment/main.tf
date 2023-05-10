@@ -86,7 +86,7 @@ module "hub_primary" {
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
-  internal_public_key = try(file(var.internal_hub_public_key_file_path), "")
+  internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
 }
 
 module "hub_secondary" {
@@ -116,7 +116,7 @@ module "hub_secondary" {
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
-  internal_public_key = try(file(var.internal_hub_public_key_file_path), "")
+  internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
 }
 
 module "agentless_gw_group" {
@@ -149,7 +149,7 @@ module "agentless_gw_group" {
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_gw_private_key_secret_name
-  internal_public_key = try(file(var.internal_gw_public_key_file_path), "")
+  internal_public_key = try(trimspace(file(var.internal_gw_public_key_file_path)), "")
 }
 
 locals {
