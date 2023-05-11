@@ -44,7 +44,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform ${{ inputs.branch }}'
+    name: 'Multi Account ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     environment: test
   
