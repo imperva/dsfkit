@@ -97,8 +97,11 @@ jobs:
         proxy_address="54.179.25.83"
         proxy_private_address="10.0.102.52"
         proxy_ssh_user="ec2-user"
-        proxy_ssh_key_path=$AWS_KEY_PATH
+        proxy_ssh_key_path="$AWS_KEY_PATH"
         EOF
+
+    - name: Cat tfvars File
+      run: cat $EXAMPLE_DIR/terraform.tfvars
 
     - name: Get The Public IP
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
