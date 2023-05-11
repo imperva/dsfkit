@@ -110,7 +110,7 @@ jobs:
 
     - name: Create Key File
       run: |
-        echo "${{ secrets.JUMP_SERVER_KEY }}" | base64 -d > $EXAMPLE_DIR/$AWS_KEY_PATH
+        echo "${{ secrets.JUMP_SERVER_KEY }}" > $EXAMPLE_DIR/$AWS_KEY_PATH
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
