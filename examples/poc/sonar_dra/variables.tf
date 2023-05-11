@@ -16,10 +16,9 @@ variable "private_subnets" {
   description = "VPC private subnet cidr range"
 }
 
-# todo - check whether it should be different than the public subnets for the sonar / dam
 variable "public_subnets" {
   type        = list(string)
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
+  default     = ["10.0.103.0/24", "10.0.104.0/24"]
   description = "VPC public subnet cidr range"
 }
 
@@ -37,22 +36,20 @@ variable "subnet_ids" {
   }
 }
 
-variable "security_group_id_admin" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the DRA Admin (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
-}
-
-variable "security_group_id_analytics" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the DRA Analytics (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
-}
-
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
   description = "CIDR blocks allowing hub ssh and debugging access"
+}
+
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing ssh access"
+  validation {
+    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
 }
 
 variable "admin_instance_type" {

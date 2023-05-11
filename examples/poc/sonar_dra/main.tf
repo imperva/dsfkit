@@ -17,8 +17,16 @@ locals {
   archiver_password                     = local.admin_analytics_registration_password
   archiver_user                         = var.archiver_user != null ? var.archiver_user : join("-", [var.deployment_name, module.globals.salt, "archiver-user"])
   tags                                  = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  admin_subnet                          = var.subnet_ids != null ? var.subnet_ids.admin_subnet_id : module.vpc[0].public_subnets[0]
-  analytics_subnet                      = var.subnet_ids != null ? var.subnet_ids.analytics_subnet_id : module.vpc[0].private_subnets[0]
+  admin_subnet_id                       = var.subnet_ids != null ? var.subnet_ids.admin_subnet_id : module.vpc[0].public_subnets[0]
+  analytics_subnet_id                   = var.subnet_ids != null ? var.subnet_ids.analytics_subnet_id : module.vpc[0].private_subnets[0]
+}
+
+data "aws_subnet" "admin" {
+  id = local.admin_subnet_id
+}
+
+data "aws_subnet" "analytics" {
+  id = local.analytics_subnet_id
 }
 
 module "vpc" {
@@ -51,10 +59,11 @@ module "key_pair" {
 module "dra_admin" {
   source                                = "../../../modules/aws/dra/dra-admin"
   friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
-  subnet_id                             = local.admin_subnet
-  security_group_id                     = var.security_group_id_admin
+  subnet_id                             = local.admin_subnet_id
   admin_ami_id                          = var.admin_ami_id
   admin_analytics_registration_password = local.admin_analytics_registration_password
+  allowed_web_console_cidrs             = local.workstation_cidr
+  allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
   instance_type                         = var.admin_instance_type
   attach_public_ip                      = true
   ssh_key_pair = {
@@ -71,10 +80,11 @@ module "analytics_server_group" {
   count                                     = var.analytics_server_count
   source                                    = "../../../modules/aws/dra/dra-analytics"
   friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
-  subnet_id                                 = local.analytics_subnet
-  security_group_id                         = var.security_group_id_analytics
+  subnet_id                                 = local.analytics_subnet_id
   analytics_ami_id                          = var.analytics_ami_id
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
+  allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]
+  allowed_ssh_cidrs                         = var.allowed_ssh_cidrs
   instance_type                             = var.analytics_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path

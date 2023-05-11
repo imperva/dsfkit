@@ -5,11 +5,15 @@ locals {
   ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
   ebs_state_throughput = var.ebs == null ? null : var.ebs.throughput
 
-  security_group_id = length(aws_security_group.admin_instance) > 0 ? element(aws_security_group.admin_instance.*.id, 0) : var.security_group_id
-
   install_script = templatefile("${path.module}/setup.tftpl", {
     admin_analytics_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
   })
+
+  security_group_ids = concat(
+    [aws_security_group.dsf_base_sg_out.id],
+    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+    var.security_group_ids
+  )
 }
 
 resource "aws_instance" "dsf_base_instance" {
@@ -36,7 +40,7 @@ resource "aws_instance" "dsf_base_instance" {
 # Create a network interface for the instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
-  security_groups = [local.security_group_id]
+  security_groups = local.security_group_ids
 }
 
 resource "aws_eip" "dsf_instance_eip" {
