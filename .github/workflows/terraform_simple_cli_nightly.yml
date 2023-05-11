@@ -12,12 +12,6 @@ on:
         options:
           - simple_cli_dev_nightly
           - simple_cli_master_nightly
-          - multi_account
-      example_dir:
-        type: choice
-        options:
-          - ./examples/poc/basic_deployment
-          - ./examples/installation/multi_account_deployment
 
   workflow_call:
     inputs:
@@ -27,10 +21,6 @@ on:
       workspace:
         required: true
         type: string
-      example_dir:
-        type: string
-        required: false
-        default: ./examples/poc/basic_deployment
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -46,20 +36,18 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
-  EXAMPLE_DIR: ${{ inputs.example_dir }}
+  EXAMPLE_DIR: ./examples/poc/basic_deployment
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_WORKSPACE: ${{ inputs.workspace }}
-  JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-  AWS_KEY_PATH: "aws_key.cer"
 
 permissions:
   contents: read
 
 jobs:
   terraform:
-    name: '${{ inputs.branch }}'
+    name: 'Terraform ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     environment: test
   
@@ -96,41 +84,6 @@ jobs:
         }
         EOF
 
-    - name: Create tfvars File
-      if: contains(env.TF_WORKSPACE, 'multi_account')
-      run: |
-        cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        aws_profile_hub="innostage"
-        aws_region_hub_primary="ap-southeast-1"
-        aws_region_hub_secondary="ap-southeast-2"
-        aws_profile_gw="innodev"
-        aws_region_gw_primary="ap-southeast-1"
-        aws_region_gw_secondary="ap-southeast-2"
-        subnet_hub_primary="subnet-01eb3ee7b2a93a856"
-        subnet_hub_secondary="subnet-02b768bd5cf60ebd1"
-        subnet_gw_primary="subnet-0c5ade55a259105e6"
-        subnet_gw_secondary="subnet-065e567c8ba05713d"
-        proxy_address="54.179.25.83"
-        proxy_private_address="10.0.102.52"
-        proxy_ssh_user="ec2-user"
-        proxy_ssh_key_path=$AWS_KEY_PATH
-        EOF
-
-    - name: Get The Public IP
-      if: contains(env.TF_WORKSPACE, 'multi_account')
-      run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
-
-    - name: Set IP in AWS Security Group
-      if: contains(env.TF_WORKSPACE, 'multi_account')
-      run: |
-        aws_sg=$(aws ec2 authorize-security-group-ingress --group-id sg-0abaf0022b3d32a43 --protocol tcp --port 22 --cidr $curr_ip/32)
-        echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
-
-    - name: Create Key File
-      if: contains(env.TF_WORKSPACE, 'multi_account')
-      run: |
-        echo "${{ secrets.JUMP_SERVER_KEY }}" | base64 -d > $EXAMPLE_DIR/$AWS_KEY_PATH
-
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
@@ -145,74 +98,74 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-#    - name: Terraform Validate
-#      run: terraform -chdir=$EXAMPLE_DIR validate
-#
-#    # Generates an execution plan for Terraform
-#    - name: Terraform Plan
-#      run: terraform -chdir=$EXAMPLE_DIR plan
-#
-#    - name: Cleaning envrionment
-#      run: |
-#        mv $EXAMPLE_DIR/main.tf{,_}
-#        mv $EXAMPLE_DIR/outputs.tf{,_}
-#        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-#        mv $EXAMPLE_DIR/main.tf{_,}
-#        mv $EXAMPLE_DIR/outputs.tf{_,}
-#
-#      # On push to "main", build or change infrastructure according to Terraform configuration files
-#      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-#    - name: Terraform Apply
-#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-#      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
-#
-#    - name: Terraform Output
-#      run: terraform -chdir=$EXAMPLE_DIR output -json
-#
-#    - name: Set Environment Variables
-#      run: |
-#        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
-#        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
-#        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
-#
-#    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-#    - name: Check SSH Connectivity - Hub & GW
-#      uses: appleboy/ssh-action@v0.1.6
-#      with:
-#        proxy_host: ${{ env.hub_ip }}
-#        proxy_username: ec2-user
-#        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-#        proxy_port: 22
-#        host: ${{ env.gw_ip }}
-#        username: ec2-user
-#        key_path: ${{ env.dsf_ssh_key_file_name }}
-#        port: 22
-#        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-#
-#    - name: Check Aduit data
-#      uses: appleboy/ssh-action@v0.1.6
-#      id: test_audit
-#      with:
-#        host: ${{ env.hub_ip }}
-#        username: ec2-user
-#        key_path: ${{ env.dsf_ssh_key_file_name }}
-#        port: 22
-#        command_timeout: "2h"
-#        script: |
-#          sleep 35m
-#          for run in {1..8}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
-#          if [ $res -le 0 ]; then exit 1; fi
-#
-#    - name: Terraform Destroy
-#      # if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-#
-#    # Send job failure to Slack
-#    - name: Send Slack When Failure
-#      run: |
-#        if [ ${{ inputs.branch }} == 'master' ]; then
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        else
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        fi
-#      if: ${{ failure() }}
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
+
+    - name: Cleaning envrionment
+      run: |
+        mv $EXAMPLE_DIR/main.tf{,_}
+        mv $EXAMPLE_DIR/outputs.tf{,_}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+        mv $EXAMPLE_DIR/main.tf{_,}
+        mv $EXAMPLE_DIR/outputs.tf{_,}
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Set Environment Variables
+      run: |
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
+        echo gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."gw-0".private_dns') >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+
+    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
+    - name: Check SSH Connectivity - Hub & GW
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        proxy_host: ${{ env.hub_ip }}
+        proxy_username: ec2-user
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_port: 22
+        host: ${{ env.gw_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    - name: Check Aduit data
+      uses: appleboy/ssh-action@v0.1.6
+      id: test_audit
+      with:
+        host: ${{ env.hub_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        command_timeout: "2h"
+        script: |
+          sleep 35m
+          for run in {1..8}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
+          if [ $res -le 0 ]; then exit 1; fi
+
+    - name: Terraform Destroy
+      # if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+
+    # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
+      if: ${{ failure() }}
