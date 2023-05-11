@@ -77,7 +77,6 @@ jobs:
     - name: Change the modules source to local
       run: | 
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
-        echo "${{ toJSON(github) }}"
 
     - name: Sets env vars for environment
       run: |
