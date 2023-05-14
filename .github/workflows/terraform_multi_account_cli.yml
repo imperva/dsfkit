@@ -83,9 +83,9 @@ jobs:
 
     - name: Create tfvars File
       run: |
-        echo "${{ env.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}"
+        echo "${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}"
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        $TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}
+        ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}
         EOF
 
     - name: Cat tfvars File
