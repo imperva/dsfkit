@@ -84,21 +84,11 @@ jobs:
     - name: Create tfvars File
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        aws_profile_hub="innostage"
-        aws_region_hub_primary="ap-southeast-1"
-        aws_region_hub_secondary="ap-southeast-2"
-        aws_profile_gw="innodev"
-        aws_region_gw_primary="ap-southeast-1"
-        aws_region_gw_secondary="ap-southeast-2"
-        subnet_hub_primary="subnet-01eb3ee7b2a93a856"
-        subnet_hub_secondary="subnet-02b768bd5cf60ebd1"
-        subnet_gw_primary="subnet-0c5ade55a259105e6"
-        subnet_gw_secondary="subnet-065e567c8ba05713d"
-        proxy_address="54.179.25.83"
-        proxy_private_address="10.0.102.52"
-        proxy_ssh_user="ec2-user"
-        proxy_ssh_key_path="$AWS_KEY_PATH"
+        ${{ env.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}
         EOF
+
+    - name: Cat tfvars File
+      run: cat $EXAMPLE_DIR/terraform.tfvars
 
     - name: Add Profile Credentials to ~/.aws/credentials
       run: |
@@ -106,9 +96,6 @@ jobs:
         aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile innodev
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }} --profile innostage
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }} --profile innostage
-
-    - name: Cat tfvars File
-      run: cat $EXAMPLE_DIR/terraform.tfvars
 
     - name: Get The Public IP
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
@@ -174,13 +161,13 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       if: always()
       run: aws ec2 revoke-security-group-ingress --group-id sg-0abaf0022b3d32a43 --security-group-rule-ids ${{ env.sg_id }}
-#
-#    # Send job failure to Slack
-#    - name: Send Slack When Failure
-#      run: |
-#        if [ ${{ inputs.branch }} == 'master' ]; then
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        else
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        fi
-#      if: ${{ failure() }}
+
+    # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
+      if: ${{ failure() }}
