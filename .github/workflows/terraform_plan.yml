@@ -115,7 +115,6 @@ jobs:
           aws sts get-caller-identity
 
       - name: Create tfvars File
-        env:
         if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: |
           if [ ${{ matrix.name }} == 'Sonar Single Account' ]; then 
