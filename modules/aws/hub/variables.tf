@@ -159,12 +159,17 @@ variable "sonarw_private_key" {
 variable "web_console_admin_password" {
   type        = string
   sensitive   = true
-  description = "Admin password"
+  description = "Admin user password"
   validation {
-    condition     = length(var.web_console_admin_password) > 8
-    error_message = "Admin password must be at least 8 characters"
+    condition     = var.web_console_admin_password == null || try(length(var.web_console_admin_password) > 8, false)
+    error_message = "Admin user password must be at least 8 characters. Used only if 'web_console_admin_password_secret_name' is not set."
   }
-  nullable = false
+}
+
+variable "web_console_admin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'web_console_admin_password' is used."
 }
 
 variable "ssh_key_pair" {
@@ -221,4 +226,22 @@ variable "terraform_script_path_folder" {
     condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
+}
+
+variable "internal_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_public_key" {
+  type        = string
+  default     = null
+  description = "The DSF Hub sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "should_generate_access_token" {
+  type        = bool
+  default     = false
+  description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
 }

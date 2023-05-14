@@ -26,7 +26,8 @@ locals {
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
-  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
+  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
   should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
 }
@@ -80,6 +81,7 @@ module "hub_primary" {
   security_group_ids         = var.security_group_ids_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   ami                        = var.ami
@@ -88,12 +90,15 @@ module "hub_primary" {
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hadr_console_cidrs = [data.aws_subnet.secondary_hub.cidr_block]
-  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
-  allowed_all_cidrs = local.workstation_cidr
+  allowed_hadr_console_cidrs        = [data.aws_subnet.secondary_hub.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_all_cidrs                 = local.workstation_cidr
   
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  role_arn                          = var.hub_primary_role_arn
 }
 
 module "hub_secondary" {
@@ -104,6 +109,7 @@ module "hub_secondary" {
   security_group_ids         = var.security_group_ids_hub
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   ami                        = var.ami
@@ -115,12 +121,15 @@ module "hub_secondary" {
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hadr_console_cidrs = [data.aws_subnet.primary_hub.cidr_block]
-  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw.cidr_block]
-  allowed_all_cidrs = local.workstation_cidr
+  allowed_hadr_console_cidrs        = [data.aws_subnet.primary_hub.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_all_cidrs                 = local.workstation_cidr
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  role_arn                          = var.hub_secondary_role_arn
 }
 
 module "agentless_gw_group" {
@@ -134,14 +143,15 @@ module "agentless_gw_group" {
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   ami                        = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_private_key_pem_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
-  allowed_all_cidrs = local.workstation_cidr
+  allowed_hub_cidrs          = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
+  allowed_all_cidrs          = local.workstation_cidr
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
@@ -149,6 +159,26 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
+  role_arn                          = var.gw_role_arn
+}
+
+module "hub_hadr" {
+  source                       = "imperva/dsf-hadr/null"
+  version                      = "1.4.4" # latest release tag
+  sonar_version                = module.globals.tarball_location.version
+  dsf_primary_ip               = module.hub_primary.private_ip
+  dsf_primary_private_ip       = module.hub_primary.private_ip
+  dsf_secondary_ip             = module.hub_secondary.private_ip
+  dsf_secondary_private_ip     = module.hub_secondary.private_ip
+  ssh_key_path                 = local.hub_private_key_pem_file_path
+  ssh_user                     = module.hub_primary.ssh_user
+  terraform_script_path_folder = var.terraform_script_path_folder
+  depends_on = [
+    module.hub_primary,
+    module.hub_secondary
+  ]
 }
 
 locals {
@@ -180,24 +210,7 @@ module "federation" {
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary,
+    module.hub_hadr,
     module.agentless_gw_group
-  ]
-}
-
-module "hub_hadr" {
-  source                       = "imperva/dsf-hadr/null"
-  version                      = "1.4.4" # latest release tag
-  sonar_version                = module.globals.tarball_location.version
-  dsf_primary_ip               = module.hub_primary.private_ip
-  dsf_primary_private_ip       = module.hub_primary.private_ip
-  dsf_secondary_ip             = module.hub_secondary.private_ip
-  dsf_secondary_private_ip     = module.hub_secondary.private_ip
-  ssh_key_path                 = local.hub_private_key_pem_file_path
-  ssh_user                     = module.hub_primary.ssh_user
-  terraform_script_path_folder = var.terraform_script_path_folder
-  depends_on = [
-    module.federation
   ]
 }

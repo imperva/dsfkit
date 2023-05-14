@@ -14,7 +14,7 @@ variable "friendly_name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF Agentless Gateway instance"
+  description = "Subnet id for the Agentless Gateway instance"
   validation {
     condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
@@ -33,7 +33,7 @@ variable "security_group_ids" {
 
 variable "allowed_hub_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing hub to access the DSF Agentless Gateway instance"
+  description = "List of ingress CIDR patterns allowing hub to access the Agentless Gateway instance"
   validation {
     condition = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
@@ -80,7 +80,7 @@ variable "public_ip" {
 variable "instance_type" {
   type        = string
   default     = "r6i.xlarge"
-  description = "Ec2 instance type for the DSF Agentless Gateway"
+  description = "Ec2 instance type for the Agentless Gateway"
 }
 
 variable "ebs" {
@@ -98,7 +98,7 @@ variable "ingress_communication_via_proxy" {
     proxy_private_ssh_key_path = string
     proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private DSF Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default = {
     proxy_address              = null
     proxy_private_ssh_key_path = null
@@ -130,27 +130,31 @@ variable "hub_sonarw_public_key" {
 
 variable "sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the primary agentless Gateway output. This variable must only be defined for the secondary Gateway."
+  description = "Public key of the sonarw user taken from the primary Agentless Gateway output. This variable must only be defined for the secondary Agentless Gateway."
   default     = null
 }
 
 variable "sonarw_private_key" {
   type        = string
-  description = "Private key of the sonarw user taken from the primary agentless Gateway output. This variable must only be defined for the secondary Gateway."
+  description = "Private key of the sonarw user taken from the primary Agentless Gateway output. This variable must only be defined for the secondary Agentless Gateway."
   default     = null
 }
 
 variable "web_console_admin_password" {
   type        = string
   sensitive   = true
-  description = "Admin password"
+  description = "Admin user password"
   validation {
-    condition     = length(var.web_console_admin_password) > 8
-    error_message = "Admin password must be at least 8 characters" # todo explain why we have here admin console
+    condition     = var.web_console_admin_password == null || try(length(var.web_console_admin_password) > 8, false)
+    error_message = "Admin user password must be at least 8 characters. Used only if 'web_console_admin_password_secret_name' is not set."
   }
-  nullable = false
 }
 
+variable "web_console_admin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'web_console_admin_password' is used."
+}
 
 variable "ssh_key_pair" {
   type = object({
@@ -191,7 +195,7 @@ EOF
 variable "role_arn" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF agentless Gateway. Keep empty if you wish to create a new role."
+  description = "IAM role to assign to the Agentless Gateway. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {
@@ -206,10 +210,22 @@ variable "skip_instance_health_verification" {
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF agentless Gateway instance. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the Agentless Gateway instance. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
+}
+
+variable "internal_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_public_key" {
+  type        = string
+  default     = null
+  description = "The Agentless Gateway sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
 }
