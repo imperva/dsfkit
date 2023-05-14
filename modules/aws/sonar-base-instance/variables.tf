@@ -104,14 +104,14 @@ variable "web_console_admin_password" {
   description = "Admin user password"
   validation {
     condition     = var.web_console_admin_password == null || try(length(var.web_console_admin_password) > 8, false)
-    error_message = "Admin password must be at least 8 characters. Used only if web_console_admin_password_secret_name is not set."
+    error_message = "Admin password must be at least 8 characters. Used only if 'web_console_admin_password_secret_name' is not set."
   }
 }
 
 variable "web_console_admin_password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, web_console_admin_password is used."
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'web_console_admin_password' is used."
 }
 
 variable "ssh_key_path" {

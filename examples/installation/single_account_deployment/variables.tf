@@ -32,7 +32,7 @@ variable "additional_tags" {
     condition = alltrue([
     for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
     ])
-    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value."
+    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
   }
 }
 
@@ -76,7 +76,7 @@ variable "security_group_ids_gw" {
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of Agentless gateways"
+  description = "Number of Agentless Gateways"
   validation {
     condition     = var.gw_count > 0
     error_message = "The gw_count value must be greater than 0."
@@ -87,7 +87,7 @@ variable "web_console_admin_password" {
   sensitive   = true
   type        = string
   default     = null
-  description = "Admin user password. If not set, and web_console_admin_password_secret_name is also not set, random value is generated."
+  description = "Admin user password. If this variable is not set and 'web_console_admin_password_secret_name' is also not set, a random value is generated."
 }
 
 variable "web_console_admin_password_secret_name" {
@@ -128,7 +128,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
@@ -171,7 +171,7 @@ variable "hub_skip_instance_health_verification" {
 
 variable "gw_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the DSF Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "hub_key_pem_details" {
@@ -210,7 +210,7 @@ variable "gw_key_pem_details" {
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF Hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the DSF Hub and Agentless Gateway instances. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""

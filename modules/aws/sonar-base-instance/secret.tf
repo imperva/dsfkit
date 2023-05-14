@@ -41,30 +41,31 @@ locals {
   password_secret_aws_arn = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
   password_secret_name = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.web_console_admin_password_secret_name
 
-  should_create_password_in_secret_manager = var.web_console_admin_password_secret_name == null ? true : false
+  should_create_sonarw_private_key_in_secrets_manager = var.internal_private_key_secret_name == null ? true : false
+  should_create_web_console_password_in_secrets_manager = var.web_console_admin_password_secret_name == null ? true : false
 }
 
 # generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
 resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
-  count       = var.internal_private_key_secret_name == null ? 1 : 0
+  count       = local.should_create_sonarw_private_key_in_secrets_manager == true ? 1 : 0
   name_prefix = "${var.name}-sonarw-private-key"
   description = "Imperva DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
-  count         = var.internal_private_key_secret_name == null ? 1 : 0
+  count         = local.should_create_sonarw_private_key_in_secrets_manager == true ? 1 : 0
   secret_id     = aws_secretsmanager_secret.sonarw_private_key_secret[0].id
   secret_string = chomp(local.primary_node_sonarw_private_key)
 }
 
 resource "aws_secretsmanager_secret" "password_secret" {
-  count       = local.should_create_password_in_secret_manager == true ? 1 : 0
+  count       = local.should_create_web_console_password_in_secrets_manager == true ? 1 : 0
   name_prefix = "${var.name}-password"
   description = "Imperva DSF node password"
 }
 
 resource "aws_secretsmanager_secret_version" "password_ver" {
-  count         = local.should_create_password_in_secret_manager == true ? 1 : 0
+  count         = local.should_create_web_console_password_in_secrets_manager == true ? 1 : 0
   secret_id     = aws_secretsmanager_secret.password_secret[0].id
   secret_string = var.web_console_admin_password
 }
