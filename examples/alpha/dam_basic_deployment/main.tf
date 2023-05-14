@@ -122,7 +122,4 @@ module "agent_monitored_db" {
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }
-  depends_on = [
-    module.agent_gw
-  ]
 }
