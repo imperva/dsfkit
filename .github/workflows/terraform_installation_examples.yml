@@ -47,9 +47,9 @@ jobs:
       max-parallel: 1
       matrix:
         include:
-#          - name: single account
-#            example_dir: examples/installation/single_account_deployment
-#            target_dir: single_account
+          - name: single account
+            example_dir: examples/installation/single_account_deployment
+            target_dir: single_account
           - name: multi account
             example_dir: examples/installation/multi_account_deployment
             target_dir: multi_account
@@ -224,18 +224,18 @@ jobs:
         envs: REMOTE_EXAMPLE_DIR
         script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 
-#    - name: Terraform Destroy
-#    #   if: always()
-#      uses: appleboy/ssh-action@v0.1.8
-#      id: test_audit
-#      with:
-#        host: 54.179.25.83
-#        username: ec2-user
-#        key: ${{ env.JUMP_SERVER_KEY }}
-#        port: 22
-#        command_timeout: "2h"
-#        envs: REMOTE_EXAMPLE_DIR
-#        script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
+    - name: Terraform Destroy
+    #   if: always()
+      uses: appleboy/ssh-action@v0.1.8
+      id: test_audit
+      with:
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: REMOTE_EXAMPLE_DIR
+        script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
     - name: Delete Security Group
       if: always()
