@@ -22,17 +22,17 @@ variable "tarball_location" {
 
 variable "aws_profile_hub" {
   type        = string
-  description = "Aws profile name for the DSF hub account"
+  description = "Aws profile name for the DSF Hub account"
 }
 
 variable "aws_region_hub" {
   type        = string
-  description = "Aws region for the DSF hub (e.g us-east-2)"
+  description = "Aws region for the DSF Hub (e.g us-east-2)"
 }
 
 variable "subnet_hub" {
   type        = string
-  description = "Aws subnet id for the DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "security_group_ids_hub" {
@@ -84,7 +84,7 @@ variable "web_console_cidr" {
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
-  description = "CIDR blocks allowing hub ssh and debugging access"
+  description = "CIDR blocks allowing DSF Hub ssh and debugging access"
 }
 
 variable "additional_install_parameters" {
@@ -123,7 +123,7 @@ variable "gw_group_ebs_details" {
 variable "hub_instance_type" {
   type        = string
   default     = "r6i.xlarge"
-  description = "Ec2 instance type for the DSF hub"
+  description = "Ec2 instance type for the DSF Hub"
 }
 
 variable "gw_instance_type" {
@@ -184,7 +184,7 @@ variable "gw_key_pem_details" {
 
 variable "hub_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "gw_skip_instance_health_verification" {
@@ -194,7 +194,7 @@ variable "gw_skip_instance_health_verification" {
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless Gateway instances. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the DSF Hub and DSF agentless Gateway instances. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
