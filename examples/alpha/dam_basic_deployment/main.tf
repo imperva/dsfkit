@@ -79,6 +79,9 @@ module "mx" {
   large_scale_mode          = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "agent_gw" {
@@ -98,6 +101,9 @@ module "agent_gw" {
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
+  depends_on = [
+    module.vpc
+  ]
 }
 
 module "agent_monitored_db" {
@@ -116,4 +122,7 @@ module "agent_monitored_db" {
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }
+  depends_on = [
+    module.agent_gw
+  ]
 }
