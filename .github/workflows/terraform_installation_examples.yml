@@ -49,7 +49,8 @@ jobs:
         include:
           - name: single account
             example_dir: examples/installation/single_account_deployment
-#          - name: multi account
+            target_dir: single_account
+    #          - name: multi account
 #            example_dir: examples/installation/multi_account_deployment
 #            aws_region: ap-southeast-1
 #            workspace: multi_account
