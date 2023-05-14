@@ -118,14 +118,14 @@ jobs:
 
     - name: Create tfvars File
       run: |
-        if [ ${{ matrix.name }} == 'single account' ]; then 
+        if [ '${{ matrix.name }}' == 'single account' ]; then 
           cat << EOF > $EXAMPLE_DIR/terraform.tfvars
           ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION }}
-          EOF
+        EOF
         else 
           cat << EOF > $EXAMPLE_DIR/terraform.tfvars
           ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_OLD }}
-          EOF
+        EOF
         fi
         
 
