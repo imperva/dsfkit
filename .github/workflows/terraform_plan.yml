@@ -51,18 +51,8 @@ jobs:
             example: ./examples/poc/hadr_deployment
           - name: Sonar Single Account
             example: ./examples/installation/single_account_deployment
-            aws_region: ap-southeast-1
-            subnet_hub: subnet-01eb3ee7b2a93a856
-            aws_profile: innostage
-            subnet_gw: subnet-01eb3ee7b2a93a856
-            subnet_hub_secondary: subnet-01eb3ee7b2a93a856
           - name: Sonar Multi Account
             example: ./examples/installation/multi_account_deployment
-            aws_region: ap-southeast-1
-            subnet_hub: subnet-01eb3ee7b2a93a856
-            aws_profile: innostage
-            aws_profile_gw: innodev
-            subnet_gw: subnet-0c5ade55a259105e6
 
     name: '${{ matrix.name }}'
     env:
@@ -126,22 +116,17 @@ jobs:
 
       - name: Create tfvars File
         env:
-          EXAMPLE_DIR: ./${{ matrix.example_dir }}
-          REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
-          TARGET_DIR: ${{ matrix.target_dir }}
-        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
+        if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: |
-          cat << EOF > ${{ matrix.example }}/terraform.tfvars
-          aws_profile="$TF_VAR_aws_profile"
-          aws_profile_hub="$TF_VAR_aws_profile_hub"
-          aws_profile_gw="$TF_VAR_aws_profile_gw"
-          aws_region="$TF_VAR_aws_region"
-          aws_region_hub="$TF_VAR_aws_region"
-          aws_region_gw="$TF_VAR_aws_region"
-          subnet_hub="$TF_VAR_subnet_hub"
-          subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
-          subnet_gw="$TF_VAR_subnet_gw"
-          EOF
+          if [ ${{ matrix.name }} == 'Sonar Single Account' ]; then 
+            cat << EOF > ${{ matrix.example }}/terraform.tfvars
+            ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION }}
+            EOF
+          elif [ ${{ matrix.name }} == 'Sonar Multi Account' ]; then
+            cat << EOF > ${{ matrix.example_dir }}/terraform.tfvars
+            ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_OLD }}
+            EOF
+          fi
 
       - name: View The Vars
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
