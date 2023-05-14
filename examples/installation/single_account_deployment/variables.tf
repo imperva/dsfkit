@@ -24,6 +24,18 @@ variable "sonar_version" {
   }
 }
 
+variable "additional_tags" {
+  type        = list(string)
+  default     = []
+  description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+  validation {
+    condition = alltrue([
+    for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
+    ])
+    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value."
+  }
+}
+
 variable "tarball_location" {
   type = object({
     s3_bucket = string
@@ -36,12 +48,12 @@ variable "tarball_location" {
 
 variable "subnet_hub_primary" {
   type        = string
-  description = "Aws subnet id for the primary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_hub_secondary" {
   type        = string
-  description = "Aws subnet id for the secondary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_gw" {
@@ -74,8 +86,14 @@ variable "gw_count" {
 variable "web_console_admin_password" {
   sensitive   = true
   type        = string
-  default     = null # Random
-  description = "Admin password (Random generated if not set)"
+  default     = null
+  description = "Admin user password. If not set, and web_console_admin_password_secret_name is also not set, random value is generated."
+}
+
+variable "web_console_admin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, web_console_admin_password is used."
 }
 
 variable "web_console_cidr" {
@@ -148,7 +166,7 @@ EOF
 
 variable "hub_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "gw_skip_instance_health_verification" {
@@ -198,4 +216,46 @@ variable "terraform_script_path_folder" {
     condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
+}
+
+variable "hub_primary_role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the primary DSF Hub. Keep empty if you wish to create a new role."
+}
+
+variable "hub_secondary_role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the secondary DSF Hub. Keep empty if you wish to create a new role."
+}
+
+variable "gw_role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role to assign to the Agentless Gateway. Keep empty if you wish to create a new role."
+}
+
+variable "internal_hub_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_hub_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The DSF Hub sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }

@@ -95,8 +95,9 @@ module "hub_primary" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_persistent_public_ip           = true
+  attach_persistent_public_ip  = true
   use_public_ip = true
+  should_generate_access_token = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -124,6 +125,7 @@ module "hub_secondary" {
   hadr_secondary_node        = true
   sonarw_public_key          = module.hub_primary.sonarw_public_key
   sonarw_private_key         = module.hub_primary.sonarw_private_key
+  should_generate_access_token = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

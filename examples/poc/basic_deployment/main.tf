@@ -86,8 +86,9 @@ module "hub" {
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
   ebs                        = var.hub_ebs_details
-  attach_persistent_public_ip           = true
+  attach_persistent_public_ip  = true
   use_public_ip = true
+  should_generate_access_token = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
