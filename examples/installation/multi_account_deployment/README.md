@@ -1,7 +1,7 @@
 # Installation - Agentless Gateways Multi Account Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-A DSF Hub and 2 Agentless Gateways (formerly Sonar) deployment with HADR setup in multi accounts and multi regions.
+A DSF Hub with HADR setup and an Agentless Gateway with HADR setup (formerly Sonar) deployment in multi accounts and multi regions.
 
 This deployment consists of:
 
@@ -19,13 +19,7 @@ They can be in the same or in different subnets.<br/>
 
 In this example you should supply the proxy details for ssh to the DSF Hub and the Agentless Gateways.<br/>
 
-Note that in case of supplying the security group id of the DSF Hub and the Agentless Gateways, because the security group of the Agentless Gateways should contain the IP of the DSF Hub (for the federation) which is not exists in this phase, the following steps should be executed:
-1. Disable the federation module
-2. Run the deployment (which will fail because of the health check from the DSF Hub to the Agentless Gateways, unless you disable this flag)
-3. Update the security group of the Agentless Gateways with the created primary and secondary DSF Hub IPs
-4. Enable the federation
-5. Run again the deployment
-
+Note that in case of supplying the security group id of the DSF Hubs and the Agentless Gateways, you should add the cidr of the Agentless Gateways to the security group of the DSF Hubs and vice versa before running the deployment.<br/>
 
 #### Running terraform with variables
 In the current example setting AWS profile, AWS region and the subnets of the DSF Hub and the Agentless gateways are mandatory.<br/>
@@ -47,10 +41,10 @@ This example contains variables with default values. In order to customize the v
   subnet_hub_secondary="subnet-xxxxxxxxxxxxxxxx2"<br/>
   subnet_gw_primary="subnet-xxxxxxxxxxxxxxxx3"<br/>
   subnet_gw_secondary="subnet-xxxxxxxxxxxxxxxx4"<br/>
-  security_group_id_hub_primary="sg-xxxxxxxxxxxxxxxx1"<br/>
-  security_group_id_hub_secondary="sg-xxxxxxxxxxxxxxxx2"<br/>
-  security_group_id_gw_primary="sg-xxxxxxxxxxxxxxxx3"<br/>
-  security_group_id_gw_secondary="sg-xxxxxxxxxxxxxxxx4"<br/>
+  security_group_ids_hub_primary=["sg-xxxxxxxxxxxxxxxx1"]<br/>
+  security_group_ids_hub_secondary=["sg-xxxxxxxxxxxxxxxx2"]<br/>
+  security_group_ids_gw_primary=["sg-xxxxxxxxxxxxxxxx3"]<br/>
+  security_group_ids_gw_secondary=["sg-xxxxxxxxxxxxxxxx4"]<br/>
   proxy_address="x.x.x.x"<br/>
   proxy_private_address="x.x.x.x"<br/>
   proxy_ssh_key_path="/proxy-ssh-key-path.pem"<br/>

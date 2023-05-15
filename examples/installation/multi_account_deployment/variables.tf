@@ -46,12 +46,12 @@ variable "aws_region_gw_secondary" {
 
 variable "subnet_hub_primary" {
   type        = string
-  description = "Aws subnet id for the primary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_hub_secondary" {
   type        = string
-  description = "Aws subnet id for the secondary DSF hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "Aws subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_gw_primary" {
@@ -64,40 +64,28 @@ variable "subnet_gw_secondary" {
   description = "Aws subnet id for the secondary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "security_group_ids_hub" {
+variable "security_group_ids_hub_primary" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the primary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
-variable "security_group_ids_gw" {
+variable "security_group_ids_hub_secondary" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the secondary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
-variable "security_group_id_hub_primary" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the primary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+variable "security_group_ids_gw_primary" {
+  type        = list(string)
+  default     = []
+  description = "Additional aws security group ids for the primary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
-variable "security_group_id_hub_secondary" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the secondary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
-}
-
-variable "security_group_id_gw_primary" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the primary Agentless gateway (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
-}
-
-variable "security_group_id_gw_secondary" {
-  type        = string
-  default     = null
-  description = "Aws security group id for the secondary Agentless gateway (e.g sg-xxxxxxxxxxxxxxxxx). In case it is not set, a security group will be created automatically. Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+variable "security_group_ids_gw_secondary" {
+  type        = list(string)
+  default     = []
+  description = "Additional aws security group ids for the secondary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
 variable "proxy_address" {
@@ -152,7 +140,7 @@ variable "web_console_cidr" {
 variable "workstation_cidr" {
   type        = list(string)
   default     = null # workstation ip
-  description = "CIDR blocks allowing hub ssh and debugging access"
+  description = "CIDR blocks allowing DSF Hub ssh and debugging access"
 }
 
 variable "hub_ebs_details" {
@@ -209,6 +197,74 @@ The "id" and "name" fields are used to filter the machine image by ID or name, r
 The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
 EOF
   default     = null
+}
+
+variable "hub_primary_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default     = null
+
+  validation {
+    condition = (
+      var.hub_primary_key_pem_details == null ||
+      try(var.hub_primary_key_pem_details.private_key_pem_file_path != null && var.hub_primary_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the 'hub_primary_key_pem_details' variable"
+  }
+}
+
+variable "hub_secondary_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default     = null
+
+  validation {
+    condition = (
+      var.hub_secondary_key_pem_details == null ||
+      try(var.hub_secondary_key_pem_details.private_key_pem_file_path != null && var.hub_secondary_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the 'hub_secondary_key_pem_details' variable"
+  }
+}
+
+variable "gw_primary_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default     = null
+
+  validation {
+    condition = (
+      var.gw_primary_key_pem_details == null ||
+      try(var.gw_primary_key_pem_details.private_key_pem_file_path != null && var.gw_primary_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the 'gw_primary_key_pem_details' variable"
+  }
+}
+
+variable "gw_secondary_key_pem_details" {
+  type = object({
+    private_key_pem_file_path = string
+    public_key_name           = string
+  })
+  description = "Key pem details used to ssh to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  default     = null
+
+  validation {
+    condition = (
+      var.gw_secondary_key_pem_details == null ||
+      try(var.gw_secondary_key_pem_details.private_key_pem_file_path != null && var.gw_secondary_key_pem_details.public_key_name != null, false)
+    )
+    error_message = "All fields should be specified when specifying the 'gw_secondary_key_pem_details' variable"
+  }
 }
 
 variable "hub_skip_instance_health_verification" {
