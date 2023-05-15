@@ -9,9 +9,7 @@ on:
       branch:
         required: true
         type: string
-#  push:
-#    branches:
-#      - 'add_tests'
+
   workflow_call:
     inputs:
       branch:
@@ -50,9 +48,6 @@ jobs:
           - name: single account
             example_dir: examples/installation/single_account_deployment
             target_dir: single_account
-          - name: multi account
-            example_dir: examples/installation/multi_account_deployment
-            target_dir: multi_account
 
     name: '${{ matrix.name }} ${{ inputs.branch }}'
     runs-on: ubuntu-latest
@@ -68,185 +63,179 @@ jobs:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ inputs.branch }}
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.branch }}
 
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
+      - name: Setup jq
+        uses: sergeysova/jq-action@v2
 
-    - name: Get The Public IP
-      run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
+      - name: Get The Public IP
+        run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
 
-    - name: Set IP in AWS Security Group
-      run: |
-        aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
-        echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
+      - name: Set IP in AWS Security Group
+        run: |
+          aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
+          echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
 
-    - name: Change the modules source to local
-      run: |
-        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+      - name: Change the modules source to local
+        run: |
+          find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
-    - name: Cleaning envrionment
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: TARGET_DIR
-        script: |
-          cd $TARGET_DIR
-          rm -rf dsfkit
-          rm -rf dsfkit.zip
+      - name: Cleaning envrionment
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: TARGET_DIR
+          script: |
+            cd $TARGET_DIR
+            rm -rf dsfkit
+            rm -rf dsfkit.zip
 
-    - name: Create terraform backend file
-      run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
-        terraform {
-          backend "s3" {
-            bucket         = "terraform-state-bucket-dsfkit-github-tests"
-            key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
-            region         = "us-east-1"
+      - name: Create terraform backend file
+        run: |
+          cat << EOF > $EXAMPLE_DIR/backend.tf
+          terraform {
+            backend "s3" {
+              bucket         = "terraform-state-bucket-dsfkit-github-tests"
+              key            = "states/terraform.tfstate"
+              dynamodb_table = "terraform-state-lock"
+              region         = "us-east-1"
+            }
           }
-        }
-        EOF
+          EOF
 
-    - name: Create tfvars File
-      run: |
-        if [ '${{ matrix.name }}' == 'single account' ]; then 
+      - name: Create tfvars File
+        run: |
           cat << EOF > $EXAMPLE_DIR/terraform.tfvars
           ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION }}
-        EOF
-        else 
-          cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-          ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_OLD }}
-        EOF
-        fi
-        
+          EOF
 
-    - name: View The Vars
-      run: cat $EXAMPLE_DIR/terraform.tfvars
 
-    - name: Create a ZIP File
-      run: zip -r dsfkit.zip ../dsfkit
+      - name: View The Vars
+        run: cat $EXAMPLE_DIR/terraform.tfvars
 
-    - name: View The ZIP File
-      run: |
-        ls -l
-        pwd
+      - name: Create a ZIP File
+        run: zip -r dsfkit.zip ../dsfkit
 
-    - name: SCP the ZIP File
-      uses: appleboy/scp-action@master
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        source: "dsfkit.zip"
-        timeout: "10m"
-        target: ${{ matrix.target_dir }}
-        overwrite: true
+      - name: View The ZIP File
+        run: |
+          ls -l
+          pwd
 
-    - name: Unzip
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: TARGET_DIR
-        script: |
-          cd $TARGET_DIR
-          unzip -uq dsfkit.zip
+      - name: SCP the ZIP File
+        uses: appleboy/scp-action@master
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          source: "dsfkit.zip"
+          timeout: "10m"
+          target: ${{ matrix.target_dir }}
+          overwrite: true
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR init
+      - name: Unzip
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: TARGET_DIR
+          script: |
+            cd $TARGET_DIR
+            unzip -uq dsfkit.zip
 
-    - name: Terraform Validate
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR init
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: |
-          printenv
-          terraform -chdir=$REMOTE_EXAMPLE_DIR plan
+      - name: Terraform Validate
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
-    - name: Terraform Apply
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: |
+            printenv
+            terraform -chdir=$REMOTE_EXAMPLE_DIR plan
 
-    - name: Terraform Output
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
+      - name: Terraform Apply
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
 
-    - name: Terraform Destroy
-    #   if: always()
-      uses: appleboy/ssh-action@v0.1.8
-      id: test_audit
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
+      - name: Terraform Output
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 
-    - name: Delete Security Group
-      if: always()
-      run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
+      - name: Terraform Destroy
+        #   if: always()
+        uses: appleboy/ssh-action@v0.1.8
+        id: test_audit
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
-      # Send job failure to Slack
-    - name: Send Slack When Failure
-      run: |
-        if [ ${{ inputs.branch }} == 'master' ]; then 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        else 
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        fi
-      if: ${{ failure() }}
+      - name: Delete Security Group
+        if: always()
+        run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
+
+        # Send job failure to Slack
+      - name: Send Slack When Failure
+        run: |
+          if [ ${{ inputs.branch }} == 'master' ]; then 
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          else 
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ github.triggering_actor }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+        if: ${{ failure() }}

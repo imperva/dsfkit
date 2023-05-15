@@ -150,26 +150,6 @@ jobs:
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
-#    - name: Set Environment Variables
-#      run: |
-#        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $HUB_OUTPUT) >> $GITHUB_ENV
-#        echo agent_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $GW_OUTPUT) >> $GITHUB_ENV
-#        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
-
-    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-#    - name: Check SSH Connectivity
-#      uses: appleboy/ssh-action@v0.1.6
-#      with:
-#        proxy_host: ${{ env.hub_ip }}
-#        proxy_username: ec2-user
-#        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-#        proxy_port: 22
-#        host: ${{ env.agent_gw_ip }}
-#        username: ec2-user
-#        key_path: ${{ env.dsf_ssh_key_file_name }}
-#        port: 22
-#        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-
     - name: Terraform Destroy
       id: destroy
 #      if: always()
@@ -186,11 +166,11 @@ jobs:
         TF_WORKSPACE: default
 
     # Send job failure to Slack
-#    - name: Send Slack by action-slack
-#      uses: 8398a7/action-slack@v3
-#      with:
-#        status: ${{ job.status }}
-#        fields: author,action,eventName,ref,workflow,pullRequest
-#      env:
-#        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#      if: ${{ failure() }}
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: author,action,eventName,ref,workflow,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }}
