@@ -74,7 +74,7 @@ resource "aws_instance" "dsf_base_instance" {
   root_block_device {
     volume_size = local.disk_size_app
   }
-  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.name
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0

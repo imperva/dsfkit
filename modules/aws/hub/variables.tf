@@ -67,11 +67,11 @@ variable "allowed_web_console_and_api_cidrs" {
   default     = []
 }
 
-variable "allowed_hadr_console_cidrs" {
+variable "allowed_hub_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing hadr access (replica set members)"
+  description = "List of ingress CIDR patterns allowing other hubs access (hadr & health)"
   validation {
-    condition = alltrue([for item in var.allowed_hadr_console_cidrs : can(cidrnetmask(item))])
+    condition = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default     = []

@@ -42,7 +42,7 @@ resource "aws_instance" "dsf_base_instance" {
   instance_type        = local.mapper.instance_type[var.dam_model]
   key_name             = var.key_pair
   user_data            = local.userdata
-  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.name
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0

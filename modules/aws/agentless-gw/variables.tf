@@ -51,11 +51,11 @@ variable "allowed_ssh_cidrs" {
   default     = []
 }
 
-variable "allowed_hadr_console_cidrs" {
+variable "allowed_agentless_gw_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing hadr access (replica set members)"
+  description = "List of ingress CIDR patterns allowing other Agentless Gateways access (hadr)"
   validation {
-    condition = alltrue([for item in var.allowed_hadr_console_cidrs : can(cidrnetmask(item))])
+    condition = alltrue([for item in var.allowed_agentless_gw_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default     = []
