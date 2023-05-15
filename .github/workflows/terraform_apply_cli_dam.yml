@@ -55,7 +55,7 @@ jobs:
         include:
           - workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/alpha/dam_basic_deployment
-            aws_region: eu-west-2
+            aws_region: eu-south-1
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
