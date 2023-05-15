@@ -224,12 +224,12 @@ EOF
   }
 }
 
-variable "gateway_group_id" {
+variable "gateway_group_name" {
   type        = string
-  description = "Gw group id (Keep empty to get random id)"
+  description = "The name of the Agent Gateway Group in which to provision the Agent Gateway. Keep empty to get a random name. It is not possible to provision Agent Gateway directly in a Cluster, to achieve this, provision the Agent Gateway in a Gateway Group and then move it to the Cluster."
   default     = null
   validation {
-    condition     = var.gateway_group_id == null || try(length(var.gateway_group_id) >= 3, false)
-    error_message = "Id must be at least 3 chrachters long"
+    condition     = var.gateway_group_name == null || try(length(var.gateway_group_name) >= 3, false)
+    error_message = "The gateway group name must be at least 3 characters long"
   }
 }
