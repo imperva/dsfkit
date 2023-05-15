@@ -2,6 +2,7 @@ name: 'Cli (basic) Nightly'
 
 concurrency:
   group: basic_nightly
+  limit: 2
 
 on:
   workflow_dispatch:
