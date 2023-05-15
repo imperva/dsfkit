@@ -49,6 +49,6 @@ output "instance_id" {
   value = module.agent_gw.instance_id
 }
 
-output "gateway_group_id" {
-  value = local.gateway_group_id
+output "gateway_group_name" {
+  value = local.gateway_group_name
 }

@@ -114,7 +114,7 @@ jobs:
           EOF
           elif [ "${{ matrix.name }}" == "Sonar Multi Account" ]; then
             cat << EOF > "${{ matrix.example }}/terraform.tfvars"
-            ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_OLD }}
+            ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION }}
           EOF
           fi
 
