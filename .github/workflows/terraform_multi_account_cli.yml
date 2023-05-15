@@ -25,10 +25,6 @@ on:
       JUMP_SERVER_KEY:
         required: true
 
-  push:
-    branches:
-      - 'hadar-change-multi-account-example'
-
 env:
   TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
