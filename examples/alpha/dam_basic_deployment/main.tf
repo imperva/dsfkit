@@ -24,6 +24,7 @@ locals {
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   mx_subnet_id                  = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
   gw_subnet_id                  = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  gateway_group_name         = "gatewayGroup1"
 }
 
 data "aws_subnet" "mx" {
@@ -101,6 +102,7 @@ module "agent_gw" {
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
+  gateway_group_name                      = local.gateway_group_name
   depends_on = [
     module.vpc
   ]
