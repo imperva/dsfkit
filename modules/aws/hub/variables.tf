@@ -31,60 +31,60 @@ variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids to attach to the hub instance"
   validation {
-    condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
     error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_agentless_gw_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing DSF Agentless Gateways to access the DSF hub instance"
   validation {
-    condition = alltrue([for item in var.allowed_agentless_gw_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_agentless_gw_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing ssh access"
   validation {
-    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_web_console_and_api_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing web console access"
   validation {
-    condition = alltrue([for item in var.allowed_web_console_and_api_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_web_console_and_api_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_hub_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing other hubs access (hadr & health)"
   validation {
-    condition = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_all_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
   validation {
-    condition = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "instance_type" {

@@ -63,20 +63,20 @@ locals {
 }
 
 module "mx" {
-  source                 = "../../../modules/aws/dam-base-instance"
-  name                   = var.friendly_name
-  dam_version            = var.dam_version
-  resource_type          = local.resource_type
-  dam_model              = local.dam_model
-  mx_password            = var.mx_password
-  secure_password        = var.secure_password
-  security_groups_config = local.security_groups_config
-  security_group_ids     = var.security_group_ids
-  subnet_id              = var.subnet_id
-  user_data_commands     = local.user_data_commands
-  iam_actions            = local.iam_actions
-  key_pair               = var.key_pair
-  attach_persistent_public_ip       = var.attach_persistent_public_ip
+  source                      = "../../../modules/aws/dam-base-instance"
+  name                        = var.friendly_name
+  dam_version                 = var.dam_version
+  resource_type               = local.resource_type
+  dam_model                   = local.dam_model
+  mx_password                 = var.mx_password
+  secure_password             = var.secure_password
+  security_groups_config      = local.security_groups_config
+  security_group_ids          = var.security_group_ids
+  subnet_id                   = var.subnet_id
+  user_data_commands          = local.user_data_commands
+  iam_actions                 = local.iam_actions
+  key_pair                    = var.key_pair
+  attach_persistent_public_ip = var.attach_persistent_public_ip
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true

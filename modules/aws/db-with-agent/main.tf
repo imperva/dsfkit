@@ -2,9 +2,9 @@ locals {
   db_types = ["PostgreSql", "MySql", "MariaDB"]
   os_types = keys(local.os_params)
 
-  db_type = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
-  os_type = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
-  binaries_location     = var.binaries_location != null ? var.binaries_location : local.os_params[local.os_type].binaries_location
+  db_type           = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
+  os_type           = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
+  binaries_location = var.binaries_location != null ? var.binaries_location : local.os_params[local.os_type].binaries_location
 }
 
 resource "random_shuffle" "db" {

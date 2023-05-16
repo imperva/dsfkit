@@ -1,5 +1,5 @@
 locals {
-security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
+  security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
     {
       name  = ["web", "console", "and", "api"]
       udp   = []
@@ -56,8 +56,8 @@ module "hub_instance" {
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
     proxy_ssh_user     = var.ingress_communication_via_proxy.proxy_ssh_user
   }
-  skip_instance_health_verification      = var.skip_instance_health_verification
-  terraform_script_path_folder           = var.terraform_script_path_folder
-  internal_private_key_secret_name       = var.internal_private_key_secret_name
-  internal_public_key                    = var.internal_public_key
+  skip_instance_health_verification = var.skip_instance_health_verification
+  terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_private_key_secret_name
+  internal_public_key               = var.internal_public_key
 }

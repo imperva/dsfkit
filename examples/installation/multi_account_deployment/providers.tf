@@ -12,7 +12,7 @@ provider "aws" {
   }
   profile = var.aws_profile_hub
   region  = var.aws_region_hub_secondary
-  alias = "hub-secondary"
+  alias   = "hub-secondary"
 }
 
 provider "aws" {

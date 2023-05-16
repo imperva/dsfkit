@@ -18,12 +18,12 @@
 
 data "aws_secretsmanager_secret" "sonarw_private_key_secret_data" {
   count = var.internal_private_key_secret_name != null ? 1 : 0
-  name = var.internal_private_key_secret_name
+  name  = var.internal_private_key_secret_name
 }
 
 data "aws_secretsmanager_secret" "password_secret_data" {
   count = var.web_console_admin_password_secret_name != null ? 1 : 0
-  name = var.web_console_admin_password_secret_name
+  name  = var.web_console_admin_password_secret_name
 }
 
 resource "tls_private_key" "sonarw_private_key" {
@@ -39,9 +39,9 @@ locals {
   sonarw_secret_aws_name          = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
 
   password_secret_aws_arn = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
-  password_secret_name = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.web_console_admin_password_secret_name
+  password_secret_name    = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.web_console_admin_password_secret_name
 
-  should_create_sonarw_private_key_in_secrets_manager = var.internal_private_key_secret_name == null ? true : false
+  should_create_sonarw_private_key_in_secrets_manager   = var.internal_private_key_secret_name == null ? true : false
   should_create_web_console_password_in_secrets_manager = var.web_console_admin_password_secret_name == null ? true : false
 }
 

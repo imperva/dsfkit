@@ -1,8 +1,8 @@
 locals {
-  volume_size      = "500"
+  volume_size        = "500"
   gateway_group_name = var.gateway_group_name == null ? random_uuid.gateway_group_id.result : var.gateway_group_name
-  dam_model        = var.gw_model
-  resource_type    = "agent-gw"
+  dam_model          = var.gw_model
+  resource_type      = "agent-gw"
 
   security_groups_config = [
     {
