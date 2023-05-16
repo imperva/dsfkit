@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "friendly_name" {
   type        = string
   default     = "imperva-dsf-agentless-gw"

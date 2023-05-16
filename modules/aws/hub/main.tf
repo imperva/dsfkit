@@ -34,4 +34,5 @@ module "hub_instance" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_private_key_secret_name
   internal_public_key = var.internal_public_key
+  tags = var.tags
 }

@@ -47,6 +47,7 @@ resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
   count = var.internal_private_key_secret_name == null ? 1 : 0
   name_prefix = "${var.name}-sonarw-private-key"
   description = "Imperva DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+  tags = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
@@ -59,6 +60,7 @@ resource "aws_secretsmanager_secret" "password_secret" {
   count = var.web_console_admin_password_secret_name == null ? 1 : 0
   name_prefix = "${var.name}-password"
   description = "Imperva DSF node password"
+  tags = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "password_ver" {
@@ -71,6 +73,7 @@ resource "aws_secretsmanager_secret" "access_token" {
   count       = 0
   name_prefix = "${var.name}-${local.access_tokens[count.index].name}-access-token"
   description = "Imperva EDSF ${local.access_tokens[count.index].name} access token"
+  tags = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "token_ver" {

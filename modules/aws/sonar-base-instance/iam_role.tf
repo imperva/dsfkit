@@ -60,6 +60,7 @@ locals {
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
   name_prefix = "${var.name}-${var.resource_type}-instance-iam-profile"
   role        = local.role_name
+  tags = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
@@ -75,4 +76,5 @@ resource "aws_iam_role" "dsf_node_role" {
     name   = "${var.name}-secret-access"
     policy = local.inline_policy_secret
   }
+  tags = var.tags
 }
