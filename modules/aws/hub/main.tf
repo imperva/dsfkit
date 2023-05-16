@@ -14,7 +14,7 @@ module "hub_instance" {
   ami                           = var.ami
   web_console_cidr              = var.ingress_communication.additional_web_console_access_cidr_list
   sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
-  role_arn                      = var.role_arn
+  instance_profile_name         = var.instance_profile_name
   attach_public_ip              = var.attach_public_ip
   use_public_ip                 = var.use_public_ip
   additional_install_parameters = var.additional_install_parameters

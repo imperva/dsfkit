@@ -88,6 +88,7 @@ module "hub_primary" {
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
   tags = local.tags
+  instance_profile_name = var.hub_instance_profile_name
 }
 
 module "hub_secondary" {
@@ -119,6 +120,7 @@ module "hub_secondary" {
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
   tags = local.tags
+  instance_profile_name = var.hub_instance_profile_name
 }
 
 module "agentless_gw_group" {
@@ -153,6 +155,7 @@ module "agentless_gw_group" {
   internal_private_key_secret_name = var.internal_gw_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_gw_public_key_file_path)), "")
   tags = local.tags
+  instance_profile_name = var.gw_instance_profile_name
 }
 
 module "hub_hadr" {

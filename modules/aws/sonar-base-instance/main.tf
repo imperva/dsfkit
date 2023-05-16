@@ -21,6 +21,8 @@ locals {
   ami_name     = local.ami.name != null ? local.ami.name : "*"
   ami_id       = local.ami.id != null ? local.ami.id : "*"
   ami_username = local.ami.username
+
+  instance_profile = var.instance_profile_name != null ? var.instance_profile_name : aws_iam_instance_profile.dsf_node_instance_iam_profile[0].id
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -68,7 +70,7 @@ resource "aws_instance" "dsf_base_instance" {
   root_block_device {
     volume_size = local.disk_size_app
   }
-  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  iam_instance_profile = local.instance_profile
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
