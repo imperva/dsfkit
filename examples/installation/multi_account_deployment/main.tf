@@ -111,7 +111,7 @@ module "hub_primary" {
     ssh_public_key_name       = local.hub_primary_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hadr_console_cidrs        = [data.aws_subnet.subnet_hub_secondary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = {
@@ -142,7 +142,7 @@ module "hub_secondary" {
     ssh_public_key_name       = local.hub_secondary_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hadr_console_cidrs        = [data.aws_subnet.subnet_hub_primary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_primary.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = {
@@ -174,7 +174,7 @@ module "agentless_gw_group_primary" {
     ssh_private_key_file_path = local.gw_primary_private_key_pem_file_path
     ssh_public_key_name       = local.gw_primary_public_key_name
   }
-  allowed_hadr_console_cidrs = [data.aws_subnet.subnet_gw_secondary.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = {
@@ -209,7 +209,7 @@ module "agentless_gw_group_secondary" {
     ssh_private_key_file_path = local.gw_secondary_private_key_pem_file_path
     ssh_public_key_name       = local.gw_secondary_public_key_name
   }
-  allowed_hadr_console_cidrs = [data.aws_subnet.subnet_gw_primary.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_primary.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = {
