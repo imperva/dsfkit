@@ -18,10 +18,7 @@ resource "aws_security_group" "dsf_base_sg" {
   count = local.create_security_group_count
   // TODO put description
   vpc_id = data.aws_subnet.subnet.vpc_id
-
-  tags = {
-    Name = join("-", [var.name, "sg"])
-  }
+  tags = merge(var.tags, {Name = join("-", [var.name, "sg"])})
 }
 
 resource "aws_security_group_rule" "all_out" {

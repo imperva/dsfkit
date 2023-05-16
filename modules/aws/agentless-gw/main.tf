@@ -15,7 +15,7 @@ module "gw_instance" {
   ebs_details                   = var.ebs
   ami                           = var.ami
   sg_ingress_cidr               = var.ingress_communication.full_access_cidr_list
-  role_arn                      = var.role_arn
+  instance_profile_name         = var.instance_profile_name
   attach_public_ip              = var.attach_public_ip
   use_public_ip                 = var.use_public_ip
   additional_install_parameters = var.additional_install_parameters
@@ -36,4 +36,5 @@ module "gw_instance" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_private_key_secret_name
   internal_public_key = var.internal_public_key
+  tags = var.tags
 }
