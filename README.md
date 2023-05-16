@@ -292,6 +292,17 @@ The following table lists the released DSFKit versions, their release date and a
       <br>2. In the POC examples, onboarded the demo databases to the Agentless Gateway instead of the DSF Hub.
    </td>
   </tr>
+  <tr>
+   <td>16 May 2023
+   </td>
+   <td>1.4.5
+   </td>
+   <td>
+      1. Defined separate security groups for the DSF node according to the traffic source type (e.g., web console, Hub).  
+      <br>2. Added the option to provide custom secrets for the DSF Hub and the Agentless Gateway.
+      <br>3. Updated the POC multi_account_deployment example.
+   </td>
+  </tr>
 
 </table>
 
