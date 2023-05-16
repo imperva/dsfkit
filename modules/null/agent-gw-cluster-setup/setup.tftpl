@@ -1,0 +1,62 @@
+#!/bin/bash
+#set -x
+
+cookie_file=$(mktemp)
+
+https_auth_header="YWRtaW46LE5VdHRKOHFheiVaKls="
+mx_address="13.52.156.121"
+mx_port=8083
+gateway_group_name=gatewayGroup1
+cluster_name=newCluster5
+
+trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
+
+response=$(curl -k -s -X POST --cookie-jar $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session" \
+  --header "Authorization: Basic ${https_auth_header}")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed to login to the MX. MX response: $response"
+  exit 1
+fi
+
+# Step 2: Get all gateways in the gateway group
+response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_name}/gateways")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed get all gateways in the gateway group. MX response: $response"
+  exit 1
+fi
+
+gw_names=$(echo "$response" | jq -r '.gateways[].name')
+
+if [ -z "$gw_names" ]; then
+  echo "Failed to extract the gateway names in the gateway group"
+  exit 1
+fi
+
+gw_count=${#gw_names[@]}
+if [ "$gw_count" -ge 2 ]; then
+  echo "The number of gateways in '$gateway_group_name' is $gw_count"
+else
+  echo "Expected at least 2 gateways in gateway group '$gateway_group_name', which is the minimum number required to setup a Cluster, but was $gw_count"
+  exit 1
+fi
+
+# Step 3: Create an empty cluster
+request_body="{\"name\":\"$cluster_name\",\"clusterType\":\"REGULAR_CLUSTER\",\"autoLoadBalance\":true,\"hasRedundant\":true,\"networkTopology\":\"Single\"}"
+response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
+  -d "$request_body" \
+  -H "Content-Type: application/json")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed create an empty Cluster. MX response: $response"
+  exit 1
+fi
+
+cluster_id=$(echo "$response" | jq -r '.id')
+echo "Cluster '$cluster_name' was created with id '$cluster_id'"
+
+# Step 4: Update the cluster to activate it
+gw0_name=${gw_names[0]}
+gw1_name=${gw_names[1]}
+other_gw_names=("${names[@]:2}")
