@@ -9,14 +9,14 @@ security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-install
     {
       name  = ["hub"]
       udp   = []
-      tcp   = [22, 8443, 61617]
+      tcp   = [22, 8443]
       cidrs = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["hadr", "replica", "set"]
+      name  = ["agentless", "gw", "replica", "set"]
       udp   = []
       tcp   = [3030, 27117, 22]
-      cidrs = concat(var.allowed_hadr_console_cidrs, var.allowed_all_cidrs)
+      cidrs = concat(var.allowed_agentless_gw_cidrs, var.allowed_all_cidrs)
     }
   ]
 }
