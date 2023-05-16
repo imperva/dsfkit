@@ -1,3 +1,8 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+}
+
 variable "name" {
   type = string
 }
@@ -93,9 +98,10 @@ EOF
   }
 }
 
-variable "ec2_instance_type" {
+variable "instance_profile_name" {
   type        = string
-  description = "Ec2 instance type for the DSF base instance"
+  default     = null
+  description = "Instance profile to assign to the DSF node. Keep empty if you wish to create a new instance profile."
 }
 
 variable "web_console_admin_password" {

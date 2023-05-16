@@ -73,6 +73,18 @@ variable "security_group_ids_gw" {
   description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
 }
 
+variable "hub_instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the DSF Hub. Keep empty if you wish to create a new instance profile."
+}
+
+variable "gw_instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the Agentless Gateway. Keep empty if you wish to create a new instance profile."
+}
+
 variable "gw_count" {
   type        = number
   default     = 1

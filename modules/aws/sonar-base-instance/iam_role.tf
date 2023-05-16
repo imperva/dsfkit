@@ -3,8 +3,8 @@
 #################################
 
 locals {
-  role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.dsf_node_role[0].arn, null)
-  role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+  role_arn  = try(aws_iam_role.dsf_node_role[0].arn, null)
+  role_name = try(split("/", local.role_arn)[1], "") //arn:aws:iam::xxxxxxxxx:role/role-name
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -58,12 +58,14 @@ locals {
 }
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
+  count       = var.instance_profile_name == null ? 1 : 0
   name_prefix = "${var.name}-${var.resource_type}-instance-iam-profile"
   role        = local.role_name
+  tags = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
-  count               = var.role_arn != null ? 0 : 1
+  count               = var.instance_profile_name == null ? 1 : 0
   description         = "${var.name}-${var.resource_type}-role-${var.name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
@@ -75,4 +77,5 @@ resource "aws_iam_role" "dsf_node_role" {
     name   = "${var.name}-secret-access"
     policy = local.inline_policy_secret
   }
+  tags = var.tags
 }

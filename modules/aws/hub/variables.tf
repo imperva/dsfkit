@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
@@ -206,6 +212,12 @@ EOF
     condition     = var.ami == null || try(var.ami.username != null, false)
     error_message = "ami username mustn't be null"
   }
+}
+
+variable "instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the DSF Hub. Keep empty if you wish to create a new instance profile."
 }
 
 variable "additional_install_parameters" {
