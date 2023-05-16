@@ -40,3 +40,6 @@ gw_group_ebs_details = {
   provisioned_iops = 0
   throughput       = 125
 }
+
+hub_instance_profile_name="instance-profile-name-for-hub"
+gw_instance_profile_name="instance-profile-name-for-gw"
