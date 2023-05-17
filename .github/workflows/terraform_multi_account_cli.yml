@@ -134,6 +134,7 @@ jobs:
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
+
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan
