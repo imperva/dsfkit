@@ -14,7 +14,7 @@ on:
     inputs:
       branch:
         required: true
-        type: string
+        type: false
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -165,21 +165,22 @@ jobs:
 #      if: always()
 #      run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
 #
-#    - name: Check how was the workflow run
-#      id: check-trigger
-#      run: |
-#        if [ "${{ github.event_name }}" = "schedule" ]; then
-#          echo "run-by=Automation" >> $GITHUB_OUTPUT
-#        else
-#          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-#        fi
-#
-#    # Send job failure to Slack
-#    - name: Send Slack When Failure
-#      run: |
-#        if [ ${{ github.ref }} == 'master' ]; then
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        else
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        fi
+    - name: Check how was the workflow run
+      id: check-trigger
+#      if: ${{ failure() }}
+      run: |
+        if [ "${{ github.event_name }}" == "schedule" ]; then
+          echo "run-by=Automation" >> $GITHUB_OUTPUT
+        else
+          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+        fi
+
+    # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ github.ref }} == 'refs/heads/master' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
 #      if: ${{ failure() }}
