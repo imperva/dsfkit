@@ -13,8 +13,8 @@ on:
   workflow_call:
     inputs:
       branch:
-        required: true
-        type: false
+        required: false
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
