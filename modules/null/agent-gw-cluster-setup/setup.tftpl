@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+#set -x
 
 cookie_file=$(mktemp)
 
@@ -21,23 +21,24 @@ if echo $response | grep 'errors' &>/dev/null; then
   exit 1
 fi
 
-gw_names=$(echo "$response" | jq -r '.gateways[].name')
+gw_names=($(echo "$response" | jq -r '.gateways[].name'))
 
 if [ -z "$gw_names" ]; then
   echo "Failed to extract the gateway names in the gateway group"
   exit 1
 fi
 
-gw_count=${#gw_names[@]}
+gw_count=$${#gw_names[@]}
+
 if [ "$gw_count" -ge 2 ]; then
-  echo "The number of gateways in '$gateway_group_name' is $gw_count"
+  echo "The number of gateways in '${gateway_group_name}' is $gw_count"
 else
-  echo "Expected at least 2 gateways in gateway group '$gateway_group_name', which is the minimum number required to setup a Cluster, but was $gw_count"
+  echo "Expected at least 2 gateways in gateway group '${gateway_group_name}', which is the minimum number required to setup a Cluster, but was $gw_count"
   exit 1
 fi
 
 # Step 3: Create an empty cluster
-request_body="{\"name\":\"$cluster_name\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
+request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
 response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
   -d "$request_body" \
   -H "Content-Type: application/json")
@@ -48,23 +49,21 @@ if echo $response | grep 'errors' &>/dev/null; then
 fi
 
 cluster_id=$(echo "$response" | jq -r '.id')
-echo "Cluster '$cluster_name' was created with id '$cluster_id'"
+echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
 
 # Step 4: Update the cluster to activate it
-gw0_name=${gw_names[0]}
-gw1_name=${gw_names[1]}
-other_gw_names=("${names[@]:2}")
-
-echo "Gateways names - gw0_name: $gw0_name, gw1_name: $gw1_name, other_gw_names: $other_gw_names"
+gw0_name=$${gw_names[0]}
+gw1_name=$${gw_names[1]}
+other_gw_names=("$${gw_names[@]:2}")
 
 subnet="{\"ip\":\"0.0.0.0\",\"mask\":0}"
 request_body="{\"id\":\"$cluster_id\", \"name\":\"$cluster_name\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"clusterSubnetDTO\": \"$subnet\", \"agentsSubnetDTO\": \"$subnet\", \"mxSubnetDTO\": \"$subnet\", \"active\": true}"
-response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/${cluster_id}" \
+response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/$cluster_id" \
   -d "$request_body" \
   -H "Content-Type: application/json")
 
 if echo $response | grep 'errors' &>/dev/null; then
-  echo "Failed to update cluster '$cluster_name'. MX response: $response"
+  echo "Failed to update cluster '${cluster_name}'. MX response: $response"
   exit 1
 fi
 
@@ -73,7 +72,7 @@ timeout=300 # 5 minutes
 start_time=$(date +%s)
 while true; do
   sleep 10
-  response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/${cluster_id}")
+  response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/$cluster_id")
 
   if echo $response | grep 'errors' &>/dev/null; then
     echo "Failed to get cluster with Id '$cluster_id' and name '$cluster_name'. MX response: $response"
@@ -81,16 +80,18 @@ while true; do
   elif
     active=$(echo "$response" | jq -r '.active')
     if [ "$active" == "true" ]; then
-        echo "Cluster '$cluster_name' is active"
+        echo "Cluster '${cluster_name}' is active"
         break
     elif
       current_time=$(date +%s)
       elapsed_time=$((current_time - start_time))
       if [ $elapsed_time -ge $timeout ]; then
-        echo "Timeout: Cluster '$cluster_name' is not active after $timeout seconds"
+        echo "Timeout: Cluster '${cluster_name}' is not active after $timeout seconds"
         exit 1
     fi
   fi
 done
 
 # Step  6: Move the other gateways to the cluster
+
+
