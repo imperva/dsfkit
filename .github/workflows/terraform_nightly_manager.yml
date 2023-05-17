@@ -51,7 +51,7 @@ jobs:
 #      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_multi_account:
-    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@add_tests
 #    with:
 #      branch: dev
     secrets:
