@@ -6,9 +6,6 @@ concurrency:
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        required: false
-        type: string
       workspace:
         required: true
         type: choice
@@ -18,6 +15,9 @@ on:
 
   workflow_call:
     inputs:
+      branch:
+        required: false
+        type: string
       workspace:
         required: true
         type: string
