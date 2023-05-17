@@ -21,11 +21,13 @@ data "aws_iam_role" "assignee_role" {
 resource "aws_iam_policy" "db_policy" {
   description = "IAM policy for collecting audit"
   policy      = local.db_policy_by_engine_map[var.database_details.db_engine]
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attach" {
   role       = data.aws_iam_role.assignee_role.name
   policy_arn = aws_iam_policy.db_policy.arn
+  tags = var.tags
 }
 
 data "aws_caller_identity" "current" {}

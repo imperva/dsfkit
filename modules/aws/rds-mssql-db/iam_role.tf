@@ -121,11 +121,13 @@ resource "aws_iam_role" "rds_db_og_role" {
     name   = "imperva-dsf-s3-access"
     policy = local.rds_db_og_role_inline_policy_s3
   }
+  tags = var.tags
 }
 
 resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
   name_prefix = "lambda-mssql-infra-instance-iam-profile"
   role        = local.role_name
+  tags = var.tags
 }
 
 resource "aws_iam_role" "lambda_mssql_infra_role" {
@@ -146,4 +148,5 @@ resource "aws_iam_role" "lambda_mssql_infra_role" {
     name   = "imperva-dsf-mssql-ec2-access"
     policy = local.inline_policy_ec2
   }
+  tags = var.tags
 }

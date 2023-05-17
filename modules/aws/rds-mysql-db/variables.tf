@@ -55,3 +55,9 @@ variable "security_group_ingress_cidrs" {
     error_message = "Each item of the 'security_group_ingress_cidrs' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
 }
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

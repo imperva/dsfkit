@@ -67,3 +67,9 @@ variable "db_audit_lambda_package_name" {
   description = "Lambda package name for running the DB audit scripts"
   default     = "mssqlLambdaPackage.zip"
 }
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
