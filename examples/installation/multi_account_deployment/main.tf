@@ -2,6 +2,7 @@ module "globals" {
   source        = "imperva/dsf-globals/aws"
   version       = "1.4.5" # latest release tag
   sonar_version = var.sonar_version
+  tags = local.tags
 }
 
 locals {
@@ -27,6 +28,7 @@ module "key_pair_hub_primary" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
+  tags = local.tags
 }
 
 module "key_pair_hub_secondary" {
@@ -35,6 +37,7 @@ module "key_pair_hub_secondary" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-hub-secondary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
+  tags = local.tags
   providers = {
     aws = aws.hub-secondary
   }
@@ -46,6 +49,7 @@ module "key_pair_gw_primary" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-primary-${terraform.workspace}"
+  tags = local.tags
   providers = {
     aws = aws.gw-primary
   }
@@ -57,6 +61,7 @@ module "key_pair_gw_secondary" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-gw-secondary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-secondary-${terraform.workspace}"
+  tags = local.tags
   providers = {
     aws = aws.gw-secondary
   }
@@ -121,6 +126,7 @@ module "hub_primary" {
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  tags = local.tags
 }
 
 module "hub_secondary" {
@@ -152,6 +158,7 @@ module "hub_secondary" {
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  tags = local.tags
   providers = {
     aws = aws.hub-secondary
   }
@@ -184,6 +191,7 @@ module "agentless_gw_group_primary" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  tags = local.tags
   providers = {
     aws = aws.gw-primary
   }
@@ -219,6 +227,7 @@ module "agentless_gw_group_secondary" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  tags = local.tags
   providers = {
     aws = aws.gw-secondary
   }
