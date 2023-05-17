@@ -79,7 +79,10 @@ resource "null_resource" "exec_replication_cycle_on_secondary" {
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication"]
+    inline = [
+      "sudo touch $JSONAR_LOGDIR/sonarw/replication.log",
+      "sudo chown sonarw:sonar $JSONAR_LOGDIR/sonarw/replication.log",
+      "sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication"]
   }
 
   depends_on = [
