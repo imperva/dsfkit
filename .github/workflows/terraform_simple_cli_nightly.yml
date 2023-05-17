@@ -15,6 +15,9 @@ on:
 
   workflow_call:
     inputs:
+      branch:
+        required: false
+        type: string
       workspace:
         required: true
         type: string
