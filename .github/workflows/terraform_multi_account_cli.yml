@@ -5,16 +5,8 @@ concurrency:
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        required: false
-        type: string
 
   workflow_call:
-    inputs:
-      branch:
-        required: false
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -146,25 +138,24 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan
 
-#    - name: Terraform Apply
-#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-#      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
-#
-#    - name: Terraform Output
-#      run: terraform -chdir=$EXAMPLE_DIR output -json
-#
-#    - name: Terraform Destroy
-#      # if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-#
-#    - name: Delete Security Group
-#      env:
-#        AWS_REGION: ap-southeast-1
-#        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-#        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-#      if: always()
-#      run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
-#
+    - name: Terraform Apply
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+
+    - name: Terraform Output
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Terraform Destroy
+      # if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+
+    - name: Delete Security Group
+      env:
+        AWS_REGION: ap-southeast-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      if: always()
+      run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
+
     - name: Check how was the workflow run
       id: check-trigger
       if: ${{ failure() }}

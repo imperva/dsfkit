@@ -231,9 +231,10 @@ jobs:
         run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
 
       - name: Check how was the workflow run
+        if: ${{ failure() }}
         id: check-trigger
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ github.event_name }}" == "schedule" ]; then
             echo "run-by=Automation" >> $GITHUB_OUTPUT
           else
             echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
