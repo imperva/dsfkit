@@ -1,12 +1,10 @@
 provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
 }
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
   version = "1.4.5" # latest release tag
+  tags = local.tags
 }
 
 module "key_pair" {
