@@ -121,12 +121,12 @@ done
 
 # Step 8: Cleanup - delete the gateway group
 if [ "${delete_gateway_group}" == "true" ]; then
-  http_code=$(curl -k -s --cookie $cookie_file -w "%%{http_code}" --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_name})
+  http_code=$(curl -k -s --cookie $cookie_file -w "%%{http_code}" --request DELETE "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_name}")
   if [ $http_code -ne 200 ]; then
     echo "Failed to delete gateway group '${gateway_group_name}'. MX response: $response"
   else
     echo "Deleted gateway group '${gateway_group_name}'"
   fi
-if
+fi
 
 echo "Finished setup of cluster '${cluster_name}'. Check the cluster's status in the web console."
