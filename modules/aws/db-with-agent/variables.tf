@@ -78,5 +78,5 @@ variable "binaries_location" {
     s3_key    = string
   })
   description = "S3 DSF DAM agent installation location"
-  default = null
+  default     = null
 }

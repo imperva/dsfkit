@@ -1,16 +1,16 @@
 locals {
   os_params = {
     "Red Hat" : {
-      ami_owner = "309956199498"
-      ami_name = "RHEL-8.6.0_HVM-2022*-x86_64-2-Hourly2-GP2"
-      ami_ssh_user = "ec2-user"
+      ami_owner              = "309956199498"
+      ami_name               = "RHEL-8.6.0_HVM-2022*-x86_64-2-Hourly2-GP2"
+      ami_ssh_user           = "ec2-user"
       agent_installation_dir = "/opt/imperva",
       binaries_location = {
         s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
         s3_key    = "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
         s3_region = "us-east-1"
       }
-      package_install        = <<-EOF
+      package_install = <<-EOF
         yum update -y
         yum install unzip -y
       EOF
@@ -37,16 +37,16 @@ locals {
       }
     },
     "Ubuntu" : {
-      ami_owner    = "099720109477" # Amazon
-      ami_name     = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
-      ami_ssh_user = "ubuntu"
+      ami_owner              = "099720109477" # Amazon
+      ami_name               = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+      ami_ssh_user           = "ubuntu"
       agent_installation_dir = "/usr/imperva",
       binaries_location = {
         s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
         s3_key    = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
         s3_region = "us-east-1"
       }
-      package_install        = <<-EOF
+      package_install = <<-EOF
         apt update -y
         apt install unzip
       EOF

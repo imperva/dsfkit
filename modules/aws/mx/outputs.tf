@@ -37,12 +37,12 @@ output "iam_role" {
 
 output "display_name" {
   description = "Display name"
-  value = module.mx.display_name
+  value       = module.mx.display_name
 }
 
 output "ssh_user" {
   description = "Ssh username"
-  value = var.ssh_user
+  value       = var.ssh_user
 }
 
 output "instance_id" {

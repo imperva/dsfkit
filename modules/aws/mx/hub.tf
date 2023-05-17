@@ -53,15 +53,15 @@ locals {
         "data-collection-db-response" : false
         }
       )
-    },
-    {
-      name     = "send_incidents_to_hub" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78509.htm
-      method   = "PUT"
-      url_path = "SecureSphere/api/v1/conf/systemDefinitions/send-alerts-to-sonar"
-      payload = jsonencode({
-        "value" : true
-        }
-      )
+      },
+      {
+        name     = "send_incidents_to_hub" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78509.htm
+        method   = "PUT"
+        url_path = "SecureSphere/api/v1/conf/systemDefinitions/send-alerts-to-sonar"
+        payload = jsonencode({
+          "value" : true
+          }
+        )
     }]
   )
 }

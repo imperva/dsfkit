@@ -35,7 +35,7 @@ output "dsf_hubs" {
 output "dsf_hub_web_console" {
   value = {
     private_url    = try(join("", ["https://", module.hub_primary.private_ip, ":8443/"]), null)
-    admin_password = nonsensitive(local.web_console_admin_password)
+    admin_password = var.web_console_admin_password_secret_name != null ? "See the secret named '${var.web_console_admin_password_secret_name}' in your AWS Secrets Manager" : nonsensitive(local.web_console_admin_password)
   }
 }
 
