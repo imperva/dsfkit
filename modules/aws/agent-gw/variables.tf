@@ -233,3 +233,9 @@ variable "gateway_group_name" {
     error_message = "The gateway group name must be at least 3 characters long"
   }
 }
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

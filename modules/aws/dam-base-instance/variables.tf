@@ -154,3 +154,9 @@ variable "iam_actions" {
   description = "Required AWS IAM action list for the DSF DAM instance"
   type        = list(string)
 }
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

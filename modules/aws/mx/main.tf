@@ -82,4 +82,5 @@ module "mx" {
     enable   = true
     timeout  = local.timeout
   }
+  tags = var.tags
 }
