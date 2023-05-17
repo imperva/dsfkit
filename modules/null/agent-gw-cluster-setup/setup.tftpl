@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -x
+set -x
 
 cookie_file=$(mktemp)
 
@@ -7,7 +7,7 @@ https_auth_header="YWRtaW46LE5VdHRKOHFheiVaKls="
 mx_address="13.52.156.121"
 mx_port=8083
 gateway_group_name=gatewayGroup1
-cluster_name=newCluster5
+cluster_name=cluster1
 
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
@@ -43,13 +43,13 @@ else
 fi
 
 # Step 3: Create an empty cluster
-request_body="{\"name\":\"$cluster_name\",\"clusterType\":\"REGULAR_CLUSTER\",\"autoLoadBalance\":true,\"hasRedundant\":true,\"networkTopology\":\"Single\"}"
+request_body="{\"name\":\"$cluster_name\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
 response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
   -d "$request_body" \
   -H "Content-Type: application/json")
 
 if echo $response | grep 'errors' &>/dev/null; then
-  echo "Failed create an empty Cluster. MX response: $response"
+  echo "Failed to create an empty Cluster. MX response: $response"
   exit 1
 fi
 
@@ -60,3 +60,43 @@ echo "Cluster '$cluster_name' was created with id '$cluster_id'"
 gw0_name=${gw_names[0]}
 gw1_name=${gw_names[1]}
 other_gw_names=("${names[@]:2}")
+
+echo "Gateways names - gw0_name: $gw0_name, gw1_name: $gw1_name, other_gw_names: $other_gw_names"
+
+subnet="{\"ip\":\"0.0.0.0\",\"mask\":0}"
+request_body="{\"id\":\"$cluster_id\", \"name\":\"$cluster_name\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"clusterSubnetDTO\": \"$subnet\", \"agentsSubnetDTO\": \"$subnet\", \"mxSubnetDTO\": \"$subnet\", \"active\": true}"
+response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/${cluster_id}" \
+  -d "$request_body" \
+  -H "Content-Type: application/json")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed to update cluster '$cluster_name'. MX response: $response"
+  exit 1
+fi
+
+# Step 5: Wait for the cluster to become active
+timeout=300 # 5 minutes
+start_time=$(date +%s)
+while true; do
+  sleep 10
+  response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/${cluster_id}")
+
+  if echo $response | grep 'errors' &>/dev/null; then
+    echo "Failed to get cluster with Id '$cluster_id' and name '$cluster_name'. MX response: $response"
+    exit 1
+  elif
+    active=$(echo "$response" | jq -r '.active')
+    if [ "$active" == "true" ]; then
+        echo "Cluster '$cluster_name' is active"
+        break
+    elif
+      current_time=$(date +%s)
+      elapsed_time=$((current_time - start_time))
+      if [ $elapsed_time -ge $timeout ]; then
+        echo "Timeout: Cluster '$cluster_name' is not active after $timeout seconds"
+        exit 1
+    fi
+  fi
+done
+
+# Step  6: Move the other gateways to the cluster
