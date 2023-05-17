@@ -3,12 +3,6 @@ set -x
 
 cookie_file=$(mktemp)
 
-https_auth_header="YWRtaW46LE5VdHRKOHFheiVaKls="
-mx_address="13.52.156.121"
-mx_port=8083
-gateway_group_name=gatewayGroup1
-cluster_name=cluster1
-
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
 response=$(curl -k -s -X POST --cookie-jar $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session" \
