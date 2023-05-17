@@ -56,7 +56,7 @@ jobs:
 
     - name: Change the modules source to local
       run: |
-        echo "BRANCH_NAME=$(basename ${{ github.ref }})"
+        echo "${{ toJSON(github) }}"
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     - name: Sets env vars for environment
