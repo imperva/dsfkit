@@ -1,7 +1,4 @@
 provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
 }
 
 provider "aws" {
@@ -13,6 +10,7 @@ module "globals" {
   source        = "imperva/dsf-globals/aws"
   version       = "1.4.5" # latest release tag
   sonar_version = var.sonar_version
+  tags = local.tags
 }
 
 module "key_pair" {
@@ -20,6 +18,7 @@ module "key_pair" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+  tags = local.tags
 }
 
 locals {
@@ -81,6 +80,7 @@ module "vpc" {
   public_subnets  = var.public_subnets
 
   map_public_ip_on_launch = true
+  tags = local.tags
 }
 
 ##############################
@@ -106,6 +106,7 @@ module "hub_primary" {
   allowed_hub_cidrs                 = [data.aws_subnet.secondary_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -133,6 +134,7 @@ module "hub_secondary" {
   allowed_hub_cidrs          = [data.aws_subnet.primary_hub.cidr_block]
   allowed_agentless_gw_cidrs = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -161,6 +163,7 @@ module "agentless_gw_group_primary" {
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -192,6 +195,7 @@ module "agentless_gw_group_secondary" {
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -280,6 +284,7 @@ module "rds_mysql" {
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
+  tags = local.tags
 }
 
 # create a RDS SQL Server DB
@@ -291,6 +296,7 @@ module "rds_mssql" {
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
 
+  tags = local.tags
   providers = {
     aws                       = aws,
     aws.poc_scripts_s3_region = aws.poc_scripts_s3_region
@@ -321,6 +327,7 @@ module "db_onboarding" {
     db_engine     = each.value.db_engine
     db_name       = try(each.value.db_name, null)
   }
+  tags = local.tags
   depends_on = [
     module.federation,
     module.rds_mysql,
