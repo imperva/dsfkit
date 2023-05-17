@@ -98,6 +98,11 @@ EOF
   }
 }
 
+variable "ec2_instance_type" {
+  type        = string
+  description = "Ec2 instance type for the DSF base instance"
+}
+
 variable "instance_profile_name" {
   type        = string
   default     = null

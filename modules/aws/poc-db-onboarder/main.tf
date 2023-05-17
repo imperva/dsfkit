@@ -27,7 +27,6 @@ resource "aws_iam_policy" "db_policy" {
 resource "aws_iam_role_policy_attachment" "policy_attach" {
   role       = data.aws_iam_role.assignee_role.name
   policy_arn = aws_iam_policy.db_policy.arn
-  tags = var.tags
 }
 
 data "aws_caller_identity" "current" {}

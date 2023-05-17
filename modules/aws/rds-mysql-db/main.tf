@@ -87,5 +87,4 @@ resource "aws_security_group_rule" "rds_mysql_access_rule" {
   protocol          = "tcp"
   cidr_blocks       = var.security_group_ingress_cidrs
   security_group_id = aws_security_group.rds_mysql_access.id
-  tags = var.tags
 }
