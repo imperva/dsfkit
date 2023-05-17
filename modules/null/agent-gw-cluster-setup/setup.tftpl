@@ -37,19 +37,21 @@ else
   exit 1
 fi
 
-# Step 3: Create an empty cluster
-request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
-response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
-  -d "$request_body" \
-  -H "Content-Type: application/json")
+## Step 3: Create an empty cluster
+#request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
+#response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
+#  -d "$request_body" \
+#  -H "Content-Type: application/json")
+#
+#if echo $response | grep 'errors' &>/dev/null; then
+#  echo "Failed to create an empty Cluster. MX response: $response"
+#  exit 1
+#fi
+#
+#cluster_id=$(echo "$response" | jq -r '.id')
+#echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
 
-if echo $response | grep 'errors' &>/dev/null; then
-  echo "Failed to create an empty Cluster. MX response: $response"
-  exit 1
-fi
-
-cluster_id=$(echo "$response" | jq -r '.id')
-echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
+cluster_id=1508059239
 
 # Step 4: Update the cluster to activate it
 gw0_name=$${gw_names[0]}
@@ -57,7 +59,7 @@ gw1_name=$${gw_names[1]}
 other_gw_names=("$${gw_names[@]:2}")
 
 subnet="{\"ip\":\"0.0.0.0\",\"mask\":0}"
-request_body="{\"id\":\"$cluster_id\", \"name\":\"$cluster_name\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"clusterSubnetDTO\": \"$subnet\", \"agentsSubnetDTO\": \"$subnet\", \"mxSubnetDTO\": \"$subnet\", \"active\": true}"
+request_body="{\"id\":\"$cluster_id\", \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"useUnlimitedCapacity\": false, \"userDefinedGatewayWeightCapacity\": 15000, \"clusterSubnetDTO\": $subnet, \"agentsSubnetDTO\": $subnet, \"mxSubnetDTO\": $subnet, \"active\": true}"
 response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/$cluster_id" \
   -d "$request_body" \
   -H "Content-Type: application/json")
