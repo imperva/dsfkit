@@ -26,7 +26,7 @@ resource "null_resource" "exec_hadr_primary" {
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup setup-2hadr-replica-set --ipv4-address-main=${var.dsf_primary_private_ip} --ipv4-address-dr=${var.dsf_secondary_private_ip} --replication-sync-interval=1"]
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup setup-2hadr-replica-set --ipv4-address-main=${var.dsf_primary_private_ip} --ipv4-address-dr=${var.dsf_secondary_private_ip} --replication-sync-interval=30"]
   }
 }
 
@@ -47,7 +47,7 @@ resource "null_resource" "exec_hadr_secondary" {
   }
 
   provisioner "remote-exec" {
-    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup restart-secondary-services"]
+    inline = ["sudo $JSONAR_BASEDIR/bin/arbiter-setup restart-secondary-services --disable-primary-check"]
   }
 
   depends_on = [
@@ -55,10 +55,45 @@ resource "null_resource" "exec_hadr_secondary" {
   ]
 }
 
-resource "time_sleep" "sleep" {
-  create_duration = "10m"
+resource "time_sleep" "sleep_before_replication_cycle" {
+  create_duration = "1m"
   depends_on = [
     null_resource.exec_hadr_secondary
+  ]
+}
+
+resource "null_resource" "exec_replication_cycle_on_secondary" {
+  connection {
+    type        = "ssh"
+    user        = local.secondary_ssh_user
+    private_key = file(local.ssh_key_path_secondary)
+    host        = var.dsf_secondary_ip
+
+    timeout = "5m"
+
+    bastion_host        = var.proxy_info.proxy_address
+    bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+    bastion_user        = var.proxy_info.proxy_ssh_user
+
+    script_path = local.script_path
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo touch $JSONAR_LOGDIR/sonarw/replication.log",
+      "sudo chown sonarw:sonar $JSONAR_LOGDIR/sonarw/replication.log",
+      "sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication"]
+  }
+
+  depends_on = [
+    time_sleep.sleep_before_replication_cycle
+  ]
+}
+
+resource "time_sleep" "sleep_before_hadr_verify" {
+  create_duration = "5m"
+  depends_on = [
+    null_resource.exec_replication_cycle_on_secondary
   ]
 }
 
@@ -83,6 +118,6 @@ resource "null_resource" "hadr_verify" {
   }
 
   depends_on = [
-    time_sleep.sleep
+    time_sleep.sleep_before_hadr_verify
   ]
 }
