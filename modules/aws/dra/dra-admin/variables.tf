@@ -9,8 +9,9 @@ variable "friendly_name" {
 }
 
 variable "instance_type" {
-    type = string
-    default = "m4.xlarge"
+  type        = string
+  default     = "m4.xlarge"
+  description = "EC2 instance type for the Admin Server"
 }
 
 variable "ssh_key_pair" {
@@ -23,20 +24,37 @@ variable "ssh_key_pair" {
   nullable = false
 }
 
-variable "admin_ami_id" {
-    type = string
-    description = "DRA admin AMI ID in region"
-    # default = "ami-05d03d9f0e5f8c9f9"
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
+The latest image that matches the specified filter will be chosen.
+EOF
+
+  validation {
+    condition     = var.ami != null && (var.ami.id != null || var.ami.name != null)
+    error_message = "Either the 'id' or the 'name' should be specified"
+  }
 }
 
 variable "admin_analytics_registration_password" {
-    type = string
-    description = "Password to be used to register Analtyics server to Admin Server"
+  type = string
+  description = "Password to be used to register Analytics Server to Admin Server"
 }
 
 variable "subnet_id" {
-    type = string
-    description = "subnet_id"
+  type = string
+  description = "Subnet id for the Admin Server"
+  validation {
+    condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
+    error_message = "Subnet id is invalid. Must be subnet-********"
+  }
 }
 
 variable "security_group_ids" {

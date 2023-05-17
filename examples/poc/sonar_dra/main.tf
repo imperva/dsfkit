@@ -60,7 +60,7 @@ module "dra_admin" {
   source                                = "../../../modules/aws/dra/dra-admin"
   friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                             = local.admin_subnet_id
-  admin_ami_id                          = var.admin_ami_id
+  ami                                   = var.admin_ami
   admin_analytics_registration_password = local.admin_analytics_registration_password
   allowed_web_console_cidrs             = local.workstation_cidr
   allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
@@ -81,7 +81,7 @@ module "analytics_server_group" {
   source                                    = "../../../modules/aws/dra/dra-analytics"
   friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                                 = local.analytics_subnet_id
-  analytics_ami_id                          = var.analytics_ami_id
+  ami                                       = var.analytics_ami
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]
   allowed_ssh_cidrs                         = var.allowed_ssh_cidrs

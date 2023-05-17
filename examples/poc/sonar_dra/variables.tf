@@ -26,13 +26,12 @@ variable "subnet_ids" {
   type = object({
     admin_subnet_id = string
     analytics_subnet_id  = string
-    db_subnet_ids = list(string)
   })
   default     = null
-  description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+  description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets."
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.admin_subnet_id != null && var.subnet_ids.analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
-    error_message = "Value must either be null or specified for all"
+    condition     = var.subnet_ids == null || try(var.subnet_ids.admin_subnet_id != null && var.subnet_ids.analytics_subnet_id != null, false)
+    error_message = "Value must either be null or specified for all fields"
   }
 }
 
@@ -53,25 +52,53 @@ variable "allowed_ssh_cidrs" {
 }
 
 variable "admin_instance_type" {
-    type = string
-    default = "m4.xlarge"
+  type = string
+  default = "m4.xlarge"
+  description = "Ec2 instance type for the Admin Server"
 }
 
 variable "analytics_instance_type" {
   type = string
   default = "m4.xlarge"
+  description = "Ec2 instance type for the Analytics Server"
 }
 
-variable "admin_ami_id" {
-    type = string
-    description = "DRA admin AMI ID in region"
-    # default = "ami-05d03d9f0e5f8c9f9"
+variable "admin_ami" {
+  type = object({
+    id               = string
+    name             = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
+The latest image that matches the specified filter will be chosen.
+EOF
+
+  validation {
+    condition     = var.admin_ami != null && (var.admin_ami.id != null || var.admin_ami.name != null)
+    error_message = "Either the 'id' or the 'name' should be specified"
+  }
 }
 
-variable "analytics_ami_id" {
-    type = string
-    description = "DRA analytics AMI ID in region"
-    # default = "ami-06c0b1409371fd42f"
+variable "analytics_ami" {
+  type = object({
+    id               = string
+    name             = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
+The latest image that matches the specified filter will be chosen.
+EOF
+
+  validation {
+    condition     = var.analytics_ami != null && (var.analytics_ami.id != null || var.analytics_ami.name != null)
+    error_message = "Either the 'id' or the 'name' should be specified"
+  }
 }
 
 variable "analytics_server_count" {
@@ -81,21 +108,21 @@ variable "analytics_server_count" {
 }
 
 variable "admin_analytics_registration_password" {
-    type = string
-    description = "Password to be used to register Analtyics server to Admin Server"
-    default = null
+  type = string
+  description = "Password to be used to register Analtyics server to Admin Server"
+  default = null
 }
 
 variable "archiver_user" {
-    type = string
-    description = "User to be used to upload archive files for analysis"
-    default = null
+  type = string
+  description = "User to be used to upload archive files for analysis"
+  default = null
 }
 
 variable "archiver_password" {
-    type = string
-    description = "Password to be used to upload archive files for analysis"
-    default = null
+  type = string
+  description = "Password to be used to upload archive files for analysis"
+  default = null
 }
 
 variable "analytics_group_ebs_details" {

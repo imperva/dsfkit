@@ -14,10 +14,39 @@ locals {
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
     var.security_group_ids
   )
+
+  ami_name     = var.ami.name != null ? var.ami.name : "*"
+  ami_id       = var.ami.id != null ? var.ami.id : "*"
+  ami_owner_id = var.ami.owner_account_id != null ? var.ami.owner_account_id : "496834581024" # default is Imperva account id
+}
+
+data "aws_ami" "selected-ami" {
+  most_recent = true
+  owners      = [local.ami_owner_id]
+
+  filter {
+    name   = "image-id"
+    values = [local.ami_id]
+  }
+
+  filter {
+    name   = "name"
+    values = [local.ami_name]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
 
 resource "aws_instance" "dsf_base_instance" {
-  ami           = var.admin_ami_id
+  ami           = data.aws_ami.selected-ami.image_id
   instance_type = var.instance_type
   key_name      = var.ssh_key_pair.ssh_public_key_name
   user_data     = local.install_script
