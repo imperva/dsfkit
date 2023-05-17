@@ -17,10 +17,10 @@ fi
 
 # Step 2: Verify agent gateway group "gateway-group" exists
 if ! $gateway_exists; then
-  response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_id}")
+  response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_name}")
 
   if [[ -z "$response" || "$response" == "{}" ]]; then
-    echo "Agent Gateway group ${gateway_group_id} doesn't exist yet."
+    echo "Agent Gateway group ${gateway_group_name} doesn't exist yet."
     return
   fi
 

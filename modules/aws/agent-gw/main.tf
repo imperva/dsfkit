@@ -1,6 +1,6 @@
 locals {
   volume_size        = "500"
-  gateway_group_name = var.gateway_group_name == null ? random_uuid.gateway_group_id.result : var.gateway_group_name
+  gateway_group_name = var.gateway_group_name == null ? random_uuid.gateway_group_name.result : var.gateway_group_name
   dam_model          = var.gw_model
   resource_type      = "agent-gw"
 
@@ -34,7 +34,7 @@ locals {
   management_server_host_for_api_access = var.management_server_host_for_api_access != null ? var.management_server_host_for_api_access : var.management_server_host_for_registration
 }
 
-resource "random_uuid" "gateway_group_id" {}
+resource "random_uuid" "gateway_group_name" {}
 
 locals {
   large_scale_arg = var.large_scale_mode == true ? "--sonar-only-mode" : ""
@@ -61,7 +61,7 @@ locals {
 
   readiness_commands = templatefile("${path.module}/readiness.tftpl", {
     mx_address        = var.management_server_host_for_api_access
-    gateway_group_id  = local.gateway_group_name
+    gateway_group_name  = local.gateway_group_name
     https_auth_header = local.https_auth_header
     gateway_id        = module.agent_gw.instance_id
   })
