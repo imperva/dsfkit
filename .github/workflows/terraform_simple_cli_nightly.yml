@@ -165,8 +165,9 @@ jobs:
 
     - name: Check how was the workflow run
       id: check-trigger
+      if: ${{ failure() }}
       run: |
-        if [ "${{ github.event_name }}" = "schedule" ]; then
+        if [ "${{ github.event_name }}" == "schedule" ]; then
           echo "run-by=Automation" >> $GITHUB_OUTPUT
         else
           echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT

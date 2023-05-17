@@ -52,8 +52,6 @@ jobs:
 
   dev_multi_account:
     uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
-    with:
-      branch: dev
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -65,8 +63,6 @@ jobs:
   master_multi_account:
     needs: dev_multi_account
     uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@master
-    with:
-      branch: master
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

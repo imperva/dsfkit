@@ -5,16 +5,8 @@ concurrency:
 
 on:
   workflow_dispatch:
-    inputs:
-      branch:
-        required: true
-        type: string
 
   workflow_call:
-    inputs:
-      branch:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -47,7 +39,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Multi Account ${{ inputs.branch }}'
+    name: 'Multi Account ${{ github.ref }}'
     runs-on: ubuntu-latest
     environment: test
   
@@ -60,10 +52,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ inputs.branch }}
+        ref: ${{ github.ref }}
 
     - name: Change the modules source to local
-      run: | 
+      run: |
+        echo "BRANCH_NAME=$(basename ${{ github.ref }})"
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     - name: Sets env vars for environment
@@ -131,13 +124,6 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Terraform Validate
-      run: terraform -chdir=$EXAMPLE_DIR validate
-
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
-
     - name: Cleaning envrionment
       run: |
         mv $EXAMPLE_DIR/main.tf{,_}
@@ -146,8 +132,14 @@ jobs:
         mv $EXAMPLE_DIR/main.tf{_,}
         mv $EXAMPLE_DIR/outputs.tf{_,}
 
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform -chdir=$EXAMPLE_DIR plan
+
     - name: Terraform Apply
-      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
@@ -167,8 +159,9 @@ jobs:
 
     - name: Check how was the workflow run
       id: check-trigger
+      if: ${{ failure() }}
       run: |
-        if [ "${{ github.event_name }}" = "schedule" ]; then
+        if [ "${{ github.event_name }}" == "schedule" ]; then
           echo "run-by=Automation" >> $GITHUB_OUTPUT
         else
           echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
@@ -177,7 +170,7 @@ jobs:
     # Send job failure to Slack
     - name: Send Slack When Failure
       run: |
-        if [ ${{ inputs.branch }} == 'master' ]; then
+        if [ ${{ github.ref }} == 'refs/heads/master' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
