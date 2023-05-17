@@ -7,6 +7,10 @@ on:
   workflow_dispatch:
 
   workflow_call:
+    inputs:
+      branch:
+        required: false
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
