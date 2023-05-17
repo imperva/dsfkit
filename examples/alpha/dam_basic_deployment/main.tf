@@ -14,6 +14,7 @@ module "key_pair" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+  tags = local.tags
 }
 
 locals {
@@ -57,6 +58,7 @@ module "vpc" {
   public_subnets  = var.public_subnets_cidr_list
 
   map_public_ip_on_launch = true
+  tags = local.tags
 }
 
 ##############################
@@ -80,6 +82,7 @@ module "mx" {
   large_scale_mode                  = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -103,6 +106,7 @@ module "agent_gw" {
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
   gateway_group_name                      = local.gateway_group_name
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -124,4 +128,5 @@ module "agent_monitored_db" {
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }
+  tags = local.tags
 }
