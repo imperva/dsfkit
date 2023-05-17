@@ -1,8 +1,5 @@
 name: 'Cli (basic) Nightly'
 
-concurrency:
-  group: basic_nightly
-
 on:
   workflow_dispatch:
     inputs:
