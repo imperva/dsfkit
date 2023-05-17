@@ -24,6 +24,7 @@ The following input variables are **required**:
 
 * `cluster_name`: The name of the Cluster to set up
 * `gateway_group_name`: The name of the Gateway Group which holds the Agent Gateways to add to the new Cluster. There must be at least 2 Agent Gateways in the Gateway Group, which is the minimum number required to set up a Cluster.
+* `mx_details`: Details of the MX for API calls
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
