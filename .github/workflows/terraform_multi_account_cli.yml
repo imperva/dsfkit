@@ -61,7 +61,7 @@ jobs:
     - name: Sets env vars for environment
       run: |
         echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-      if: github.ref_name != "master"
+      if: github.ref_name != 'master'
 
     - name: Create terraform backend file
       run: |
