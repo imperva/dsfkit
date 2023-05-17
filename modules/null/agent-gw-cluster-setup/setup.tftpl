@@ -53,11 +53,30 @@ fi
 
 cluster_id=1508059239
 
-# Step 4: Update the cluster to activate it
+# Step 6: Move the first two gateways to the cluster
 gw0_name=$${gw_names[0]}
 gw1_name=$${gw_names[1]}
 other_gw_names=("$${gw_names[@]:2}")
 
+response=$(curl -k -s -X PUT -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gateways/$gw0_name/${cluster_name}")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed move gateway $gw0_name to cluster ${cluster_name}. MX response: $response"
+  exit 1
+else
+  echo "Gateway $gw0_name was moved to cluster ${cluster_name}"
+fi
+
+response=$(curl -k -s -X PUT -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gateways/$gw1_name/${cluster_name}")
+
+if echo $response | grep 'errors' &>/dev/null; then
+  echo "Failed move gateway $gw1_name to cluster ${cluster_name}. MX response: $response"
+  exit 1
+else
+  echo "Gateway $gw1_name was moved to cluster ${cluster_name}"
+fi
+
+# Step 5: Update the cluster to activate it
 subnet="{\"ip\":\"0.0.0.0\",\"mask\":0}"
 request_body="{\"id\":\"$cluster_id\", \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"useUnlimitedCapacity\": false, \"userDefinedGatewayWeightCapacity\": 15000, \"clusterSubnetDTO\": $subnet, \"agentsSubnetDTO\": $subnet, \"mxSubnetDTO\": $subnet, \"active\": true}"
 response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/$cluster_id" \
@@ -69,7 +88,7 @@ if echo $response | grep 'errors' &>/dev/null; then
   exit 1
 fi
 
-# Step 5: Wait for the cluster to become active
+# Step 6: Wait for the cluster to become active
 timeout=300 # 5 minutes
 start_time=$(date +%s)
 while true; do
@@ -94,6 +113,6 @@ while true; do
   fi
 done
 
-# Step  6: Move the other gateways to the cluster
+# Step 7: Move the other gateways to the cluster
 
 
