@@ -46,13 +46,11 @@ variable "key_pair" {
   description = "Key pair for the DSF base instance"
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF base instance. Keep empty if you wish to create a new role."
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
-
-
 
 variable "dam_model" {
   type        = string
@@ -153,4 +151,10 @@ variable "dam_version" {
 variable "iam_actions" {
   description = "Required AWS IAM action list for the DSF DAM instance"
   type        = list(string)
+}
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }

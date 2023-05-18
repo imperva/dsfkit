@@ -18,11 +18,13 @@ resource "aws_cloudwatch_log_group" "cloudwatch_streams" {
   for_each          = { for name in local.cloudwatch_stream_names : name => name }
   name              = "/aws/rds/instance/${local.db_identifier}/${each.value}"
   retention_in_days = 30
+  tags = var.tags
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
   name       = "${local.db_identifier}-db-subnet-group"
   subnet_ids = var.rds_subnet_ids
+  tags = var.tags
 }
 
 resource "aws_db_option_group" "impv_rds_db_og" {
@@ -42,6 +44,7 @@ resource "aws_db_option_group" "impv_rds_db_og" {
       value = "rdsadmin"
     }
   }
+  tags = var.tags
 }
 
 resource "aws_db_instance" "rds_db" {
@@ -61,6 +64,7 @@ resource "aws_db_instance" "rds_db" {
   backup_retention_period = 0
 
   enabled_cloudwatch_logs_exports = local.cloudwatch_stream_names
+  tags = var.tags
   depends_on = [
     aws_cloudwatch_log_group.cloudwatch_streams
   ]
@@ -73,6 +77,7 @@ data "aws_subnet" "subnet" {
 resource "aws_security_group" "rds_mysql_access" {
   description = "RDS MySQL Access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
+  tags = var.tags
 }
 
 resource "aws_security_group_rule" "rds_mysql_access_rule" {
@@ -83,14 +88,3 @@ resource "aws_security_group_rule" "rds_mysql_access_rule" {
   cidr_blocks       = var.security_group_ingress_cidrs
   security_group_id = aws_security_group.rds_mysql_access.id
 }
-
-# # data "local_file" "sql_script" {
-# #   filename = "${var.init_sql_file_path}"
-# # }
-
-# resource "null_resource" "db_setup" {
-#   depends_on = [aws_db_instance.rds_db]
-#   provisioner "local-exec" {
-#     command = "mysql -h ${aws_db_instance.rds_db.endpoint} -u=${var.username} -p=${var.password} -P ${aws_db_instance.rds_db.port} mysql < ${var.init_sql_file_path}"
-#   }
-# }

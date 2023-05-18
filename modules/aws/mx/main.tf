@@ -75,6 +75,7 @@ module "mx" {
   subnet_id                   = var.subnet_id
   user_data_commands          = local.user_data_commands
   iam_actions                 = local.iam_actions
+  instance_profile_name       = var.instance_profile_name
   key_pair                    = var.key_pair
   attach_persistent_public_ip = var.attach_persistent_public_ip
   instance_readiness_params = {
@@ -82,4 +83,5 @@ module "mx" {
     enable   = true
     timeout  = local.timeout
   }
+  tags = var.tags
 }

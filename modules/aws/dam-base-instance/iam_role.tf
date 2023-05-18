@@ -3,8 +3,10 @@
 #################################
 
 locals {
-  role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.dsf_node_role[0].arn, null)
-  role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+  instance_profile = var.instance_profile_name == null ? aws_iam_instance_profile.dsf_node_instance_iam_profile[0].name : var.instance_profile_name
+  role_arn  = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].arn : data.aws_iam_instance_profile.profile[0].role_arn
+  role_name = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].name : data.aws_iam_instance_profile.profile[0].role_name
+
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -45,12 +47,14 @@ locals {
 }
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
+  count       = var.instance_profile_name == null ? 1 : 0
   name_prefix = "${var.name}-${var.resource_type}-instance-iam-profile"
   role        = local.role_name
+  tags = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
-  count               = var.role_arn != null ? 0 : 1
+  count               = var.instance_profile_name == null ? 1 : 0
   description         = "${var.name}-${var.resource_type}-role-${var.name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
@@ -62,4 +66,9 @@ resource "aws_iam_role" "dsf_node_role" {
     name   = "${var.name}-kms-decrypt-access"
     policy = local.inline_policy_kms
   }
+  tags = var.tags
+}
+data "aws_iam_instance_profile" "profile" {
+  count = var.instance_profile_name != null ? 1 : 0
+  name = var.instance_profile_name
 }

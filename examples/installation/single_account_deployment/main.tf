@@ -1,15 +1,13 @@
 provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-  profile = var.aws_profile
   region  = var.aws_region
+  profile = var.aws_profile
 }
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
   version       = "1.4.5" # latest release tag
   sonar_version = var.sonar_version
+  tags = local.tags
 }
 
 data "aws_availability_zones" "available" { state = "available" }
@@ -41,6 +39,7 @@ module "key_pair_hub" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
+  tags = local.tags
 }
 
 module "key_pair_gw" {
@@ -49,6 +48,7 @@ module "key_pair_gw" {
   version                  = "1.4.5" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
+  tags = local.tags
 }
 
 locals {
@@ -96,9 +96,10 @@ module "hub_primary" {
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
-  role_arn                          = var.hub_primary_role_arn
+  internal_private_key_secret_name = var.internal_hub_private_key_secret_name
+  internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
+  tags = local.tags
+  instance_profile_name = var.hub_instance_profile_name
 }
 
 module "hub_secondary" {
@@ -127,9 +128,10 @@ module "hub_secondary" {
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
-  role_arn                          = var.hub_secondary_role_arn
+  internal_private_key_secret_name = var.internal_hub_private_key_secret_name
+  internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), "")
+  tags = local.tags
+  instance_profile_name = var.hub_instance_profile_name
 }
 
 module "agentless_gw_group" {
@@ -159,9 +161,10 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
-  role_arn                          = var.gw_role_arn
+  internal_private_key_secret_name = var.internal_gw_private_key_secret_name
+  internal_public_key = try(trimspace(file(var.internal_gw_public_key_file_path)), "")
+  tags = local.tags
+  instance_profile_name = var.gw_instance_profile_name
 }
 
 module "hub_hadr" {

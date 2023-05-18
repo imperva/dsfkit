@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "friendly_name" {
   type        = string
   description = "Friendly name to identify all resources"
@@ -19,6 +25,12 @@ variable "subnet_id" {
     condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
+}
+
+variable "instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
 
 variable "security_group_ids" {
@@ -190,12 +202,6 @@ EOF
     condition     = var.ami == null || try(var.ami.username != null, false)
     error_message = "ami username mustn't be null"
   }
-}
-
-variable "role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the Agentless Gateway. Keep empty if you wish to create a new role."
 }
 
 variable "additional_install_parameters" {

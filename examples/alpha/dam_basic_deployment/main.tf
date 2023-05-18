@@ -1,19 +1,16 @@
 provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
 }
 
 module "globals" {
-  source  = "imperva/dsf-globals/aws"
-  version = "1.4.5" # latest release tag
+  source  = "../../../modules/aws/core/globals"
+  tags = local.tags
 }
 
 module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
+  tags = local.tags
 }
 
 locals {
@@ -57,14 +54,14 @@ module "vpc" {
   public_subnets  = var.public_subnets_cidr_list
 
   map_public_ip_on_launch = true
+  tags = local.tags
 }
 
 ##############################
 # Generating deployment
 ##############################
 module "mx" {
-  source                            = "imperva/dsf-mx/aws"
-  version                           = "1.4.5" # latest release tag
+  source                            = "../../../modules/aws/mx"
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
   subnet_id                         = local.mx_subnet_id
@@ -80,14 +77,14 @@ module "mx" {
   large_scale_mode                  = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
 }
 
 module "agent_gw" {
-  source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.5" # latest release tag
+  source  = "../../../modules/aws/agent-gw"
   count   = var.gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
@@ -103,6 +100,7 @@ module "agent_gw" {
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
   gateway_group_name                      = local.gateway_group_name
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -124,4 +122,5 @@ module "agent_monitored_db" {
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }
+  tags = local.tags
 }

@@ -3,8 +3,9 @@
 #################################
 
 locals {
-  role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.lambda_mssql_infra_role[0].arn, null)
-  role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+  instance_profile = var.instance_profile_name != null ? var.instance_profile_name : aws_iam_instance_profile.lambda_mssql_infra_instance_iam_profile[0].name
+  role_arn  = var.instance_profile_name != null ? aws_iam_role.lambda_mssql_infra_role[0].arn : data.aws_iam_instance_profile.profile[0].role_arn
+  role_name = var.instance_profile_name != null ? aws_iam_role.lambda_mssql_infra_role[0].name : data.aws_iam_instance_profile.profile[0].role_name
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -121,15 +122,18 @@ resource "aws_iam_role" "rds_db_og_role" {
     name   = "imperva-dsf-s3-access"
     policy = local.rds_db_og_role_inline_policy_s3
   }
+  tags = var.tags
 }
 
 resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
+  count       = var.instance_profile_name == null ? 1 : 0
   name_prefix = "lambda-mssql-infra-instance-iam-profile"
   role        = local.role_name
+  tags        = var.tags
 }
 
 resource "aws_iam_role" "lambda_mssql_infra_role" {
-  count               = var.role_arn != null ? 0 : 1
+  count               = var.instance_profile_name == null ? 1 : 0
   name_prefix         = "imperva-mssql-infra-role"
   description         = "imperva-mssql-infra-role"
   managed_policy_arns = null
@@ -146,4 +150,9 @@ resource "aws_iam_role" "lambda_mssql_infra_role" {
     name   = "imperva-dsf-mssql-ec2-access"
     policy = local.inline_policy_ec2
   }
+  tags = var.tags
+}
+data "aws_iam_instance_profile" "profile" {
+  count = var.instance_profile_name != null ? 1 : 0
+  name = var.instance_profile_name
 }

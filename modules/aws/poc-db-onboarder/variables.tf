@@ -85,3 +85,8 @@ variable "terraform_script_path_folder" {
   }
 }
 
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

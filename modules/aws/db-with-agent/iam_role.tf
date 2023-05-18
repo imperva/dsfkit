@@ -41,6 +41,7 @@ locals {
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
   name_prefix = join("-", [var.friendly_name, "agent", "instance-iam-profile"])
   role        = local.role_name
+  tags = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
@@ -52,4 +53,5 @@ resource "aws_iam_role" "dsf_node_role" {
     name   = "${var.friendly_name}-s3-access"
     policy = local.inline_policy_s3
   }
+  tags = var.tags
 }

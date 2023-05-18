@@ -80,3 +80,9 @@ variable "binaries_location" {
   description = "S3 DSF DAM agent installation location"
   default     = null
 }
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}

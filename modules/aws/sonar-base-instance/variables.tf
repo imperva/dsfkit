@@ -1,3 +1,8 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+}
+
 variable "name" {
   type = string
 }
@@ -46,10 +51,10 @@ variable "key_pair" {
   description = "Key pair for the DSF base instance"
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF base instance. Keep empty if you wish to create a new role."
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
 
 variable "use_public_ip" {
@@ -65,7 +70,6 @@ variable "ebs_details" {
   })
   description = "Compute instance volume attributes"
 }
-
 
 variable "ami" {
   type = object({
