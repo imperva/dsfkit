@@ -7,13 +7,17 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "../../../modules/aws/core/globals"
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.4.5" # latest release tag
+
   sonar_version = var.sonar_version
   tags = local.tags
 }
 
 module "key_pair" {
-  source                   = "../../../modules/aws/core/key_pair"
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.5" # latest release tag
+
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   tags = local.tags
@@ -76,7 +80,8 @@ data "aws_subnet" "gw" {
 ##############################
 
 module "hub" {
-  source  = "../../../modules/aws/hub"
+  source  = "imperva/dsf-hub/aws"
+  version = "1.4.5" # latest release tag
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                    = local.hub_subnet_id
@@ -100,7 +105,8 @@ module "hub" {
 }
 
 module "agentless_gw_group" {
-  source  = "../../../modules/aws/agentless-gw"
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.4.5" # latest release tag
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
@@ -127,7 +133,8 @@ module "agentless_gw_group" {
 }
 
 module "federation" {
-  source   = "../../../modules/null/federation"
+  source   = "imperva/dsf-federation/null"
+  version  = "1.4.5" # latest release tag
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
 
   gw_info = {
@@ -152,7 +159,8 @@ module "federation" {
 }
 
 module "rds_mysql" {
-  source  = "../../../modules/aws/rds-mysql-db"
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
+  version = "1.4.5" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -161,7 +169,8 @@ module "rds_mysql" {
 }
 
 module "rds_mssql" {
-  source  = "../../../modules/aws/rds-mssql-db"
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  version = "1.4.5" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -175,7 +184,8 @@ module "rds_mssql" {
 }
 
 module "db_onboarding" {
-  source   = "../../../modules/aws/poc-db-onboarder"
+  source   = "imperva/dsf-poc-db-onboarder/aws"
+  version  = "1.4.5" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version
