@@ -56,3 +56,7 @@ output "access_tokens" {
   value     = module.hub_instance.access_tokens
   sensitive = true
 }
+
+output "web_console_user" {
+  value = "admin"
+}

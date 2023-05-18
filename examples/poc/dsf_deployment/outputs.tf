@@ -1,38 +1,3 @@
-output "dsf_agentless_gw_group" {
-  value = {
-    for idx, val in module.agentless_gw_group : "agentless-gw-${idx}" =>
-    {
-      private_ip   = try(val.private_ip, null)
-      private_dns  = try(val.private_dns, null)
-      jsonar_uid   = try(val.jsonar_uid, null)
-      display_name = try(val.display_name, null)
-      role_arn     = try(val.iam_role, null)
-      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub.ssh_user}@${module.hub.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-    }
-  }
-}
-
-output "dsf_hub" {
-  value = {
-    public_ip    = try(module.hub.public_ip, null)
-    public_dns   = try(module.hub.public_dns, null)
-    private_ip   = try(module.hub.private_ip, null)
-    private_dns  = try(module.hub.private_dns, null)
-    jsonar_uid   = try(module.hub.jsonar_uid, null)
-    display_name = try(module.hub.display_name, null)
-    role_arn     = try(module.hub.iam_role, null)
-    ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
-  }
-}
-
-output "dsf_hub_web_console" {
-  value = {
-    public_url     = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
-    private_url    = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
-    admin_password = nonsensitive(local.web_console_admin_password)
-  }
-}
-
 output "deployment_name" {
   value = local.deployment_name_salted
 }
@@ -50,12 +15,9 @@ output "dsf_hub_web_console_url" {
   value = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
 }
 
-output "mysql_db_details" {
-  value = try(module.rds_mysql, null)
-}
-
-output "mssql_db_details" {
-  value = try(module.rds_mssql, null)
+output "hub_tokens" {
+  value     = module.hub.access_tokens
+  sensitive = true
 }
 
 output "generated_network" {
@@ -66,7 +28,83 @@ output "generated_network" {
   }, null)
 }
 
-output "tokens" {
-  value     = module.hub.access_tokens
-  sensitive = true
+output "agentless_gws" {
+  value = {
+    agenless_gw = [
+      for idx, val in module.agentless_gw_group :
+      {
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        jsonar_uid   = try(val.jsonar_uid, null)
+        display_name = try(val.display_name, null)
+        role_arn     = try(val.iam_role, null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub.ssh_user}@${module.hub.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
+    ]
+    agentless_sources = {
+      rds_mysql = try(module.rds_mysql[0], null)
+      rds_mssql = try(module.rds_mssql[0], null)
+    }
+  }
+}
+
+output "hub" {
+  value = {
+    public_ip    = try(module.hub.public_ip, null)
+    public_dns   = try(module.hub.public_dns, null)
+    private_ip   = try(module.hub.private_ip, null)
+    private_dns  = try(module.hub.private_dns, null)
+    jsonar_uid   = try(module.hub.jsonar_uid, null)
+    display_name = try(module.hub.display_name, null)
+    role_arn     = try(module.hub.iam_role, null)
+    ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
+    web_console = {
+      public_url     = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
+      private_url    = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
+      password = nonsensitive(local.password)
+      user = module.hub.web_console_user
+    }
+  }
+}
+
+output "dam" {
+  value = {
+    web_console = {
+      public_url     = try(join("", ["https://", module.mx.public_dns, ":8083/"]), null)
+      private_url    = try(join("", ["https://", module.mx.private_dns, ":8083/"]), null)
+      password = nonsensitive(local.password)
+      user = module.hub.web_console_user
+    }
+    mx = {
+      public_ip    = try(module.mx.public_ip, null)
+      public_dns   = try(module.mx.public_dns, null)
+      private_ip   = try(module.mx.private_ip, null)
+      private_dns  = try(module.mx.private_dns, null)
+      display_name = try(module.mx.display_name, null)
+      role_arn     = try(module.mx.iam_role, null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.mx.ssh_user}@${module.mx.public_dns}", null)
+    }
+    agent_gw = [
+      for idx, val in module.agent_gw : {
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        public_ip    = try(val.public_ip, null)
+        public_dns   = try(val.public_dns, null)
+        display_name = try(val.display_name, null)
+        role_arn     = try(val.iam_role, null)
+        group_id     = try(val.group_id, null)
+        ssh_command  = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx.ssh_user}@${module.mx.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
+    ]
+    agent_sources = [
+      for idx, val in module.agent_monitored_db :
+      {
+        private_ip  = val.private_ip
+        private_dns = val.private_dns
+        db_type     = val.db_type
+        os_type     = val.os_type
+        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx.ssh_user}@${module.mx.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
+    ]
+  }
 }
