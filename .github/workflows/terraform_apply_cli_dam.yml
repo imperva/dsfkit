@@ -27,7 +27,14 @@ on:
     branches:
       - 'master'
       - 'dev'
-    
+    paths:
+      - 'modules/aws/dam-base-instance'
+      - 'modules/aws/agent-gw/*'
+      - 'modules/aws/mx'
+      - 'modules/null/agent-gw-cluster-setup/*'
+      - 'modules/aws/db-with-agent'
+      - 'examples/alpha/dam_basic_deployment/*'
+
   pull_request:
     types:
       - 'opened'
@@ -35,6 +42,13 @@ on:
     branches:
       - 'master'
       - 'dev'
+    paths:
+      - 'modules/aws/dam-base-instance'
+      - 'modules/aws/agent-gw/*'
+      - 'modules/aws/mx'
+      - 'modules/null/agent-gw-cluster-setup/*'
+      - 'modules/aws/db-with-agent'
+      - 'examples/alpha/dam_basic_deployment/*'
 
 env:
   TF_WARN_OUTPUT_ERRORS: 1
