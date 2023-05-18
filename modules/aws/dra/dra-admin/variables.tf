@@ -115,12 +115,14 @@ variable "attach_public_ip" {
 
 variable "ebs" {
   type = object({
-    disk_size        = number
-    provisioned_iops = number
-    throughput       = number
+    volume_size      = number
+    volume_type      = string
   })
-  description = "Compute instance volume attributes"
-  default = null
+  description = "Compute instance volume attributes for the Admin Server"
+  default = {
+    volume_size      = 260
+    volume_type      = "gp3"
+  }
 }
 
 variable "role_arn" {

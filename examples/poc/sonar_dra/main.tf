@@ -61,6 +61,7 @@ module "dra_admin" {
   friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                             = local.admin_subnet_id
   ami                                   = var.admin_ami
+  ebs                                   = var.admin_ebs_details
   admin_analytics_registration_password = local.admin_analytics_registration_password
   allowed_web_console_cidrs             = local.workstation_cidr
   allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
@@ -70,7 +71,6 @@ module "dra_admin" {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  # ebs = var.admin_ebs_details
   depends_on = [
     module.vpc
   ]
@@ -82,6 +82,7 @@ module "analytics_server_group" {
   friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                                 = local.analytics_subnet_id
   ami                                       = var.analytics_ami
+  ebs                                       = var.analytics_group_ebs_details
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]
   allowed_ssh_cidrs                         = var.allowed_ssh_cidrs
@@ -94,32 +95,7 @@ module "analytics_server_group" {
   archiver_password                         = local.archiver_password
   admin_server_private_ip                   = module.dra_admin.private_ip
   admin_server_public_ip                    = module.dra_admin.public_ip
-  # ebs = var.analitycs_group_ebs_details
   depends_on = [
     module.vpc
   ]
 }
-
-
-
-
-# resource "aws_instance" "jump_server" {
-#   ami           = data.aws_ssm_parameter.centOS.value
-#   instance_type = var.instance_type
-#   subnet_id = aws_subnet.public-1.id
-#   vpc_security_group_ids = ["${aws_security_group.jump_server.id}"]
-#   user_data = file ("./bootstrap_jumpserver.sh")
-#   key_name = var.key
-
-#   tags = {
-#     Name = "Jump-Server-on-centos"
-#     stage = "Test"
-#   }
-# }
-# # ----------- Output the public ID of the Web Server ----------------
-
-# output "web" {
-#   value = [aws_instance.web.private_ip]
-# }
-
-

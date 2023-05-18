@@ -125,30 +125,26 @@ variable "archiver_password" {
   default = null
 }
 
-variable "analytics_group_ebs_details" {
+variable "admin_ebs_details" {
   type = object({
-    disk_size        = number
-    provisioned_iops = number
-    throughput       = number
+    volume_size      = number
+    volume_type      = string
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "Admin Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
-    disk_size        = 75
-    provisioned_iops = 0
-    throughput       = 125
+    volume_size      = 260
+    volume_type      = "gp3"
   }
 }
 
-variable "admin_ebs_details" {
+variable "analytics_group_ebs_details" {
   type = object({
-    disk_size        = number
-    provisioned_iops = number
-    throughput       = number
+    volume_size      = number
+    volume_type      = string
   })
-  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "Analytics Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
-    disk_size        = 250
-    provisioned_iops = 0
-    throughput       = 125
+    volume_size      = 1010
+    volume_type      = "gp3"
   }
 }

@@ -1,16 +1,4 @@
 locals {
-  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
-    admin_server_public_ip  = var.admin_server_public_ip
-  })
-}
-
-locals {
-  disk_size_app        = 1010
-  ebs_state_disk_type  = "gp3"
-  ebs_state_disk_size  = var.ebs == null ? null : var.ebs.disk_size
-  ebs_state_iops       = var.ebs == null ? null : var.ebs.provisioned_iops
-  ebs_state_throughput = var.ebs == null ? null : var.ebs.throughput
-
   security_group_ids = concat(
     [aws_security_group.dsf_base_sg_out.id],
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
@@ -27,6 +15,10 @@ locals {
     archiver_user                             = var.archiver_user
     archiver_password                         = var.archiver_password
     admin_server_private_ip                   = var.admin_server_private_ip
+  })
+
+  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
+    admin_server_public_ip  = var.admin_server_public_ip
   })
 }
 
@@ -61,7 +53,8 @@ resource "aws_instance" "dra_analytics" {
   key_name      = var.ssh_key_pair.ssh_public_key_name
   user_data     = local.install_script
   root_block_device {
-    volume_size           = local.disk_size_app
+    volume_size           = var.ebs.volume_size
+    volume_type           = var.ebs.volume_type
     delete_on_termination = true
   }
   iam_instance_profile = aws_iam_instance_profile.dsf_dra_analytics_instance_iam_profile.id
@@ -90,31 +83,4 @@ resource "null_resource" "waiter_cmds" {
   depends_on = [
     aws_instance.dra_analytics
   ]
-}
-
-data "aws_subnet" "selected_subnet" {
-  id = var.subnet_id
-}
-
-resource "aws_volume_attachment" "ebs_att" {
-  count                          = var.ebs == null ? 0 : 1
-  device_name                    = "/dev/sdb"
-  volume_id                      = aws_ebs_volume.ebs_external_data_vol[0].id
-  instance_id                    = aws_instance.dra_analytics.id
-  stop_instance_before_detaching = true
-}
-
-resource "aws_ebs_volume" "ebs_external_data_vol" {
-  count             = var.ebs == null ? 0 : 1
-  size              = local.ebs_state_disk_size
-  type              = local.ebs_state_disk_type
-  iops              = local.ebs_state_iops
-  throughput        = local.ebs_state_throughput
-  availability_zone = data.aws_subnet.selected_subnet.availability_zone
-  tags = {
-    Name = join("-", [var.friendly_name, "data", "volume", "ebs"])
-  }
-  lifecycle {
-    ignore_changes = [iops]
-  }
 }
