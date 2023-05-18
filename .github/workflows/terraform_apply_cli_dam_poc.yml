@@ -1,4 +1,4 @@
-name: 'Terraform DAM Cli'
+name: 'Terraform DAM POC CLI'
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: 'Terraform Plan'
+name: 'Terraform Sonar CLI - Plan'
 
 on:
   workflow_call:

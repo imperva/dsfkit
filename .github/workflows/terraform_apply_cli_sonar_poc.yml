@@ -1,4 +1,4 @@
-name: 'Terraform Sonar POC Cli'
+name: 'Terraform Sonar POC CLI'
 
 on:
   workflow_call:
