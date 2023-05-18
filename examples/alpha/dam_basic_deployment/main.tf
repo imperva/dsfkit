@@ -105,6 +105,7 @@ module "agent_gw" {
   allowed_agent_cidrs                     = [data.aws_subnet.gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
   allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
+  allowed_gw_clusters_cidrs               = [data.aws_subnet.gw.cidr_block]
   management_server_host_for_registration = module.mx.private_ip
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
