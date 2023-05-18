@@ -59,10 +59,10 @@ output "hub" {
     role_arn     = try(module.hub.iam_role, null)
     ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
     web_console = {
-      public_url     = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
-      private_url    = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
-      password = nonsensitive(local.password)
-      user = module.hub.web_console_user
+      public_url  = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
+      private_url = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
+      password    = nonsensitive(local.password)
+      user        = module.hub.web_console_user
     }
   }
 }
@@ -70,10 +70,10 @@ output "hub" {
 output "dam" {
   value = {
     web_console = {
-      public_url     = try(join("", ["https://", module.mx.public_dns, ":8083/"]), null)
-      private_url    = try(join("", ["https://", module.mx.private_dns, ":8083/"]), null)
-      password = nonsensitive(local.password)
-      user = module.hub.web_console_user
+      public_url  = try(join("", ["https://", module.mx.public_dns, ":8083/"]), null)
+      private_url = try(join("", ["https://", module.mx.private_dns, ":8083/"]), null)
+      password    = nonsensitive(local.password)
+      user        = module.hub.web_console_user
     }
     mx = {
       public_ip    = try(module.mx.public_ip, null)

@@ -3,7 +3,8 @@ locals {
 }
 
 module "mx" {
-  source = "../../../modules/aws/mx"
+  source  = "imperva/dsf-mx/aws"
+  version = "1.4.5" # latest release tag
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -31,9 +32,9 @@ module "mx" {
 }
 
 module "agent_gw" {
-  source = "../../../modules/aws/agent-gw"
-
-  count = var.agent_gw_count
+  source  = "imperva/dsf-agent-gw/aws"
+  version = "1.4.5" # latest release tag
+  count   = var.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
@@ -55,8 +56,9 @@ module "agent_gw" {
 }
 
 module "agent_monitored_db" {
-  source = "../../../modules/aws/db-with-agent"
-  count  = var.agent_count
+  source  = "imperva/dsf-db-with-agent/aws"
+  version = "1.4.5" # latest release tag
+  count   = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
 

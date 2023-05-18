@@ -4,7 +4,8 @@ locals {
 }
 
 module "hub" {
-  source = "../../../modules/aws/hub"
+  source  = "imperva/dsf-hub/aws"
+  version = "1.4.5" # latest release tag
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                    = local.hub_subnet_id
@@ -28,8 +29,9 @@ module "hub" {
 }
 
 module "agentless_gw_group" {
-  source = "../../../modules/aws/agentless-gw"
-  count  = var.agentless_gw_count
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.4.5" # latest release tag
+  count   = var.agentless_gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id                  = local.agentless_gw_subnet_id
@@ -55,7 +57,8 @@ module "agentless_gw_group" {
 }
 
 module "federation" {
-  source   = "../../../modules/null/federation"
+  source   = "imperva/dsf-federation/null"
+  version  = "1.4.5" # latest release tag
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
 
   gw_info = {
@@ -80,8 +83,9 @@ module "federation" {
 }
 
 module "rds_mysql" {
-  source = "../../../modules/aws/rds-mysql-db"
-  count  = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
+  version = "1.4.5" # latest release tag
+  count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
@@ -89,8 +93,9 @@ module "rds_mysql" {
 }
 
 module "rds_mssql" {
-  source = "../../../modules/aws/rds-mssql-db"
-  count  = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
+  count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  version = "1.4.5" # latest release tag
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
@@ -103,7 +108,8 @@ module "rds_mssql" {
 }
 
 module "db_onboarding" {
-  source   = "../../../modules/aws/poc-db-onboarder"
+  source   = "imperva/dsf-poc-db-onboarder/aws"
+  version  = "1.4.5" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version
