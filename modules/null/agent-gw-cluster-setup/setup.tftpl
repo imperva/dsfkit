@@ -73,7 +73,7 @@ moveGatewayToCluster $gw1_name
 
 # Step 5: Update the cluster and activate it
 subnet="{\"ip\":\"0.0.0.0\",\"mask\":0}"
-request_body="{\"id\":\"$cluster_id\", \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"useUnlimitedCapacity\": false, \"userDefinedGatewayWeightCapacity\": 15000, \"clusterSubnetDTO\": $subnet, \"agentsSubnetDTO\": $subnet, \"mxSubnetDTO\": $subnet, \"active\": true}"
+request_body="{\"id\":\"$cluster_id\", \"networkTopology\":\"Single\", \"manager1Name\": \"$gw0_name\", \"manager2Name\": \"$gw1_name\", \"useUnlimitedCapacity\": false, \"userDefinedGatewayWeightCapacity\": 15000, \"clusterSubnetDTO\": $subnet, \"active\": true}"
 response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/$cluster_id" \
   -d "$request_body" \
   -H "Content-Type: application/json")
