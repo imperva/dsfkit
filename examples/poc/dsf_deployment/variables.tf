@@ -10,8 +10,9 @@ variable "password" {
   default     = null # Random
   description = "Admin password (Random generated if not set)"
 }
-
-# networking variables
+##############################
+#### networking variables ####
+##############################
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
@@ -53,12 +54,14 @@ variable "subnet_ids" {
   default     = null
   description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
 }
 
-# DAM variables"
+##############################
+####    DAM variables     ####
+##############################
 variable "dam_version" {
   description = "The DAM version to install"
   type        = string
@@ -81,7 +84,7 @@ variable "license_file" {
 variable "large_scale_mode" {
   type        = bool
   description = "DAM large scale mode"
-  default     = false
+  default     = true
 }
 
 variable "agent_gw_count" {
@@ -96,7 +99,9 @@ variable "agent_count" {
   description = "The number of compute instances to provision, each with a database and a monitoring agent"
 }
 
-# sonar variables"
+##############################
+####    sonar variables   ####
+##############################
 variable "sonar_version" {
   type        = string
   default     = "4.11"
