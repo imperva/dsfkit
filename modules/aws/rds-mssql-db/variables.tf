@@ -50,10 +50,10 @@ variable "security_group_ingress_cidrs" {
   }
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the RDS SQL Server DB"
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
 
 variable "db_audit_scripts_bucket_name" {

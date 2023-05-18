@@ -51,10 +51,10 @@ variable "key_pair" {
   description = "Key pair for the DSF base instance"
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF base instance. Keep empty if you wish to create a new role."
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
 
 variable "use_public_ip" {
@@ -70,7 +70,6 @@ variable "ebs_details" {
   })
   description = "Compute instance volume attributes"
 }
-
 
 variable "ami" {
   type = object({
@@ -101,12 +100,6 @@ EOF
 variable "ec2_instance_type" {
   type        = string
   description = "Ec2 instance type for the DSF base instance"
-}
-
-variable "instance_profile_name" {
-  type        = string
-  default     = null
-  description = "Instance profile to assign to the DSF node. Keep empty if you wish to create a new instance profile."
 }
 
 variable "web_console_admin_password" {

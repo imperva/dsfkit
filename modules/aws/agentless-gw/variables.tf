@@ -27,6 +27,12 @@ variable "subnet_id" {
   }
 }
 
+variable "instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
+}
+
 variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids to attach to the Agentless Gateway instance"
@@ -196,12 +202,6 @@ EOF
     condition     = var.ami == null || try(var.ami.username != null, false)
     error_message = "ami username mustn't be null"
   }
-}
-
-variable "instance_profile_name" {
-  type        = string
-  default     = null
-  description = "Instance profile to assign to the Agentless Gateway. Keep empty if you wish to create a new instance profile."
 }
 
 variable "additional_install_parameters" {

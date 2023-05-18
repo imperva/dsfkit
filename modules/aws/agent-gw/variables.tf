@@ -86,10 +86,10 @@ variable "allowed_all_cidrs" {
   default = []
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the DSF Agent Gateway. Keep empty if you wish to create a new role"
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
 
 variable "mx_password" {

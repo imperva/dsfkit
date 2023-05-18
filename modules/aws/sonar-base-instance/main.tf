@@ -28,8 +28,6 @@ locals {
   ami_name     = local.ami.name != null ? local.ami.name : "*"
   ami_id       = local.ami.id != null ? local.ami.id : "*"
   ami_username = local.ami.username
-
-  instance_profile = var.instance_profile_name != null ? var.instance_profile_name : aws_iam_instance_profile.dsf_node_instance_iam_profile[0].name
 }
 
 resource "aws_eip" "dsf_instance_eip" {

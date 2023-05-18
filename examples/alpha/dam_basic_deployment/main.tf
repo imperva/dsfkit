@@ -2,14 +2,12 @@ provider "aws" {
 }
 
 module "globals" {
-  source  = "imperva/dsf-globals/aws"
-  version = "1.4.5" # latest release tag
+  source  = "../../../modules/aws/core/globals"
   tags = local.tags
 }
 
 module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   tags = local.tags
@@ -63,8 +61,7 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source                            = "imperva/dsf-mx/aws"
-  version                           = "1.4.5" # latest release tag
+  source                            = "../../../modules/aws/mx"
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
   subnet_id                         = local.mx_subnet_id
@@ -87,8 +84,7 @@ module "mx" {
 }
 
 module "agent_gw" {
-  source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.5" # latest release tag
+  source  = "../../../modules/aws/agent-gw"
   count   = var.gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
@@ -111,8 +107,7 @@ module "agent_gw" {
 }
 
 module "agent_monitored_db" {
-  source = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.5" # latest release tag
+  source = "../../../modules/aws/db-with-agent"
   count  = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
