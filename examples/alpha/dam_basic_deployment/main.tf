@@ -26,6 +26,7 @@ locals {
   mx_subnet_id               = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
   gw_subnet_id               = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
   gateway_group_name         = "gatewayGroup1"
+  cluster_name               = "cluster1"
 }
 
 data "aws_subnet" "mx" {
@@ -114,6 +115,21 @@ module "agent_gw" {
   ]
 }
 
+module "agent_gw_cluster_setup" {
+  source                  = "../../../modules/null/agent-gw-cluster-setup"
+  cluster_name            = local.cluster_name
+  gateway_group_name      = local.gateway_group_name
+  mx_details = {
+    address  = module.mx.public_ip
+    port     = 8083
+    user     = "admin"
+    password = local.web_console_admin_password
+  }
+  depends_on = [
+    module.agent_gw
+  ]
+}
+
 module "agent_monitored_db" {
   source  = "imperva/dsf-db-with-agent/aws"
   version = "1.4.5" # latest release tag
@@ -132,4 +148,7 @@ module "agent_monitored_db" {
     site               = module.mx.configuration.default_site
   }
   tags = local.tags
+  depends_on = [
+    module.agent_gw_cluster_setup
+  ]
 }
