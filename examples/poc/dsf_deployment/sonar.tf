@@ -6,6 +6,7 @@ locals {
 module "hub" {
   source  = "imperva/dsf-hub/aws"
   version = "1.4.5" # latest release tag
+  count   = var.enable_dsf_hub ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                    = local.hub_subnet_id
@@ -38,7 +39,7 @@ module "agentless_gw_group" {
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.password
-  hub_sonarw_public_key      = module.hub.sonarw_public_key
+  hub_sonarw_public_key      = module.hub[0].sonarw_public_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -46,9 +47,9 @@ module "agentless_gw_group" {
   allowed_hub_cidrs = [data.aws_subnet.hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = {
-    proxy_address              = module.hub.public_ip
+    proxy_address              = module.hub[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub.ssh_user
+    proxy_ssh_user             = module.hub[0].ssh_user
   }
   tags = local.tags
   depends_on = [
@@ -67,14 +68,14 @@ module "federation" {
     gw_ssh_user             = each.value.ssh_user
   }
   hub_info = {
-    hub_ip_address           = module.hub.public_ip
+    hub_ip_address           = module.hub[0].public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
-    hub_ssh_user             = module.hub.ssh_user
+    hub_ssh_user             = module.hub[0].ssh_user
   }
   gw_proxy_info = {
-    proxy_address              = module.hub.public_ip
+    proxy_address              = module.hub[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub.ssh_user
+    proxy_ssh_user             = module.hub[0].ssh_user
   }
   depends_on = [
     module.hub,
@@ -113,11 +114,11 @@ module "db_onboarding" {
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version
-  usc_access_token = module.hub.access_tokens.usc.token
+  usc_access_token = module.hub[0].access_tokens.usc.token
   hub_info = {
-    hub_ip_address           = module.hub.public_ip
+    hub_ip_address           = module.hub[0].public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
-    hub_ssh_user             = module.hub.ssh_user
+    hub_ssh_user             = module.hub[0].ssh_user
   }
 
   assignee_gw   = module.agentless_gw_group[0].jsonar_uid

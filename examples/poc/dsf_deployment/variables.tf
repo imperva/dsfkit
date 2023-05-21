@@ -4,19 +4,44 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
+variable "enable_dsf_hub" {
+  type        = bool
+  default     = true
+  description = "Provision DSF Hub. Required if you wish to provision Agentless Gateways"
+}
+
+variable "enable_dsf_mx" {
+  type        = bool
+  default     = true
+  description = "Provision DSF MX. Required if you wish to provision Agent Gateways"
+}
+
+variable "agentless_gw_count" {
+  type        = number
+  default     = 1
+  description = "Number of DSF Agentless Gateways. Provisioning Agentless Gateways requires DSF HUB"
+}
+
+variable "agent_gw_count" {
+  type        = number
+  default     = 1
+  description = "Number of DSF Agent Gateways. Provisioning Agent Gateways requires DSF MX"
+}
+
 variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
   description = "Admin password (Random generated if not set)"
 }
+
 ##############################
 #### networking variables ####
 ##############################
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DSF Hub and MX web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
@@ -87,16 +112,10 @@ variable "large_scale_mode" {
   default     = true
 }
 
-variable "agent_gw_count" {
-  type        = number
-  default     = 1
-  description = "Number of DSF Agent Gateways"
-}
-
 variable "agent_count" {
   type        = number
   default     = 1
-  description = "The number of compute instances to provision, each with a database and a monitoring agent"
+  description = "The agent sources to provision. Each with a database and a monitoring agent"
 }
 
 ##############################
@@ -110,18 +129,6 @@ variable "sonar_version" {
     condition     = var.sonar_version == "4.11"
     error_message = "This example supports Sonar version 4.11"
   }
-}
-
-variable "agentless_gw_count" {
-  type        = number
-  default     = 1
-  description = "Number of DSF Agentless Gateways"
-}
-
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
 }
 
 variable "hub_ebs_details" {
@@ -152,6 +159,11 @@ variable "gw_group_ebs_details" {
   }
 }
 
+variable "additional_install_parameters" {
+  default     = ""
+  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
+}
+
 variable "db_types_to_onboard" {
   type        = list(string)
   default     = ["RDS MySQL"]
@@ -164,7 +176,8 @@ variable "db_types_to_onboard" {
   }
 }
 
-variable "additional_install_parameters" {
-  default     = ""
-  description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
+variable "database_cidr" {
+  type        = list(string)
+  default     = null # workstation ip
+  description = "CIDR blocks allowing dummy database access"
 }

@@ -16,11 +16,11 @@ module "mx" {
   allowed_web_console_and_api_cidrs = local.workstation_cidr
   allowed_agent_gw_cidrs            = [data.aws_subnet.agent_gw.cidr_block]
   allowed_ssh_cidrs                 = local.workstation_cidr
-  hub_details = {
-    address      = module.hub.private_ip
-    access_token = module.hub.access_tokens["dam-to-hub"].token
+  hub_details = var.enable_dsf_hub ? {
+    address      = module.hub[0].private_ip
+    access_token = module.hub[0].access_tokens["dam-to-hub"].token
     port         = 8443
-  }
+  } : null
   attach_persistent_public_ip = true
   large_scale_mode            = var.large_scale_mode
 
