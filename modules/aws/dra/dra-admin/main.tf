@@ -68,13 +68,13 @@ resource "aws_network_interface" "eni" {
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_public_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   vpc   = true
   tags  = var.tags
 }
 
 resource "aws_eip_association" "eip_assoc" {
-  count         = var.attach_public_ip ? 1 : 0
+  count         = var.attach_persistent_public_ip ? 1 : 0
   instance_id   = aws_instance.dsf_base_instance.id
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }

@@ -8,19 +8,6 @@ function wait-for-admin(){
   done
 }
 
-
-
-# function wait-for-admin(){
-#   while true; do
-#     response=$(curl -k -s -o /dev/null -w "%%{http_code}" --request GET 'https://${admin_server_private_ip}:8443/mvc/login')
-#     if [ $response -eq 200 ]; then
-#       exit 0
-#     else
-#       sleep 60
-#     fi
-#   done
-# }
-
 date '+%Y-%m-%d %H:%M:%S'
 my_nameserver=$(ifconfig eth0 | grep "inet " | awk '{print $2}')
 my_ip=$(ifconfig eth0 | grep "inet " | awk '{print $2}')

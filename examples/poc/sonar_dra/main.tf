@@ -65,7 +65,7 @@ module "dra_admin" {
   allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
   allowed_ssh_cidrs                     = var.allowed_ssh_cidrs_to_admin
   instance_type                         = var.admin_instance_type
-  attach_public_ip                      = true
+  attach_persistent_public_ip           = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
