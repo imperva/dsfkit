@@ -1,10 +1,12 @@
 locals {
   gateway_group_name = "gatewayGroup1"
+  agent_gw_count     = var.enable_dsf_mx ? var.agent_gw_count : 0
 }
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
   version = "1.4.5" # latest release tag
+  count   = var.enable_dsf_mx ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -34,7 +36,7 @@ module "mx" {
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
   version = "1.4.5" # latest release tag
-  count   = var.agent_gw_count
+  count   = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
@@ -53,24 +55,4 @@ module "agent_gw" {
   depends_on = [
     module.vpc
   ]
-}
-
-module "agent_monitored_db" {
-  source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.5" # latest release tag
-  count   = var.agent_count
-
-  friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
-
-  subnet_id         = local.agent_gw_subnet_id
-  key_pair          = module.key_pair.key_pair.key_pair_name
-  allowed_ssh_cidrs = [format("%s/32", module.mx.private_ip)]
-
-  registration_params = {
-    agent_gateway_host = module.agent_gw[0].private_ip
-    secure_password    = local.password
-    server_group       = module.mx.configuration.default_server_group
-    site               = module.mx.configuration.default_site
-  }
-  tags = local.tags
 }
