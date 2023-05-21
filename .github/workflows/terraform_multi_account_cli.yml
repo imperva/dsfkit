@@ -5,11 +5,14 @@ concurrency:
 
 on:
   workflow_dispatch:
+    branch:
+      required: true
+      type: string
 
   workflow_call:
     inputs:
       branch:
-        required: false
+        required: true
         type: string
     secrets:
       AWS_ACCESS_KEY_ID:
@@ -43,7 +46,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Multi Account ${{ github.ref_name }}'
+    name: 'Multi Account ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     environment: test
   
@@ -56,7 +59,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.ref_name }}
+        ref: ${{ inputs.branch }}
 
     - name: Change the modules source to local
       run: |
@@ -65,7 +68,7 @@ jobs:
     - name: Sets env vars for environment
       run: |
         echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-      if: github.ref_name != 'master'
+      if: inputs.branch != 'master'
 
     - name: Create terraform backend file
       run: |
@@ -173,7 +176,7 @@ jobs:
     # Send job failure to Slack
     - name: Send Slack When Failure
       run: |
-        if [ ${{ github.ref_name }} == 'master' ]; then
+        if [ ${{ inputs.branch }} == 'master' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -5,11 +5,14 @@ concurrency:
 
 on:
   workflow_dispatch:
+    branch:
+      required: true
+      type: string
 
   workflow_call:
     inputs:
       branch:
-        required: false
+        required: true
         type: string
     secrets:
       AWS_ACCESS_KEY_ID_STAGE:
@@ -45,7 +48,7 @@ jobs:
             example_dir: examples/installation/single_account_deployment
             target_dir: single_account
 
-    name: '${{ matrix.name }} ${{ github.ref_name }}'
+    name: '${{ matrix.name }} ${{ inputs.branch }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
@@ -63,7 +66,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ inputs.branch }}
 
       - name: Setup jq
         uses: sergeysova/jq-action@v2
@@ -239,7 +242,7 @@ jobs:
         # Send job failure to Slack
       - name: Send Slack When Failure
         run: |
-          if [ ${{ github.ref_name }} == 'master' ]; then 
+          if [ ${{ inputs.branch }} == 'master' ]; then 
             curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
           else 
             curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ matrix.name }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -10,57 +10,67 @@ permissions:
 
 jobs:
   dev_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@add_tests
+    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@dev
     with:
+      branch: dev
       workspace: simple_cli_dev_nightly
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-#  master_basic_poc:
-#    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@master
-#    with:
-#      workspace: simple_cli_master_nightly
-#    secrets:
-#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#
-#  dev_single_account:
-#    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@dev
-#    secrets:
-#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#
-#  master_single_account:
-#    needs: dev_single_account
-#    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@master
-#    secrets:
-#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#
-#  dev_multi_account:
-#    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
-#    secrets:
-#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#
-#  master_multi_account:
-#    needs: dev_multi_account
-#    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@master
-#    secrets:
-#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  master_basic_poc:
+    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@master
+    with:
+      branch: master
+      workspace: simple_cli_master_nightly
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  dev_single_account:
+    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@dev
+    with:
+      branch: dev
+    secrets:
+      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  master_single_account:
+    needs: dev_single_account
+    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@master
+    with:
+      branch: master
+    secrets:
+      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  dev_multi_account:
+    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
+    with:
+      branch: dev
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  master_multi_account:
+    needs: dev_multi_account
+    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@master
+    with:
+      branch: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
