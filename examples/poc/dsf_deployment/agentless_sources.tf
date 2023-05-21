@@ -5,7 +5,7 @@ locals {
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
   version = "1.4.5" # latest release tag
-  count   = contains(local.db_types_to_onboard, "RDS MySQL") ? 1 : 0
+  count  = contains(local.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
@@ -13,9 +13,9 @@ module "rds_mysql" {
 }
 
 module "rds_mssql" {
-  count   = contains(local.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
   version = "1.4.5" # latest release tag
+  count  = contains(local.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr

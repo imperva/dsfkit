@@ -7,7 +7,7 @@ locals {
 module "hub" {
   source  = "imperva/dsf-hub/aws"
   version = "1.4.5" # latest release tag
-  count   = var.enable_dsf_hub ? 1 : 0
+  count  = var.enable_dsf_hub ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                    = local.hub_subnet_id
@@ -33,7 +33,7 @@ module "hub" {
 module "agentless_gw_group" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.4.5" # latest release tag
-  count   = local.agentless_gw_count
+  count  = local.agentless_gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
   subnet_id                  = local.agentless_gw_subnet_id

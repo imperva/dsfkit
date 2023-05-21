@@ -6,7 +6,7 @@ locals {
 module "mx" {
   source  = "imperva/dsf-mx/aws"
   version = "1.4.5" # latest release tag
-  count   = var.enable_dsf_mx ? 1 : 0
+  count  = var.enable_dsf_mx ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -36,7 +36,7 @@ module "mx" {
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
   version = "1.4.5" # latest release tag
-  count   = local.agent_gw_count
+  count  = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
@@ -47,8 +47,8 @@ module "agent_gw" {
   allowed_agent_cidrs                     = [data.aws_subnet.agent_gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
   allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
-  management_server_host_for_registration = module.mx.private_ip
-  management_server_host_for_api_access   = module.mx.public_ip
+  management_server_host_for_registration = module.mx[0].private_ip
+  management_server_host_for_api_access   = module.mx[0].public_ip
   large_scale_mode                        = var.large_scale_mode
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
