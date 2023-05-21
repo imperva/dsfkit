@@ -1,12 +1,12 @@
 locals {
   gateway_group_name = "gatewayGroup1"
-  agent_gw_count     = var.enable_dsf_mx ? var.agent_gw_count : 0
+  agent_gw_count     = var.enable_dsf_dam ? var.agent_gw_count : 0
 }
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
   version = "1.4.5" # latest release tag
-  count  = var.enable_dsf_mx ? 1 : 0
+  count  = var.enable_dsf_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version

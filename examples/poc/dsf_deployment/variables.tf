@@ -10,7 +10,7 @@ variable "enable_dsf_hub" {
   description = "Provision DSF Hub. Required if you wish to provision Agentless Gateways"
 }
 
-variable "enable_dsf_mx" {
+variable "enable_dsf_dam" {
   type        = bool
   default     = true
   description = "Provision DSF MX. Required if you wish to provision Agent Gateways"
