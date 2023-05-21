@@ -56,15 +56,14 @@ resource "aws_instance" "dra_analytics" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     delete_on_termination = true
+    tags                  = merge(var.tags, {Name = var.friendly_name})
   }
   iam_instance_profile = aws_iam_instance_profile.dsf_dra_analytics_instance_iam_profile.id
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  tags = {
-     Name = var.friendly_name
-  }
+  tags = merge(var.tags, {Name = var.friendly_name})
   disable_api_termination     = true
   user_data_replace_on_change = true
 }
@@ -73,6 +72,7 @@ resource "aws_instance" "dra_analytics" {
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids
+  tags            = var.tags
 }
 
 resource "null_resource" "waiter_cmds" {

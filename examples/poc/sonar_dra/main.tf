@@ -1,12 +1,8 @@
-provider "aws" {
-  default_tags {
-    tags = local.tags
-  }
-}
+provider "aws" { }
 
 module "globals" {
-  source        = "imperva/dsf-globals/aws"
-  version       = "1.4.4" # latest release tag
+  source        = "../../../modules/aws/core/globals"
+  tags          = local.tags
 }
 
 locals {
@@ -47,13 +43,15 @@ module "vpc" {
   public_subnets  = var.public_subnets
 
   map_public_ip_on_launch = true
+
+  tags = local.tags
 }
 
 module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.4" # latest release tag
+  source                   = "../../../modules/aws/core/key_pair"
   key_name_prefix          = "imperva-dsf-dra-"
   private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
+  tags                     = local.tags
 }
 
 module "dra_admin" {
@@ -65,12 +63,14 @@ module "dra_admin" {
   admin_analytics_registration_password = local.admin_analytics_registration_password
   allowed_web_console_cidrs             = local.workstation_cidr
   allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
+  allowed_ssh_cidrs                     = var.allowed_ssh_cidrs_to_admin
   instance_type                         = var.admin_instance_type
   attach_public_ip                      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
+  tags                                  = local.tags
   depends_on = [
     module.vpc
   ]
@@ -85,7 +85,7 @@ module "analytics_server_group" {
   ebs                                       = var.analytics_group_ebs_details
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]
-  allowed_ssh_cidrs                         = var.allowed_ssh_cidrs
+  allowed_ssh_cidrs                         = var.allowed_ssh_cidrs_to_analytics
   instance_type                             = var.analytics_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -95,6 +95,7 @@ module "analytics_server_group" {
   archiver_password                         = local.archiver_password
   admin_server_private_ip                   = module.dra_admin.private_ip
   admin_server_public_ip                    = module.dra_admin.public_ip
+  tags                                      = local.tags
   depends_on = [
     module.vpc
   ]

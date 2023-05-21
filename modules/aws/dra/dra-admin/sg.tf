@@ -53,6 +53,7 @@ resource "aws_security_group" "dsf_base_sg_out" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+  tags = merge(var.tags, {Name = var.friendly_name})
 }
 
 ##############################################################################
@@ -84,4 +85,5 @@ resource "aws_security_group" "dsf_base_sg_in" {
       cidr_blocks = each.value.cidrs
     }
   }
+  tags = merge(var.tags, {Name = var.friendly_name})
 }

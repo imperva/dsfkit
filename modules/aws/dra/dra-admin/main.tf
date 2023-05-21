@@ -48,28 +48,29 @@ resource "aws_instance" "dsf_base_instance" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     delete_on_termination = true
+    tags                  = merge(var.tags, {Name = var.friendly_name})
   }
   iam_instance_profile = aws_iam_instance_profile.dsf_dra_admin_instance_iam_profile.id
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  tags = {
-    Name = var.friendly_name
-  }
   disable_api_termination     = true
   user_data_replace_on_change = true
+  tags = merge(var.tags, {Name = var.friendly_name})
 }
 
 # Create a network interface for the instance
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids
+  tags            = var.tags
 }
 
 resource "aws_eip" "dsf_instance_eip" {
   count = var.attach_public_ip ? 1 : 0
   vpc   = true
+  tags  = var.tags
 }
 
 resource "aws_eip_association" "eip_assoc" {

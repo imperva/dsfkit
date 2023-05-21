@@ -15,7 +15,3 @@ output "archiver_password" {
   sensitive = true
   value = var.archiver_password
 }
-
-output "ssh_user" {
-  value = var.ssh_user
-}

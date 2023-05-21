@@ -8,6 +8,12 @@ variable "friendly_name" {
   }
 }
 
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "instance_type" {
   type        = string
   default     = "m4.xlarge"
@@ -129,9 +135,4 @@ variable "role_arn" {
   type        = string
   default     = null
   description = "IAM role to assign to the DRA Admin. Keep empty if you wish to create a new role."
-}
-
-variable "ssh_user" {
-  type    = string
-  default = "ec2-user"
 }

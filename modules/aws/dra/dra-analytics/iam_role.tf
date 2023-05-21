@@ -38,6 +38,7 @@ locals {
 resource "aws_iam_instance_profile" "dsf_dra_analytics_instance_iam_profile" {
   name_prefix = "dsf-dra-analytics-instance-iam-profile"
   role        = local.role_name
+  tags        = var.tags
 }
 
 resource "aws_iam_role" "dsf_dra_analytics_node_role" {
@@ -50,4 +51,5 @@ resource "aws_iam_role" "dsf_dra_analytics_node_role" {
     name   = "imperva-dsf-dra-analytics-secret-access"
     policy = local.inline_policy_secret
   }
+  tags = var.tags
 }

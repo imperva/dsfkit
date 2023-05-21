@@ -8,6 +8,12 @@ variable "friendly_name" {
   }
 }
 
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "admin_analytics_registration_password_arn" {
   type        = string
   description = "Password to be used to register Analytics Server to Admin Server"
@@ -131,9 +137,4 @@ variable "role_arn" {
   type        = string
   default     = null
   description = "IAM role to assign to the Analytics Server. Keep empty if you wish to create a new role."
-}
-
-variable "ssh_user" {
-  type    = string
-  default = "ec2-user"
 }

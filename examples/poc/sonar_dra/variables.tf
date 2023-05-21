@@ -41,11 +41,21 @@ variable "workstation_cidr" {
   description = "CIDR blocks allowing hub ssh and debugging access"
 }
 
-variable "allowed_ssh_cidrs" {
+variable "allowed_ssh_cidrs_to_admin" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing ssh access"
+  description = "List of ingress CIDR patterns allowing SSH access to the Admin Server"
   validation {
-    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    condition = alltrue([for item in var.allowed_ssh_cidrs_to_admin : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default     = []
+}
+
+variable "allowed_ssh_cidrs_to_analytics" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing SSH access to the Analytics Server"
+  validation {
+    condition = alltrue([for item in var.allowed_ssh_cidrs_to_analytics : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default     = []

@@ -1,5 +1,4 @@
 output "public_ip" {
-  # todo - check if we can take the public ip from the eni instead of from the aws_instance.dsf_base_instance.public_ip
   value       = try(aws_eip.dsf_instance_eip[0].public_ip, try(aws_instance.dsf_base_instance.public_ip, null))
   description = "Public elastic IP address of the DSF Admin Server instance"
   depends_on = [
@@ -45,5 +44,9 @@ output "admin_analytics_registration_password_secret_arn" {
 }
 
 output "ssh_user" {
-  value = var.ssh_user
+  value = "cbadmin"
+}
+
+output "ssh_password" {
+  value = "admin"
 }
