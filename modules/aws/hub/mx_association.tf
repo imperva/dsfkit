@@ -12,6 +12,7 @@ locals {
 }
 
 resource "null_resource" "mx_association" {
+    count = length(local.mx_association_commands) > 0 ? 1 : 0
   connection {
     type        = "ssh"
     user        = module.hub_instance.ssh_user

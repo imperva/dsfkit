@@ -70,16 +70,18 @@ variable "public_subnets" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id          = string
-    agentless_gw_subnet_id = string
-    mx_subnet_id           = string
-    agent_gw_subnet_id     = string
-    db_subnet_ids          = list(string)
+    hub_subnet_id                    = string
+    hub_secondary_subnet_id          = string
+    agentless_gw_subnet_id           = string
+    agentless_gw_secondary_subnet_id = string
+    mx_subnet_id                     = string
+    agent_gw_subnet_id               = string
+    db_subnet_ids                    = list(string)
   })
   default     = null
   description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_secondary_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id && var.subnet_ids.agentless_gw_secondary_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
 }
@@ -129,6 +131,18 @@ variable "sonar_version" {
     condition     = var.sonar_version == "4.11"
     error_message = "This example supports Sonar version 4.11"
   }
+}
+
+variable "hub_hadr" {
+  type        = bool
+  default     = true
+  description = "Provisions a High Availability and Disaster Recovery node for the DSF Hub"
+}
+
+variable "agentless_gw_hadr" {
+  type        = bool
+  default     = true
+  description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
 variable "hub_ebs_details" {

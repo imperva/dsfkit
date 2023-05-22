@@ -1,9 +1,11 @@
 locals {
-  hub_subnet_id          = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
-  agentless_gw_subnet_id = var.subnet_ids != null ? var.subnet_ids.agentless_gw_subnet_id : module.vpc[0].private_subnets[0]
-  db_subnet_ids          = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
-  mx_subnet_id           = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
-  agent_gw_subnet_id     = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
+  hub_subnet_id                    = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
+  hub_secondary_subnet_id          = var.subnet_ids != null ? var.subnet_ids.hub_secondary_subnet_id : module.vpc[0].public_subnets[1]
+  agentless_gw_subnet_id           = var.subnet_ids != null ? var.subnet_ids.agentless_gw_subnet_id : module.vpc[0].private_subnets[0]
+  agentless_gw_secondary_subnet_id = var.subnet_ids != null ? var.subnet_ids.agentless_gw_secondary_subnet_id : module.vpc[0].private_subnets[1]
+  db_subnet_ids                    = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
+  mx_subnet_id                     = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
+  agent_gw_subnet_id               = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
 }
 
 module "vpc" {
@@ -31,8 +33,16 @@ data "aws_subnet" "hub" {
   id = local.hub_subnet_id
 }
 
+data "aws_subnet" "hub_secondary" {
+  id = local.hub_secondary_subnet_id
+}
+
 data "aws_subnet" "agentless_gw" {
   id = local.agentless_gw_subnet_id
+}
+
+data "aws_subnet" "agentless_gw_secondary" {
+  id = local.agentless_gw_secondary_subnet_id
 }
 
 data "aws_subnet" "mx" {
