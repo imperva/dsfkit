@@ -10,13 +10,5 @@ http_code=$(curl -k -s --cookie-jar $cookie_file -o $response_file -w "%%{http_c
   --request POST 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session' \
   --header "Authorization: Basic ${https_auth_header}")
 if [ "$http_code" -eq 200 ]; then
-  # http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \
-  #   --request GET 'https://${mx_address}:8083/SecureSphere/api/v1/api/status' \
-  #   --header "Authorization: Basic ${https_auth_header}")
-  # if [ "$http_code" -eq 200 ]; then
     exit 0
-  # fi
-  # echo "MX initialization failed (status code: $http_code):"
-  # cat $response_file
-  # exit 1
 fi
