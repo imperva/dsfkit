@@ -29,7 +29,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  dev_single_account:
+  master_single_account:
     uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@master
     with:
       branch: master
@@ -39,7 +39,7 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  master_single_account:
+  dev_single_account:
     needs: dev_single_account
     uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@dev
     with:
@@ -50,7 +50,7 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  dev_multi_account:
+  master_multi_account:
     uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@master
     with:
       branch: master
@@ -62,7 +62,7 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  master_multi_account:
+  dev_multi_account:
     needs: dev_multi_account
     uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
     with:
