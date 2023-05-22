@@ -151,6 +151,12 @@ jobs:
     - name: Terraform Output
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
+    - name: Collect Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: ssh_keys
+
     - name: Terraform Destroy
       # if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
