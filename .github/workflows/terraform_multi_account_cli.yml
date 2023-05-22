@@ -5,9 +5,10 @@ concurrency:
 
 on:
   workflow_dispatch:
-    branch:
-      required: true
-      type: string
+    inputs:
+      branch:
+        required: true
+        type: string
 
   workflow_call:
     inputs:
