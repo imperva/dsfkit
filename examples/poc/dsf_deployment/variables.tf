@@ -32,7 +32,7 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Admin password (Random generated if not set)"
+  description = "Password for internal communication between components and to MX and DSF Hub web console (Random generated if not set)"
 }
 
 ##############################

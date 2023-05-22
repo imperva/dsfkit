@@ -67,6 +67,16 @@ variable "allowed_web_console_and_api_cidrs" {
   default = []
 }
 
+variable "allowed_hub_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing DSF Hub access"
+  validation {
+    condition     = alltrue([for item in var.allowed_hub_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default = []
+}
+
 variable "allowed_all_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"

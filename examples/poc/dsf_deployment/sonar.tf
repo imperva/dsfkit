@@ -24,6 +24,12 @@ module "hub" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
+  mx_details = var.enable_dsf_dam ? [{
+    name = module.mx[0].display_name
+    address = module.mx[0].private_ip
+    username = module.mx[0].web_console_user
+    password = local.password
+  }] : []
   tags                              = local.tags
   depends_on = [
     module.vpc

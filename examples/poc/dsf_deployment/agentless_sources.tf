@@ -1,5 +1,5 @@
 locals {
-  db_types_to_onboard = var.enable_dsf_hub ? var.db_types_to_onboard : []
+  db_types_to_onboard = local.agentless_gw_count > 0 ? var.db_types_to_onboard : []
 }
 
 module "rds_mysql" {
