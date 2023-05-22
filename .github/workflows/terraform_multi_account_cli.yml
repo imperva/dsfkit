@@ -156,7 +156,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: collected-keys
-        path: ssh_keys
+        path: $EXAMPLE_DIR/ssh_keys
 
     - name: Terraform Destroy
       # if: always()
