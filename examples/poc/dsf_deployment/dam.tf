@@ -1,6 +1,6 @@
 locals {
-  gateway_group_name = "gatewayGroup1"
   agent_gw_count     = var.enable_dsf_dam ? var.agent_gw_count : 0
+  gateway_group_name         = "temporaryGatewayGroup"
 }
 
 module "mx" {
@@ -49,6 +49,7 @@ module "agent_gw" {
   allowed_agent_cidrs                     = [data.aws_subnet.agent_gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
   allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
+  allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
   management_server_host_for_registration = module.mx[0].private_ip
   management_server_host_for_api_access   = module.mx[0].public_ip
   large_scale_mode                        = var.large_scale_mode
@@ -56,5 +57,22 @@ module "agent_gw" {
   tags                                    = local.tags
   depends_on = [
     module.vpc
+  ]
+}
+
+module "agent_gw_cluster_setup" {
+  source                  = "../../../modules/null/agent-gw-cluster-setup"
+  count = local.agent_gw_count >= 2 ? 1 : 0
+
+  cluster_name            = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
+  gateway_group_name      = local.gateway_group_name
+  mx_details = {
+    address  = module.mx[0].public_ip
+    port     = 8083
+    user     = module.mx[0].web_console_user
+    password = local.password
+  }
+  depends_on = [
+    module.agent_gw
   ]
 }
