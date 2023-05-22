@@ -41,8 +41,8 @@ locals {
   password_secret_aws_arn = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
   password_secret_name    = var.web_console_admin_password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.web_console_admin_password_secret_name
 
-  should_create_sonarw_private_key_in_secrets_manager   = var.internal_private_key_secret_name == null ? true : false
-  should_create_web_console_password_in_secrets_manager = var.web_console_admin_password_secret_name == null ? true : false
+  should_create_sonarw_private_key_in_secrets_manager   = var.internal_private_key_secret_name == null
+  should_create_web_console_password_in_secrets_manager = var.web_console_admin_password_secret_name == null
 }
 
 # generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
