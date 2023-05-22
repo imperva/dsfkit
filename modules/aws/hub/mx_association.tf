@@ -6,13 +6,13 @@ locals {
 
     hub_address = var.use_public_ip ? module.hub_instance.public_ip : module.hub_instance.private_ip
     mx_association_commands = [for mx in var.mx_details : <<-EOF
-    curl --fail -k -X POST 'https://127.0.0.1:8443/usc/api/internal/appliances' --header "Authorization: Bearer ${module.hub_instance.access_tokens.usc.token}" -F 'applianceDtoApiData={"data":{"type":"MX","name":"${mx.name}","hostOrIp":"${mx.address}","mxUsername":"${mx.username}","mxPassword":"${mx.password}", "hasCertificate":false, "mxAuthType": "PASSWORD"}};type=application/json'
+    curl --fail -k -X POST 'https://127.0.0.1:8443/usc/api/v2/appliances' --header "Authorization: Bearer ${module.hub_instance.access_tokens.usc.token}" -F 'applianceDtoApiData={"data":{"type":"MX","name":"${mx.name}","hostOrIp":"${mx.address}","mxUsername":"${mx.username}","mxPassword":"${mx.password}", "hasCertificate":false, "mxAuthType": "PASSWORD"}};type=application/json'
     EOF
     ]
 }
 
 resource "null_resource" "mx_association" {
-    count = length(local.mx_association_commands) > 0 ? 1 : 0
+  count = length(local.mx_association_commands) > 0 ? 1 : 0
   connection {
     type        = "ssh"
     user        = module.hub_instance.ssh_user
@@ -27,10 +27,10 @@ resource "null_resource" "mx_association" {
   }
 
   provisioner "remote-exec" {
-    inline = local.mx_association_commands
+    inline = concat(local.mx_association_commands)
   }
   depends_on = [
-    module.hub_instance.readiness
+    module.hub_instance.ready
   ]
   triggers = {
     command = join("\n", local.mx_association_commands)
