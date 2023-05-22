@@ -1,6 +1,6 @@
 locals {
   agent_gw_count     = var.enable_dsf_dam ? var.agent_gw_count : 0
-  gateway_group_name         = "temporaryGatewayGroup"
+  gateway_group_name = "temporaryGatewayGroup"
 }
 
 module "mx" {
@@ -61,11 +61,11 @@ module "agent_gw" {
 }
 
 module "agent_gw_cluster_setup" {
-  source                  = "../../../modules/null/agent-gw-cluster-setup"
-  count = local.agent_gw_count >= 2 ? 1 : 0
+  source = "../../../modules/null/agent-gw-cluster-setup"
+  count  = local.agent_gw_count >= 2 ? 1 : 0
 
-  cluster_name            = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
-  gateway_group_name      = local.gateway_group_name
+  cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
+  gateway_group_name = local.gateway_group_name
   mx_details = {
     address  = module.mx[0].public_ip
     port     = 8083

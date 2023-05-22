@@ -38,7 +38,8 @@ module "hub" {
 }
 
 module "hub_secondary" {
-  source = "../../../modules/aws/hub"
+  source  = "imperva/dsf-hub/aws"
+  version = "1.4.5" # latest release tag
   count  = var.enable_dsf_hub && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "secondary"])
@@ -86,7 +87,8 @@ module "hub_hadr" {
 }
 
 module "agentless_gw_group" {
-  source = "../../../modules/aws/agentless-gw"
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.4.5" # latest release tag
   count  = local.agentless_gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
@@ -114,7 +116,8 @@ module "agentless_gw_group" {
 }
 
 module "agentless_gw_group_secondary" {
-  source = "../../../modules/aws/agentless-gw"
+  source  = "imperva/dsf-agentless-gw/aws"
+  version = "1.4.5" # latest release tag
   count  = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
