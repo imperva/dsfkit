@@ -202,7 +202,7 @@ variable "internal_public_key" {
   description = "The DSF node sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "should_generate_access_token" {
+variable "generate_access_tokens" {
   type        = bool
   default     = false
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"

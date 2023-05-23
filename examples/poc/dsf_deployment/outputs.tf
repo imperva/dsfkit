@@ -42,6 +42,16 @@ output "sonar" {
         user        = module.hub[0].web_console_user
       }
     }
+    hub_secondary = var.hub_hadr ? {
+      public_ip    = try(module.hub_secondary[0].public_ip, null)
+      public_dns   = try(module.hub_secondary[0].public_dns, null)
+      private_ip   = try(module.hub_secondary[0].private_ip, null)
+      private_dns  = try(module.hub_secondary[0].private_dns, null)
+      jsonar_uid   = try(module.hub_secondary[0].jsonar_uid, null)
+      display_name = try(module.hub_secondary[0].display_name, null)
+      role_arn     = try(module.hub_secondary[0].iam_role, null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
+    } : null
     agentless_gw = [
       for idx, val in module.agentless_gw_group :
       {
@@ -53,6 +63,17 @@ output "sonar" {
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub[0].ssh_user}@${module.hub[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
+    agentless_gw_secondary = var.agentless_gw_hadr ? [
+      for idx, val in module.agentless_gw_group_secondary :
+      {
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        jsonar_uid   = try(val.jsonar_uid, null)
+        display_name = try(val.display_name, null)
+        role_arn     = try(val.iam_role, null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub[0].ssh_user}@${module.hub[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
+    ] : []
   } : null
 }
 
