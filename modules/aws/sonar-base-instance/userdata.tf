@@ -28,7 +28,7 @@ data "aws_region" "current" {}
 
 resource "random_uuid" "jsonar_uuid" {}
 
-resource "null_resource" "wait_for_installation_completion" {
+resource "null_resource" "readiness" {
   count = var.skip_instance_health_verification == true ? 0 : 1
   connection {
     type        = "ssh"
