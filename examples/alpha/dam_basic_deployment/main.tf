@@ -127,7 +127,8 @@ module "agent_gw_cluster_setup" {
     password = local.web_console_admin_password
   }
   depends_on = [
-    module.agent_gw
+    module.agent_gw,
+    module.mx
   ]
 }
 

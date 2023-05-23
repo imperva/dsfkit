@@ -24,7 +24,7 @@ module "key_pair" {
 }
 
 locals {
-  workstation_cidr_24    = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
+  workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
   password               = var.password != null ? var.password : module.globals.random_password
   workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
