@@ -30,7 +30,7 @@ variable "agentless_gw_count" {
 
 variable "agent_gw_count" {
   type        = number
-  default     = 1
+  default     = 2 # Minimum amount for a cluster
   description = "Number of DSF Agent Gateways. Provisioning Agent Gateways requires DSF MX"
 }
 
