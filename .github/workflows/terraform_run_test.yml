@@ -26,43 +26,13 @@ jobs:
       matrix:
         include:
           - name: single account
-            example_dir: examples/installation/single_account_deployment
-            aws_region: ap-southeast-1
-            workspace: single_account
-            subnet_hub: subnet-01eb3ee7b2a93a856
-            aws_profile: innostage
-            subnet_gw: subnet-01eb3ee7b2a93a856
-            subnet_hub_secondary: subnet-01eb3ee7b2a93a856
-            target_dir: single_account
-          - name: multi account
-            example_dir: examples/installation/multi_account_deployment
-            aws_region: ap-southeast-1
-            workspace: multi_account
-            subnet_hub: subnet-01eb3ee7b2a93a856
-            aws_profile: innostage
-            aws_profile_gw: innodev
-            subnet_gw: subnet-0c5ade55a259105e6
-            target_dir: multi_account
+            example_dir: ./examples/installation/multi_account_deployment
+
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./${{ matrix.example_dir }}
-      REMOTE_EXAMPLE_DIR: ./${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
-      TARGET_DIR: ${{ matrix.target_dir }}
-      AWS_REGION: ${{ matrix.aws_region }}
-      TF_WORKSPACE: ${{ matrix.workspace }}
-      TF_VAR_aws_profile: ${{ matrix.aws_profile }}
-      TF_VAR_aws_profile_hub: ${{ matrix.aws_profile }}
-      TF_VAR_aws_profile_gw: ${{ matrix.aws_profile_gw }}
-      TF_VAR_subnet_hub: ${{ matrix.subnet_hub }}
-      TF_VAR_subnet_hub_primary: ${{ matrix.subnet_hub }}
-      TF_VAR_subnet_gw: ${{ matrix.subnet_gw }}
-      TF_VAR_subnet_hub_secondary: ${{ matrix.subnet_hub_secondary }}
-      TF_VAR_aws_region: ${{ matrix.aws_region }}
-      TF_VAR_aws_region_hub: ${{ matrix.aws_region }}
-      TF_VAR_aws_region_gw: ${{ matrix.aws_region }}
-      TF_VAR_workstation_cidr: '["10.0.102.52/32", "54.179.25.83/32"]'
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -77,201 +47,14 @@ jobs:
       with:
         ref: dev
 
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
+    - name: ls
+      run: ls -l
 
-    - name: Get The Public IP
-      run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
-
-    - name: Set IP in AWS Security Group
-      run: |
-        aws_sg=$(aws ec2 authorize-security-group-ingress --group-id sg-0abaf0022b3d32a43 --protocol tcp --port 22 --cidr $curr_ip/32)
-        echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
-
-    - name: Change the modules source to local
-      run: |
-        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
-
-    - name: Cleaning envrionment
-      uses: appleboy/ssh-action@v0.1.8
+    - name: Collect Artifacts
+      uses: actions/upload-artifact@v2
       with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: TARGET_DIR
-        script: |
-          cd $TARGET_DIR
-          rm -rf dsfkit
-          rm -rf dsfkit.zip
+        name: collected-keys
+        path: |
+          README.md
+          ./permissions_samples
 
-    - name: Create terraform backend file
-      run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
-        terraform {
-          backend "s3" {
-            bucket         = "terraform-state-bucket-dsfkit-github-tests"
-            key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
-            region         = "us-east-1"
-          }
-        }
-        EOF
-
-    - name: Create tfvars File
-      run: |
-        cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        aws_profile="$TF_VAR_aws_profile"
-        aws_profile_hub="$TF_VAR_aws_profile_hub"
-        aws_profile_gw="$TF_VAR_aws_profile_gw"
-        aws_region="$TF_VAR_aws_region"
-        aws_region_hub="$TF_VAR_aws_region"
-        aws_region_gw="$TF_VAR_aws_region"
-        subnet_hub="$TF_VAR_subnet_hub"
-        subnet_hub_primary="$TF_VAR_subnet_hub_primary"
-        subnet_hub_secondary="$TF_VAR_subnet_hub_secondary"
-        subnet_gw="$TF_VAR_subnet_gw"
-        workstation_cidr=$TF_VAR_workstation_cidr
-        EOF
-
-    - name: View The Vars
-      run: cat $EXAMPLE_DIR/terraform.tfvars
-
-    - name: Create a ZIP File
-      run: zip -r dsfkit.zip ../dsfkit
-
-    - name: View The ZIP File
-      run: |
-        ls -l
-        pwd
-
-    - name: SCP the ZIP File
-      uses: appleboy/scp-action@master
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        source: "dsfkit.zip"
-        timeout: "10m"
-        target: ${{ matrix.target_dir }}
-        overwrite: true
-
-    - name: Unzip
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: TARGET_DIR
-        script: |
-          cd $TARGET_DIR
-          unzip -uq dsfkit.zip
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR init
-
-    - name: Terraform Validate
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
-
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: |
-          printenv
-          terraform -chdir=$REMOTE_EXAMPLE_DIR plan
-
-    - name: Terraform Apply
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
-
-    - name: Terraform Output
-      uses: appleboy/ssh-action@v0.1.8
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
-
-    - name: Terraform Destroy
-    #   if: always()
-      uses: appleboy/ssh-action@v0.1.8
-      id: test_audit
-      with:
-        host: 54.179.25.83
-        username: ec2-user
-        key: ${{ env.JUMP_SERVER_KEY }}
-        port: 22
-        command_timeout: "2h"
-        envs: REMOTE_EXAMPLE_DIR
-        script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
-
-#     Send job failure to Slack
-#     - name: Send Slack by action-slack
-#       uses: 8398a7/action-slack@v3
-#       with:
-#         status: ${{ job.status }}
-#         fields: message,author,action,eventName,ref,workflow,job,pullRequest
-#       env:
-#         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-#       if: ${{ failure() }}
-
-#     - name: Slack Notification - Slack Notify
-#       uses: rtCamp/action-slack-notify@v2
-#       env:
-#         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-#       if: ${{ failure() }}
-
-    - name: Delete Security Group
-      if: always()
-      run: aws ec2 revoke-security-group-ingress --group-id sg-0abaf0022b3d32a43 --security-group-rule-ids ${{ env.sg_id }}
-
-    # - name: Send GitHub Action trigger data to Slack workflow
-    #   id: slack
-    #   uses: slackapi/slack-github-action@v1.23.0
-    #   with:
-    #     payload: |
-    #       {
-    #         "key": "value",
-    #         "foo": "bar"
-    #       }
-    #   env:
-    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_TEST }}
-    #   if: ${{ always() }}
