@@ -156,7 +156,7 @@ jobs:
       run: |
         ls -l
         ls -l $EXAMPLE_DIR
-        ls -l $EXAMPLE_DIR/ssh_keys
+#        ls -l $EXAMPLE_DIR/ssh_keys
 
     - name: Collect Artifacts
       uses: actions/upload-artifact@v2
