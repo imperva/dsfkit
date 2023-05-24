@@ -7,7 +7,6 @@ output "dsf_admin_server" {
     display_name = try(module.dra_admin.display_name, null)
     role_arn     = try(module.dra_admin.iam_role, null)
     ssh_command  = try("ssh ${module.dra_admin.ssh_user}@${module.dra_admin.public_dns}", null)
-    ssh_password = module.dra_admin.ssh_password
   }
 }
 

@@ -9,6 +9,7 @@ module "globals" {
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.5" # latest release tag
+  key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
   tags                     = local.tags
 }
