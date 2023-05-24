@@ -163,7 +163,7 @@ jobs:
       with:
         name: collected-keys
         path: |
-          ./examples/installation/multi_account_deployment/main.tf
+          ${{ env.EXAMPLE_DIR }}/main.tf
 #          $EXAMPLE_DIR/ssh_keys
 
 #    - name: Terraform Destroy
