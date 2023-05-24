@@ -116,11 +116,7 @@ variable "dam_version" {
 }
 
 variable "license_file" {
-  type = string
-  validation {
-    condition     = fileexists(var.license_file)
-    error_message = "File doesn't exist"
-  }
+  type        = string
   description = "License file"
 }
 

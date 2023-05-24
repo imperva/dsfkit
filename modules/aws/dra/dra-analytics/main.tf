@@ -13,7 +13,8 @@ locals {
 
   install_script = templatefile("${path.module}/setup.tftpl", {
     analytics_archiver_password_secret_arn    = aws_secretsmanager_secret.analytics_archiver_password.arn
-    admin_analytics_registration_password_arn = aws_secretsmanager_secret.admin_analytics_registration_password.arn
+    admin_analytics_registration_password_arn = aws_secretsmanager_secret.admin_registration_password.arn
+    admin_password_secret_arn = aws_secretsmanager_secret.admin_password.arn
     archiver_user                             = var.archiver_user
     archiver_password                         = var.archiver_password
     admin_server_private_ip                   = var.admin_server_private_ip

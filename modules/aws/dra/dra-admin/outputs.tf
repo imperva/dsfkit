@@ -39,14 +39,6 @@ output "display_name" {
   value = aws_instance.dsf_base_instance.tags.Name
 }
 
-output "admin_analytics_registration_password_secret_arn" {
-  value = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
-}
-
 output "ssh_user" {
   value = "cbadmin"
-}
-
-output "ssh_password" {
-  value = "admin"
 }

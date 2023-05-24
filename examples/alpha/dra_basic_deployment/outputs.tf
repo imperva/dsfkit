@@ -13,20 +13,20 @@ output "dsf_admin_server" {
 
 output "dsf_admin_server_web_console" {
   value = {
-    public_url     = try(join("", ["https://", module.dra_admin.public_ip, ":8443/"]), null)
-    private_url    = try(join("", ["https://", module.dra_admin.private_ip, ":8443/"]), null)
+    public_url  = try(join("", ["https://", module.dra_admin.public_ip, ":8443/"]), null)
+    private_url = try(join("", ["https://", module.dra_admin.private_ip, ":8443/"]), null)
   }
 }
 
 output "dra_analytics" {
-   sensitive = true
-   value = {
-   for idx, val in module.analytics_server_group : "analytics-${idx}" =>
+  sensitive = true
+  value = {
+    for idx, val in module.analytics_server_group : "analytics-${idx}" =>
     {
-      private_ip        = try(val.analytics_private_ip, null)
-      archiver_user     = try(val.archiver_user, null)
+      private_ip    = try(val.analytics_private_ip, null)
+      archiver_user = try(val.archiver_user, null)
     }
-   }
+  }
 }
 
 output "dsf_private_ssh_key" {

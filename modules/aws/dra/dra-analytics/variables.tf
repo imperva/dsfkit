@@ -14,9 +14,64 @@ variable "tags" {
   default     = {}
 }
 
-variable "admin_analytics_registration_password" {
-  type        = string
+variable "admin_registration_password" {
+  type = string
   description = "Password to be used to register Analytics Server to Admin Server"
+
+  validation {
+    condition     = length(var.admin_registration_password) >= 7
+    error_message = "Password must be at least 7 characters long"
+  }
+
+  validation {
+    condition     = can(regex("[A-Z]", var.admin_registration_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    condition     = can(regex("[a-z]", var.admin_registration_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    condition     = can(regex("\\d", var.admin_registration_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.admin_registration_password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
+}
+
+variable "admin_password" {
+  type = string
+  description = "Password to be used to admin os user"
+
+  validation {
+    condition     = length(var.admin_password) >= 7
+    error_message = "Password must be at least 7 characters long"
+  }
+
+  validation {
+    condition     = can(regex("[A-Z]", var.admin_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    condition     = can(regex("[a-z]", var.admin_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    condition     = can(regex("\\d", var.admin_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.admin_password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
 }
 
 variable "archiver_user" {

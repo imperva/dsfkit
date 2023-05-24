@@ -25,3 +25,7 @@ output "archiver_user" {
 output "incoming_folder_path" {
   value = local.incoming_folder_path
 }
+
+output "ssh_user" {
+  value = "cbadmin"
+}

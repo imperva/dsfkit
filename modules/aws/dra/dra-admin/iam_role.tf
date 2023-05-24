@@ -28,7 +28,8 @@ locals {
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
         "Resource" : [
-          "${aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn}"
+          aws_secretsmanager_secret.admin_analytics_registration_password.arn,
+          aws_secretsmanager_secret.admin_password.arn,
         ]
       }
     ]

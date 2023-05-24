@@ -1,9 +1,9 @@
-provider "aws" { }
+provider "aws" {}
 
 module "globals" {
-  source        = "imperva/dsf-globals/aws"
-  version       = "1.4.5" # latest release tag
-  tags          = local.tags
+  source  = "imperva/dsf-globals/aws"
+  version = "1.4.5" # latest release tag
+  tags    = local.tags
 }
 
 module "key_pair" {
@@ -14,15 +14,15 @@ module "key_pair" {
 }
 
 locals {
-  deployment_name_salted                = join("-", [var.deployment_name, module.globals.salt])
-  workstation_cidr_24                   = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
-  workstation_cidr                      = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  admin_analytics_registration_password = var.admin_analytics_registration_password != null ? var.admin_analytics_registration_password : module.globals.random_password
-  archiver_password                     = local.admin_analytics_registration_password
-  archiver_user                         = var.archiver_user != null ? var.archiver_user : join("-", [var.deployment_name, module.globals.salt, "archiver-user"])
-  tags                                  = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  admin_subnet_id                       = var.subnet_ids != null ? var.subnet_ids.admin_subnet_id : module.vpc[0].public_subnets[0]
-  analytics_subnet_id                   = var.subnet_ids != null ? var.subnet_ids.analytics_subnet_id : module.vpc[0].private_subnets[0]
+  deployment_name_salted      = join("-", [var.deployment_name, module.globals.salt])
+  workstation_cidr_24         = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
+  workstation_cidr            = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
+  admin_registration_password = var.admin_registration_password != null ? var.admin_registration_password : module.globals.random_password
+  archiver_password           = local.admin_registration_password
+  archiver_user               = var.archiver_user != null ? var.archiver_user : join("-", [var.deployment_name, module.globals.salt, "archiver-user"])
+  tags                        = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  admin_subnet_id             = var.subnet_ids != null ? var.subnet_ids.admin_subnet_id : module.vpc[0].public_subnets[0]
+  analytics_subnet_id         = var.subnet_ids != null ? var.subnet_ids.analytics_subnet_id : module.vpc[0].private_subnets[0]
 }
 
 data "aws_subnet" "admin" {
@@ -56,47 +56,49 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source                                = "../../../modules/aws/dra/dra-admin"
-  friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
-  subnet_id                             = local.admin_subnet_id
-  dra_version                           = var.dra_version
-  ebs                                   = var.admin_ebs_details
-  admin_analytics_registration_password = local.admin_analytics_registration_password
-  allowed_web_console_cidrs             = local.workstation_cidr
-  allowed_analytics_server_cidrs        = [data.aws_subnet.analytics.cidr_block]
-  allowed_ssh_cidrs                     = var.allowed_ssh_cidrs_to_admin
-  instance_type                         = var.admin_instance_type
-  attach_persistent_public_ip           = true
+  source                         = "../../../modules/aws/dra/dra-admin"
+  friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
+  subnet_id                      = local.admin_subnet_id
+  dra_version                    = var.dra_version
+  ebs                            = var.admin_ebs_details
+  admin_registration_password    = local.admin_registration_password
+  admin_password                 = local.admin_registration_password
+  allowed_web_console_cidrs      = local.workstation_cidr
+  allowed_analytics_server_cidrs = [data.aws_subnet.analytics.cidr_block]
+  allowed_ssh_cidrs              = var.allowed_ssh_cidrs_to_admin
+  instance_type                  = var.admin_instance_type
+  attach_persistent_public_ip    = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  tags                                  = local.tags
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
 }
 
 module "analytics_server_group" {
-  count                                     = var.analytics_server_count
-  source                                    = "../../../modules/aws/dra/dra-analytics"
-  friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
-  subnet_id                                 = local.analytics_subnet_id
-  dra_version                               = var.dra_version
-  ebs                                       = var.analytics_group_ebs_details
-  admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
-  allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]
-  allowed_ssh_cidrs                         = var.allowed_ssh_cidrs_to_analytics
-  instance_type                             = var.analytics_instance_type
+  count                       = var.analytics_server_count
+  source                      = "../../../modules/aws/dra/dra-analytics"
+  friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
+  subnet_id                   = local.analytics_subnet_id
+  dra_version                 = var.dra_version
+  ebs                         = var.analytics_group_ebs_details
+  admin_registration_password = local.admin_registration_password
+  admin_password              = local.admin_registration_password
+  allowed_admin_server_cidrs  = [data.aws_subnet.admin.cidr_block]
+  allowed_ssh_cidrs           = var.allowed_ssh_cidrs_to_analytics
+  instance_type               = var.analytics_instance_type
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
-  archiver_user                             = local.archiver_user
-  archiver_password                         = local.archiver_password
-  admin_server_private_ip                   = module.dra_admin.private_ip
-  admin_server_public_ip                    = module.dra_admin.public_ip
-  tags                                      = local.tags
+  archiver_user           = local.archiver_user
+  archiver_password       = local.archiver_password
+  admin_server_private_ip = module.dra_admin.private_ip
+  admin_server_public_ip  = module.dra_admin.public_ip
+  tags                    = local.tags
   depends_on = [
     module.vpc
   ]

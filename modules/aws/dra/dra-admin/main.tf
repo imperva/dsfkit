@@ -10,7 +10,8 @@ locals {
   )
 
   install_script = templatefile("${path.module}/setup.tftpl", {
-    admin_analytics_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password_secret.arn
+    admin_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password.arn
+    admin_password_secret_arn = aws_secretsmanager_secret.admin_password.arn
   })
 
 }
