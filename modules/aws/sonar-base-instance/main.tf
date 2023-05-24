@@ -13,21 +13,6 @@ locals {
     [aws_security_group.dsf_base_sg_out.id],
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
   var.security_group_ids)
-
-  # ami
-  ami_default = {
-    id               = null
-    owner_account_id = "309956199498"
-    username         = "ec2-user"
-    name             = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
-  }
-
-  ami = var.ami != null ? var.ami : local.ami_default
-
-  ami_owner    = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
-  ami_name     = local.ami.name != null ? local.ami.name : "*"
-  ami_id       = local.ami.id != null ? local.ami.id : "*"
-  ami_username = local.ami.username
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -42,31 +27,6 @@ resource "aws_eip_association" "eip_assoc" {
   allocation_id = aws_eip.dsf_instance_eip[0].id
 }
 
-data "aws_ami" "selected-ami" {
-  most_recent = true
-  owners      = [local.ami_owner]
-
-  filter {
-    name   = "image-id"
-    values = [local.ami_id]
-  }
-
-  filter {
-    name   = "name"
-    values = [local.ami_name]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 resource "aws_instance" "dsf_base_instance" {
   ami           = data.aws_ami.selected-ami.image_id
   instance_type = var.ec2_instance_type
@@ -74,7 +34,7 @@ resource "aws_instance" "dsf_base_instance" {
   user_data     = local.install_script
   root_block_device {
     volume_size = local.disk_size_app
-    tags = var.tags
+    tags = merge(var.tags, {Name = var.name})
   }
   iam_instance_profile = local.instance_profile
   network_interface {
