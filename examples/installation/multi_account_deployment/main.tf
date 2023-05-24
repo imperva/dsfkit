@@ -11,7 +11,8 @@ locals {
   web_console_admin_password           = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr                     = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location                     = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
-  tags                                 = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  additional_tags                      = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
+  tags                                 = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_primary_key_pair   = var.hub_primary_key_pem_details == null ? true : false
   should_create_hub_secondary_key_pair = var.hub_secondary_key_pem_details == null ? true : false
   should_create_gw_primary_key_pair    = var.gw_primary_key_pem_details == null ? true : false
@@ -26,9 +27,12 @@ module "key_pair_hub_primary" {
   count                    = local.should_create_hub_primary_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.5" # latest release tag
-  key_name_prefix          = "imperva-dsf-hub"
+  key_name_prefix          = "imperva-dsf-hub-primary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
   tags = local.tags
+  providers = {
+    aws = aws.hub-primary
+  }
 }
 
 module "key_pair_hub_secondary" {
@@ -69,6 +73,7 @@ module "key_pair_gw_secondary" {
 
 data "aws_subnet" "subnet_hub_primary" {
   id = var.subnet_hub_primary
+  provider = aws.hub-primary
 }
 
 data "aws_subnet" "subnet_hub_secondary" {
@@ -108,6 +113,7 @@ module "hub_primary" {
   security_group_ids         = var.security_group_ids_hub_primary
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   ami                        = var.ami
@@ -126,7 +132,13 @@ module "hub_primary" {
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  instance_profile_name             = var.hub_instance_profile_name
   tags = local.tags
+  providers = {
+    aws = aws.hub-primary
+  }
 }
 
 module "hub_secondary" {
@@ -137,6 +149,7 @@ module "hub_secondary" {
   security_group_ids         = var.security_group_ids_hub_secondary
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   instance_type              = var.hub_instance_type
   ebs                        = var.hub_ebs_details
   ami                        = var.ami
@@ -158,6 +171,9 @@ module "hub_secondary" {
   }
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  instance_profile_name             = var.hub_instance_profile_name
   tags = local.tags
   providers = {
     aws = aws.hub-secondary
@@ -175,6 +191,7 @@ module "agentless_gw_group_primary" {
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   ami                        = var.ami
   ssh_key_pair = {
@@ -191,6 +208,9 @@ module "agentless_gw_group_primary" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
+  instance_profile_name             = var.gw_instance_profile_name
   tags = local.tags
   providers = {
     aws = aws.gw-primary
@@ -208,6 +228,7 @@ module "agentless_gw_group_secondary" {
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
   web_console_admin_password = local.web_console_admin_password
+  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   hadr_secondary_node        = true
   sonarw_public_key          = module.agentless_gw_group_primary[count.index].sonarw_public_key
@@ -227,6 +248,9 @@ module "agentless_gw_group_secondary" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
+  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
+  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
+  instance_profile_name             = var.gw_instance_profile_name
   tags = local.tags
   providers = {
     aws = aws.gw-secondary

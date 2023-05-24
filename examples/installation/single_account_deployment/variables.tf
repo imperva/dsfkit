@@ -230,24 +230,6 @@ variable "terraform_script_path_folder" {
   }
 }
 
-variable "hub_primary_role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the primary DSF Hub. Keep empty if you wish to create a new role."
-}
-
-variable "hub_secondary_role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the secondary DSF Hub. Keep empty if you wish to create a new role."
-}
-
-variable "gw_role_arn" {
-  type        = string
-  default     = null
-  description = "IAM role to assign to the Agentless Gateway. Keep empty if you wish to create a new role."
-}
-
 variable "internal_hub_private_key_secret_name" {
   type        = string
   default     = null
