@@ -14,7 +14,7 @@ variable "tags" {
   default     = {}
 }
 
-variable "admin_analytics_registration_password_arn" {
+variable "admin_analytics_registration_password" {
   type        = string
   description = "Password to be used to register Analytics Server to Admin Server"
 }

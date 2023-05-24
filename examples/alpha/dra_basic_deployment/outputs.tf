@@ -25,7 +25,6 @@ output "dra_analytics" {
     {
       private_ip        = try(val.analytics_private_ip, null)
       archiver_user     = try(val.archiver_user, null)
-      archiver_password = try(val.archiver_password, null)
     }
    }
 }

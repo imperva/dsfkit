@@ -125,7 +125,7 @@ output "dra" {
     }
     dra_analytics = [
       for idx, val in module.analytics_server_group : {
-        private_ip = try(val.analytics_private_ip, null)
+        private_ip = val.private_ip
       }
     ]
   } : null

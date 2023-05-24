@@ -1,4 +1,10 @@
 locals {
+  incoming_folder_path = "/opt/itpba/incoming"
+
+  public_ip  = aws_instance.dsf_base_instance.public_ip
+  public_dns = aws_instance.dsf_base_instance.public_dns
+  private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+
   security_group_ids = concat(
     [aws_security_group.dsf_base_sg_out.id],
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
@@ -6,8 +12,8 @@ locals {
   )
 
   install_script = templatefile("${path.module}/setup.tftpl", {
-    analytics_archiver_password_secret_arn    = aws_secretsmanager_secret.analytics_archiver_password_secret.arn
-    admin_analytics_registration_password_arn = var.admin_analytics_registration_password_arn
+    analytics_archiver_password_secret_arn    = aws_secretsmanager_secret.analytics_archiver_password.arn
+    admin_analytics_registration_password_arn = aws_secretsmanager_secret.admin_analytics_registration_password.arn
     archiver_user                             = var.archiver_user
     archiver_password                         = var.archiver_password
     admin_server_private_ip                   = var.admin_server_private_ip

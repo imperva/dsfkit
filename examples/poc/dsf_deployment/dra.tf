@@ -32,7 +32,7 @@ module "analytics_server_group" {
   subnet_id                                 = local.dra_analytics_subnet_id
   dra_version                               = var.dra_version
   ebs                                       = var.dra_analytics_group_ebs_details
-  admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
+  admin_analytics_registration_password     = local.password
   allowed_admin_server_cidrs                = [data.aws_subnet.dra_admin.cidr_block]
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
