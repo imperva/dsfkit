@@ -163,8 +163,8 @@ jobs:
       with:
         name: collected-keys
         path: |
-          $EXAMPLE_DIR/main.tf
-          $EXAMPLE_DIR/ssh_keys
+          ./examples/installation/multi_account_deployment/main.tf
+#          $EXAMPLE_DIR/ssh_keys
 
 #    - name: Terraform Destroy
       # if: always()
