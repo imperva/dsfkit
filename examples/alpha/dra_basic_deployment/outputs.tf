@@ -30,10 +30,6 @@ output "dra_analytics" {
    }
 }
 
-output "dra_analytics_incoming_folder_path" {
-  value = "/opt/itpba/incoming"
-}
-
 output "dsf_private_ssh_key" {
   sensitive = true
   value     = try(module.key_pair.key_pair_private_pem, null)

@@ -21,7 +21,8 @@ variable "admin_analytics_registration_password_arn" {
 
 variable "archiver_user" {
   type        = string
-  description = "User to be used to upload archive files for the Analysis Server"
+  default     = "archiver-user"
+  description = "User to be used to upload archive files for the analytics server"
 }
 
 variable "dra_version" {
@@ -46,6 +47,7 @@ variable "admin_server_public_ip" {
 
 variable "instance_type" {
   type        = string
+  default     = "m4.xlarge"
   description = "EC2 instance type for the Analytics Server"
 }
 

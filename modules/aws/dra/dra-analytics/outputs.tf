@@ -10,3 +10,7 @@ output "archiver_password" {
   sensitive = true
   value = var.archiver_password
 }
+
+output "incoming_folder_path" {
+  value = "/opt/itpba/incoming"
+}
