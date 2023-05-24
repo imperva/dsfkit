@@ -16,6 +16,12 @@ variable "enable_dsf_dam" {
   description = "Provision DSF MX. Required if you wish to provision Agent Gateways"
 }
 
+variable "enable_dsf_dra" {
+  type        = bool
+  default     = true
+  description = "Provision DSF DRA. Required if you wish to provision DRA analytics"
+}
+
 variable "agentless_gw_count" {
   type        = number
   default     = 1
@@ -28,11 +34,17 @@ variable "agent_gw_count" {
   description = "Number of DSF Agent Gateways. Provisioning Agent Gateways requires DSF MX"
 }
 
+variable "dra_analytics_server_count" {
+  type        = number
+  default     = 1
+  description = "Number of DRA analytics servers. Provisioning Agentless Gateways requires a DRA admin"
+}
+
 variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Password for internal communication between components and to MX and DSF Hub web console (Random generated if not set)"
+  description = "Password for all relevant users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Random generated if not set)"
 }
 
 ##############################
@@ -76,19 +88,23 @@ variable "subnet_ids" {
     agentless_gw_secondary_subnet_id = string
     mx_subnet_id                     = string
     agent_gw_subnet_id               = string
+    admin_subnet_id                  = string
+    analytics_subnet_id              = string
     db_subnet_ids                    = list(string)
   })
   default     = null
   description = "The IDs of an existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_secondary_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id && var.subnet_ids.agentless_gw_secondary_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_secondary_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id && var.subnet_ids.agentless_gw_secondary_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.admin_subnet_id != null && var.subnet_ids.analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
 }
 
+
 ##############################
 ####    DAM variables     ####
 ##############################
+
 variable "dam_version" {
   description = "The DAM version to install"
   type        = string
@@ -120,9 +136,11 @@ variable "agent_count" {
   description = "The agent sources to provision. Each with a database and a monitoring agent"
 }
 
+
 ##############################
 ####    sonar variables   ####
 ##############################
+
 variable "sonar_version" {
   type        = string
   default     = "4.11"
@@ -194,4 +212,43 @@ variable "database_cidr" {
   type        = list(string)
   default     = null # workstation ip
   description = "CIDR blocks allowing dummy database access"
+}
+
+
+##############################
+####    sonar variables   ####
+##############################
+
+variable "dra_version" {
+  description = "The DRA version to install"
+  type        = string
+  default     = "4.12.0.10.0.6"
+  validation {
+    condition     = can(regex("^(\\d{1,2}\\.){5}\\d{1,2}$", var.dra_version))
+    error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 1-99 (e.g 4.12.0.10.0.6)"
+  }
+}
+
+variable "dra_admin_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Admin Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    volume_size = 260
+    volume_type = "gp3"
+  }
+}
+
+variable "dra_analytics_group_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Analytics Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    volume_size = 1010
+    volume_type = "gp3"
+  }
 }
