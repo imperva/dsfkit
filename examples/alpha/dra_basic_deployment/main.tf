@@ -1,8 +1,16 @@
 provider "aws" { }
 
 module "globals" {
-  source        = "../../../modules/aws/core/globals"
+  source        = "imperva/dsf-globals/aws"
+  version       = "1.4.5" # latest release tag
   tags          = local.tags
+}
+
+module "key_pair" {
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.5" # latest release tag
+  private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
+  tags                     = local.tags
 }
 
 locals {
@@ -45,13 +53,6 @@ module "vpc" {
   map_public_ip_on_launch = true
 
   tags = local.tags
-}
-
-module "key_pair" {
-  source                   = "../../../modules/aws/core/key_pair"
-  key_name_prefix          = "imperva-dsf-dra-"
-  private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
-  tags                     = local.tags
 }
 
 module "dra_admin" {
