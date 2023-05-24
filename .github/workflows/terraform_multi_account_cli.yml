@@ -131,13 +131,13 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Cleaning envrionment
-      run: |
-        mv $EXAMPLE_DIR/main.tf{,_}
-        mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-        mv $EXAMPLE_DIR/main.tf{_,}
-        mv $EXAMPLE_DIR/outputs.tf{_,}
+#    - name: Cleaning envrionment
+#      run: |
+#        mv $EXAMPLE_DIR/main.tf{,_}
+#        mv $EXAMPLE_DIR/outputs.tf{,_}
+#        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+#        mv $EXAMPLE_DIR/main.tf{_,}
+#        mv $EXAMPLE_DIR/outputs.tf{_,}
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -146,22 +146,25 @@ jobs:
     - name: Terraform Plan
       run: terraform -chdir=$EXAMPLE_DIR plan
 
-    - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
-
-    - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output -json
+#    - name: Terraform Apply
+#      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+#
+#    - name: Terraform Output
+#      run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: ls
       run: |
         ls -l
         ls -l $EXAMPLE_DIR
+        ls -l $EXAMPLE_DIR/ssh_keys
 
     - name: Collect Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: collected-keys
-        path: $EXAMPLE_DIR/ssh_keys
+        path: |
+          $EXAMPLE_DIR/main.tf
+          $EXAMPLE_DIR/ssh_keys
 
 #    - name: Terraform Destroy
       # if: always()
