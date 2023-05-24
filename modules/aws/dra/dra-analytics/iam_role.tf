@@ -3,8 +3,9 @@
 #################################
 
 locals {
-  role_arn  = var.role_arn != null ? var.role_arn : try(aws_iam_role.dsf_dra_analytics_node_role[0].arn, null)
-  role_name = split("/", local.role_arn)[1] //arn:aws:iam::xxxxxxxxx:role/role-name
+  instance_profile = var.instance_profile_name == null ? aws_iam_instance_profile.dsf_node_instance_iam_profile[0].name : var.instance_profile_name
+  role_arn  = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].arn : data.aws_iam_instance_profile.profile[0].role_arn
+  role_name = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].name : data.aws_iam_instance_profile.profile[0].role_name
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -26,8 +27,8 @@ locals {
         "Effect" : "Allow",
         "Action" : "secretsmanager:GetSecretValue",
         "Resource" : [
-          "${var.admin_analytics_registration_password_arn}",
-          "${aws_secretsmanager_secret.analytics_archiver_password_secret.arn}"
+          aws_secretsmanager_secret.analytics_archiver_password.arn,
+          aws_secretsmanager_secret.admin_analytics_registration_password.arn
         ]
       }
     ]
@@ -35,16 +36,16 @@ locals {
   )
 }
 
-resource "aws_iam_instance_profile" "dsf_dra_analytics_instance_iam_profile" {
-  name_prefix = "dsf-dra-analytics-instance-iam-profile"
+resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
+  count       = var.instance_profile_name == null ? 1 : 0
+  name_prefix = "${var.friendly_name}-dra-analytics-instance-iam-profile"
   role        = local.role_name
   tags        = var.tags
 }
 
-resource "aws_iam_role" "dsf_dra_analytics_node_role" {
-  count               = var.role_arn != null ? 0 : 1
-  name_prefix         = "imperva-dsf-dra-analytics-role"
-  description         = "imperva-dsf-dra-analytics-role-${var.friendly_name}"
+resource "aws_iam_role" "dsf_node_role" {
+  count               = var.instance_profile_name == null ? 1 : 0
+  description         = "${var.friendly_name}-dra-analytics-role-${var.friendly_name}"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
@@ -52,4 +53,8 @@ resource "aws_iam_role" "dsf_dra_analytics_node_role" {
     policy = local.inline_policy_secret
   }
   tags = var.tags
+}
+data "aws_iam_instance_profile" "profile" {
+  count = var.instance_profile_name != null ? 1 : 0
+  name = var.instance_profile_name
 }

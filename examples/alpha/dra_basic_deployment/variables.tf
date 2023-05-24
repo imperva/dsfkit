@@ -73,41 +73,13 @@ variable "analytics_instance_type" {
   description = "Ec2 instance type for the Analytics Server"
 }
 
-variable "admin_ami" {
-  type = object({
-    id               = string
-    name             = string
-    owner_account_id = string
-  })
-  description = <<EOF
-This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
-The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
-The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
-The latest image that matches the specified filter will be chosen.
-EOF
-
+variable "dra_version" {
+  description = "The DRA version to install"
+  type        = string
+  default     = "4.12.0.10.0.6"
   validation {
-    condition     = var.admin_ami != null && (var.admin_ami.id != null || var.admin_ami.name != null)
-    error_message = "Either the 'id' or the 'name' should be specified"
-  }
-}
-
-variable "analytics_ami" {
-  type = object({
-    id               = string
-    name             = string
-    owner_account_id = string
-  })
-  description = <<EOF
-This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
-The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
-The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
-The latest image that matches the specified filter will be chosen.
-EOF
-
-  validation {
-    condition     = var.analytics_ami != null && (var.analytics_ami.id != null || var.analytics_ami.name != null)
-    error_message = "Either the 'id' or the 'name' should be specified"
+    condition     = can(regex("^(\\d{1,2}\\.){5}\\d{1,2}$", var.dra_version))
+    error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 1-99 (e.g 4.12.0.10.0.6)"
   }
 }
 

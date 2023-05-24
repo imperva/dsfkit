@@ -1,11 +1,20 @@
 data "aws_ami" "selected-ami" {
   owners = ["aws-marketplace"]
-
   filter {
     name   = "name"
     values = ["SecureSphere-${var.dam_version}*"]
   }
 
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
   # Filter for ami using the local.dammxbyolRegion2Ami map
   #   filter {
   #     name   = "image-id"
@@ -17,7 +26,6 @@ data "aws_ami" "selected-ami" {
   #     name   = "image-id"
   #     values = [data.external.ami.result.ami]
   #   }
-}
 
 # locals {
 #   dammxbyolRegion2Ami = {

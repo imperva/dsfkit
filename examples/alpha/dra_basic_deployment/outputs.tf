@@ -25,13 +25,8 @@ output "dra_analytics" {
     {
       private_ip        = try(val.analytics_private_ip, null)
       archiver_user     = try(val.archiver_user, null)
-      archiver_password = try(val.archiver_password, null)
     }
    }
-}
-
-output "dra_analytics_incoming_folder_path" {
-  value = "/opt/itpba/incoming"
 }
 
 output "dsf_private_ssh_key" {

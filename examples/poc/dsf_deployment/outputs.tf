@@ -107,6 +107,30 @@ output "dam" {
   } : null
 }
 
+output "dra" {
+  value = var.enable_dsf_dra ? {
+    dsf_admin_server = {
+      public_ip    = try(module.dra_admin.public_ip, null)
+      public_dns   = try(module.dra_admin.public_dns, null)
+      private_ip   = try(module.dra_admin.private_ip, null)
+      private_dns  = try(module.dra_admin.private_dns, null)
+      display_name = try(module.dra_admin.display_name, null)
+      role_arn     = try(module.dra_admin.iam_role, null)
+      ssh_command  = try("ssh ${module.dra_admin.ssh_user}@${module.dra_admin.public_dns}", null)
+      ssh_password = module.dra_admin.ssh_password
+      web_console = {
+        public_url  = try(join("", ["https://", module.dra_admin.public_ip, ":8443/"]), null)
+        private_url = try(join("", ["https://", module.dra_admin.private_ip, ":8443/"]), null)
+      }
+    }
+    dra_analytics = [
+      for idx, val in module.analytics_server_group : {
+        private_ip = val.private_ip
+      }
+    ]
+  } : null
+}
+
 output "audit_sources" {
   value = {
     agent_sources = [
