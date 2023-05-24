@@ -1,6 +1,7 @@
 provider "aws" {
   profile = var.aws_profile_hub
   region  = var.aws_region_hub_primary
+  alias   = "hub-primary"
 }
 
 provider "aws" {

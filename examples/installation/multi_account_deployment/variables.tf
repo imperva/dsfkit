@@ -44,6 +44,18 @@ variable "aws_region_gw_secondary" {
   description = "Aws region for the secondary Agentless gateway (e.g us-east-1)"
 }
 
+variable "additional_tags" {
+  type        = list(string)
+  default     = []
+  description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+  validation {
+    condition = alltrue([
+    for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
+    ])
+    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
+  }
+}
+
 variable "subnet_hub_primary" {
   type        = string
   description = "Aws subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
@@ -118,17 +130,35 @@ variable "tarball_location" {
   default     = null
 }
 
+variable "hub_instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the DSF Hub. Keep empty if you wish to create a new instance profile."
+}
+
+variable "gw_instance_profile_name" {
+  type        = string
+  default     = null
+  description = "Instance profile to assign to the Agentless Gateway. Keep empty if you wish to create a new instance profile."
+}
+
 variable "gw_count" {
   type        = number
   default     = 1
-  description = "Number of agentless gateways"
+  description = "Number of Agentless Gateways"
 }
 
 variable "web_console_admin_password" {
   sensitive   = true
   type        = string
-  default     = null # Random
-  description = "Admin password (Random generated if not set)"
+  default     = null
+  description = "Admin user password. If this variable is not set and 'web_console_admin_password_secret_name' is also not set, a random value is generated."
+}
+
+variable "web_console_admin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, web_console_admin_password is used."
 }
 
 variable "web_console_cidr" {
@@ -163,7 +193,7 @@ variable "gw_group_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF gw compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
+  description = "Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
@@ -269,20 +299,44 @@ variable "gw_secondary_key_pem_details" {
 
 variable "hub_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "gw_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the gw instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the DSF hub and DSF agentless GW instances. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the DSF Hub and Agentless Gateway instances. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
     error_message = "Terraform script path folder can not be an empty string"
   }
+}
+
+variable "internal_hub_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_hub_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The DSF Hub sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "internal_gw_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }

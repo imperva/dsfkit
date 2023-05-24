@@ -98,8 +98,8 @@ module "hub_primary" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
-  tags = local.tags
   instance_profile_name = var.hub_instance_profile_name
+  tags = local.tags
 }
 
 module "hub_secondary" {
@@ -130,8 +130,8 @@ module "hub_secondary" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_hub_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
-  tags = local.tags
   instance_profile_name = var.hub_instance_profile_name
+  tags = local.tags
 }
 
 module "agentless_gw_group" {
@@ -163,8 +163,8 @@ module "agentless_gw_group" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   internal_private_key_secret_name = var.internal_gw_private_key_secret_name
   internal_public_key = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
-  tags = local.tags
   instance_profile_name = var.gw_instance_profile_name
+  tags = local.tags
 }
 
 module "hub_hadr" {
