@@ -23,6 +23,12 @@ locals {
       tcp   = [8083, 8085]
       cidrs = concat(var.allowed_agent_gw_cidrs, var.allowed_all_cidrs)
     },
+    {
+      name  = ["hub"]
+      udp   = []
+      tcp   = [8083]
+      cidrs = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+    },
     # {
     #   name = ["som"]
     #   udp = []

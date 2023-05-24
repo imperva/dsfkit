@@ -6,6 +6,13 @@ module "globals" {
   tags          = local.tags
 }
 
+module "key_pair" {
+  source                   = "imperva/dsf-globals/aws//modules/key_pair"
+  version                  = "1.4.5" # latest release tag
+  private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
+  tags                     = local.tags
+}
+
 locals {
   deployment_name_salted                = join("-", [var.deployment_name, module.globals.salt])
   workstation_cidr_24                   = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
@@ -48,19 +55,11 @@ module "vpc" {
   tags = local.tags
 }
 
-module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
-  key_name_prefix          = "imperva-dsf-dra-"
-  private_key_pem_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
-  tags                     = local.tags
-}
-
 module "dra_admin" {
   source                                = "../../../modules/aws/dra/dra-admin"
   friendly_name                         = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                             = local.admin_subnet_id
-  ami                                   = var.admin_ami
+  dra_version                           = var.dra_version
   ebs                                   = var.admin_ebs_details
   admin_analytics_registration_password = local.admin_analytics_registration_password
   allowed_web_console_cidrs             = local.workstation_cidr
@@ -83,7 +82,7 @@ module "analytics_server_group" {
   source                                    = "../../../modules/aws/dra/dra-analytics"
   friendly_name                             = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                                 = local.analytics_subnet_id
-  ami                                       = var.analytics_ami
+  dra_version                               = var.dra_version
   ebs                                       = var.analytics_group_ebs_details
   admin_analytics_registration_password_arn = module.dra_admin.admin_analytics_registration_password_secret_arn
   allowed_admin_server_cidrs                = [data.aws_subnet.admin.cidr_block]

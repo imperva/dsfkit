@@ -16,7 +16,7 @@ resource "random_id" "salt" {
 
 resource "null_resource" "postpone_data_to_apply_phase" {
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = timestamp()
   }
 }
 

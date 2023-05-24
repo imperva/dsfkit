@@ -246,8 +246,31 @@ variable "internal_public_key" {
   description = "The DSF Hub sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "should_generate_access_token" {
+variable "generate_access_tokens" {
   type        = bool
   default     = false
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
+}
+
+variable "mx_details" {
+  description = "List of the DSF MX to onboard to USC"
+  type = list(object({
+    name      = string
+    address      = string
+    username      = string
+    password      = string
+  }))
+  validation {
+    condition = alltrue([
+      for mx in var.mx_details : try(mx.address != null && mx.address != null, false)
+    ])
+    error_message = "Each MX must specify name and address"
+  }
+  validation {
+    condition = alltrue([
+      for mx in var.mx_details : try(mx.username != null && mx.password != null, false)
+    ])
+    error_message = "Each MX must specify username and password"
+  }
+  default = []
 }

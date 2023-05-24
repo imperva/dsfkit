@@ -59,3 +59,7 @@ output "configuration" {
     null_resource.import_configuration
   ]
 }
+
+output "web_console_user" {
+  value = "admin"
+}

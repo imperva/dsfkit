@@ -14,32 +14,24 @@ variable "tags" {
   default     = {}
 }
 
-variable "admin_analytics_registration_password_arn" {
+variable "admin_analytics_registration_password" {
   type        = string
   description = "Password to be used to register Analytics Server to Admin Server"
 }
 
 variable "archiver_user" {
   type        = string
-  description = "User to be used to upload archive files for the Analysis Server"
+  default     = "archiver-user"
+  description = "User to be used to upload archive files for the analytics server"
 }
 
-variable "ami" {
-  type = object({
-    id               = string
-    name             = string
-    owner_account_id = string
-  })
-  description = <<EOF
-This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name and owner_account_id.
-The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
-The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the default owner will be Imperva AWS account id.
-The latest image that matches the specified filter will be chosen.
-EOF
-
+variable "dra_version" {
+  description = "The DRA version to install"
+  type        = string
+  default     = "4.12.0.10.0.6"
   validation {
-    condition     = var.ami != null && (var.ami.id != null || var.ami.name != null)
-    error_message = "Either the 'id' or the 'name' should be specified"
+    condition     = can(regex("^(\\d{1,2}\\.){5}\\d{1,2}$", var.dra_version))
+    error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 1-99 (e.g 4.12.0.10.0.6)"
   }
 }
 
@@ -55,6 +47,7 @@ variable "admin_server_public_ip" {
 
 variable "instance_type" {
   type        = string
+  default     = "m4.xlarge"
   description = "EC2 instance type for the Analytics Server"
 }
 
@@ -133,8 +126,8 @@ variable "ebs" {
   }
 }
 
-variable "role_arn" {
+variable "instance_profile_name" {
   type        = string
   default     = null
-  description = "IAM role to assign to the Analytics Server. Keep empty if you wish to create a new role."
+  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }

@@ -45,7 +45,7 @@ module "hub_instance" {
   additional_install_parameters = var.additional_install_parameters
   web_console_admin_password    = var.web_console_admin_password
   web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  should_generate_access_token           = var.should_generate_access_token
+  generate_access_tokens           = var.generate_access_tokens
   ssh_key_path                           = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                      = var.binaries_location
   hadr_secondary_node                    = var.hadr_secondary_node

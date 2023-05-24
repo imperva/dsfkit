@@ -2,7 +2,7 @@
 set -x
 
 sessionid=""
-gateway_exists=false
+gateway_group_exists=false
 gw_running=false
 
 cookie_file=$(mktemp)
@@ -15,8 +15,8 @@ if ! grep JSESSIONID $cookie_file &>/dev/null; then
     --header "Authorization: Basic ${https_auth_header}"
 fi
 
-# Step 2: Verify agent gateway group "gateway-group" exists
-if ! $gateway_exists; then
+# Step 2: Verify agent gateway group exists
+if ! $gateway_group_exists; then
   response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:8083/SecureSphere/api/v1/conf/gatewayGroups/${gateway_group_name}")
 
   if [[ -z "$response" || "$response" == "{}" ]]; then
@@ -24,7 +24,7 @@ if ! $gateway_exists; then
     return
   fi
 
-  gateway_exists=true
+  gateway_group_exists=true
 fi
 
 # Step 3: Verify gw exists and is running
@@ -49,7 +49,7 @@ if ! $gw_running; then
 fi
 
 # If all three requirements are met, exit the loop and script
-if $gateway_exists && $gw_running; then
-  echo "Agent Gateway ${gateway_id} is up and runnning."
+if $gateway_group_exists && $gw_running; then
+  echo "Agent Gateway ${gateway_id} is up and running."
   exit 0
 fi

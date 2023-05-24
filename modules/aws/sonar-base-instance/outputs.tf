@@ -68,3 +68,13 @@ output "access_tokens" {
   }
   sensitive = true
 }
+
+output "ready" {
+  description = <<-EOF
+    Indicates when module is "ready"
+  EOF
+  value       = "ready"
+  depends_on = [
+    null_resource.readiness
+  ]
+}
