@@ -578,6 +578,93 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **The CLI Deployment is now complete and a functioning version of DSF is now available.**
 
+## Installer Machine Deployment Mode
+
+This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+
+1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.
+
+
+2. **Launch an Instance:** Search for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 image and click “enter”:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
+
+
+3. Choose the “Community AMI”:<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
+
+
+4. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
+
+
+5. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine.
+
+
+6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that the deployment's client machine should have access to the installer machine.
+
+
+7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
+
+
+8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.4.6/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+
+
+9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
+
+
+10. When launching is completed, run SSH to the installer machine from the deployment client's machine:
+     ```bash
+     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
+   
+    >>>> Replace the key_pair_file with the name of the file from step 4, and the installer_machine_public_ip with 
+         the public IP of the installer machine which should now be available in the AWS EC2 console.
+         E.g., ssh -i a_key_pair.pem ec2-user@1.2.3.4
+     ```
+
+    **NOTE:** You may need to decrease the access privileges of the key_pair_file in order to be able to use it in for ssh.
+    For example: `chmode 400 a_key_pair.pem`
+
+
+11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+    Run:
+    ```bash
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/basic_deployment/basic_deployment.zip
+    
+    or
+    
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/hadr_deployment/hadr_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/single_account_deployment/single_account_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/multi_account_deployment/multi_account_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip
+
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dsf_deployment/dsf_deployment.zip
+    ```
+
+12. Unzip the zip file:
+    ```bash
+    unzip basic_deployment.zip
+
+    >>>> Change this command depending on the example you chose
+    ```
+
+13. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 3.
+
+**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Installer Machine Undeployment Mode](#installer-machine-undeployment-mode) section.
+
+**The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
+
 ## Terraform Cloud Deployment Mode
 
 As mentioned in the [Prerequisites](#prerequisites), the DSF deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
@@ -711,93 +798,6 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
 **The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
-## Installer Machine Deployment Mode
-
-This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
-
-1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.  
-
-
-2. **Launch an Instance:** Search for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 image and click “enter”:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
-
-
-3. Choose the “Community AMI”:<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
-
-
-4. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
-
-
-5. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine. 
-
-
-6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that the deployment's client machine should have access to the installer machine.
-
-
-7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
-
-
-8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.4.6/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
-
-
-9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
-
-
-10. When launching is completed, run SSH to the installer machine from the deployment client's machine:
-     ```bash
-     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
-   
-    >>>> Replace the key_pair_file with the name of the file from step 4, and the installer_machine_public_ip with 
-         the public IP of the installer machine which should now be available in the AWS EC2 console.
-         E.g., ssh -i a_key_pair.pem ec2-user@1.2.3.4
-     ```
-   
-     **NOTE:** You may need to decrease the access privileges of the key_pair_file in order to be able to use it in for ssh. 
-     For example: `chmode 400 a_key_pair.pem` 
-
-
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
-    Run:
-    ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/basic_deployment/basic_deployment.zip
-    
-    or
-    
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/hadr_deployment/hadr_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/single_account_deployment/single_account_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/multi_account_deployment/multi_account_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip
-
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dsf_deployment/dsf_deployment.zip
-    ```
-
-12. Unzip the zip file:
-    ```bash
-    unzip basic_deployment.zip
-
-    >>>> Change this command depending on the example you chose
-    ```
-
-13. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 3.
-
-**IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Installer Machine Undeployment Mode](#installer-machine-undeployment-mode) section.
-
-**The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
-
 # IAM Users and Roles
 
 TODO divide to Sonar, DAM and DRA
@@ -845,14 +845,6 @@ In case of failure, the Terraform may have deployed some resources before failin
     terraform destroy -auto-approve
     ```
 
-## Terraform Cloud Undeployment Mode
-
-1. To undeploy the DSF deployment, click on Settings and find "Destruction and Deletion" from the navigation menu to open the "Destroy infrastructure" page. Ensure that the "Allow destroy plans" toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
-
-2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
-
-**NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
-
 ## Installer Machine Undeployment Mode
 
 1. Run SSH to installer machine from the deployment client's machine:
@@ -869,6 +861,14 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 
 4. Terminate the EC2 installer machine via the AWS Console.
+
+## Terraform Cloud Undeployment Mode
+
+1. To undeploy the DSF deployment, click on Settings and find "Destruction and Deletion" from the navigation menu to open the "Destroy infrastructure" page. Ensure that the "Allow destroy plans" toggle is selected, and click on the Queue Destroy Plan button to begin.<br>![Destroy Plan](https://user-images.githubusercontent.com/87799317/203826129-6957bb53-b824-4f7a-8bbd-b44c17a5a3c4.png)
+
+2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
+
+**NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
 
 # More Information
 
