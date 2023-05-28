@@ -303,6 +303,18 @@ The following table lists the released DSFKit versions, their release date and a
       <br>3. Updated the POC multi_account_deployment example.
    </td>
   </tr>
+  <tr>
+   <td>28 May 2023
+   </td>
+   <td>1.4.6
+   </td>
+   <td>
+      1. Replaced IAM Role variable with instance profile.
+      <br>2. Removed usage of AWS provider's default_tags feature.
+      <br>3. First Alpha deployment of DRA. It can be used with caution.
+      <br>4. Alpha deployment example of full DSF - Sonar, DAM and DRA. It can be used with caution.
+   </td>
+  </tr>
 
 </table>
 
