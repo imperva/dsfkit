@@ -91,7 +91,7 @@ resource "null_resource" "exec_replication_cycle_on_secondary" {
 }
 
 resource "time_sleep" "sleep_before_hadr_verify" {
-  create_duration = "5m"
+  create_duration = "10m"
   depends_on = [
     null_resource.exec_replication_cycle_on_secondary
   ]
