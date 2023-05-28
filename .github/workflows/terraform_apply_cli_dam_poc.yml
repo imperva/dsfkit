@@ -1,4 +1,4 @@
-name: 'Terraform DAM POC CLI'
+name: 'ADM/DSF POC CLI'
 
 on:
   workflow_call:
@@ -67,11 +67,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - name: DAM POC CLI
+            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
+          - name: DSF POC CLI
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            example_dir: ./examples/alpha/dsf_deployment
+            aws_region: eu-west-2
 
-    name: 'Terraform ${{ matrix.workspace }}'
+    name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
