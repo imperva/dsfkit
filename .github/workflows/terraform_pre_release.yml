@@ -162,7 +162,7 @@ jobs:
 
   test_apply:
     needs: test_plan
-    uses: ./.github/workflows/terraform_apply_cli_sonar.yml
+    uses: ./.github/workflows/terraform_apply_cli_sonar_poc.yml
     with:
       use_modules_from_terraform_registry: true
       explicit_ref: master
