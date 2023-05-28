@@ -70,7 +70,6 @@ function create_users_and_groups() {
 function create_lvm() {
     # Set the physical device name
     physical_device=$1
-    mount_point="/imperva"
 
     # Set the volume group name from an environment variable
     volume_group_name="sonar"
@@ -94,16 +93,16 @@ function create_lvm() {
     mkfs.xfs /dev/$volume_group_name/data
 
     # Create mount points
-    mkdir -p $mount_point/logs
-    mkdir -p $mount_point/local
-    mkdir -p $mount_point/apps
-    mkdir -p $mount_point/data
+    mkdir -p $LOGS_DIR
+    mkdir -p $LOCAL_DIR
+    mkdir -p $APPS_DIR
+    mkdir -p $DATA_DIR
 
     # Add entries to /etc/fstab for automatic mounting on boot
-    echo "/dev/$volume_group_name/logs $mount_point/logs xfs defaults 0 0" >> /etc/fstab
-    echo "/dev/$volume_group_name/local $mount_point/local xfs defaults 0 0" >> /etc/fstab
-    echo "/dev/$volume_group_name/apps $mount_point/apps xfs defaults 0 0" >> /etc/fstab
-    echo "/dev/$volume_group_name/data $mount_point/data xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/logs $LOGS_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/local $LOCAL_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/apps $APPS_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/data $DATA_DIR xfs defaults 0 0" >> /etc/fstab
 }
 
 # Formatting and mounting the external ebs device
