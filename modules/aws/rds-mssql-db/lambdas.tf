@@ -78,7 +78,7 @@ resource "aws_cloudwatch_event_rule" "trafficEachMinute" {
   name                = join("-", ["dsf-mssql-lambda-traffic-every-minute", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run traffic each 1 minute"
   schedule_expression = "rate(1 minute)"
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "trafficEachMinuteTarget" {
@@ -100,7 +100,7 @@ resource "aws_cloudwatch_event_rule" "suspiciousActivityEach10Minutes" {
   name                = join("-", ["dsf-mssql-lambda-suspicious-activity-every-10-minutes", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run suspicious activity each 10 minutes"
   schedule_expression = "rate(10 minutes)"
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "suspiciousActivityEach10MinutesTarget" {

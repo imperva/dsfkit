@@ -8,7 +8,7 @@ locals {
   mx_association_commands = [for mx in var.mx_details : <<-EOF
     curl --fail -k -X POST 'https://127.0.0.1:8443/usc/api/v2/appliances' --header "Authorization: Bearer ${module.hub_instance.access_tokens.usc.token}" -F 'applianceDtoApiData={"data":{"type":"MX","name":"${mx.name}","hostOrIp":"${mx.address}","mxUsername":"${mx.username}","mxPassword":"${mx.password}", "hasCertificate":false, "mxAuthType": "PASSWORD"}};type=application/json'
     EOF
-    ]
+  ]
 }
 
 resource "null_resource" "mx_association" {

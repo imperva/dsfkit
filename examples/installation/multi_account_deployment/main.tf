@@ -1,8 +1,8 @@
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.4.5" # latest release tag
+  version       = "1.4.6" # latest release tag
   sonar_version = var.sonar_version
-  tags = local.tags
+  tags          = local.tags
 }
 
 locals {
@@ -26,10 +26,10 @@ locals {
 module "key_pair_hub_primary" {
   count                    = local.should_create_hub_primary_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   key_name_prefix          = "imperva-dsf-hub-primary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
   providers = {
     aws = aws.hub-primary
   }
@@ -38,10 +38,10 @@ module "key_pair_hub_primary" {
 module "key_pair_hub_secondary" {
   count                    = local.should_create_hub_secondary_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   key_name_prefix          = "imperva-dsf-hub-secondary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
   providers = {
     aws = aws.hub-secondary
   }
@@ -50,10 +50,10 @@ module "key_pair_hub_secondary" {
 module "key_pair_gw_primary" {
   count                    = local.should_create_gw_primary_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-primary-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
   providers = {
     aws = aws.gw-primary
   }
@@ -62,17 +62,17 @@ module "key_pair_gw_primary" {
 module "key_pair_gw_secondary" {
   count                    = local.should_create_gw_secondary_key_pair ? 1 : 0
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   key_name_prefix          = "imperva-dsf-gw-secondary"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-secondary-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
   providers = {
     aws = aws.gw-secondary
   }
 }
 
 data "aws_subnet" "subnet_hub_primary" {
-  id = var.subnet_hub_primary
+  id       = var.subnet_hub_primary
   provider = aws.hub-primary
 }
 
@@ -106,17 +106,17 @@ locals {
 # Generating deployment
 ##############################
 module "hub_primary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.4.5" # latest release tag
-  friendly_name              = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                  = var.subnet_hub_primary
-  security_group_ids         = var.security_group_ids_hub_primary
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  source                                 = "imperva/dsf-hub/aws"
+  version                                = "1.4.6" # latest release tag
+  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
+  subnet_id                              = var.subnet_hub_primary
+  security_group_ids                     = var.security_group_ids_hub_primary
+  binaries_location                      = local.tarball_location
+  web_console_admin_password             = local.web_console_admin_password
   web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  instance_type              = var.hub_instance_type
-  ebs                        = var.hub_ebs_details
-  ami                        = var.ami
+  instance_type                          = var.hub_instance_type
+  ebs                                    = var.hub_ebs_details
+  ami                                    = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_primary_private_key_pem_file_path
     ssh_public_key_name       = local.hub_primary_public_key_name
@@ -135,27 +135,27 @@ module "hub_primary" {
   internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.hub-primary
   }
 }
 
 module "hub_secondary" {
-  source                     = "imperva/dsf-hub/aws"
-  version                    = "1.4.5" # latest release tag
-  friendly_name              = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                  = var.subnet_hub_secondary
-  security_group_ids         = var.security_group_ids_hub_secondary
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  source                                 = "imperva/dsf-hub/aws"
+  version                                = "1.4.6" # latest release tag
+  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  subnet_id                              = var.subnet_hub_secondary
+  security_group_ids                     = var.security_group_ids_hub_secondary
+  binaries_location                      = local.tarball_location
+  web_console_admin_password             = local.web_console_admin_password
   web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  instance_type              = var.hub_instance_type
-  ebs                        = var.hub_ebs_details
-  ami                        = var.ami
-  hadr_secondary_node        = true
-  sonarw_public_key          = module.hub_primary.sonarw_public_key
-  sonarw_private_key         = module.hub_primary.sonarw_private_key
+  instance_type                          = var.hub_instance_type
+  ebs                                    = var.hub_ebs_details
+  ami                                    = var.ami
+  hadr_secondary_node                    = true
+  sonarw_public_key                      = module.hub_primary.sonarw_public_key
+  sonarw_private_key                     = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_secondary_private_key_pem_file_path
     ssh_public_key_name       = local.hub_secondary_public_key_name
@@ -174,26 +174,26 @@ module "hub_secondary" {
   internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.hub-secondary
   }
 }
 
 module "agentless_gw_group_primary" {
-  count                      = var.gw_count
-  source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.4.5" # latest release tag
-  friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id                  = var.subnet_gw_primary
-  security_group_ids         = var.security_group_ids_gw_primary
-  instance_type              = var.gw_instance_type
-  ebs                        = var.gw_group_ebs_details
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  count                                  = var.gw_count
+  source                                 = "imperva/dsf-agentless-gw/aws"
+  version                                = "1.4.6" # latest release tag
+  friendly_name                          = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
+  subnet_id                              = var.subnet_gw_primary
+  security_group_ids                     = var.security_group_ids_gw_primary
+  instance_type                          = var.gw_instance_type
+  ebs                                    = var.gw_group_ebs_details
+  binaries_location                      = local.tarball_location
+  web_console_admin_password             = local.web_console_admin_password
   web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
-  ami                        = var.ami
+  hub_sonarw_public_key                  = module.hub_primary.sonarw_public_key
+  ami                                    = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_primary_private_key_pem_file_path
     ssh_public_key_name       = local.gw_primary_public_key_name
@@ -211,29 +211,29 @@ module "agentless_gw_group_primary" {
   internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
   instance_profile_name             = var.gw_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.gw-primary
   }
 }
 
 module "agentless_gw_group_secondary" {
-  count                      = var.gw_count
-  source                     = "imperva/dsf-agentless-gw/aws"
-  version                    = "1.4.5" # latest release tag
-  friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
-  subnet_id                  = var.subnet_gw_secondary
-  security_group_ids         = var.security_group_ids_gw_secondary
-  instance_type              = var.gw_instance_type
-  ebs                        = var.gw_group_ebs_details
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  count                                  = var.gw_count
+  source                                 = "imperva/dsf-agentless-gw/aws"
+  version                                = "1.4.6" # latest release tag
+  friendly_name                          = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
+  subnet_id                              = var.subnet_gw_secondary
+  security_group_ids                     = var.security_group_ids_gw_secondary
+  instance_type                          = var.gw_instance_type
+  ebs                                    = var.gw_group_ebs_details
+  binaries_location                      = local.tarball_location
+  web_console_admin_password             = local.web_console_admin_password
   web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
-  hadr_secondary_node        = true
-  sonarw_public_key          = module.agentless_gw_group_primary[count.index].sonarw_public_key
-  sonarw_private_key         = module.agentless_gw_group_primary[count.index].sonarw_private_key
-  ami                        = var.ami
+  hub_sonarw_public_key                  = module.hub_primary.sonarw_public_key
+  hadr_secondary_node                    = true
+  sonarw_public_key                      = module.agentless_gw_group_primary[count.index].sonarw_public_key
+  sonarw_private_key                     = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  ami                                    = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_secondary_private_key_pem_file_path
     ssh_public_key_name       = local.gw_secondary_public_key_name
@@ -251,7 +251,7 @@ module "agentless_gw_group_secondary" {
   internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
   instance_profile_name             = var.gw_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.gw-secondary
   }
@@ -259,7 +259,7 @@ module "agentless_gw_group_secondary" {
 
 module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.hub_primary.private_ip
   dsf_primary_private_ip   = module.hub_primary.private_ip
@@ -283,7 +283,7 @@ module "hub_hadr" {
 module "agentless_gw_group_hadr" {
   count                    = var.gw_count
   source                   = "imperva/dsf-hadr/null"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.agentless_gw_group_primary[count.index].private_ip
   dsf_primary_private_ip   = module.agentless_gw_group_primary[count.index].private_ip
@@ -317,7 +317,7 @@ locals {
 module "federation_gws" {
   count   = length(local.hub_gws_combinations)
   source  = "imperva/dsf-federation/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gws_combinations[count.index][1].instance.private_ip
     gw_private_ssh_key_path = local.hub_gws_combinations[count.index][1].key_pem_file_path

@@ -19,7 +19,7 @@ variable "gw_count" {
   default     = 2
   description = "Number of DSF Agent Gateways"
   validation {
-    condition = var.gw_count >= 2
+    condition     = var.gw_count >= 2
     error_message = "Must be greater or equal to 2"
   }
 }

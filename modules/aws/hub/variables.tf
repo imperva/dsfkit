@@ -255,10 +255,10 @@ variable "generate_access_tokens" {
 variable "mx_details" {
   description = "List of the DSF MX to onboard to USC"
   type = list(object({
-    name      = string
-    address      = string
-    username      = string
-    password      = string
+    name     = string
+    address  = string
+    username = string
+    password = string
   }))
   validation {
     condition = alltrue([

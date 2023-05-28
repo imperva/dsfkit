@@ -15,17 +15,17 @@ data "aws_ami" "selected-ami" {
     values = ["hvm"]
   }
 }
-  # Filter for ami using the local.dammxbyolRegion2Ami map
-  #   filter {
-  #     name   = "image-id"
-  #     values = [lookup(local.dammxbyolRegion2Ami[data.aws_region.current.name], "ImageId")]
-  #   }
+# Filter for ami using the local.dammxbyolRegion2Ami map
+#   filter {
+#     name   = "image-id"
+#     values = [lookup(local.dammxbyolRegion2Ami[data.aws_region.current.name], "ImageId")]
+#   }
 
-  # Filter for ami using the CTT api
-  #   filter {
-  #     name   = "image-id"
-  #     values = [data.external.ami.result.ami]
-  #   }
+# Filter for ami using the CTT api
+#   filter {
+#     name   = "image-id"
+#     values = [data.external.ami.result.ami]
+#   }
 
 # locals {
 #   dammxbyolRegion2Ami = {

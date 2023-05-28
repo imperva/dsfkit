@@ -2,19 +2,19 @@ provider "aws" {
 }
 
 module "globals" {
-  source        = "imperva/dsf-globals/aws"
-  version       = "1.4.5" # latest release tag
+  source  = "imperva/dsf-globals/aws"
+  version = "1.4.6" # latest release tag
 
   tags = local.tags
 }
 
 module "key_pair" {
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  source  = "imperva/dsf-globals/aws//modules/key_pair"
+  version = "1.4.6" # latest release tag
 
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
 }
 
 locals {
@@ -59,15 +59,15 @@ module "vpc" {
   public_subnets  = var.public_subnets_cidr_list
 
   map_public_ip_on_launch = true
-  tags = local.tags
+  tags                    = local.tags
 }
 
 ##############################
 # Generating deployment
 ##############################
 module "mx" {
-  source                            = "imperva/dsf-mx/aws"
-  version                           = "1.4.5" # latest release tag
+  source  = "imperva/dsf-mx/aws"
+  version = "1.4.6" # latest release tag
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -84,7 +84,7 @@ module "mx" {
   large_scale_mode                  = var.large_scale_mode
 
   create_service_group = var.agent_count > 0 ? true : false
-  tags = local.tags
+  tags                 = local.tags
   depends_on = [
     module.vpc
   ]
@@ -92,9 +92,9 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
 
-  count   = var.gw_count
+  count = var.gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
@@ -110,16 +110,16 @@ module "agent_gw" {
   management_server_host_for_api_access   = module.mx.public_ip
   large_scale_mode                        = var.large_scale_mode
   gateway_group_name                      = local.gateway_group_name
-  tags = local.tags
+  tags                                    = local.tags
   depends_on = [
     module.vpc
   ]
 }
 
 module "agent_gw_cluster_setup" {
-  source                  = "../../../modules/null/agent-gw-cluster-setup"
-  cluster_name            = local.cluster_name
-  gateway_group_name      = local.gateway_group_name
+  source             = "../../../modules/null/agent-gw-cluster-setup"
+  cluster_name       = local.cluster_name
+  gateway_group_name = local.gateway_group_name
   mx_details = {
     address  = module.mx.public_ip
     port     = 8083
@@ -134,8 +134,8 @@ module "agent_gw_cluster_setup" {
 
 module "agent_monitored_db" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.5" # latest release tag
-  count  = var.agent_count
+  version = "1.4.6" # latest release tag
+  count   = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
 

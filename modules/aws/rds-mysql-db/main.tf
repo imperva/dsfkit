@@ -18,13 +18,13 @@ resource "aws_cloudwatch_log_group" "cloudwatch_streams" {
   for_each          = { for name in local.cloudwatch_stream_names : name => name }
   name              = "/aws/rds/instance/${local.db_identifier}/${each.value}"
   retention_in_days = 30
-  tags = var.tags
+  tags              = var.tags
 }
 
 resource "aws_db_subnet_group" "rds_db_sg" {
   name       = "${local.db_identifier}-db-subnet-group"
   subnet_ids = var.rds_subnet_ids
-  tags = var.tags
+  tags       = var.tags
 }
 
 resource "aws_db_option_group" "impv_rds_db_og" {
@@ -64,7 +64,7 @@ resource "aws_db_instance" "rds_db" {
   backup_retention_period = 0
 
   enabled_cloudwatch_logs_exports = local.cloudwatch_stream_names
-  tags = var.tags
+  tags                            = var.tags
   depends_on = [
     aws_cloudwatch_log_group.cloudwatch_streams
   ]
@@ -77,7 +77,7 @@ data "aws_subnet" "subnet" {
 resource "aws_security_group" "rds_mysql_access" {
   description = "RDS MySQL Access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
-  tags = var.tags
+  tags        = var.tags
 }
 
 resource "aws_security_group_rule" "rds_mysql_access_rule" {

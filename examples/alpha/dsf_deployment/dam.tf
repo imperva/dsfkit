@@ -5,8 +5,8 @@ locals {
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.4.5" # latest release tag
-  count  = var.enable_dsf_dam ? 1 : 0
+  version = "1.4.6" # latest release tag
+  count   = var.enable_dsf_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -37,8 +37,8 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.5" # latest release tag
-  count  = local.agent_gw_count
+  version = "1.4.6" # latest release tag
+  count   = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version

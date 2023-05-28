@@ -18,7 +18,7 @@ resource "random_shuffle" "os" {
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = concat(var.security_group_ids, [aws_security_group.dsf_agent_sg.id])
-  tags = var.tags
+  tags            = var.tags
 }
 
 resource "aws_instance" "agent" {
@@ -32,5 +32,5 @@ resource "aws_instance" "agent" {
   iam_instance_profile        = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   user_data                   = local.user_data
   user_data_replace_on_change = true
-  tags = merge(var.tags, {Name = join("-", [var.friendly_name])})
+  tags                        = merge(var.tags, { Name = join("-", [var.friendly_name]) })
 }

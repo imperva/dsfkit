@@ -98,4 +98,4 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 ## Additional Information
 
 For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.5).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.6).

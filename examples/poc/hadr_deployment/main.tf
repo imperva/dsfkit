@@ -8,17 +8,17 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.4.5" # latest release tag
+  version       = "1.4.6" # latest release tag
   sonar_version = var.sonar_version
-  tags = local.tags
+  tags          = local.tags
 }
 
 module "key_pair" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.5" # latest release tag
+  version                  = "1.4.6" # latest release tag
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
-  tags = local.tags
+  tags                     = local.tags
 }
 
 locals {
@@ -80,7 +80,7 @@ module "vpc" {
   public_subnets  = var.public_subnets
 
   map_public_ip_on_launch = true
-  tags = local.tags
+  tags                    = local.tags
 }
 
 ##############################
@@ -88,16 +88,16 @@ module "vpc" {
 ##############################
 module "hub_primary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
 
-  friendly_name                = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id                    = local.primary_hub_subnet_id
-  binaries_location            = local.tarball_location
-  web_console_admin_password   = local.web_console_admin_password
-  ebs                          = var.hub_ebs_details
-  attach_persistent_public_ip  = true
-  use_public_ip                = true
-  generate_access_tokens = true
+  friendly_name               = join("-", [local.deployment_name_salted, "hub", "primary"])
+  subnet_id                   = local.primary_hub_subnet_id
+  binaries_location           = local.tarball_location
+  web_console_admin_password  = local.web_console_admin_password
+  ebs                         = var.hub_ebs_details
+  attach_persistent_public_ip = true
+  use_public_ip               = true
+  generate_access_tokens      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -106,7 +106,7 @@ module "hub_primary" {
   allowed_hub_cidrs                 = [data.aws_subnet.secondary_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
-  tags = local.tags
+  tags                              = local.tags
   depends_on = [
     module.vpc
   ]
@@ -114,19 +114,19 @@ module "hub_primary" {
 
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
 
-  friendly_name                = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                    = local.secondary_hub_subnet_id
-  binaries_location            = local.tarball_location
-  web_console_admin_password   = local.web_console_admin_password
-  ebs                          = var.hub_ebs_details
-  attach_persistent_public_ip  = true
-  use_public_ip                = true
-  hadr_secondary_node          = true
-  sonarw_public_key            = module.hub_primary.sonarw_public_key
-  sonarw_private_key           = module.hub_primary.sonarw_private_key
-  generate_access_tokens = true
+  friendly_name               = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  subnet_id                   = local.secondary_hub_subnet_id
+  binaries_location           = local.tarball_location
+  web_console_admin_password  = local.web_console_admin_password
+  ebs                         = var.hub_ebs_details
+  attach_persistent_public_ip = true
+  use_public_ip               = true
+  hadr_secondary_node         = true
+  sonarw_public_key           = module.hub_primary.sonarw_public_key
+  sonarw_private_key          = module.hub_primary.sonarw_private_key
+  generate_access_tokens      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -134,7 +134,7 @@ module "hub_secondary" {
   allowed_hub_cidrs          = [data.aws_subnet.primary_hub.cidr_block]
   allowed_agentless_gw_cidrs = [data.aws_subnet.primary_gw.cidr_block, data.aws_subnet.secondary_gw.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
-  tags = local.tags
+  tags                       = local.tags
   depends_on = [
     module.vpc
   ]
@@ -142,7 +142,7 @@ module "hub_secondary" {
 
 module "agentless_gw_group_primary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
@@ -171,7 +171,7 @@ module "agentless_gw_group_primary" {
 
 module "agentless_gw_group_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = var.gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
@@ -203,7 +203,7 @@ module "agentless_gw_group_secondary" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
 
   sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.hub_primary.public_ip
@@ -220,7 +220,7 @@ module "hub_hadr" {
 
 module "agentless_gw_group_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = var.gw_count
 
   sonar_version            = module.globals.tarball_location.version
@@ -253,7 +253,7 @@ locals {
 
 module "federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = length(local.hub_gw_combinations)
 
   gw_info = {
@@ -279,18 +279,18 @@ module "federation" {
 
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
-  tags = local.tags
+  tags                         = local.tags
 }
 
 # create a RDS SQL Server DB
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -305,7 +305,7 @@ module "rds_mssql" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.4.5" # latest release tag
+  version  = "1.4.6" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version

@@ -9,17 +9,17 @@ variable "gateway_group_name" {
 }
 
 variable "delete_gateway_group" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Determines whether to delete the Gateway Group after all the Agent Gateways were moved from it to the Cluster"
 }
 
 variable "mx_details" {
   description = "Details of the MX for API calls"
   type = object({
-    address      = string
-    port         = number
-    user         = string
-    password     = string
+    address  = string
+    port     = number
+    user     = string
+    password = string
   })
 }

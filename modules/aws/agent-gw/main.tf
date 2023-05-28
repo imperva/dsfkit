@@ -60,10 +60,10 @@ locals {
   timeout           = 60 * 25
 
   readiness_commands = templatefile("${path.module}/readiness.tftpl", {
-    mx_address        = var.management_server_host_for_api_access
-    gateway_group_name  = local.gateway_group_name
-    https_auth_header = local.https_auth_header
-    gateway_id        = module.agent_gw.instance_id
+    mx_address         = var.management_server_host_for_api_access
+    gateway_group_name = local.gateway_group_name
+    https_auth_header  = local.https_auth_header
+    gateway_id         = module.agent_gw.instance_id
   })
 }
 
@@ -88,5 +88,5 @@ module "agent_gw" {
     timeout  = local.timeout
   }
   attach_persistent_public_ip = false
-  tags = var.tags
+  tags                        = var.tags
 }

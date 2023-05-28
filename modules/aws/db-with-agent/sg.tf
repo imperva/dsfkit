@@ -9,7 +9,7 @@ data "aws_vpc" "selected" {
 resource "aws_security_group" "dsf_agent_sg" {
   description = "${var.friendly_name} - Basic security group"
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
-  tags = var.tags
+  tags        = var.tags
 }
 
 resource "aws_security_group_rule" "all_out" {

@@ -1,7 +1,7 @@
 resource "aws_kms_key" "password_kms" {
   description             = "${var.name} - DAM kms"
   deletion_window_in_days = 10
-  tags = var.tags
+  tags                    = var.tags
 }
 
 resource "aws_kms_ciphertext" "encrypted_mx_password" {

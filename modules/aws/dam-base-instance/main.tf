@@ -29,7 +29,7 @@ locals {
 resource "aws_eip" "dsf_instance_eip" {
   count = var.attach_persistent_public_ip ? 1 : 0
   vpc   = true
-  tags = var.tags
+  tags  = var.tags
 }
 
 resource "aws_eip_association" "eip_assoc" {
@@ -50,11 +50,11 @@ resource "aws_instance" "dsf_base_instance" {
   }
   disable_api_termination     = true
   user_data_replace_on_change = true
-  tags = merge(var.tags, {Name = var.name})
+  tags                        = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids
-  tags = var.tags
+  tags            = var.tags
 }

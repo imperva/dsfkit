@@ -6,8 +6,8 @@ locals {
 
 module "hub" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.5" # latest release tag
-  count  = var.enable_dsf_hub ? 1 : 0
+  version = "1.4.6" # latest release tag
+  count   = var.enable_dsf_hub ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                   = local.hub_subnet_id
@@ -39,8 +39,8 @@ module "hub" {
 
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.5" # latest release tag
-  count  = var.enable_dsf_hub && var.hub_hadr ? 1 : 0
+  version = "1.4.6" # latest release tag
+  count   = var.enable_dsf_hub && var.hub_hadr ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                   = local.hub_secondary_subnet_id
@@ -69,7 +69,7 @@ module "hub_secondary" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
 
   count = length(module.hub_secondary) > 0 ? 1 : 0
 
@@ -88,8 +88,8 @@ module "hub_hadr" {
 
 module "agentless_gw_group" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.5" # latest release tag
-  count  = local.agentless_gw_count
+  version = "1.4.6" # latest release tag
+  count   = local.agentless_gw_count
 
   friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
   subnet_id                  = local.agentless_gw_subnet_id
@@ -117,8 +117,8 @@ module "agentless_gw_group" {
 
 module "agentless_gw_group_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.5" # latest release tag
-  count  = var.agentless_gw_hadr ? local.agentless_gw_count : 0
+  version = "1.4.6" # latest release tag
+  count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
   subnet_id                  = local.agentless_gw_secondary_subnet_id
@@ -149,7 +149,7 @@ module "agentless_gw_group_secondary" {
 
 module "agentless_gw_group_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = length(module.agentless_gw_group_secondary)
 
   sonar_version            = module.globals.tarball_location.version
@@ -184,7 +184,7 @@ locals {
 
 module "federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.4.5" # latest release tag
+  version = "1.4.6" # latest release tag
   count   = length(local.hub_gw_combinations)
 
   gw_info = {

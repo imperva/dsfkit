@@ -15,7 +15,7 @@ variable "tags" {
 }
 
 variable "admin_registration_password" {
-  type = string
+  type        = string
   description = "Password to be used to register Analytics Server to Admin Server"
 
   validation {
@@ -45,7 +45,7 @@ variable "admin_registration_password" {
 }
 
 variable "admin_password" {
-  type = string
+  type        = string
   description = "Password to be used to admin os user"
 
   validation {
@@ -112,16 +112,16 @@ variable "ssh_key_pair" {
     ssh_private_key_file_path = string
   })
   description = "SSH materials to access machine"
-  nullable = false
+  nullable    = false
 }
 
 variable "archiver_password" {
-  type = string
+  type        = string
   description = "Password to be used to upload archive files for analysis"
 }
 
 variable "subnet_id" {
-  type = string
+  type        = string
   description = "Subnet id for the Analytics Server"
   validation {
     condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
@@ -133,51 +133,51 @@ variable "security_group_ids" {
   type        = list(string)
   description = "Additional Security group ids to attach to the Analytics Server instance"
   validation {
-    condition = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
     error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_admin_server_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing the Admin Server to access the Analytics Server instance"
   validation {
-    condition = alltrue([for item in var.allowed_admin_server_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_admin_server_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing ssh access"
   validation {
-    condition = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "allowed_all_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
   validation {
-    condition = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
-  default     = []
+  default = []
 }
 
 variable "ebs" {
   type = object({
-    volume_size      = number
-    volume_type      = string
+    volume_size = number
+    volume_type = string
   })
   description = "Compute instance volume attributes for the Analytics Server"
   default = {
-    volume_size      = 1010
-    volume_type      = "gp3"
+    volume_size = 1010
+    volume_type = "gp3"
   }
 }
 

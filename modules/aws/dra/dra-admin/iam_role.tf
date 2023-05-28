@@ -4,8 +4,8 @@
 
 locals {
   instance_profile = var.instance_profile_name == null ? aws_iam_instance_profile.dsf_node_instance_iam_profile[0].name : var.instance_profile_name
-  role_arn  = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].arn : data.aws_iam_instance_profile.profile[0].role_arn
-  role_name = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].name : data.aws_iam_instance_profile.profile[0].role_name
+  role_arn         = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].arn : data.aws_iam_instance_profile.profile[0].role_arn
+  role_name        = var.instance_profile_name == null ? aws_iam_role.dsf_node_role[0].name : data.aws_iam_instance_profile.profile[0].role_name
 
   role_assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -53,9 +53,9 @@ resource "aws_iam_role" "dsf_node_role" {
     name   = "imperva-dsf-dra-admin-secret-access"
     policy = local.inline_policy_secret
   }
-  tags                = var.tags
+  tags = var.tags
 }
 data "aws_iam_instance_profile" "profile" {
   count = var.instance_profile_name != null ? 1 : 0
-  name = var.instance_profile_name
+  name  = var.instance_profile_name
 }

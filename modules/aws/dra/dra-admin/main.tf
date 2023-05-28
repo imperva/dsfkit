@@ -11,7 +11,7 @@ locals {
 
   install_script = templatefile("${path.module}/setup.tftpl", {
     admin_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password.arn
-    admin_password_secret_arn = aws_secretsmanager_secret.admin_password.arn
+    admin_password_secret_arn              = aws_secretsmanager_secret.admin_password.arn
   })
 
 }
@@ -37,7 +37,7 @@ resource "aws_instance" "dsf_base_instance" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     delete_on_termination = true
-    tags                  = merge(var.tags, {Name = var.friendly_name})
+    tags                  = merge(var.tags, { Name = var.friendly_name })
   }
   iam_instance_profile = local.instance_profile
   network_interface {
@@ -46,7 +46,7 @@ resource "aws_instance" "dsf_base_instance" {
   }
   disable_api_termination     = true
   user_data_replace_on_change = true
-  tags = merge(var.tags, {Name = var.friendly_name})
+  tags                        = merge(var.tags, { Name = var.friendly_name })
 }
 
 resource "aws_network_interface" "eni" {

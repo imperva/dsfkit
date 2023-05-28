@@ -50,7 +50,7 @@ variable "additional_tags" {
   description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
   validation {
     condition = alltrue([
-    for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
+      for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
     ])
     error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
   }
