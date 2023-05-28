@@ -7,7 +7,6 @@ on:
 #      - 'add_tests'
 
 env:
-  TF_WARN_OUTPUT_ERRORS: 1
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 1
