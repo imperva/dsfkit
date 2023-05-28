@@ -6,8 +6,11 @@
 Imperva DSFKit is the official Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric.
 The DSF can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
 
-Currently, the DSFKit supports deployment of the DSF Hub & Agentless Gateway (formerly Sonar), and DAM.
-In the near future, DSFKit will enable you to deploy the full suite of the DSF sub-products, including DRA, and will support the other major public clouds.
+DSFKit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
+DAM (Data Activity Monitoring) and DRA (Data Risk Analytics). 
+
+Currently, DSFKit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
+on-premises (vSphere) and hybrid environments.
 
 # About This Guide
 
@@ -327,35 +330,39 @@ DSFKit offers several deployment modes:
 * **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine which must be a Linux machine.
 
   For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+
+  For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 * **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.
   This mode can  be used in case we don't want to install any software on the deployment client's machine. It can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
 
   For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
-* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
-
-  For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 
 The first step in the deployment is to choose the deployment mode most appropriate to you.
 If you need more information to decide on your preferred mode, refer to the detailed instructions for each mode [here](#deployment).
 
 ## Prerequisites
 
-Before using DSFKit to deploy DSF, it is necessary to complete the following steps:
+Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequisites.
+
+### Prerequisites for all DSF deployments
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
-2. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva. 
-   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).  
-3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
-4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
+2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
+3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+4. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
 
+### Prerequisites for DSF deployments which include Sonar
 
-**NOTE:** It may take several hours for the access to be granted to AWS and Terraform Cloud in Steps 2 and 3.
+1. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
+   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
+
+TODO add sections for DAM and DRA
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
 An important thing to understand about the DSF deployment, is that there are many variations on what can be deployed, 
-e.g., the number of Agentless Gateways, with or without HADR, the number of VPCs, etc.
+e.g., with or without DRA, the number of Agentless Gateways, with or without HADR, the number of VPCs, etc.
 
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
@@ -417,13 +424,33 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a> (Alpha)
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with an MX, an Agent Gateway, networking and onboarding of an Agent with a randomly selected DB type: PostgreSql, MySql or MariaDB.   
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip">dam_basic_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dra_basic_deployment/README.md">DRA Basic Deployment</a> (Alpha)
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A DSF deployment with an DRA Admin, DRA Analytics and networking.   
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip">dra_basic_deployment.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dsf_deployment/README.md">DSF Deployment</a> (Alpha)
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), MX, Agent Gateways, DRA Admin and DRA Analytics. TODO continue   
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dsfdeployment/dsf_deployment.zip">dsf_deployment.zip</a>
       </td>
    </tr>
 </table>
@@ -435,7 +462,7 @@ Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_I
 
 ## Binaries Location and Versioning
 
-When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar and DAM versions specified in the Terraform example.
+When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
 
 The latest DSF version, Q1 2023, is recommended.
 This includes the following version of the DSF sub-products:
@@ -452,7 +479,12 @@ This includes the following version of the DSF sub-products:
     <td>Sonar</td><td>v4.11</td><td>4.9 and higher</td>
   </tr>
   <tr>
-    <td>DAM</td><td>v14.11.1.10</td><td>TBD</td>
+    <td>DAM</td><td>v14.11.1.10</td><td>14.6 and up for integration with Sonar. 
+
+All versions for legacy.</td>
+  </tr>
+  <tr>
+    <td>DRA</td><td>TODO</td><td>TODO</td>
   </tr>
 </table>
 
@@ -475,9 +507,6 @@ To see which versions are supported by each module, refer to the specific module
 After you have [chosen the deployment mode](#choosing-the-deployment-mode), follow the step-by-step instructions below to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 ## CLI Deployment Mode
-
-As mentioned in the [Prerequisites](#prerequisites), the DSF deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
-[Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
 
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
@@ -530,11 +559,22 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
    This should take about 30 minutes.
 
 
-7. Extract the web console admin password and DSF URL using:
+7. Depending on your deployment:
+   
+   To access the DSF Hub, extract the web console admin password and DSF URL using:
     ```bash
     terraform output "dsf_hub_web_console"
     ```
-8. Access the DSF Hub by entering the DSF URL into a web browser. Enter “admin” as the username and the admin_password as the password outputted in the previous step.
+   To access the MX, extract the web console admin password and MX URL using:
+    ```bash
+    terraform output "dsf_mx_web_console"
+    ```
+   To access the DRA Admin, extract the web console admin password and MX URL using:
+    ```bash
+    terraform output "dsf_admin_server_web_console"
+    ```
+
+8. Access the DSF Hub, MX or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. TODO DRA has no password
 
 **The CLI Deployment is now complete and a functioning version of DSF is now available.**
 
@@ -659,21 +699,19 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
     * Scroll to the bottom to find the "State versions created" link which can be helpful to investigate issues.<br>![State Version Created](https://user-images.githubusercontent.com/52969528/212992756-dfd183ac-640e-4891-8875-c1b8683d8d8d.png)
 
-    * Scroll up to view the "Outputs" of the run which should be expanded already, and locate the "dsf_hub_web_console" JSON object. Copy the "public_url" and "admin_password" fields' values for later use.<br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
+    * Scroll up to view the "Outputs" of the run which should be expanded already. Depending on your deployment, 
+      locate the "dsf_hub_web_console", "dsf_mx_web_console" or "dsf_admin_server_web_console" JSON object. Copy the "public_url" or "private_url" and "admin_password" fields' values for later use (TODO DRA has no password), for example: <br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
    
-    * Enter the "public_url" value you copied into a web browser to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
+    * Enter the "public_url" or "private_url" value you copied into a web browser. For example, enter the "dsf_hub_web_console" URL to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
     * Sonar is installed with a self-signed certificate, as a result, when opening the web page you may see a warning notification. For example, in Google Chrome, click "Proceed to domain.com (unsafe)".
     ![Warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
 
-    * Enter “admin” into the Username field and the "admin_password" value you copied into the Password field. Click "Sign In".
+    * Enter “admin” into the Username field and the "admin_password" value you copied into the Password field. Click "Sign In". TODO DRA has no password
 
 **The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
 ## Installer Machine Deployment Mode
-
-As mentioned in the [Prerequisites](#prerequisites), the DSF deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
-[Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
 
 This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
 
@@ -737,6 +775,14 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     or
  
     wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip
+
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/alpha/dsf_deployment/dsf_deployment.zip
     ```
 
 12. Unzip the zip file:
@@ -753,6 +799,8 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 **The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
 
 # IAM Users and Roles
+
+TODO divide to Sonar, DAM and DRA
 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSFKit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
