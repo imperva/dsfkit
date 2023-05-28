@@ -69,6 +69,10 @@ variable "ebs_details" {
     throughput       = number
   })
   description = "Compute instance volume attributes"
+  validation {
+    condition     = var.ebs_details.disk_size >= 150
+    error_message = "Disk size must be at least 150 GB"
+  }
 }
 
 variable "ami" {
