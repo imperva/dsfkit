@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
-      TF_WORKSPACE: ${{ matrix.workspace }}
+      TF_WORKSPACE: ${{ matrix.workspace }}_${{ matrix.aws_region }}
       AWS_REGION: ${{ matrix.aws_region }}
       HUB_OUTPUT: ${{ matrix.hub_output }}
       GW_OUTPUT: ${{ matrix.gw_output }}
