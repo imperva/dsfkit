@@ -2,40 +2,30 @@ locals {
   security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/63052.htm
     {
       name  = ["admin", "server"]
+      internet_access = false
       udp   = []
       tcp   = [8443]
       cidrs = concat(var.allowed_admin_server_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["ssh"]
+      name  = ["other"]
+      internet_access = true
       udp   = []
       tcp   = [22]
       cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["gateway"]
+      internet_access = false
+      udp   = []
+      tcp   = [22]
+      cidrs = concat(var.allowed_gateways_cidrs, var.allowed_all_cidrs)
     }
   ]
 }
 
 data "aws_subnet" "selected_subnet" {
   id = var.subnet_id
-}
-
-##############################################################################
-### Egress security group
-##############################################################################
-
-resource "aws_security_group" "dsf_base_sg_out" {
-  description = "${var.friendly_name} - Allow all out"
-  name        = join("-", [var.friendly_name, "all", "out"])
-
-  vpc_id = data.aws_subnet.selected_subnet.vpc_id
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  tags = merge(var.tags, { Name = var.friendly_name })
 }
 
 ##############################################################################
@@ -67,5 +57,15 @@ resource "aws_security_group" "dsf_base_sg_in" {
       cidr_blocks = each.value.cidrs
     }
   }
+
+  # Conditionally assign egress rules based on a "internet_access" memeber
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = each.value.internet_access ? ["0.0.0.0/0"] : []
+    ipv6_cidr_blocks = each.value.internet_access ? ["::/0"] : []
+  }
+
   tags = merge(var.tags, { Name = var.friendly_name })
 }

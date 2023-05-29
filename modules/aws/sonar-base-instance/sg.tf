@@ -3,25 +3,6 @@ data "aws_subnet" "selected_subnet" {
 }
 
 ##############################################################################
-### Egress security group 
-##############################################################################
-
-resource "aws_security_group" "dsf_base_sg_out" {
-  description = "${var.name} - Allow all out"
-  name        = join("-", [var.name, "all", "out"])
-
-  vpc_id = data.aws_subnet.selected_subnet.vpc_id
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-  tags = merge(var.tags, { Name = join("-", [var.name, "all", "out"]) })
-}
-
-##############################################################################
 ### Ingress security group 
 ##############################################################################
 
@@ -49,6 +30,15 @@ resource "aws_security_group" "dsf_base_sg_in" {
       protocol    = "udp"
       cidr_blocks = each.value.cidrs
     }
+  }
+
+  # Conditionally assign egress rules based on a "internet_access" memeber
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = each.value.internet_access ? ["0.0.0.0/0"] : []
+    ipv6_cidr_blocks = each.value.internet_access ? ["::/0"] : []
   }
 
   tags = merge(var.tags, { Name = join("-", [var.name, join(" ", each.value.name)]) })
