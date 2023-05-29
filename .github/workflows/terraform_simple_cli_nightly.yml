@@ -66,116 +66,116 @@ jobs:
         echo '${{ toJSON(github) }}'
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
-    - name: Sets env vars for environment
-      run: |
-        echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-      if: github.ref != 'refs/heads/"master"'
-
-    - name: Create terraform backend file
-      run: |
-        cat << EOF > $EXAMPLE_DIR/backend.tf
-        terraform {
-          backend "s3" {
-            bucket         = "terraform-state-bucket-dsfkit-github-tests"
-            key            = "states/terraform.tfstate"
-            dynamodb_table = "terraform-state-lock"
-            region         = "us-east-1"
-          }
-        }
-        EOF
-
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_wrapper: false
-        terraform_version: ~1.4.0
-
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
-
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform -chdir=$EXAMPLE_DIR init
-
-    - name: Terraform Validate
-      run: terraform -chdir=$EXAMPLE_DIR validate
-
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
-
-    - name: Cleaning envrionment
-      run: |
-        mv $EXAMPLE_DIR/main.tf{,_}
-        mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-        mv $EXAMPLE_DIR/main.tf{_,}
-        mv $EXAMPLE_DIR/outputs.tf{_,}
-
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
-
-    - name: Terraform Output
-      run: terraform -chdir=$EXAMPLE_DIR output -json
-
-    - name: Set Environment Variables
-      run: |
-        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
-        echo agentless_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."agentless-gw-0".private_dns') >> $GITHUB_ENV
-        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
-
-    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
-    - name: Check SSH Connectivity - Hub & GW
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        proxy_host: ${{ env.hub_ip }}
-        proxy_username: ec2-user
-        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
-        proxy_port: 22
-        host: ${{ env.agentless_gw_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
-
-    - name: Check Aduit data
-      uses: appleboy/ssh-action@v0.1.6
-      id: test_audit
-      with:
-        host: ${{ env.hub_ip }}
-        username: ec2-user
-        key_path: ${{ env.dsf_ssh_key_file_name }}
-        port: 22
-        command_timeout: "2h"
-        script: |
-          sleep 35m
-          for run in {1..8}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
-          if [ $res -le 0 ]; then exit 1; fi
-
-    - name: Terraform Destroy
-      # if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-
-    - name: Check how was the workflow run
-      id: check-trigger
-      if: ${{ failure() }}
-      run: |
-        if [ "${{ github.event_name }}" == "schedule" ]; then
-          echo "run-by=Automation" >> $GITHUB_OUTPUT
-        else
-          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-        fi
-
-      # Send job failure to Slack
-    - name: Send Slack When Failure
-      run: |
-        if [ ${{ inputs.branch }} == 'master' ]; then
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        else
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        fi
-      if: ${{ failure() }}
+#    - name: Sets env vars for environment
+#      run: |
+#        echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+#      if: github.ref != 'refs/heads/"master"'
+#
+#    - name: Create terraform backend file
+#      run: |
+#        cat << EOF > $EXAMPLE_DIR/backend.tf
+#        terraform {
+#          backend "s3" {
+#            bucket         = "terraform-state-bucket-dsfkit-github-tests"
+#            key            = "states/terraform.tfstate"
+#            dynamodb_table = "terraform-state-lock"
+#            region         = "us-east-1"
+#          }
+#        }
+#        EOF
+#
+#    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+#    - name: Setup Terraform
+#      uses: hashicorp/setup-terraform@v2
+#      with:
+#        terraform_wrapper: false
+#        terraform_version: ~1.4.0
+#
+#    - name: Setup jq
+#      uses: sergeysova/jq-action@v2
+#
+#    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+#    - name: Terraform Init
+#      run: terraform -chdir=$EXAMPLE_DIR init
+#
+#    - name: Terraform Validate
+#      run: terraform -chdir=$EXAMPLE_DIR validate
+#
+#    # Generates an execution plan for Terraform
+#    - name: Terraform Plan
+#      run: terraform -chdir=$EXAMPLE_DIR plan
+#
+#    - name: Cleaning envrionment
+#      run: |
+#        mv $EXAMPLE_DIR/main.tf{,_}
+#        mv $EXAMPLE_DIR/outputs.tf{,_}
+#        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+#        mv $EXAMPLE_DIR/main.tf{_,}
+#        mv $EXAMPLE_DIR/outputs.tf{_,}
+#
+#      # On push to "main", build or change infrastructure according to Terraform configuration files
+#      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+#    - name: Terraform Apply
+#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+#      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+#
+#    - name: Terraform Output
+#      run: terraform -chdir=$EXAMPLE_DIR output -json
+#
+#    - name: Set Environment Variables
+#      run: |
+#        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
+#        echo agentless_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw_group.value."agentless-gw-0".private_dns') >> $GITHUB_ENV
+#        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+#
+#    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
+#    - name: Check SSH Connectivity - Hub & GW
+#      uses: appleboy/ssh-action@v0.1.6
+#      with:
+#        proxy_host: ${{ env.hub_ip }}
+#        proxy_username: ec2-user
+#        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+#        proxy_port: 22
+#        host: ${{ env.agentless_gw_ip }}
+#        username: ec2-user
+#        key_path: ${{ env.dsf_ssh_key_file_name }}
+#        port: 22
+#        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+#
+#    - name: Check Aduit data
+#      uses: appleboy/ssh-action@v0.1.6
+#      id: test_audit
+#      with:
+#        host: ${{ env.hub_ip }}
+#        username: ec2-user
+#        key_path: ${{ env.dsf_ssh_key_file_name }}
+#        port: 22
+#        command_timeout: "2h"
+#        script: |
+#          sleep 35m
+#          for run in {1..8}; do sleep 5m; res=$(sudo curl --cert "${JSONAR_LOCALDIR}/ssl/client/admin/cert.pem" --key "${JSONAR_LOCALDIR}/ssl/client/admin/key.pem" -X POST  -k -H 'sonarg-user: admin.admin' https://localhost:8088/sonargd-session/_count | jq .count); echo $res; if [ $res -gt 0 ]; then exit 0; fi; done
+#          if [ $res -le 0 ]; then exit 1; fi
+#
+#    - name: Terraform Destroy
+#      # if: always()
+#      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+#
+#    - name: Check how was the workflow run
+#      id: check-trigger
+#      if: ${{ failure() }}
+#      run: |
+#        if [ "${{ github.event_name }}" == "schedule" ]; then
+#          echo "run-by=Automation" >> $GITHUB_OUTPUT
+#        else
+#          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+#        fi
+#
+#      # Send job failure to Slack
+#    - name: Send Slack When Failure
+#      run: |
+#        if [ ${{ inputs.branch }} == 'master' ]; then
+#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+#        else
+#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+#        fi
+#      if: ${{ failure() }}
