@@ -64,7 +64,7 @@ jobs:
 #            hub_output: '.dsf_hubs.value.primary.public_dns'
 #            gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".primary.private_ip'
 
-    name: 'Terraform ${{ matrix.workspace }}'
+    name: 'Terraform ${{ matrix.workspace }}_${{ matrix.aws_region }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
@@ -133,7 +133,7 @@ jobs:
         TF_WORKSPACE: default
 
     - name: Terraform Create Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}_${{ matrix.aws_region }}
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -183,7 +183,7 @@ jobs:
       run: |
         if [ '${{ steps.destroy.conclusion }}' == 'success' ]
         then 
-        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}_${{ matrix.aws_region }}
         fi
       env:
         TF_WORKSPACE: default
