@@ -51,24 +51,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        aws_region: [af-south-1, ap-south-1, eu-north-1, eu-west-3, eu-south-1, eu-west-2, eu-west-1, ap-northeast-3, ap-northeast-2, me-south-1, ap-northeast-1, ca-central-1, sa-east-1, ap-east-1, ap-southeast-1, ap-southeast-2, eu-central-1, us-east-1, us-east-2, us-west-1, us-west-2]
         include:
-#          - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
-#            example_dir: ./examples/poc/basic_deployment
-##            aws_region: eu-west-2
-#            hub_output: '.dsf_hub.value.public_dns'
-#            gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".private_ip'
+          - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            example_dir: ./examples/poc/basic_deployment
+            aws_region: eu-west-2
+            hub_output: '.dsf_hub.value.public_dns'
+            gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".private_ip'
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/hadr_deployment
-#            aws_region: eu-west-1
+            aws_region: eu-west-1
             hub_output: '.dsf_hubs.value.primary.public_dns'
             gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".primary.private_ip'
 
-    name: 'Terraform ${{ matrix.workspace }}_${{ matrix.aws_region }}'
+    name: 'Terraform ${{ matrix.workspace }}
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
-      TF_WORKSPACE: ${{ matrix.workspace }}_${{ matrix.aws_region }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
       HUB_OUTPUT: ${{ matrix.hub_output }}
       GW_OUTPUT: ${{ matrix.gw_output }}
@@ -133,7 +132,7 @@ jobs:
         TF_WORKSPACE: default
 
     - name: Terraform Create Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}_${{ matrix.aws_region }}
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -183,7 +182,7 @@ jobs:
       run: |
         if [ '${{ steps.destroy.conclusion }}' == 'success' ]
         then 
-        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}_${{ matrix.aws_region }}
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
         fi
       env:
         TF_WORKSPACE: default
