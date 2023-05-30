@@ -53,6 +53,7 @@ function install_awscli_from_internet() {
 
 function install_deps() {
     command -v unzip || install_yum_deps_from_internet unzip
+    command -v lvm2 || install_yum_deps_from_internet lvm2
     command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
     test -f /usr/local/bin/aws || install_awscli_from_internet
 }
@@ -64,6 +65,44 @@ function create_users_and_groups() {
     getent group sonar || groupadd sonar
     usermod -g sonar sonarw
     usermod -g sonar sonargd
+}
+
+function create_lvm() {
+    # Set the physical device name
+    physical_device=$1
+
+    # Set the volume group name from an environment variable
+    volume_group_name="sonar"
+
+    # Create physical volume
+    pvcreate $physical_device
+
+    # Create volume group
+    vgcreate $volume_group_name $physical_device
+
+    # Create logical volumes with lowercase names
+    lvcreate --name logs -L 20G $volume_group_name
+    lvcreate --name local -L 20G $volume_group_name
+    lvcreate --name apps -L 20G $volume_group_name
+    lvcreate -l 100%FREE --name data $volume_group_name
+
+    # Format the logical volumes with desired filesystem (e.g., xfs)
+    mkfs.xfs /dev/$volume_group_name/logs
+    mkfs.xfs /dev/$volume_group_name/local
+    mkfs.xfs /dev/$volume_group_name/apps
+    mkfs.xfs /dev/$volume_group_name/data
+
+    # Create mount points
+    mkdir -p $LOGS_DIR
+    mkdir -p $LOCAL_DIR
+    mkdir -p $APPS_DIR
+    mkdir -p $DATA_DIR
+
+    # Add entries to /etc/fstab for automatic mounting on boot
+    echo "/dev/$volume_group_name/logs $LOGS_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/local $LOCAL_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/apps $APPS_DIR xfs defaults 0 0" >> /etc/fstab
+    echo "/dev/$volume_group_name/data $DATA_DIR xfs defaults 0 0" >> /etc/fstab
 }
 
 # Formatting and mounting the external ebs device
@@ -91,20 +130,12 @@ function attach_disk() {
     fi
 
     lsblk -no FSTYPE /dev/$DEVICE
-    FS=$(lsblk -no FSTYPE /dev/$DEVICE)
-    if [ "$FS" != "xfs" ]; then
-        echo "/dev/$DEVICE fs is \"$FS\". Formatting it..."
-        ## Formatting the device
-        mkfs -t xfs /dev/$DEVICE
+    FS=$(lsblk -no FSTYPE /dev/$DEVICE | head -1)
+    if [ "$FS" != "LVM2_member" ]; then
+        echo "/dev/$DEVICE is not lvm memeber (\"$FS\"). Formatting it..."
+        create_lvm /dev/$DEVICE
     fi
     
-    ## Mounting the device
-    STATE_DIR=/data_vol/sonar-dsf/jsonar
-    mkdir -p $STATE_DIR
-    DEV_UUID=$(blkid /dev/$DEVICE | cut -d ' ' -f2 | awk '{print $1}')
-    if ! grep $DEV_UUID /etc/fstab &>/dev/null; then
-        echo "$DEV_UUID $STATE_DIR xfs defaults 0 0" >> /etc/fstab
-    fi
     mount -a
 }
 
@@ -116,10 +147,9 @@ function install_tarball() {
 
     echo Installing tarball..
     # Installing tarball
-    sudo mkdir -p $DIR
-    sudo tar -xf ./$TARBALL_FILE -gz -C $DIR
+    sudo tar -xf ./$TARBALL_FILE -gz -C $APPS_DIR
     rm ./$TARBALL_FILE
-    sudo chown -R sonarw:sonar $DIR
+    sudo chown -R sonarw:sonar $APPS_DIR
 }
 
 function set_instance_fqdn() {
@@ -140,7 +170,7 @@ verlt() {
 
 function setup() {
     set_instance_fqdn
-    VERSION=$(ls /opt/sonar-dsf/jsonar/apps/ -Art | tail -1)
+    VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
     echo Setup sonar $VERSION
 
     password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
@@ -151,7 +181,7 @@ function setup() {
         PRODUCT="data-security-fabric"
     fi
 
-    sudo /opt/sonar-dsf/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
+    sudo $APPS_DIR/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display-name}" \
         --product "$PRODUCT" \
@@ -159,9 +189,9 @@ function setup() {
         --secadmin-pass="$password" \
         --sonarg-pass="$password" \
         --sonargd-pass="$password" \
-        --jsonar-datadir=$STATE_DIR/data \
-        --jsonar-localdir=$STATE_DIR/local \
-        --jsonar-logdir=$STATE_DIR/logs \
+        --jsonar-datadir=$DATA_DIR \
+        --jsonar-localdir=$LOCAL_DIR \
+        --jsonar-logdir=$LOGS_DIR \
         --jsonar-uid ${jsonar_uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
         $(test "${resource_type}" == "agentless-gw" && echo "--remote-machine") ${additional_install_parameters}
@@ -170,7 +200,7 @@ function setup() {
 function set_environment_vars() {
     echo Setting environment vars
     if [ ! -f /etc/profile.d/jsonar.sh ]; then
-        sudo cat /etc/sysconfig/jsonar /data_vol/sonar-dsf/jsonar/local/sonarg/sysconfig/machine | \
+        sudo cat /etc/sysconfig/jsonar $LOCAL_DIR/sonarg/sysconfig/machine | \
             sed -e 's/^/'"export "'/' | sudo tee /etc/profile.d/jsonar.sh
     fi
     . /etc/sysconfig/jsonar
@@ -226,14 +256,17 @@ __EOF__
     fi
 }
 
+STATE_DIR=/imperva
+DATA_DIR=$STATE_DIR/data
+LOGS_DIR=$STATE_DIR/logs
+LOCAL_DIR=$STATE_DIR/local
+APPS_DIR=$STATE_DIR/apps
+
 install_deps
 create_users_and_groups
 attach_disk
 
-STATE_DIR=/data_vol/sonar-dsf/jsonar
-LAST_INSTALLATION_SOURCE=$STATE_DIR/last_install_source.txt
-
-DIR=/opt/sonar-dsf/
+LAST_INSTALLATION_SOURCE=$DATA_DIR/last_install_source.txt
 
 if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "s3://${installation_s3_bucket}/${installation_s3_key}" ]; then
     install_tarball

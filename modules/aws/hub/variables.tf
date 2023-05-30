@@ -83,6 +83,16 @@ variable "allowed_hub_cidrs" {
   default = []
 }
 
+variable "allowed_dra_admin_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing access to DRA admin instances"
+  validation {
+    condition     = alltrue([for item in var.allowed_dra_admin_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default = []
+}
+
 variable "allowed_all_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"

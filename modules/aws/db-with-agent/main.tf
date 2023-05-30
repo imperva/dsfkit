@@ -31,6 +31,5 @@ resource "aws_instance" "agent" {
   }
   iam_instance_profile        = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   user_data                   = local.user_data
-  user_data_replace_on_change = true
   tags                        = merge(var.tags, { Name = join("-", [var.friendly_name]) })
 }

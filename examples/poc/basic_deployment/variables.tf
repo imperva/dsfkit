@@ -104,7 +104,7 @@ variable "gw_group_ebs_details" {
   })
   description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
-    disk_size        = 75
+    disk_size        = 150
     provisioned_iops = 0
     throughput       = 125
   }
