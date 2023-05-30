@@ -63,7 +63,7 @@ jobs:
             hub_output: '.dsf_hubs.value.primary.public_dns'
             gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".primary.private_ip'
 
-    name: 'Terraform ${{ matrix.workspace }}
+    name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ${{ matrix.example_dir }}
