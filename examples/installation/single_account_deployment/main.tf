@@ -1,6 +1,6 @@
 provider "aws" {
   profile = var.aws_profile
-  region  = var.aws_region
+  region  = var.aws_region_hub
 }
 
 module "globals" {
@@ -27,7 +27,7 @@ locals {
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
-  should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
+  # should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
 }
 
 ##############################
@@ -42,20 +42,11 @@ module "key_pair_hub" {
   tags                     = local.tags
 }
 
-module "key_pair_gw" {
-  count                    = local.should_create_gw_key_pair ? 1 : 0
-  source                   = "imperva/dsf-globals/aws//modules/key_pair"
-  version                  = "1.4.6" # latest release tag
-  key_name_prefix          = "imperva-dsf-gw"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
-  tags                     = local.tags
-}
-
 locals {
   hub_private_key_pem_file_path = var.hub_key_pem_details != null ? var.hub_key_pem_details.private_key_pem_file_path : module.key_pair_hub[0].private_key_file_path
   hub_public_key_name           = var.hub_key_pem_details != null ? var.hub_key_pem_details.public_key_name : module.key_pair_hub[0].key_pair.key_pair_name
-  gw_private_key_pem_file_path  = var.gw_key_pem_details != null ? var.gw_key_pem_details.private_key_pem_file_path : module.key_pair_gw[0].private_key_file_path
-  gw_public_key_name            = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
+  gw_private_key_pem_file_path  = var.GROUPA_gw_key_pem_details.private_key_pem_file_path 
+  gw_public_key_name            = var.GROUPA_gw_key_pem_details.public_key_name
 }
 
 data "aws_subnet" "primary_hub" {
@@ -64,10 +55,6 @@ data "aws_subnet" "primary_hub" {
 
 data "aws_subnet" "secondary_hub" {
   id = var.subnet_hub_secondary
-}
-
-data "aws_subnet" "subnet_gw" {
-  id = var.subnet_gw
 }
 
 ##############################
@@ -91,7 +78,12 @@ module "hub_primary" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.secondary_hub.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_agentless_gw_cidrs        = concat(
+    [data.aws_subnet.GROUPA_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPB_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPC_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPD_subnet_gw.cidr_block]
+    )
   allowed_all_cidrs                 = local.workstation_cidr
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
@@ -123,7 +115,12 @@ module "hub_secondary" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.primary_hub.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
+  allowed_agentless_gw_cidrs        = concat(
+    [data.aws_subnet.GROUPA_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPB_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPC_subnet_gw.cidr_block],
+    [data.aws_subnet.GROUPD_subnet_gw.cidr_block]
+    )
   allowed_all_cidrs                 = local.workstation_cidr
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
@@ -131,39 +128,6 @@ module "hub_secondary" {
   internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
-  tags                              = local.tags
-}
-
-module "agentless_gw_group" {
-  count                                  = var.gw_count
-  source                                 = "imperva/dsf-agentless-gw/aws"
-  version                                = "1.4.6" # latest release tag
-  friendly_name                          = join("-", [local.deployment_name_salted, "gw", count.index])
-  subnet_id                              = var.subnet_gw
-  security_group_ids                     = var.security_group_ids_gw
-  instance_type                          = var.gw_instance_type
-  ebs                                    = var.gw_group_ebs_details
-  binaries_location                      = local.tarball_location
-  web_console_admin_password             = local.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
-  hub_sonarw_public_key                  = module.hub_primary.sonarw_public_key
-  ami                                    = var.ami
-  ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_private_key_pem_file_path
-    ssh_public_key_name       = local.gw_public_key_name
-  }
-  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
-  allowed_all_cidrs = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_primary.private_ip
-    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
-    proxy_ssh_user             = module.hub_primary.ssh_user
-  }
-  skip_instance_health_verification = var.gw_skip_instance_health_verification
-  terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
-  instance_profile_name             = var.gw_instance_profile_name
   tags                              = local.tags
 }
 
@@ -185,27 +149,42 @@ module "hub_hadr" {
 }
 
 locals {
-  hub_gw_combinations = setproduct(
-    [module.hub_primary, module.hub_secondary],
-    concat(
-      [for idx, val in module.agentless_gw_group : val]
-    )
+  gws = merge(
+    {for idx, val in module.GROUPA_agentless_gw_group : "agentless-gw-us-west-2-${idx}" => val},
+    {for idx, val in module.GROUPB_agentless_gw_group : "agentless-gw-us-west-1-${idx}" => val},
+    {for idx, val in module.GROUPC_agentless_gw_group : "agentless-gw-us-east-1-${idx}" => val},
+    {for idx, val in module.GROUPD_agentless_gw_group : "agentless-gw-us-east-2-${idx}" => val},
   )
+  gws_set = values(local.gws)
+  hubs_set = [
+    module.hub_primary,
+    module.hub_secondary
+  ]
+  hubs_keys = [
+    "hub-primary",
+    "hub-secondary",
+  ]
+
+  hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
+  hub_gw_combinations_keys_ = setproduct(local.hubs_keys, keys(local.gws))
+  hub_gw_combinations_keys = [for v in local.hub_gw_combinations_keys_: "${v[0]}-${v[1]}"]
+
+  hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
 }
 
 module "federation" {
-  count   = length(local.hub_gw_combinations)
+  for_each = local.hub_gw_combinations
   source  = "imperva/dsf-federation/null"
   version = "1.4.6" # latest release tag
   gw_info = {
-    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
+    gw_ip_address           = each.value[1].private_ip
     gw_private_ssh_key_path = local.gw_private_key_pem_file_path
-    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
+    gw_ssh_user             = each.value[1].ssh_user
   }
   hub_info = {
-    hub_ip_address           = local.hub_gw_combinations[count.index][0].private_ip
+    hub_ip_address           = each.value[0].private_ip
     hub_private_ssh_key_path = local.hub_private_key_pem_file_path
-    hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
+    hub_ssh_user             = each.value[0].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_primary.private_ip
@@ -214,6 +193,9 @@ module "federation" {
   }
   depends_on = [
     module.hub_hadr,
-    module.agentless_gw_group
+    module.GROUPA_agentless_gw_group,
+    module.GROUPB_agentless_gw_group,
+    module.GROUPC_agentless_gw_group,
+    module.GROUPD_agentless_gw_group
   ]
 }
