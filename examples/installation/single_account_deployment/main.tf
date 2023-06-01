@@ -27,7 +27,6 @@ locals {
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
-  # should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
 }
 
 ##############################
