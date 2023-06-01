@@ -35,6 +35,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
+  TF_VAR_db_types_to_onboard: ["RDS MySQL", "RDS MsSQL"]
   EXAMPLE_DIR: ./examples/poc/basic_deployment
   AWS_REGION: eu-west-2
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
