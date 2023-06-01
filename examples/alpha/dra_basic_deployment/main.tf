@@ -57,7 +57,7 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source                         = "../../../modules/aws/dra/dra-admin"
+  source                         = "../../../modules/aws/dra-admin"
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
   dra_version                    = var.dra_version
@@ -81,7 +81,7 @@ module "dra_admin" {
 
 module "analytics_server_group" {
   count                       = var.analytics_server_count
-  source                      = "../../../modules/aws/dra/dra-analytics"
+  source                      = "../../../modules/aws/dra-analytics"
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id
   dra_version                 = var.dra_version

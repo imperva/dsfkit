@@ -3,7 +3,7 @@ locals {
 }
 
 module "dra_admin" {
-  source = "../../../modules/aws/dra/dra-admin"
+  source = "../../../modules/aws/dra-admin"
   count  = var.enable_dsf_dra ? 1 : 0
 
   friendly_name                  = join("-", [local.deployment_name_salted, "dra", "admin"])
@@ -27,7 +27,7 @@ module "dra_admin" {
 }
 
 module "analytics_server_group" {
-  source = "../../../modules/aws/dra/dra-analytics"
+  source = "../../../modules/aws/dra-analytics"
 
   count                       = local.dra_analytics_server_count
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "analytics", "server", count.index])
