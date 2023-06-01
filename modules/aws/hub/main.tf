@@ -2,31 +2,41 @@ locals {
   security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
     {
       name  = ["web", "console", "and", "api"]
+      internet_access = false
       udp   = []
       tcp   = [8443]
       cidrs = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["ssh"]
+      name  = ["other"]
+      internet_access = true
       udp   = []
       tcp   = [22]
       cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["agentless", "gateway"]
+      internet_access = false
       udp   = []
       tcp   = [8443, 61617]
       cidrs = concat(var.allowed_agentless_gw_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["hub", "replica", "set"]
+      internet_access = false
       udp   = []
-      tcp   = [3030, 27117, 22, 61617]
+      tcp   = [22, 3030, 27117, 61617]
       cidrs = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name  = ["dra", "admin", "server"]
+      internet_access = false
+      udp   = []
+      tcp   = [10674, 8443]
+      cidrs = concat(var.allowed_dra_admin_cidrs, var.allowed_all_cidrs)
     }
   ]
 }
-
 
 module "hub_instance" {
   source                                 = "../../../modules/aws/sonar-base-instance"

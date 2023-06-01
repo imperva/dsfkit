@@ -63,7 +63,7 @@ Make sure that the user running the deployment has read and write access to this
 
 ### Working with DSF Hub and Agentless Gateway without outbound internet access
 Follow these steps to deploy a DSF Hub and/or Agentless Gateway in an environment without outbound internet access.
-1. Provide a custom AMI with the following dependencies: AWS CLI, unzip, and jq.
+1. Provide a custom AMI with the following dependencies: AWS CLI, unzip, lvm2 and jq.
    You can create a custom AMI with these dependencies installed by launching an Amazon EC2 instance, installing the dependencies, and creating an AMI from the instance.
    You can then use this custom AMI when launching the DSF Hub and/or Agentless Gateway instances.
 2. Update the _ami_ variable in your Terraform example with the details of the custom AMI you created.

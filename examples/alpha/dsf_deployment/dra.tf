@@ -14,6 +14,7 @@ module "dra_admin" {
   admin_password                 = local.password
   allowed_web_console_cidrs      = local.workstation_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
+  allowed_hub_cidrs              = [data.aws_subnet.hub.cidr_block]
   attach_persistent_public_ip    = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -36,6 +37,7 @@ module "analytics_server_group" {
   admin_registration_password = local.password
   admin_password              = local.password
   allowed_admin_server_cidrs  = [data.aws_subnet.dra_admin.cidr_block]
+  allowed_gateways_cidrs      = distinct(concat([data.aws_subnet.agent_gw.cidr_block], [data.aws_subnet.agentless_gw.cidr_block], [data.aws_subnet.agentless_gw_secondary.cidr_block]))
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

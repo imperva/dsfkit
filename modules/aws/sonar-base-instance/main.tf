@@ -10,7 +10,6 @@ locals {
   ebs_state_throughput = var.ebs_details.throughput
 
   security_group_ids = concat(
-    [aws_security_group.dsf_base_sg_out.id],
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
   var.security_group_ids)
 }

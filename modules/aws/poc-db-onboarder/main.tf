@@ -78,7 +78,7 @@ locals {
   }
 }
 
-resource "null_resource" "connect_dsf_to_db" {
+resource "null_resource" "onboard_db_to_dsf" {
   connection {
     type        = "ssh"
     user        = var.hub_info.hub_ssh_user

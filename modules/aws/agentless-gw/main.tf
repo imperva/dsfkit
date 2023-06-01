@@ -1,19 +1,22 @@
 locals {
   security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
     {
-      name  = ["ssh"]
+      name  = ["other"]
+      internet_access = true
       udp   = []
       tcp   = [22]
       cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["hub"]
+      internet_access = false
       udp   = []
       tcp   = [22, 8443]
       cidrs = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     {
       name  = ["agentless", "gw", "replica", "set"]
+      internet_access = false
       udp   = []
       tcp   = [3030, 27117, 22]
       cidrs = concat(var.allowed_agentless_gw_cidrs, var.allowed_all_cidrs)
