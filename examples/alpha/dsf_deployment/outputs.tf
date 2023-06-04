@@ -109,7 +109,7 @@ output "dam" {
 
 output "dra" {
   value = var.enable_dsf_dra ? {
-    dsf_admin_server = {
+    admin_server = {
       public_ip    = try(module.dra_admin[0].public_ip, null)
       public_dns   = try(module.dra_admin[0].public_dns, null)
       private_ip   = try(module.dra_admin[0].private_ip, null)
@@ -122,12 +122,12 @@ output "dra" {
         private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
       }
     }
-    dra_analytics = [
+    analytics = [
       for idx, val in module.analytics_server_group : {
-        private_ip  = val.private_ip
-        private_dns = val.private_dns
+        private_ip    = val.private_ip
+        private_dns   = val.private_dns
         archiver_user = val.archiver_user
-        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
   } : null

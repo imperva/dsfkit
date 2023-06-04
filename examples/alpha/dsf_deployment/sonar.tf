@@ -2,6 +2,9 @@ locals {
   database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location   = module.globals.tarball_location
   agentless_gw_count = var.enable_dsf_hub ? var.agentless_gw_count : 0
+
+  hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, try(format("%s/32", module.hub[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
+  agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
 }
 
 module "hub" {
@@ -23,12 +26,12 @@ module "hub" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub_secondary.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_dra_admin_cidrs           = [data.aws_subnet.dra_admin.cidr_block]
+  allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   mx_details = var.enable_dsf_dam ? [{
     name     = module.mx[0].display_name
-    address  = module.mx[0].private_ip
+    address  = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
     username = module.mx[0].web_console_user
     password = local.password
   }] : []
@@ -60,8 +63,8 @@ module "hub_secondary" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_dra_admin_cidrs           = [data.aws_subnet.dra_admin.cidr_block]
+  allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   tags                              = local.tags
   depends_on = [
