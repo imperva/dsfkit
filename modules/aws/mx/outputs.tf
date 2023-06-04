@@ -63,3 +63,7 @@ output "configuration" {
 output "web_console_user" {
   value = "admin"
 }
+
+output "large_scale_mode" {
+  value = var.large_scale_mode
+}
