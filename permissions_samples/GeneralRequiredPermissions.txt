@@ -223,6 +223,27 @@
             }
         },
         {
+            "Sid": "kmsCreatePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "kms:TagResource",
+                "kms:PutKeyPolicy",
+                "kms:CreateKey",
+                "kms:ListResourceTags",
+                "kms:DescribeKey",
+                "kms:GetKeyPolicy",
+                "kms:GetKeyRotationStatus",
+                "kms:ScheduleKeyDeletion",
+                "kms:Encrypt"
+            ],
+            "Resource": "*"
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
             "Sid": "iamNoConditions",
             "Effect": "Allow",
             "Action": [
@@ -246,6 +267,7 @@
                 "iam:PassRole",
                 "iam:PutRolePolicy",
                 "iam:RemoveRoleFromInstanceProfile"
+                "iam:CreateServiceLinkedRole"
             ],
             "Resource": "*"
         },

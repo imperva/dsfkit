@@ -37,7 +37,7 @@ data "aws_security_groups" "dsf_base_sg_in" {
 }
 
 resource "aws_security_group_rule" "example" {
-  for_each    = { for idx, val in [8443, 61617, 8501] : idx => val }
+  for_each    = var.enable_dsf_dra ? { for idx, val in [8443, 61617, 8501] : idx => val } : {}
   type        = "ingress"
   from_port   = each.value
   to_port     = each.value
