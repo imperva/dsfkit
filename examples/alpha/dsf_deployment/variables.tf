@@ -221,7 +221,6 @@ variable "database_cidr" {
   description = "CIDR blocks allowing dummy database access"
 }
 
-
 ##############################
 ####    sonar variables   ####
 ##############################
