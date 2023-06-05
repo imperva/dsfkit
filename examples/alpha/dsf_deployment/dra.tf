@@ -1,5 +1,7 @@
 locals {
   dra_analytics_server_count = var.enable_dsf_dra ? var.dra_analytics_server_count : 0
+
+  dra_admin_cidr_list = compact([data.aws_subnet.dra_admin.cidr_block, try(format("%s/32", module.dra_admin[0].public_ip), null)])
 }
 
 module "dra_admin" {
@@ -14,16 +16,32 @@ module "dra_admin" {
   admin_password                 = local.password
   allowed_web_console_cidrs      = local.workstation_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
-  allowed_hub_cidrs              = [data.aws_subnet.hub.cidr_block]
-  attach_persistent_public_ip    = true
-  ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.private_key_file_path
-    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-  }
+  # allowed_hub_cidrs              = local.hub_cidr_list
+  attach_persistent_public_ip = true
+  key_pair                    = module.key_pair.key_pair.key_pair_name
   tags = local.tags
   depends_on = [
     module.vpc
   ]
+}
+
+# Adding security group rules outside of the module to avoid cyclic dependency
+data "aws_security_groups" "dsf_base_sg_in" {
+  tags = merge(local.tags, { Name = join("-", [local.deployment_name_salted, "dra", "admin", "other"]) })
+  depends_on = [
+    module.dra_admin
+  ]
+}
+
+resource "aws_security_group_rule" "example" {
+  for_each    = var.enable_dsf_dra ? { for idx, val in [8443, 61617, 8501] : idx => val } : {}
+  type        = "ingress"
+  from_port   = each.value
+  to_port     = each.value
+  protocol    = "tcp"
+  cidr_blocks = local.hub_cidr_list
+  # ipv6_cidr_blocks  = [aws_vpc.example.ipv6_cidr_block]
+  security_group_id = data.aws_security_groups.dsf_base_sg_in.ids[0]
 }
 
 module "analytics_server_group" {
@@ -37,11 +55,8 @@ module "analytics_server_group" {
   admin_registration_password = local.password
   admin_password              = local.password
   allowed_admin_server_cidrs  = [data.aws_subnet.dra_admin.cidr_block]
-  allowed_gateways_cidrs      = distinct(concat([data.aws_subnet.agent_gw.cidr_block], [data.aws_subnet.agentless_gw.cidr_block], [data.aws_subnet.agentless_gw_secondary.cidr_block]))
-  ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.private_key_file_path
-    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-  }
+  allowed_gateways_cidrs      = distinct(concat(local.agent_gw_cidr_list, local.agentless_gw_cidr_list))
+  key_pair                    = module.key_pair.key_pair.key_pair_name
   archiver_password       = local.password
   admin_server_private_ip = module.dra_admin[0].private_ip
   admin_server_public_ip  = module.dra_admin[0].public_ip

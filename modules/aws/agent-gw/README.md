@@ -9,6 +9,7 @@ The Gateway performs application and database monitoring, providing full visibil
 * Terraform version between v1.3.1 and v1.4.x, inclusive.
 * An AWS account.
 * Network access to Management server (MX) on port 8083 (API and WebConsole)
+* Access to DAM AMIs. To request access, subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 

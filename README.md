@@ -352,12 +352,20 @@ Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequis
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 4. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
 
-### Prerequisites for DSF deployments which include Sonar
+### Prerequisites for DSF deployments which include Sonar (Including DSF Hub)
 
 1. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
    [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
 
-TODO add sections for DAM and DRA
+### Prerequisites for DSF deployments which include DAM
+
+1. Subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
+
+2. If you wish to deploy demo agent audit sources. You will need access a dedicated AWS S3 bucket owned by Imperva.
+   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
+
+
+TODO add a section for DRA
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -448,7 +456,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), MX, Agent Gateways, DRA Admin and DRA Analytics. TODO continue   
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/alpha/dsfdeployment/dsf_deployment.zip">dsf_deployment.zip</a>
       </td>
@@ -484,7 +492,7 @@ This includes the following version of the DSF sub-products:
 All versions for legacy.</td>
   </tr>
   <tr>
-    <td>DRA</td><td>TODO</td><td>TODO</td>
+    <td>DRA</td><td>v4.11.0.10.0.7</td><td>v4.11.0.10.0.7</td>
   </tr>
 </table>
 
@@ -563,18 +571,18 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
    
    To access the DSF Hub, extract the web console admin password and DSF URL using:
     ```bash
-    terraform output "dsf_hub_web_console"
+    terraform output "web_console_dsf_hub"
     ```
-   To access the MX, extract the web console admin password and MX URL using:
+   To access the DAM, extract the web console admin password and DAM URL using:
     ```bash
-    terraform output "dsf_mx_web_console"
+    terraform output "web_console_dam"
     ```
    To access the DRA Admin, extract the web console admin password and MX URL using:
     ```bash
-    terraform output "dsf_admin_server_web_console"
+    terraform output "web_console_dra"
     ```
 
-8. Access the DSF Hub, MX or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. TODO DRA has no password
+8. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
 
 **The CLI Deployment is now complete and a functioning version of DSF is now available.**
 
@@ -787,20 +795,18 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
     * Scroll to the bottom to find the "State versions created" link which can be helpful to investigate issues.<br>![State Version Created](https://user-images.githubusercontent.com/52969528/212992756-dfd183ac-640e-4891-8875-c1b8683d8d8d.png)
 
     * Scroll up to view the "Outputs" of the run which should be expanded already. Depending on your deployment, 
-      locate the "dsf_hub_web_console", "dsf_mx_web_console" or "dsf_admin_server_web_console" JSON object. Copy the "public_url" or "private_url" and "admin_password" fields' values for later use (TODO DRA has no password), for example: <br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
+      locate the "web_console_dsf_hub", "web_console_dam" or "web_console_dra" JSON object. Copy the "public_url" or "private_url" and "admin_password" fields' values for later use (there is no initial login password for DRA), for example: <br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
    
-    * Enter the "public_url" or "private_url" value you copied into a web browser. For example, enter the "dsf_hub_web_console" URL to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
+    * Enter the "public_url" or "private_url" value you copied into a web browser. For example, enter the "web_console_dsf_hub" URL to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
     * Sonar is installed with a self-signed certificate, as a result, when opening the web page you may see a warning notification. For example, in Google Chrome, click "Proceed to domain.com (unsafe)".
     ![Warning](https://user-images.githubusercontent.com/87799317/203822774-2f4baf1d-a59b-4376-af3a-8654f4d7b22c.png)
 
-    * Enter “admin” into the Username field and the "admin_password" value you copied into the Password field. Click "Sign In". TODO DRA has no password
+    * Enter “admin” into the Username field and the "admin_password" value you copied into the Password field. Click "Sign In".
 
 **The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
 # IAM Users and Roles
-
-TODO divide to Sonar, DAM and DRA
 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSFKit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:

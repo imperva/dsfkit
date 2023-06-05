@@ -49,12 +49,3 @@ variable "hub_proxy_info" {
     proxy_ssh_user             = null
   }
 }
-
-# variable "binaries_location" {
-#   type = object({
-#     s3_bucket = string
-#     s3_key    = string
-#   })
-#   description = "Changing this variable forces a re-federation process"# todo why we need this? 
-#   nullable    = false
-# }

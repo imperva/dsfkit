@@ -27,7 +27,7 @@ locals {
 resource "aws_instance" "dsf_base_instance" {
   ami           = data.aws_ami.selected-ami.image_id
   instance_type = var.instance_type
-  key_name      = var.ssh_key_pair.ssh_public_key_name
+  key_name      = var.key_pair
   user_data     = local.install_script
   root_block_device {
     volume_size           = var.ebs.volume_size
