@@ -16,32 +16,13 @@ module "dra_admin" {
   admin_password                 = local.password
   allowed_web_console_cidrs      = local.workstation_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
-  # allowed_hub_cidrs              = local.hub_cidr_list
+  allowed_hub_cidrs              = local.hub_cidr_list
   attach_persistent_public_ip = true
   key_pair                    = module.key_pair.key_pair.key_pair_name
   tags = local.tags
   depends_on = [
     module.vpc
   ]
-}
-
-# Adding security group rules outside of the module to avoid cyclic dependency
-data "aws_security_groups" "dsf_base_sg_in" {
-  tags = merge(local.tags, { Name = join("-", [local.deployment_name_salted, "dra", "admin", "other"]) })
-  depends_on = [
-    module.dra_admin
-  ]
-}
-
-resource "aws_security_group_rule" "example" {
-  for_each    = var.enable_dsf_dra ? { for idx, val in [8443, 61617, 8501] : idx => val } : {}
-  type        = "ingress"
-  from_port   = each.value
-  to_port     = each.value
-  protocol    = "tcp"
-  cidr_blocks = local.hub_cidr_list
-  # ipv6_cidr_blocks  = [aws_vpc.example.ipv6_cidr_block]
-  security_group_id = data.aws_security_groups.dsf_base_sg_in.ids[0]
 }
 
 module "analytics_server_group" {

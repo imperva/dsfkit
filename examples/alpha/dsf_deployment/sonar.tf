@@ -191,8 +191,7 @@ locals {
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
-  hub_gw_combinations_keys_ = setproduct(local.hubs_keys, keys(local.gws))
-  hub_gw_combinations_keys = [for v in local.hub_gw_combinations_keys_: "${v[0]}-${v[1]}"]
+  hub_gw_combinations_keys = [for v in setproduct(local.hubs_keys, keys(local.gws)): "${v[0]}-${v[1]}"]
 
   hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
 }

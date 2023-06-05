@@ -1,6 +1,6 @@
 locals {
-  public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.dsf_base_instance.public_ip
-  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.dsf_base_instance.public_dns
+  public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : null
+  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : null
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   security_group_ids = concat(
@@ -32,6 +32,7 @@ resource "aws_instance" "dsf_base_instance" {
   instance_type = var.instance_type
   key_name      = var.key_pair
   user_data     = local.install_script
+  associate_public_ip_address = false
   root_block_device {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
