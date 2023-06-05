@@ -1,12 +1,12 @@
 locals {
-  dra_analytics_server_count = var.enable_dsf_dra ? var.dra_analytics_server_count : 0
+  dra_analytics_server_count = var.enable_dra ? var.dra_analytics_server_count : 0
 
   dra_admin_cidr_list = compact([data.aws_subnet.dra_admin.cidr_block, try(format("%s/32", module.dra_admin[0].public_ip), null)])
 }
 
 module "dra_admin" {
   source = "../../../modules/aws/dra-admin"
-  count  = var.enable_dsf_dra ? 1 : 0
+  count  = var.enable_dra ? 1 : 0
 
   friendly_name                  = join("-", [local.deployment_name_salted, "dra", "admin"])
   subnet_id                      = local.dra_admin_subnet_id
