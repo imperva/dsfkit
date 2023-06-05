@@ -3,5 +3,3 @@
 
 A DSF MX and Agent Gateway deployment.
 
-TODO continue
-

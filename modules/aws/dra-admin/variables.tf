@@ -20,14 +20,9 @@ variable "instance_type" {
   description = "EC2 instance type for the Admin Server"
 }
 
-variable "ssh_key_pair" {
-  type = object({
-    ssh_public_key_name       = string
-    ssh_private_key_file_path = string
-  })
-  description = "SSH materials to access machine"
-
-  nullable = false
+variable "key_pair" {
+  type = string
+  description = "key pair"
 }
 
 variable "dra_version" {

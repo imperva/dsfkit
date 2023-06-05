@@ -182,12 +182,12 @@ locals {
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    [module.hub[0]],
-    var.hub_hadr ? [module.hub_secondary[0]] : []
+    var.enable_dsf_dam ? [module.hub[0]] : [],
+    var.enable_dsf_dam && var.hub_hadr ? [module.hub_secondary[0]] : []
   )
   hubs_keys = compact([
-    "hub-primary",
-    var.hub_hadr ? "hub-secondary" : null,
+    var.enable_dsf_dam ? "hub-primary" : null,
+    var.enable_dsf_dam && var.hub_hadr ? "hub-secondary" : null,
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)

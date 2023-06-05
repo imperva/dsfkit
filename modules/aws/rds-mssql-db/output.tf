@@ -30,8 +30,3 @@ output "db_port" {
   value = aws_db_instance.rds_db.port
 }
 
-#output "sql_cmd" {
-# TODO fix command
-#  value = "mysql -h${aws_db_instance.rds_db.address} --user ${local.db_username} mysql --password=${nonsensitive(local.db_password)}"
-#}
-
