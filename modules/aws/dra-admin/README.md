@@ -8,7 +8,6 @@ This Terraform module provisions a DSF DRA Admin instance on AWS as an EC2 insta
 * An AWS account.
 * Access to DRA software. (TODO how to obtain the sw)
 
-
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 
 ## Resources Provisioned

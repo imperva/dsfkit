@@ -8,7 +8,8 @@ This Terraform module sets up a database on an EC2 instance with an Imperva DAM 
 
 * Terraform v0.13 and up
 * An AWS account
-* Access to the Imperva DAM agent software. [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
+* Access to the Imperva DAM agent software. To request access, [click here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
+
 
 ## Resources Provisioned
 
