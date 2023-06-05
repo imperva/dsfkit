@@ -10,7 +10,7 @@ output "dsf_admin_server" {
   }
 }
 
-output "dsf_admin_server_web_console" {
+output "web_console_dra" {
   value = {
     public_url  = try(join("", ["https://", module.dra_admin.public_ip, ":8443/"]), null)
     private_url = try(join("", ["https://", module.dra_admin.private_ip, ":8443/"]), null)

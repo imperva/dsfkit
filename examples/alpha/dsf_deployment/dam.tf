@@ -1,6 +1,8 @@
 locals {
   agent_gw_count     = var.enable_dsf_dam ? var.agent_gw_count : 0
   gateway_group_name = "temporaryGatewayGroup"
+
+  agent_gw_cidr_list = [data.aws_subnet.agent_gw.cidr_block]
 }
 
 module "mx" {
@@ -18,10 +20,10 @@ module "mx" {
   allowed_web_console_and_api_cidrs = local.workstation_cidr
   allowed_agent_gw_cidrs            = [data.aws_subnet.agent_gw.cidr_block]
   allowed_ssh_cidrs                 = local.workstation_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.hub.cidr_block]
+  allowed_hub_cidrs                 = local.hub_cidr_list
 
   hub_details = var.enable_dsf_hub ? {
-    address      = module.hub[0].private_ip
+    address      = coalesce(module.hub[0].public_ip, module.hub[0].private_ip)
     access_token = module.hub[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null

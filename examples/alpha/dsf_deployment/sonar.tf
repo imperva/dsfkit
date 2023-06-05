@@ -2,6 +2,9 @@ locals {
   database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location   = module.globals.tarball_location
   agentless_gw_count = var.enable_dsf_hub ? var.agentless_gw_count : 0
+
+  hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, try(format("%s/32", module.hub[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
+  agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
 }
 
 module "hub" {
@@ -23,12 +26,12 @@ module "hub" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub_secondary.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_dra_admin_cidrs           = [data.aws_subnet.dra_admin.cidr_block]
+  allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   mx_details = var.enable_dsf_dam ? [{
     name     = module.mx[0].display_name
-    address  = module.mx[0].private_ip
+    address  = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
     username = module.mx[0].web_console_user
     password = local.password
   }] : []
@@ -60,8 +63,8 @@ module "hub_secondary" {
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_dra_admin_cidrs           = [data.aws_subnet.dra_admin.cidr_block]
+  allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   tags                              = local.tags
   depends_on = [
@@ -173,31 +176,40 @@ module "agentless_gw_group_hadr" {
 }
 
 locals {
-  hubs = concat(
-    [for idx, val in module.hub : val],
-    [for idx, val in module.hub_secondary : val]
+  gws = merge(
+    {for idx, val in module.agentless_gw_group : "agentless-gw-${idx}" => val},
+    {for idx, val in module.agentless_gw_group_secondary : "agentless-gw-secondary-${idx}" => val},
   )
-  agentless_gws = concat(
-    [for idx, val in module.agentless_gw_group : val],
-    [for idx, val in module.agentless_gw_group_secondary : val]
+  gws_set = values(local.gws)
+  hubs_set = concat(
+    [module.hub[0]],
+    var.hub_hadr ? [module.hub_secondary[0]] : []
   )
-  hub_gw_combinations = setproduct(local.hubs, local.agentless_gws)
+  hubs_keys = compact([
+    "hub-primary",
+    var.hub_hadr ? "hub-secondary" : null,
+  ])
+
+  hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
+  hub_gw_combinations_keys_ = setproduct(local.hubs_keys, keys(local.gws))
+  hub_gw_combinations_keys = [for v in local.hub_gw_combinations_keys_: "${v[0]}-${v[1]}"]
+
+  hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
 }
 
 module "federation" {
-  source  = "imperva/dsf-federation/null"
-  version = "1.4.6" # latest release tag
-  count   = length(local.hub_gw_combinations)
+  source = "../../../modules/null/federation"
+  for_each = local.hub_gw_combinations
 
   gw_info = {
-    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
+    gw_ip_address           = each.value[1].private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
-    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
+    gw_ssh_user             = each.value[1].ssh_user
   }
   hub_info = {
-    hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
+    hub_ip_address           = each.value[0].public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
-    hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
+    hub_ssh_user             = each.value[0].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub[0].public_ip

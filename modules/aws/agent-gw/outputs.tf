@@ -52,3 +52,7 @@ output "instance_id" {
 output "gateway_group_name" {
   value = local.gateway_group_name
 }
+
+output "large_scale_mode" {
+  value = var.large_scale_mode
+}

@@ -132,6 +132,17 @@ variable "agent_count" {
   description = "The agent sources to provision. Each with a database and a monitoring agent"
 }
 
+variable "agent_source_db" {
+  type        = string
+  default     = "PostgreSql"
+  description = "Agent DB type"
+}
+
+variable "agent_source_os" {
+  type        = string
+  default     = "Ubuntu"
+  description = "Agent OS type"
+}
 
 ##############################
 ####    sonar variables   ####
@@ -209,7 +220,6 @@ variable "database_cidr" {
   default     = null # workstation ip
   description = "CIDR blocks allowing dummy database access"
 }
-
 
 ##############################
 ####    sonar variables   ####

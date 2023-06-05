@@ -9,6 +9,9 @@ module "agent_monitored_db" {
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
 
+  os_type = var.agent_source_os
+  db_type = var.agent_source_db
+
   subnet_id         = local.agent_gw_subnet_id
   key_pair          = module.key_pair.key_pair.key_pair_name
   allowed_ssh_cidrs = [format("%s/32", module.mx[0].private_ip)]
