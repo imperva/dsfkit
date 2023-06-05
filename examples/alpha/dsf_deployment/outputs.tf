@@ -78,7 +78,7 @@ output "sonar" {
 }
 
 output "dam" {
-  value = var.enable_dsf_dam ? {
+  value = var.enable_dam ? {
     mx = {
       public_ip        = try(module.mx[0].public_ip, null)
       public_dns       = try(module.mx[0].public_dns, null)
@@ -110,7 +110,7 @@ output "dam" {
 }
 
 output "dra" {
-  value = var.enable_dsf_dra ? {
+  value = var.enable_dra ? {
     admin_server = {
       public_ip    = try(module.dra_admin[0].public_ip, null)
       public_dns   = try(module.dra_admin[0].public_dns, null)

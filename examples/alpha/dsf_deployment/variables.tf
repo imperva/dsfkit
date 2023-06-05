@@ -7,37 +7,37 @@ variable "deployment_name" {
 variable "enable_dsf_hub" {
   type        = bool
   default     = true
-  description = "Provision DSF Hub. Required if you wish to provision Agentless Gateways"
+  description = "Provision DSF Hub and Agentless Gateways (formerly Sonar). To provision only a DSF Hub, set agentless_gw_count to 0."
 }
 
-variable "enable_dsf_dam" {
+variable "enable_dam" {
   type        = bool
   default     = true
-  description = "Provision DSF MX. Required if you wish to provision Agent Gateways"
+  description = "Provision DAM MX and Agent Gateways"
 }
 
-variable "enable_dsf_dra" {
+variable "enable_dra" {
   type        = bool
   default     = true
-  description = "Provision DSF DRA. Required if you wish to provision DRA analytics"
+  description = "Provision DRA Admin and Analytics"
 }
 
 variable "agentless_gw_count" {
   type        = number
   default     = 1
-  description = "Number of DSF Agentless Gateways. Provisioning Agentless Gateways requires DSF HUB"
+  description = "Number of Agentless Gateways. Provisioning Agentless Gateways requires the enable_dsf_hub variable to be set to 'true'."
 }
 
 variable "agent_gw_count" {
   type        = number
-  default     = 2 # Minimum amount for a cluster
-  description = "Number of DSF Agent Gateways. Provisioning Agent Gateways requires DSF MX"
+  default     = 2 # Minimum count for a cluster
+  description = "Number of Agent Gateways. Provisioning Agent Gateways requires the enable_dam variable to be set to 'true'."
 }
 
 variable "dra_analytics_server_count" {
   type        = number
   default     = 1
-  description = "Number of DRA analytics servers. Provisioning Agentless Gateways requires a DRA admin"
+  description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
 }
 
 variable "password" {

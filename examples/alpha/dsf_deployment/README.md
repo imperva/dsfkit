@@ -30,9 +30,9 @@ To deploy specific modules, you can customize the deployment by setting the corr
 
 To deploy only the DAM module, set the following variables in your Terraform configuration:
 ```
-enable_dsf_dam = true
+enable_dam = true
 enable_dsf_hub = false
-enable_dsf_dra = false
+enable_dra = false
 ```
 
 This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
@@ -41,9 +41,9 @@ This configuration will enable the DAM module while disabling the DSF Hub and DR
 
 To deploy only the DRA module, set the following variables in your Terraform configuration:
 ```
-enable_dsf_dam = false
+enable_dam = false
 enable_dsf_hub = false
-enable_dsf_dra = true
+enable_dra = true
 ```
 
 This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
@@ -52,9 +52,9 @@ This configuration will enable the DRA module while disabling the DSF Hub and DA
 
 To deploy only the Sonar module, set the following variables in your Terraform configuration:
 ```
-enable_dsf_dam = false
+enable_dam = false
 enable_dsf_hub = true
-enable_dsf_dra = false
+enable_dra = false
 ```
 
 This configuration will enable the Sonar module, including the DSF Hub, while disabling the DAM and DRA modules.
@@ -67,8 +67,8 @@ Several variables in the `variables.tf` file are important for configuring the d
 
 ### Products
 - `enable_dsf_hub`: Enable DSF Hub module
-- `enable_dsf_dam`: Enable DAM module
-- `enable_dsf_dra`: Enable DRA module
+- `enable_dam`: Enable DAM module
+- `enable_dra`: Enable DRA module
 
 ### Server Count
 - `dra_analytics_server_count`: Number of DRA analytic servers
