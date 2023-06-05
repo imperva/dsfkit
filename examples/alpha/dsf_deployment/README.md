@@ -22,6 +22,46 @@ The deployment is modular and allows users to deploy one or more of the followin
    - Agent audit sources (EC2 instances)
    - Agentless audit sources (RDS instances)
 
+### Deploying Specific Modules
+
+To deploy specific modules, you can customize the deployment by setting the corresponding variables in your Terraform configuration. Here are the instructions to deploy the following specific modules:
+
+#### 1. DAM Only Deployment
+
+To deploy only the DAM module, set the following variables in your Terraform configuration:
+```
+enable_dsf_dam = true
+enable_dsf_hub = false
+enable_dsf_dra = false
+```
+
+This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
+
+#### 2. DRA Only Deployment
+
+To deploy only the DRA module, set the following variables in your Terraform configuration:
+```
+enable_dsf_dam = false
+enable_dsf_hub = false
+enable_dsf_dra = true
+```
+
+This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
+
+#### 3. Sonar Only Deployment
+
+To deploy only the Sonar module, set the following variables in your Terraform configuration:
+```
+enable_dsf_dam = false
+enable_dsf_hub = true
+enable_dsf_dra = false
+```
+
+This configuration will enable the Sonar module, including the DSF Hub, while disabling the DAM and DRA modules.
+
+Feel free to customize your deployment by setting the appropriate variables based on your requirements.
+
+
 ## Variables
 Several variables in the `variables.tf` file are important for configuring the deployment. The following variables dictate the deployment content and should be paid more attention to:
 
