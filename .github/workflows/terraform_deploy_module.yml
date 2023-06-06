@@ -53,14 +53,14 @@ jobs:
             hidden_submodule: "aws/dam-base-instance"
           - source_module: "aws/db-with-agent"
             destination_repo: "terraform-aws-dsf-db-with-agent"
+          - source_module: "null/agent-gw-cluster-setup"
+            destination_repo: "terraform-null-agent-gw-cluster-setup"
 
           # DRA
           - source_module: "aws/dra-admin"
             destination_repo: "terraform-aws-dsf-dra-admin"
           - source_module: "aws/dra-analytics"
             destination_repo: "terraform-aws-dsf-dra-analytics"
-          - source_module: "null/agent-gw-cluster-setup"
-            destination_repo: "terraform-null-agent-gw-cluster-setup"
 
 
           # Globals
