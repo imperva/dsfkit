@@ -1,4 +1,4 @@
-name: 'ADM/DSF POC CLI'
+name: 'DAM/DSF POC CLI'
 
 on:
   workflow_call:
