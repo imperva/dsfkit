@@ -26,8 +26,8 @@ jobs:
         shell: bash
 
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         include:
           # Sonar
 #          - source_module: "aws/hub"
