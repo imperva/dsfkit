@@ -29,7 +29,6 @@ resource "aws_instance" "dsf_base_instance" {
   instance_type = var.instance_type
   key_name      = var.key_pair
   user_data     = local.install_script
-  associate_public_ip_address = false
   root_block_device {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type

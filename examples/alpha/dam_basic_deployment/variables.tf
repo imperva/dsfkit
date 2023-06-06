@@ -80,7 +80,7 @@ variable "license_file" {
     condition     = fileexists(var.license_file)
     error_message = "File doesn't exist"
   }
-  description = "License file"
+  description = "DAM license file path"
 }
 
 variable "subnet_ids" {

@@ -6,7 +6,8 @@ locals {
 }
 
 module "mx" {
-  source  = "../../../modules/aws/mx"
+  source  = "imperva/dsf-mx/aws"
+  version = "1.4.6" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
@@ -22,7 +23,7 @@ module "mx" {
   allowed_hub_cidrs                 = local.hub_cidr_list
 
   hub_details = var.enable_dsf_hub ? {
-    address      = coalesce(module.hub[0].public_ip, module.hub[0].private_ip)
+    address      = coalesce(module.hub[0].public_dns, module.hub[0].private_dns)
     access_token = module.hub[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null
@@ -37,7 +38,8 @@ module "mx" {
 }
 
 module "agent_gw" {
-  source  = "../../../modules/aws/agent-gw"
+  source  = "imperva/dsf-agent-gw/aws"
+  version = "1.4.6" # latest release tag
   count   = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])

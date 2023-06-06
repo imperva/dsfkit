@@ -117,7 +117,7 @@ variable "dam_version" {
 
 variable "license_file" {
   type        = string
-  description = "License file"
+  description = "DAM license file path"
 }
 
 variable "large_scale_mode" {
