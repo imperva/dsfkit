@@ -1,7 +1,7 @@
 # Installation - Agentless Gateways Multi Account Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-A DSF Hub with HADR setup and an Agentless Gateway with HADR setup (formerly Sonar) deployment in multi accounts and multi regions.
+A DSF Hub and Agentless Gateway (formerly Sonar) deployment with Hub HADR and Agentless Gateway HADR; deployed in multiple accounts and multiple regions.
 
 This deployment consists of:
 
