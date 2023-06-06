@@ -1,6 +1,7 @@
 locals {
-  agent_gw_count     = var.enable_dam ? var.agent_gw_count : 0
-  gateway_group_name = "temporaryGatewayGroup"
+  agent_gw_count              = var.enable_dam ? var.agent_gw_count : 0
+  gateway_group_name          = "temporaryGatewayGroup"
+  create_agent_gw_cluster     = local.agent_gw_count >= 2 ? 1 : 0
 
   agent_gw_cidr_list = [data.aws_subnet.agent_gw.cidr_block]
 }
@@ -64,7 +65,7 @@ module "agent_gw" {
 
 module "agent_gw_cluster_setup" {
   source = "../../../modules/null/agent-gw-cluster-setup"
-  count  = local.agent_gw_count >= 2 ? 1 : 0
+  count  = local.create_agent_gw_cluster
 
   cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name

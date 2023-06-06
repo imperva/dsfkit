@@ -1,5 +1,5 @@
 locals {
-  agent_count = local.agent_gw_count > 0 ? var.agent_count : 0
+  agent_count = local.create_agent_gw_cluster > 0 ? var.agent_count : 0
 }
 
 module "agent_monitored_db" {
@@ -23,7 +23,4 @@ module "agent_monitored_db" {
     site               = module.mx[0].configuration.default_site
   }
   tags = local.tags
-  depends_on = [
-    module.agent_gw_cluster_setup
-  ]
 }
