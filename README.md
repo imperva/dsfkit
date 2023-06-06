@@ -476,7 +476,7 @@ Restrictions on modules may apply</td>
   <tr>
     <td>DAM</td><td>14.11.1.10</td><td>14.11.1.10
 
-14.7.1.60 (LTS)
+14.7.x.y (LTS)
 
   </tr>
   <tr>
