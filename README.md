@@ -134,16 +134,16 @@ Latest Supported Terraform Version: 1.4.x. Using a higher version may result in 
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Open Terraform Cloud Account - Request Form</a>
+   <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Requst access to Terraform Cloud account - Request Form</a>
    </td>
-   <td>Grants access for a specific e-mail address to Imperva's Terraform Cloud account.
-       Required for <a href="https://github.com/imperva/dsfkit/tree/1.4.6#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>
+   <td>Grants access for a specific e-mail address to eDSF Kit's Terraform Cloud account.
+       Required for <a href="https://github.com/imperva/dsfkit/tree/1.4.6#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>.
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform">Open TAR AWS S3 Bucket - Request Form</a>
+   <td><a href="https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs">Request access to DSF installation software - Request Form</a>
    </td>
-   <td> Grants access for a specific AWS account to Imperva's AWS S3 bucket where Sonar's installation tarball can be downloaded
+   <td> Grants access for a specific AWS account to the DSF installation software.
    </td>
   </tr>
 </table>
@@ -455,6 +455,7 @@ Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_I
 ## Installation Software Location and Versioning
 
 When using eDSF Kit there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
+In order to be able to download the installation software during deployment, you must request access beforehand. See [Prerequisites](#prerequisites).
 
 The latest DSF version, Q1 2023, is recommended.
 This includes the following version of the DSF sub-products:
@@ -661,9 +662,6 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 **The Installer Machine Deployment is now completed and a functioning version of DSF is now available.**
 
 ## Terraform Cloud Deployment Mode
-
-As mentioned in the [Prerequisites](#prerequisites), the DSF deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
-[Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
 
 This deployment mode uses the Terraform Cloud service, which allows deploying and managing deployments via a dedicated UI. Deploying the environment is easily triggered by clicking a button within the Terraform interface, which then pulls the required code from the Imperva GitHub repository and automatically runs the scripts remotely. 
 
