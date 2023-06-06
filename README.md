@@ -345,27 +345,11 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
-### Prerequisites for all DSF deployments
-
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
-2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
-3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-4. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
-
-### Prerequisites for DSF deployments which include Sonar (Including DSF Hub)
-
-1. The deployment requires access to the tarball containing the Sonar binaries. The tarball is located in a dedicated AWS S3 bucket owned by Imperva.
-   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
-
-### Prerequisites for DSF deployments which include DAM
-
-1. Subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
-
-2. If you wish to deploy demo agent audit sources. You will need access a dedicated AWS S3 bucket owned by Imperva.
-   [Click here to request access to download this file](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
-
-
-TODO add a section for DRA
+2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
+3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
+4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+5. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
