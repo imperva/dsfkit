@@ -468,9 +468,9 @@ The examples make use of the building blocks of the DSFKit - the modules, which 
 
 Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to suit your needs. 
 
-## Binaries Location and Versioning
+## Installation Software Location and Versioning
 
-When using DSFKit there is no need to manually download the DSF binaries, DSFKit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
+When using eDSF Kit there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
 
 The latest DSF version, Q1 2023, is recommended.
 This includes the following version of the DSF sub-products:
@@ -484,15 +484,18 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>v4.11</td><td>4.9 and higher</td>
-  </tr>
-  <tr>
-    <td>DAM</td><td>v14.11.1.10</td><td>14.6 and up for integration with Sonar. 
+    <td>Sonar</td><td>4.11</td><td>4.9 and up 
 
-All versions for legacy.</td>
+Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DRA</td><td>v4.11.0.10.0.7</td><td>v4.11.0.10.0.7</td>
+    <td>DAM</td><td>14.11.1.10</td><td>14.11.1.10
+
+14.7.1.60 (LTS)
+
+  </tr>
+  <tr>
+    <td>DRA</td><td>4.11.0.10.0.7</td><td>4.11.0.10.0.7</td>
   </tr>
 </table>
 
