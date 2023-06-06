@@ -94,6 +94,10 @@ jobs:
     - name: Setup jq
       uses: sergeysova/jq-action@v2
 
+    - name: Set DB Types To Onboard
+      run: |
+        echo "TF_VAR_db_types_to_onboard=[\"RDS MySQL\", \"RDS MsSQL\"]" >> $GITHUB_ENV
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
