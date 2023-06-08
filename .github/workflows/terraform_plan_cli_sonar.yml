@@ -56,7 +56,7 @@ jobs:
           - name: Sonar Single Account
             example: ./examples/installation/sonar_single_account_deployment
           - name: Sonar Multi Account
-            example: ./examples/installation/multi_account_deployment
+            example: ./examples/installation/sonar_multi_account_deployment
 
     name: '${{ matrix.name }}'
     env:

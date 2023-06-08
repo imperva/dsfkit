@@ -25,7 +25,7 @@ jobs:
       matrix:
         include:
           - name: single account
-            example_dir: ./examples/installation/multi_account_deployment
+            example_dir: ./examples/installation/sonar_multi_account_deployment
 
 
     name: '${{ matrix.name }}'

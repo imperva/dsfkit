@@ -406,13 +406,13 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/sonar_multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/multi_account_deployment/multi_account_deployment.zip">multi_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment.zip">sonar_multi_account_deployment.zip</a>
       </td>
    </tr>
    <tr>
@@ -633,7 +633,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/multi_account_deployment/multi_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment.zip
     
     or
  
