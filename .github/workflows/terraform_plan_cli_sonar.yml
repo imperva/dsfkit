@@ -50,9 +50,9 @@ jobs:
       matrix:
         include:
           - name: Sonar Basic
-            example: ./examples/poc/basic_deployment
+            example: ./examples/poc/sonar_basic_deployment
           - name: Sonar HADR
-            example: ./examples/poc/hadr_deployment
+            example: ./examples/poc/sonar_hadr_deployment
           - name: Sonar Single Account
             example: ./examples/installation/single_account_deployment
           - name: Sonar Multi Account

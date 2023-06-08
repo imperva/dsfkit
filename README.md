@@ -376,23 +376,23 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/README.md">Sonar Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/hadr_deployment/README.md">Sonar HADR Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_hadr_deployment/README.md">Sonar HADR Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/hadr_deployment/hadr_deployment.zip">hadr_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment.zip">sonar_hadr_deployment.zip</a>
       </td>
    </tr>
    <tr>
@@ -484,7 +484,7 @@ Restrictions on modules may apply</td>
   </tr>
 </table>
 
-**For example**: examples/poc/basic_deployment/variables.tf
+**For example**: examples/poc/sonar_basic_deployment/variables.tf
    ```terraform
    variable "sonar_version" {
        type    = string
@@ -511,12 +511,12 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
    ```bash
-   unzip basic_deployment.zip
+   unzip sonar_basic_deployment.zip
    
    >>>> Change this command depending on the example you chose
    ```
@@ -524,7 +524,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 3. In CLI, navigate to the directory which contains the Terraform files.
    For example:
    ```bash
-   cd basic_deployment
+   cd sonar_basic_deployment
    
    >>>> Change this command depending on the example you chose
    ```
@@ -618,14 +618,14 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     For example: `chmode 400 a_key_pair.pem`
 
 
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/basic_deployment/basic_deployment.zip">basic_deployment.zip</a>.
+11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.6">DSFKit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
     Run:
     ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/basic_deployment/basic_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip
     
     or
     
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/hadr_deployment/hadr_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment.zip
     
     or
  
@@ -650,7 +650,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 
 12. Unzip the zip file:
     ```bash
-    unzip basic_deployment.zip
+    unzip sonar_basic_deployment.zip
 
     >>>> Change this command depending on the example you chose
     ```
@@ -695,7 +695,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/52969528/212977394-60f79882-008b-44ef-bb05-9af629b1a88a.png)
 
-    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://user-images.githubusercontent.com/52969528/212981545-31063817-e9ef-43e4-bb9c-b4a8e5391568.png)
+    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/sonar_basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://user-images.githubusercontent.com/52969528/212981545-31063817-e9ef-43e4-bb9c-b4a8e5391568.png)
       ```
       >>>> Change the directory in the above screenshot depending on the example you chose  
       ```
@@ -816,7 +816,7 @@ In case of failure, the Terraform may have deployed some resources before failin
 1. Navigate to the directory which contains the Terraform files.
    For example:
    ```bash
-   cd basic_deployment
+   cd sonar_basic_deployment
    
    >>>> Change this command depending on the example you chose
    ```
