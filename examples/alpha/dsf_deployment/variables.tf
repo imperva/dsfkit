@@ -121,9 +121,19 @@ variable "license_file" {
 }
 
 variable "large_scale_mode" {
-  type        = bool
+  type        = object({
+    mx = bool
+    agent_gw = bool
+  })
   description = "DAM large scale mode"
-  default     = true
+  validation {
+    condition     = var.large_scale_mode.mx == false || var.large_scale_mode.agent_gw == true
+    error_message = "MX large scale mode requires setting large scale mode in the Agentless Gateway as well"
+  }
+  default     = {
+    mx = false
+    agent_gw = true
+  }
 }
 
 variable "agent_count" {
