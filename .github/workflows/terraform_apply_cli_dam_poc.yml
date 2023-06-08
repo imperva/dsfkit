@@ -166,6 +166,7 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
 
     - name: Terraform Output
+      if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Terraform Destroy
