@@ -202,6 +202,7 @@ jobs:
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
 
       - name: Terraform Output
+        if: always()
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: 54.179.25.83
