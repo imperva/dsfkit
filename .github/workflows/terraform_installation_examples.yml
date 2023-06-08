@@ -45,7 +45,7 @@ jobs:
       matrix:
         include:
           - name: single account
-            example_dir: examples/installation/single_account_deployment
+            example_dir: examples/installation/sonar_single_account_deployment
             target_dir: single_account
 
     name: '${{ matrix.name }} ${{ inputs.branch }}'

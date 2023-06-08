@@ -396,13 +396,13 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/single_account_deployment/README.md">Sonar Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/single_account_deployment/single_account_deployment.zip">single_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment.zip">sonar_single_account_deployment.zip</a>
       </td>
    </tr>
    <tr>
@@ -629,7 +629,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/single_account_deployment/single_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.4.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment.zip
     
     or
  
@@ -865,7 +865,7 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 Information about additional topics can be found in specific examples' READMEs, when relevant.
 
-For example:  <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/single_account_deployment/README.md">Single Account Deployment</a>
+For example:  <a href="https://github.com/imperva/dsfkit/tree/1.4.6/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
 
 These topics include:
 - Storing Terraform state in S3 bucket
