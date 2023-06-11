@@ -11,7 +11,7 @@
 # in the key manager under a different unique name. Consider optimizing in the
 # future.
 #
-# TODO the private key in stored unencrypted in the TF state file - handle this
+# TODO the private key is stored unencrypted in the TF state file - handle this
 # See Security notice:
 # https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key
 ###################################################################################
