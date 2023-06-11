@@ -33,7 +33,7 @@ The following input variables are **required**:
 
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
-* `web_console_admin_password`: Admin password
+* `password`: Admin password
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary DSF Hub output. This variable must only be defined for the secondary DSF Hub.
@@ -68,7 +68,7 @@ module "dsf_hub" {
 
   allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 
-  web_console_admin_password    = random_password.pass.result
+  password    = random_password.pass.result
   ebs                           = {
     disk_size        = 1000
     provisioned_iops = 0

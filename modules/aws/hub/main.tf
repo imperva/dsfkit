@@ -53,8 +53,8 @@ module "hub_instance" {
   attach_persistent_public_ip            = var.attach_persistent_public_ip
   use_public_ip                          = var.use_public_ip
   additional_install_parameters          = var.additional_install_parameters
-  web_console_admin_password             = var.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
+  password             = var.password
+  password_secret_name = var.password_secret_name
   generate_access_tokens                 = var.generate_access_tokens
   ssh_key_path                           = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                      = var.binaries_location

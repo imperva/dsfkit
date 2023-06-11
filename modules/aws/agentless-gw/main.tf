@@ -42,8 +42,8 @@ module "gw_instance" {
   ami                                    = var.ami
   instance_profile_name                  = var.instance_profile_name
   additional_install_parameters          = var.additional_install_parameters
-  web_console_admin_password             = var.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
+  password             = var.password
+  password_secret_name = var.password_secret_name
   ssh_key_path                           = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                      = var.binaries_location
   hub_sonarw_public_key                  = var.hub_sonarw_public_key

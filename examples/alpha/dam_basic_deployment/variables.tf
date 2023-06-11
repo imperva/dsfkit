@@ -30,11 +30,10 @@ variable "agent_count" {
   description = "The number of compute instances to provision, each with a database and a monitoring agent"
 }
 
-variable "web_console_admin_password" {
-  default   = null # Random
+variable "password" {
   sensitive = true
   type      = string
-  # default     = null # Random
+  default   = null # Random
   description = "Admin password (Randomly generated if not set)"
 }
 

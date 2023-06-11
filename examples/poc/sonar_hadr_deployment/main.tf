@@ -30,7 +30,7 @@ locals {
 }
 
 locals {
-  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
+  password = var.password != null ? var.password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
@@ -93,7 +93,7 @@ module "hub_primary" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                   = local.primary_hub_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.web_console_admin_password
+  password  = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -119,7 +119,7 @@ module "hub_secondary" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                   = local.secondary_hub_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.web_console_admin_password
+  password  = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -149,7 +149,7 @@ module "agentless_gw_group_primary" {
   subnet_id                  = local.primary_gws_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  password = local.password
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -178,7 +178,7 @@ module "agentless_gw_group_secondary" {
   subnet_id                  = local.secondary_gws_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  password = local.password
   hub_sonarw_public_key      = module.hub_primary.sonarw_public_key
   hadr_secondary_node        = true
   sonarw_public_key          = module.agentless_gw_group_primary[count.index].sonarw_public_key

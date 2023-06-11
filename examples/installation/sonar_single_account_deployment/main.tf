@@ -21,7 +21,7 @@ locals {
 }
 
 locals {
-  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
+  password = var.password != null ? var.password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
@@ -80,8 +80,8 @@ module "hub_primary" {
   subnet_id                              = var.subnet_hub_primary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location
-  web_console_admin_password             = local.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
+  password             = local.password
+  password_secret_name = var.password_secret_name
   instance_type                          = var.hub_instance_type
   ebs                                    = var.hub_ebs_details
   ami                                    = var.ami
@@ -109,8 +109,8 @@ module "hub_secondary" {
   subnet_id                              = var.subnet_hub_secondary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location
-  web_console_admin_password             = local.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
+  password             = local.password
+  password_secret_name = var.password_secret_name
   instance_type                          = var.hub_instance_type
   ebs                                    = var.hub_ebs_details
   ami                                    = var.ami
@@ -144,8 +144,8 @@ module "agentless_gw_group" {
   instance_type                          = var.gw_instance_type
   ebs                                    = var.gw_group_ebs_details
   binaries_location                      = local.tarball_location
-  web_console_admin_password             = local.web_console_admin_password
-  web_console_admin_password_secret_name = var.web_console_admin_password_secret_name
+  password             = local.password
+  password_secret_name = var.password_secret_name
   hub_sonarw_public_key                  = module.hub_primary.sonarw_public_key
   ami                                    = var.ami
   ssh_key_pair = {
