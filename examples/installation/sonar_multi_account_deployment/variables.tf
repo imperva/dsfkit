@@ -234,7 +234,7 @@ variable "hub_primary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -251,7 +251,7 @@ variable "hub_secondary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -268,7 +268,7 @@ variable "gw_primary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -285,7 +285,7 @@ variable "gw_secondary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
