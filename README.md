@@ -318,6 +318,17 @@ The following table lists the released DSFKit versions, their release date and a
       <br>4. Alpha deployment example of full DSF - Sonar, DAM and DRA. It can be used with caution.
    </td>
   </tr>
+  <tr>
+   <td>11 June 2023
+   </td>
+   <td>1.4.7
+   </td>
+   <td>
+      1. Triggered the first replication cycle as part of an HADR setup
+      <br>2. Added LVM support (DSF Hub and Agentless GW)
+      <br>3. Fixed error while onboarding MSSQL RDS
+   </td>
+  </tr>
 
 </table>
 
