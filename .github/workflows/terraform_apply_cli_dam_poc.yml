@@ -140,6 +140,7 @@ jobs:
         MY_SECRET: ${{ vars.DAM_LICENSE }}
       run: |
         echo "${{ vars.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
+        cat $EXAMPLE_DIR/license.mprv
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
