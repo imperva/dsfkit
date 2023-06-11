@@ -29,7 +29,7 @@ module "mx" {
     port         = 8443
   } : null
   attach_persistent_public_ip = true
-  large_scale_mode            = var.large_scale_mode
+  large_scale_mode            = var.large_scale_mode.mx
 
   create_service_group = var.agent_count > 0 ? true : false
   tags                 = local.tags
@@ -55,7 +55,7 @@ module "agent_gw" {
   allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
   management_server_host_for_registration = module.mx[0].private_ip
   management_server_host_for_api_access   = module.mx[0].public_ip
-  large_scale_mode                        = var.large_scale_mode
+  large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
   depends_on = [

@@ -41,8 +41,8 @@ variable "database_cidr" {
 
 variable "workstation_cidr" {
   type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing hub ssh and debugging access"
+  default     = null
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "additional_install_parameters" {
