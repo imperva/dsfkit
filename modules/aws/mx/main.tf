@@ -6,32 +6,32 @@ locals {
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
   security_groups_config = [ # https://docs.imperva.com/bundle/v14.11-dam-on-amazon-aws-byol-installation-guide/page/78113.htm
     {
-      name  = ["web", "console", "and", "api"]
+      name            = ["web", "console", "and", "api"]
       internet_access = false
-      udp   = []
-      tcp   = [8083]
-      cidrs = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [8083]
+      cidrs           = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["other"]
+      name            = ["other"]
       internet_access = true
-      udp   = []
-      tcp   = [22]
-      cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [22]
+      cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["agent", "gateway"]
+      name            = ["agent", "gateway"]
       internet_access = false
-      udp   = []
-      tcp   = [8083, 8085]
-      cidrs = concat(var.allowed_agent_gw_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [8083, 8085]
+      cidrs           = concat(var.allowed_agent_gw_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["hub"]
+      name            = ["hub"]
       internet_access = false
-      udp   = []
-      tcp   = [8083]
-      cidrs = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [8083]
+      cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     # {
     #   name = ["som"]

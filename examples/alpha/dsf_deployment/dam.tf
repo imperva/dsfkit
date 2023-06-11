@@ -1,14 +1,14 @@
 locals {
-  agent_gw_count              = var.enable_dam ? var.agent_gw_count : 0
-  gateway_group_name          = "temporaryGatewayGroup"
-  create_agent_gw_cluster     = local.agent_gw_count >= 2 ? 1 : 0
+  agent_gw_count          = var.enable_dam ? var.agent_gw_count : 0
+  gateway_group_name      = "temporaryGatewayGroup"
+  create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
 
   agent_gw_cidr_list = [data.aws_subnet.agent_gw.cidr_block]
 }
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
@@ -32,7 +32,7 @@ module "mx" {
   large_scale_mode            = var.large_scale_mode.mx
 
   create_server_group = var.agent_count > 0 ? true : false
-  tags                 = local.tags
+  tags                = local.tags
   depends_on = [
     module.vpc
   ]
@@ -40,7 +40,7 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])

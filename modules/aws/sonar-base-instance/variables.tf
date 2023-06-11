@@ -28,11 +28,11 @@ variable "resource_type" {
 variable "security_groups_config" {
   description = "Security groups config"
   type = list(object({
-    name  = list(string)
-    internet_access  = bool
-    udp   = list(number)
-    tcp   = list(number)
-    cidrs = list(string)
+    name            = list(string)
+    internet_access = bool
+    udp             = list(number)
+    tcp             = list(number)
+    cidrs           = list(string)
   }))
 }
 

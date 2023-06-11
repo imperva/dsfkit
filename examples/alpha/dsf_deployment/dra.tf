@@ -17,9 +17,9 @@ module "dra_admin" {
   allowed_web_console_cidrs      = local.workstation_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs              = local.hub_cidr_list
-  attach_persistent_public_ip = true
-  key_pair                    = module.key_pair.key_pair.key_pair_name
-  tags = local.tags
+  attach_persistent_public_ip    = true
+  key_pair                       = module.key_pair.key_pair.key_pair_name
+  tags                           = local.tags
   depends_on = [
     module.vpc
   ]
@@ -38,10 +38,10 @@ module "analytics_server_group" {
   allowed_admin_server_cidrs  = [data.aws_subnet.dra_admin.cidr_block]
   allowed_gateways_cidrs      = distinct(concat(local.agent_gw_cidr_list, local.agentless_gw_cidr_list))
   key_pair                    = module.key_pair.key_pair.key_pair_name
-  archiver_password       = local.password
-  admin_server_private_ip = module.dra_admin[0].private_ip
-  admin_server_public_ip  = module.dra_admin[0].public_ip
-  tags                    = local.tags
+  archiver_password           = local.password
+  admin_server_private_ip     = module.dra_admin[0].private_ip
+  admin_server_public_ip      = module.dra_admin[0].public_ip
+  tags                        = local.tags
   depends_on = [
     module.vpc
   ]

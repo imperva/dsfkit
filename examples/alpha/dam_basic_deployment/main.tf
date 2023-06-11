@@ -3,14 +3,14 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   tags = local.tags
 }
 
 module "key_pair" {
   source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
@@ -18,15 +18,15 @@ module "key_pair" {
 }
 
 locals {
-  workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-  deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
-  password = var.password != null ? var.password : module.globals.random_password
-  workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  mx_subnet_id               = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
-  gw_subnet_id               = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
-  gateway_group_name         = "gatewayGroup1"
-  cluster_name               = "cluster1"
+  workstation_cidr_24    = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+  password               = var.password != null ? var.password : module.globals.random_password
+  workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
+  tags                   = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  mx_subnet_id           = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
+  gw_subnet_id           = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  gateway_group_name     = "gatewayGroup1"
+  cluster_name           = "cluster1"
 }
 
 data "aws_subnet" "mx" {
@@ -67,7 +67,7 @@ module "vpc" {
 ##############################
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -84,7 +84,7 @@ module "mx" {
   large_scale_mode                  = var.large_scale_mode
 
   create_server_group = var.agent_count > 0 ? true : false
-  tags                 = local.tags
+  tags                = local.tags
   depends_on = [
     module.vpc
   ]
@@ -92,7 +92,7 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   count = var.gw_count
 
@@ -134,7 +134,7 @@ module "agent_gw_cluster_setup" {
 
 module "agent_monitored_db" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])

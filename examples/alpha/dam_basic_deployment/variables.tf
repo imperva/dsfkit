@@ -31,9 +31,9 @@ variable "agent_count" {
 }
 
 variable "password" {
-  sensitive = true
-  type      = string
-  default   = null # Random
+  sensitive   = true
+  type        = string
+  default     = null # Random
   description = "Password for all users and components including internal communication (Agent Gateways, MX) and also to web console (Randomly generated if not set)"
 }
 
