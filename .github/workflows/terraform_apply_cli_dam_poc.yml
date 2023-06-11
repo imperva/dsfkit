@@ -152,7 +152,7 @@ jobs:
         TF_WORKSPACE: default
 
     - name: Terraform Create Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}_${{ env.REF }}
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -165,25 +165,25 @@ jobs:
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    - name: Terraform Apply
-      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
-
-    - name: Terraform Output
-      if: always()
-      run: terraform -chdir=$EXAMPLE_DIR output -json
-
-    - name: Terraform Destroy
-      id: destroy
-      if: always()
-      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
+#    - name: Terraform Apply
+#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+#      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
+#
+#    - name: Terraform Output
+#      if: always()
+#      run: terraform -chdir=$EXAMPLE_DIR output -json
+#
+#    - name: Terraform Destroy
+#      id: destroy
+#      if: always()
+#      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
       if: always()
       run: |
         if [ '${{ steps.destroy.conclusion }}' == 'success' ]
         then
-        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}_${{ env.REF }}
         fi
       env:
         TF_WORKSPACE: default
