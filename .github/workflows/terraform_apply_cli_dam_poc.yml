@@ -53,7 +53,8 @@ on:
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  TF_VAR_gw_count: 2
+  TF_VAR_gw_count: 0
+  TF_VAR_agent_count: 0
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -70,10 +71,10 @@ jobs:
             workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
-          - name: DSF POC CLI
-            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
-            example_dir: ./examples/alpha/dsf_deployment
-            aws_region: eu-west-2
+#          - name: DSF POC CLI
+#            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
+#            example_dir: ./examples/alpha/dsf_deployment
+#            aws_region: eu-west-2
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -162,19 +163,19 @@ jobs:
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-#    - name: Terraform Apply
-#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-#      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
-#
-#    - name: Terraform Output
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
+
+    - name: Terraform Output
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Terraform Destroy
+      id: destroy
 #      if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR output -json
-#
-#    - name: Terraform Destroy
-#      id: destroy
-#      if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
-#
+      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
+
     - name: Terraform Delete Workspace
       if: always()
       run: |
@@ -184,23 +185,23 @@ jobs:
         fi
       env:
         TF_WORKSPACE: default
-#
-#    - name: Check how was the workflow run
-#      id: check-trigger
-#      if: ${{ failure() }}
-#      run: |
-#        if [ "${{ github.event_name }}" == "schedule" ]; then
-#          echo "run-by=Automation" >> $GITHUB_OUTPUT
-#        else
-#          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-#        fi
-#
-#      # Send job failure to Slack
-#    - name: Send Slack When Failure
-#      run: |
-#        if [ ${{ inputs.branch }} == 'master' ]; then
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        else
-#          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#        fi
-#      if: ${{ failure() }}
+
+    - name: Check how was the workflow run
+      id: check-trigger
+      if: ${{ failure() }}
+      run: |
+        if [ "${{ github.event_name }}" == "schedule" ]; then
+          echo "run-by=Automation" >> $GITHUB_OUTPUT
+        else
+          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+        fi
+
+      # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Dev nightly ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
+      if: ${{ failure() }}
