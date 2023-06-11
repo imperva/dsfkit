@@ -136,7 +136,7 @@ jobs:
       uses: sergeysova/jq-action@v2
 
     - name: Create License File
-      env:
+#      env:
 #        MY_SECRET: ${{ var.DAM_LICENSE }}
       run: |
         echo "${{ var.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
