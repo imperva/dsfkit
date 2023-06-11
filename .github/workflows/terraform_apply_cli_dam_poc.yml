@@ -19,6 +19,8 @@ on:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
+      DAM_LICENSE:
+        required: true
 
   workflow_dispatch:
     inputs:
