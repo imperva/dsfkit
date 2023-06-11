@@ -70,7 +70,7 @@ jobs:
       matrix:
         include:
           - name: DAM POC CLI
-            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
           - name: DSF POC CLI
@@ -152,7 +152,7 @@ jobs:
         TF_WORKSPACE: default
 
     - name: Terraform Create Workspace
-      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}_${{ env.REF }}
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
         
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
@@ -183,7 +183,7 @@ jobs:
       run: |
         if [ '${{ steps.destroy.conclusion }}' == 'success' ]
         then
-        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}_${{ env.REF }}
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
         fi
       env:
         TF_WORKSPACE: default
