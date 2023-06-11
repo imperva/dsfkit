@@ -137,7 +137,7 @@ jobs:
 
     - name: Create License File
       env:
-        MY_SECRET: ${{ var.DAM_LICENSE }}
+#        MY_SECRET: ${{ var.DAM_LICENSE }}
       run: |
         echo "${{ var.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
 
@@ -174,15 +174,15 @@ jobs:
 #      if: always()
 #      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 #
-#    - name: Terraform Delete Workspace
-#      if: always()
-#      run: |
-#        if [ '${{ steps.destroy.conclusion }}' == 'success' ]
-#        then
-#        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
-#        fi
-#      env:
-#        TF_WORKSPACE: default
+    - name: Terraform Delete Workspace
+      if: always()
+      run: |
+        if [ '${{ steps.destroy.conclusion }}' == 'success' ]
+        then
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        fi
+      env:
+        TF_WORKSPACE: default
 #
 #    - name: Check how was the workflow run
 #      id: check-trigger
