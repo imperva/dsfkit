@@ -1,5 +1,8 @@
 name: 'DAM/DSF POC CLI'
 
+concurrency:
+  group: dsf_poc_cli
+
 on:
   workflow_call:
     inputs:
