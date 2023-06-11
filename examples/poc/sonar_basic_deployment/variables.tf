@@ -24,7 +24,7 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Admin password (Randomly generated if not set)"
+  description = "Password for all users and components including internal communication (Agentless Gateways and Hub) and also to DSF Hub web console (Randomly generated if not set)"
 }
 
 variable "web_console_cidr" {

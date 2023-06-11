@@ -175,17 +175,17 @@ variable "sonarw_private_key" {
 variable "password" {
   type        = string
   sensitive   = true
-  description = "Admin user password"
+  description = "Initial password for all users"
   validation {
     condition     = var.password == null || try(length(var.password) > 8, false)
-    error_message = "Admin user password must be at least 8 characters. Used only if 'password_secret_name' is not set."
+    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
   }
 }
 
 variable "password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'password' is used."
+  description = "Secret name in AWS secrets manager which holds the password. If not set, 'password' is used."
 }
 
 variable "ssh_key_pair" {

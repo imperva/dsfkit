@@ -31,7 +31,7 @@ module "mx" {
   attach_persistent_public_ip = true
   large_scale_mode            = var.large_scale_mode.mx
 
-  create_service_group = var.agent_count > 0 ? true : false
+  create_server_group = var.agent_count > 0 ? true : false
   tags                 = local.tags
   depends_on = [
     module.vpc

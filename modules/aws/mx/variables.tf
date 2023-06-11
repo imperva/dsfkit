@@ -193,7 +193,7 @@ variable "attach_persistent_public_ip" {
 }
 
 
-variable "create_service_group" {
+variable "create_server_group" {
   type        = bool
   description = "Create initial configuration to allow automatic agent on-boarding"
   default     = false

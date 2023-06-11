@@ -99,13 +99,13 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null
-  description = "Admin user password. If this variable is not set and 'password_secret_name' is also not set, a random value is generated."
+  description = "Password for all users and components including internal communication (Agentless Gateways and Hub) and also to DSF Hub web console (Randomly generated if not set)"
 }
 
 variable "password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, password is used."
+  description = "Secret name in AWS secrets manager which holds the password value. If not set, password is used."
 }
 
 variable "web_console_cidr" {
