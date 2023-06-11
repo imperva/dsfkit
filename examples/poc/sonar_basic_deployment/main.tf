@@ -32,7 +32,7 @@ locals {
 }
 
 locals {
-  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
+  password = var.password != null ? var.password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location           = module.globals.tarball_location
@@ -86,7 +86,7 @@ module "hub" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                   = local.hub_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.web_console_admin_password
+  password  = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -113,7 +113,7 @@ module "agentless_gw_group" {
   subnet_id                  = local.gw_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
-  web_console_admin_password = local.web_console_admin_password
+  password = local.password
   hub_sonarw_public_key      = module.hub.sonarw_public_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path

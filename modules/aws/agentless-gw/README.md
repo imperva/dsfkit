@@ -33,7 +33,7 @@ The following input variables are **required**:
 
 * `subnet_id`: The ID of the subnet in which to launch the Agentless Gateway instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
-* `web_console_admin_password`: Admin password
+* `password`: Admin password
 * `ingress_communication`: List of allowed ingress CIDR patterns for the Agentless Gateway instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
@@ -71,7 +71,7 @@ module "dsf_gw" {
 
   allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 
-  web_console_admin_password    = random_password.pass.result
+  password    = random_password.pass.result
   ebs                           = {
     disk_size        = 1000
     provisioned_iops = 0

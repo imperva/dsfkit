@@ -44,7 +44,7 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Password for all relevant users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Random generated if not set)"
+  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Randomly generated if not set)"
 }
 
 ##############################

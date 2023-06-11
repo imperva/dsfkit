@@ -43,7 +43,7 @@ output "web_console_dam" {
   value = {
     public_url     = try(join("", ["https://", module.mx.public_dns, ":8083/"]), null)
     private_url    = try(join("", ["https://", module.mx.private_dns, ":8083/"]), null)
-    admin_password = nonsensitive(local.web_console_admin_password)
+    admin_password = nonsensitive(local.password)
   }
 }
 

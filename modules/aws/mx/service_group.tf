@@ -10,7 +10,7 @@ locals {
     # "Oracle",
   ]
 
-  service_group_configuration = var.create_service_group == false ? [] : concat([{
+  service_group_configuration = var.create_server_group == false ? [] : concat([{
     name     = "default_server_group"
     method   = "POST"
     url_path = "SecureSphere/api/v1/conf/serverGroups/${local.site}/${local.server_group}"

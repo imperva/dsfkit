@@ -15,7 +15,7 @@ module "hub" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                   = local.hub_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.password
+  password  = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -49,7 +49,7 @@ module "hub_secondary" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                   = local.hub_secondary_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.password
+  password  = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -99,7 +99,7 @@ module "agentless_gw_group" {
   subnet_id                  = local.agentless_gw_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
-  web_console_admin_password = local.password
+  password = local.password
   hub_sonarw_public_key      = module.hub[0].sonarw_public_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -128,7 +128,7 @@ module "agentless_gw_group_secondary" {
   subnet_id                  = local.agentless_gw_secondary_subnet_id
   ebs                        = var.gw_group_ebs_details
   binaries_location          = local.tarball_location
-  web_console_admin_password = local.password
+  password = local.password
   hub_sonarw_public_key      = module.hub[0].sonarw_public_key
   hadr_secondary_node        = true
   sonarw_public_key          = module.agentless_gw_group[count.index].sonarw_public_key
