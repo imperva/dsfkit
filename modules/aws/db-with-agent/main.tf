@@ -29,7 +29,7 @@ resource "aws_instance" "agent" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  iam_instance_profile        = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
-  user_data                   = local.user_data
-  tags                        = merge(var.tags, { Name = join("-", [var.friendly_name]) })
+  iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
+  user_data            = local.user_data
+  tags                 = merge(var.tags, { Name = join("-", [var.friendly_name]) })
 }

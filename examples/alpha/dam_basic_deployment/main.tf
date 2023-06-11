@@ -3,14 +3,14 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   tags = local.tags
 }
 
 module "key_pair" {
   source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
@@ -18,15 +18,15 @@ module "key_pair" {
 }
 
 locals {
-  workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
-  deployment_name_salted     = join("-", [var.deployment_name, module.globals.salt])
-  web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
-  workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
-  mx_subnet_id               = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
-  gw_subnet_id               = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
-  gateway_group_name         = "gatewayGroup1"
-  cluster_name               = "cluster1"
+  workstation_cidr_24    = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+  password               = var.password != null ? var.password : module.globals.random_password
+  workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
+  tags                   = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  mx_subnet_id           = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
+  gw_subnet_id           = var.subnet_ids != null ? var.subnet_ids.gw_subnet_id : module.vpc[0].private_subnets[0]
+  gateway_group_name     = "gatewayGroup1"
+  cluster_name           = "cluster1"
 }
 
 data "aws_subnet" "mx" {
@@ -67,15 +67,15 @@ module "vpc" {
 ##############################
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
   subnet_id                         = local.mx_subnet_id
   license_file                      = var.license_file
   key_pair                          = module.key_pair.key_pair.key_pair_name
-  secure_password                   = local.web_console_admin_password
-  mx_password                       = local.web_console_admin_password
+  secure_password                   = local.password
+  mx_password                       = local.password
   allowed_web_console_and_api_cidrs = local.workstation_cidr
   allowed_agent_gw_cidrs            = [data.aws_subnet.gw.cidr_block]
   allowed_ssh_cidrs                 = local.workstation_cidr
@@ -83,8 +83,8 @@ module "mx" {
   attach_persistent_public_ip       = true
   large_scale_mode                  = var.large_scale_mode
 
-  create_service_group = var.agent_count > 0 ? true : false
-  tags                 = local.tags
+  create_server_group = var.agent_count > 0 ? true : false
+  tags                = local.tags
   depends_on = [
     module.vpc
   ]
@@ -92,7 +92,7 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   count = var.gw_count
 
@@ -100,8 +100,8 @@ module "agent_gw" {
   dam_version                             = var.dam_version
   subnet_id                               = local.gw_subnet_id
   key_pair                                = module.key_pair.key_pair.key_pair_name
-  secure_password                         = local.web_console_admin_password
-  mx_password                             = local.web_console_admin_password
+  secure_password                         = local.password
+  mx_password                             = local.password
   allowed_agent_cidrs                     = [data.aws_subnet.gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
   allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
@@ -124,7 +124,7 @@ module "agent_gw_cluster_setup" {
     address  = module.mx.public_ip
     port     = 8083
     user     = "admin"
-    password = local.web_console_admin_password
+    password = local.password
   }
   depends_on = [
     module.agent_gw,
@@ -134,7 +134,7 @@ module "agent_gw_cluster_setup" {
 
 module "agent_monitored_db" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
@@ -145,7 +145,7 @@ module "agent_monitored_db" {
 
   registration_params = {
     agent_gateway_host = module.agent_gw[0].private_ip
-    secure_password    = local.web_console_admin_password
+    secure_password    = local.password
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }

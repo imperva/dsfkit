@@ -9,13 +9,13 @@ locals {
 
 module "hub" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.enable_dsf_hub ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                   = local.hub_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.password
+  password                    = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -43,13 +43,13 @@ module "hub" {
 
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.enable_dsf_hub && var.hub_hadr ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                   = local.hub_secondary_subnet_id
   binaries_location           = local.tarball_location
-  web_console_admin_password  = local.password
+  password                    = local.password
   ebs                         = var.hub_ebs_details
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -74,8 +74,8 @@ module "hub_secondary" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.6" # latest release tag
-  count = length(module.hub_secondary) > 0 ? 1 : 0
+  version = "1.4.7" # latest release tag
+  count   = length(module.hub_secondary) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
   dsf_primary_ip           = module.hub[0].public_ip
@@ -92,15 +92,15 @@ module "hub_hadr" {
 
 module "agentless_gw_group" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = local.agentless_gw_count
 
-  friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
-  subnet_id                  = local.agentless_gw_subnet_id
-  ebs                        = var.gw_group_ebs_details
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.password
-  hub_sonarw_public_key      = module.hub[0].sonarw_public_key
+  friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
+  subnet_id             = local.agentless_gw_subnet_id
+  ebs                   = var.gw_group_ebs_details
+  binaries_location     = local.tarball_location
+  password              = local.password
+  hub_sonarw_public_key = module.hub[0].sonarw_public_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -121,18 +121,18 @@ module "agentless_gw_group" {
 
 module "agentless_gw_group_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
-  friendly_name              = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
-  subnet_id                  = local.agentless_gw_secondary_subnet_id
-  ebs                        = var.gw_group_ebs_details
-  binaries_location          = local.tarball_location
-  web_console_admin_password = local.password
-  hub_sonarw_public_key      = module.hub[0].sonarw_public_key
-  hadr_secondary_node        = true
-  sonarw_public_key          = module.agentless_gw_group[count.index].sonarw_public_key
-  sonarw_private_key         = module.agentless_gw_group[count.index].sonarw_private_key
+  friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
+  subnet_id             = local.agentless_gw_secondary_subnet_id
+  ebs                   = var.gw_group_ebs_details
+  binaries_location     = local.tarball_location
+  password              = local.password
+  hub_sonarw_public_key = module.hub[0].sonarw_public_key
+  hadr_secondary_node   = true
+  sonarw_public_key     = module.agentless_gw_group[count.index].sonarw_public_key
+  sonarw_private_key    = module.agentless_gw_group[count.index].sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -153,7 +153,7 @@ module "agentless_gw_group_secondary" {
 
 module "agentless_gw_group_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
   count   = length(module.agentless_gw_group_secondary)
 
   sonar_version            = module.globals.tarball_location.version
@@ -176,8 +176,8 @@ module "agentless_gw_group_hadr" {
 
 locals {
   gws = merge(
-    {for idx, val in module.agentless_gw_group : "agentless-gw-${idx}" => val},
-    {for idx, val in module.agentless_gw_group_secondary : "agentless-gw-secondary-${idx}" => val},
+    { for idx, val in module.agentless_gw_group : "agentless-gw-${idx}" => val },
+    { for idx, val in module.agentless_gw_group_secondary : "agentless-gw-secondary-${idx}" => val },
   )
   gws_set = values(local.gws)
   hubs_set = concat(
@@ -190,13 +190,13 @@ locals {
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
-  hub_gw_combinations_keys = [for v in setproduct(local.hubs_keys, keys(local.gws)): "${v[0]}-${v[1]}"]
+  hub_gw_combinations_keys   = [for v in setproduct(local.hubs_keys, keys(local.gws)) : "${v[0]}-${v[1]}"]
 
   hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
 }
 
 module "federation" {
-  source = "../../../modules/null/federation"
+  source   = "../../../modules/null/federation"
   for_each = local.hub_gw_combinations
 
   gw_info = {

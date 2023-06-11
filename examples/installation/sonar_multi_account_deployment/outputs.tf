@@ -2,17 +2,17 @@ output "dsf_agentless_gw_group" {
   value = {
     for idx, val in module.agentless_gw_group_primary : "gw-${idx}" => {
       primary = {
-        private_ip   = try(module.agentless_gw_group_primary[idx].private_ip, null)
-        private_dns  = try(module.agentless_gw_group_primary[idx].private_dns, null)
-        jsonar_uid   = try(module.agentless_gw_group_primary[idx].jsonar_uid, null)
-        display_name = try(module.agentless_gw_group_primary[idx].display_name, null)
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        jsonar_uid   = try(val.jsonar_uid, null)
+        display_name = try(val.display_name, null)
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.gw_primary_private_key_pem_file_path} ${module.agentless_gw_group_primary[idx].ssh_user}@${module.agentless_gw_group_primary[idx].private_ip}", null)
       }
       secondary = {
-        private_ip   = try(module.agentless_gw_group_secondary[idx].private_ip, null)
-        private_dns  = try(module.agentless_gw_group_secondary[idx].private_dns, null)
-        jsonar_uid   = try(module.agentless_gw_group_secondary[idx].jsonar_uid, null)
-        display_name = try(module.agentless_gw_group_secondary[idx].display_name, null)
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        jsonar_uid   = try(val.jsonar_uid, null)
+        display_name = try(val.display_name, null)
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.gw_secondary_private_key_pem_file_path} ${module.agentless_gw_group_secondary[idx].ssh_user}@${module.agentless_gw_group_secondary[idx].private_ip}", null)
       }
     }
@@ -39,7 +39,7 @@ output "dsf_hubs" {
 output "web_console_dsf_hub" {
   value = {
     private_url    = try(join("", ["https://", module.hub_primary.private_ip, ":8443/"]), null)
-    admin_password = var.web_console_admin_password_secret_name != null ? "See the secret named '${var.web_console_admin_password_secret_name}' in your AWS Secrets Manager" : nonsensitive(local.web_console_admin_password)
+    admin_password = var.password_secret_name != null ? "See the secret named '${var.password_secret_name}' in your AWS Secrets Manager" : nonsensitive(local.password)
   }
 }
 

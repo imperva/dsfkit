@@ -33,7 +33,7 @@ The following input variables are **required**:
 
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
-* `web_console_admin_password`: Admin password
+* `password`: Admin password
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 * `sonarw_public_key`: Public key of the sonarw user taken from the primary DSF Hub output. This variable must only be defined for the secondary DSF Hub.
@@ -68,7 +68,7 @@ module "dsf_hub" {
 
   allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
 
-  web_console_admin_password    = random_password.pass.result
+  password    = random_password.pass.result
   ebs                           = {
     disk_size        = 1000
     provisioned_iops = 0
@@ -98,4 +98,4 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 ## Additional Information
 
 For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.6).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.7).

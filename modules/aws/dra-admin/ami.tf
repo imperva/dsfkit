@@ -2,7 +2,7 @@ data "aws_region" "current" {}
 
 locals {
   base_filters = {
-    architecture = ["x86_64"]
+    architecture        = ["x86_64"]
     virtualization-type = ["hvm"]
   }
   name_filter = {
@@ -20,7 +20,7 @@ data "aws_ami" "selected-ami" {
   dynamic "filter" {
     for_each = local.filters
     content {
-      name = filter.key
+      name   = filter.key
       values = filter.value
     }
   }

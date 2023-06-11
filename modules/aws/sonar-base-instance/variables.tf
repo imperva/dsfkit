@@ -28,11 +28,11 @@ variable "resource_type" {
 variable "security_groups_config" {
   description = "Security groups config"
   type = list(object({
-    name  = list(string)
-    internet_access  = bool
-    udp   = list(number)
-    tcp   = list(number)
-    cidrs = list(string)
+    name            = list(string)
+    internet_access = bool
+    udp             = list(number)
+    tcp             = list(number)
+    cidrs           = list(string)
   }))
 }
 
@@ -107,20 +107,20 @@ variable "ec2_instance_type" {
   description = "Ec2 instance type for the DSF base instance"
 }
 
-variable "web_console_admin_password" {
+variable "password" {
   type        = string
   sensitive   = true
-  description = "Admin user password"
+  description = "Password for all users"
   validation {
-    condition     = var.web_console_admin_password == null || try(length(var.web_console_admin_password) > 8, false)
-    error_message = "Admin password must be at least 8 characters. Used only if 'web_console_admin_password_secret_name' is not set."
+    condition     = var.password == null || try(length(var.password) > 8, false)
+    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
   }
 }
 
-variable "web_console_admin_password_secret_name" {
+variable "password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'web_console_admin_password' is used."
+  description = "Secret name in AWS secrets manager which holds the user password. If not set, 'password' is used."
 }
 
 variable "ssh_key_path" {

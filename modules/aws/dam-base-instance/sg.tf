@@ -34,10 +34,10 @@ resource "aws_security_group" "dsf_base_sg_in" {
 
   # Conditionally assign egress rules based on a "internet_access" memeber
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = each.value.internet_access ? ["0.0.0.0/0"] : []
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = each.value.internet_access ? ["0.0.0.0/0"] : []
     ipv6_cidr_blocks = each.value.internet_access ? ["::/0"] : []
   }
 

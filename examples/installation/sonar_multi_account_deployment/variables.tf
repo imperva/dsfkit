@@ -148,17 +148,17 @@ variable "gw_count" {
   description = "Number of Agentless Gateways"
 }
 
-variable "web_console_admin_password" {
+variable "password" {
   sensitive   = true
   type        = string
   default     = null
-  description = "Admin user password. If this variable is not set and 'web_console_admin_password_secret_name' is also not set, a random value is generated."
+  description = "Password for all users and components including internal communication (Agentless Gateways and Hub) and also to DSF Hub web console (Randomly generated if not set)"
 }
 
-variable "web_console_admin_password_secret_name" {
+variable "password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, web_console_admin_password is used."
+  description = "Secret name in AWS secrets manager which holds the password value. If not set, password is used."
 }
 
 variable "web_console_cidr" {
@@ -234,7 +234,7 @@ variable "hub_primary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -251,7 +251,7 @@ variable "hub_secondary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -268,7 +268,7 @@ variable "gw_primary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {
@@ -285,7 +285,7 @@ variable "gw_secondary_key_pem_details" {
     private_key_pem_file_path = string
     public_key_name           = string
   })
-  description = "Key pem details used to ssh to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
   default     = null
 
   validation {

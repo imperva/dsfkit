@@ -82,7 +82,7 @@ resource "null_resource" "exec_replication_cycle_on_secondary" {
     inline = [
       "sudo touch $JSONAR_LOGDIR/sonarw/replication.log",
       "sudo chown sonarw:sonar $JSONAR_LOGDIR/sonarw/replication.log",
-      "sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication"]
+    "sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication"]
   }
 
   depends_on = [

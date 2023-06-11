@@ -6,32 +6,32 @@ locals {
 
   security_groups_config = [
     {
-      name  = ["agent"]
+      name            = ["agent"]
       internet_access = false
-      udp   = []
-      tcp   = [443, var.agent_listener_port]
-      cidrs = concat(var.allowed_agent_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [443, var.agent_listener_port]
+      cidrs           = concat(var.allowed_agent_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["mx"]
+      name            = ["mx"]
       internet_access = false
-      udp   = []
-      tcp   = [443]
-      cidrs = concat(var.allowed_mx_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [443]
+      cidrs           = concat(var.allowed_mx_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["other"]
+      name            = ["other"]
       internet_access = true
-      udp   = []
-      tcp   = [22]
-      cidrs = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+      udp             = []
+      tcp             = [22]
+      cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
-      name  = ["agent", "gateway", "clusters"]
+      name            = ["agent", "gateway", "clusters"]
       internet_access = false
-      udp   = [3792]
-      tcp   = [3792, 7700]
-      cidrs = concat(var.allowed_gw_clusters_cidrs, var.allowed_all_cidrs)
+      udp             = [3792]
+      tcp             = [3792, 7700]
+      cidrs           = concat(var.allowed_gw_clusters_cidrs, var.allowed_all_cidrs)
     }
   ]
 

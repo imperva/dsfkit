@@ -24,13 +24,13 @@ locals {
 resource "aws_db_subnet_group" "rds_db_sg" {
   name       = "${local.db_identifier}-db-subnet-group"
   subnet_ids = var.rds_subnet_ids
-  tags = var.tags
+  tags       = var.tags
 }
 
 resource "aws_s3_bucket" "rds_db_audit_bucket" {
   bucket        = local.db_audit_bucket_name
   force_destroy = true
-  tags = var.tags
+  tags          = var.tags
 }
 
 resource "aws_s3_bucket_public_access_block" "rds_db_audit_bucket_public_access_block" {
@@ -84,18 +84,18 @@ resource "aws_db_instance" "rds_db" {
   identifier              = local.db_identifier
   publicly_accessible     = true
   backup_retention_period = 0
-  tags = var.tags
+  tags                    = var.tags
 }
 
 data "aws_subnet" "subnet" {
-  id = var.rds_subnet_ids[0]
+  id   = var.rds_subnet_ids[0]
   tags = var.tags
 }
 
 resource "aws_security_group" "rds_mssql_access" {
   description = "RDS SQL Server Access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
-  tags = var.tags
+  tags        = var.tags
 }
 
 resource "aws_security_group_rule" "rds_mssql_access_rule" {
@@ -137,7 +137,7 @@ data "aws_s3_object" "source" {
 
   bucket = data.aws_s3_objects.source.bucket
   key    = each.key
-  tags = var.tags
+  tags   = var.tags
 }
 
 resource "aws_s3_bucket" "mssql_lambda_bucket" {

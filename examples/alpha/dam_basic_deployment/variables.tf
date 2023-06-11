@@ -30,12 +30,11 @@ variable "agent_count" {
   description = "The number of compute instances to provision, each with a database and a monitoring agent"
 }
 
-variable "web_console_admin_password" {
-  default   = null # Random
-  sensitive = true
-  type      = string
-  # default     = null # Random
-  description = "Admin password (Randomly generated if not set)"
+variable "password" {
+  sensitive   = true
+  type        = string
+  default     = null # Random
+  description = "Password for all users and components including internal communication (Agent Gateways, MX) and also to web console (Randomly generated if not set)"
 }
 
 variable "web_console_cidr_list" {

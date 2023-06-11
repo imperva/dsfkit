@@ -8,7 +8,7 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   sonar_version = var.sonar_version
   tags          = local.tags
@@ -16,7 +16,7 @@ module "globals" {
 
 module "key_pair" {
   source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.4.6" # latest release tag
+  version = "1.4.7" # latest release tag
 
   key_name_prefix          = "imperva-dsf-"
   private_key_pem_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
