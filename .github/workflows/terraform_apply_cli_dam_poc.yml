@@ -71,10 +71,10 @@ jobs:
             workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
-#          - name: DSF POC CLI
-#            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
-#            example_dir: ./examples/alpha/dsf_deployment
-#            aws_region: eu-west-2
+          - name: DSF POC CLI
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            example_dir: ./examples/alpha/dsf_deployment
+            aws_region: eu-west-2
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -138,9 +138,9 @@ jobs:
 
     - name: Create License File
       env:
-        MY_SECRET: ${{ vars.DAM_LICENSE }}
+        MY_SECRET: ${{ secrets.DAM_LICENSE }}
       run: |
-        echo "${{ vars.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
+        echo "${{ secrets.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
         cat $EXAMPLE_DIR/license.mprv
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
