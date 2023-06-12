@@ -93,7 +93,7 @@ jobs:
     - name: Pick ref
       run: |
         if [ -z "${{ inputs.explicit_ref }}" ]; then
-          echo REF=${{ github.ref_name }} >> $GITHUB_ENV;
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
         else
           echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
         fi
