@@ -1,8 +1,5 @@
 name: 'DAM/DSF POC CLI'
 
-concurrency:
-  group: dsf_poc_cli
-
 on:
   workflow_call:
     inputs:
@@ -76,7 +73,7 @@ jobs:
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
           - name: DSF POC CLI
-            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/alpha/dsf_deployment
             aws_region: eu-west-2
 
