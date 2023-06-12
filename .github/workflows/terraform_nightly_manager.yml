@@ -84,6 +84,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dam_dsf:
     uses: imperva/dsfkit/.github/workflows/terraform_apply_cli_dam_poc.yml@dev
@@ -94,3 +95,4 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
