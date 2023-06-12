@@ -26,8 +26,8 @@ locals {
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
-  should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
-  should_create_gw_key_pair  = var.gw_key_pem_details == null ? true : false
+  should_create_hub_key_pair = var.hub_key_pair == null ? true : false
+  should_create_gw_key_pair  = var.gw_key_pair == null ? true : false
 }
 
 ##############################
@@ -38,7 +38,7 @@ module "key_pair_hub" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-hub"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
   tags                     = local.tags
 }
 
@@ -47,15 +47,15 @@ module "key_pair_gw" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   tags                     = local.tags
 }
 
 locals {
-  hub_private_key_pem_file_path = var.hub_key_pem_details != null ? var.hub_key_pem_details.private_key_pem_file_path : module.key_pair_hub[0].private_key_file_path
-  hub_public_key_name           = var.hub_key_pem_details != null ? var.hub_key_pem_details.public_key_name : module.key_pair_hub[0].key_pair.key_pair_name
-  gw_private_key_pem_file_path  = var.gw_key_pem_details != null ? var.gw_key_pem_details.private_key_pem_file_path : module.key_pair_gw[0].private_key_file_path
-  gw_public_key_name            = var.gw_key_pem_details != null ? var.gw_key_pem_details.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
+  hub_private_key_file_path = var.hub_key_pair != null ? var.hub_key_pair.private_key_file_path : module.key_pair_hub[0].private_key_file_path
+  hub_public_key_name           = var.hub_key_pair != null ? var.hub_key_pair.public_key_name : module.key_pair_hub[0].key_pair.key_pair_name
+  gw_private_key_file_path  = var.gw_key_pair != null ? var.gw_key_pair.private_key_file_path : module.key_pair_gw[0].private_key_file_path
+  gw_public_key_name            = var.gw_key_pair != null ? var.gw_key_pair.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
 data "aws_subnet" "primary_hub" {
@@ -86,7 +86,7 @@ module "hub_primary" {
   ebs                  = var.hub_ebs_details
   ami                  = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_private_key_pem_file_path
+    ssh_private_key_file_path = local.hub_private_key_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
@@ -118,7 +118,7 @@ module "hub_secondary" {
   sonarw_public_key    = module.hub_primary.sonarw_public_key
   sonarw_private_key   = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_private_key_pem_file_path
+    ssh_private_key_file_path = local.hub_private_key_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
@@ -149,14 +149,14 @@ module "agentless_gw_group" {
   hub_sonarw_public_key = module.hub_primary.sonarw_public_key
   ami                   = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_private_key_pem_file_path
+    ssh_private_key_file_path = local.gw_private_key_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
   allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_primary.private_ip
-    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
+    proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
@@ -175,7 +175,7 @@ module "hub_hadr" {
   dsf_primary_private_ip       = module.hub_primary.private_ip
   dsf_secondary_ip             = module.hub_secondary.private_ip
   dsf_secondary_private_ip     = module.hub_secondary.private_ip
-  ssh_key_path                 = local.hub_private_key_pem_file_path
+  ssh_key_path                 = local.hub_private_key_file_path
   ssh_user                     = module.hub_primary.ssh_user
   terraform_script_path_folder = var.terraform_script_path_folder
   depends_on = [
@@ -199,17 +199,17 @@ module "federation" {
   version = "1.4.7" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
-    gw_private_ssh_key_path = local.gw_private_key_pem_file_path
+    gw_private_ssh_key_path = local.gw_private_key_file_path
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   hub_info = {
     hub_ip_address           = local.hub_gw_combinations[count.index][0].private_ip
-    hub_private_ssh_key_path = local.hub_private_key_pem_file_path
+    hub_private_ssh_key_path = local.hub_private_key_file_path
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_primary.private_ip
-    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
+    proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
