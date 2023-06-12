@@ -16,6 +16,8 @@ on:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
+      DAM_LICENSE:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -67,11 +69,11 @@ jobs:
       matrix:
         include:
           - name: DAM POC CLI
-            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/alpha/dam_basic_deployment
             aws_region: ca-central-1
           - name: DSF POC CLI
-            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/alpha/dsf_deployment
             aws_region: eu-west-2
 
@@ -91,7 +93,7 @@ jobs:
     - name: Pick ref
       run: |
         if [ -z "${{ inputs.explicit_ref }}" ]; then
-          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+          echo REF=${{ github.ref_name }} >> $GITHUB_ENV;
         else
           echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
         fi
