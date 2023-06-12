@@ -1,6 +1,6 @@
 variable "username" {
   type        = string
-  description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name can not be a word reserved by the database engine."
+  description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name cannot be a word reserved by the database engine."
   default     = "admin"
   validation {
     condition     = length(var.username) > 1
@@ -10,7 +10,7 @@ variable "username" {
 
 variable "password" {
   type        = string
-  description = "Master password must contain 8–41 printable ASCII characters, and can not contain /, \", @, or a space."
+  description = "Master password must contain 8–41 printable ASCII characters, and cannot contain /, \", @, or a space."
   default     = ""
   validation {
     condition     = length(var.password) == 0 || length(var.password) > 7
