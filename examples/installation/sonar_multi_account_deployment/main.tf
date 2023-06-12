@@ -13,10 +13,10 @@ locals {
   tarball_location                     = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags                      = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                                 = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
-  should_create_hub_primary_key_pair   = var.hub_primary_key_pem_details == null ? true : false
-  should_create_hub_secondary_key_pair = var.hub_secondary_key_pem_details == null ? true : false
-  should_create_gw_primary_key_pair    = var.gw_primary_key_pem_details == null ? true : false
-  should_create_gw_secondary_key_pair  = var.gw_secondary_key_pem_details == null ? true : false
+  should_create_hub_primary_key_pair   = var.hub_primary_key_pair == null ? true : false
+  should_create_hub_secondary_key_pair = var.hub_secondary_key_pair == null ? true : false
+  should_create_gw_primary_key_pair    = var.gw_primary_key_pair == null ? true : false
+  should_create_gw_secondary_key_pair  = var.gw_secondary_key_pair == null ? true : false
 }
 
 ##############################
@@ -28,7 +28,7 @@ module "key_pair_hub_primary" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-hub-primary"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
   tags                     = local.tags
   providers = {
     aws = aws.hub-primary
@@ -40,7 +40,7 @@ module "key_pair_hub_secondary" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-hub-secondary"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
   tags                     = local.tags
   providers = {
     aws = aws.hub-secondary
@@ -52,7 +52,7 @@ module "key_pair_gw_primary" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-gw"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-primary-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-gw-primary-${terraform.workspace}"
   tags                     = local.tags
   providers = {
     aws = aws.gw-primary
@@ -64,7 +64,7 @@ module "key_pair_gw_secondary" {
   source                   = "imperva/dsf-globals/aws//modules/key_pair"
   version                  = "1.4.7" # latest release tag
   key_name_prefix          = "imperva-dsf-gw-secondary"
-  private_key_pem_filename = "ssh_keys/dsf_ssh_key-gw-secondary-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-gw-secondary-${terraform.workspace}"
   tags                     = local.tags
   providers = {
     aws = aws.gw-secondary
@@ -92,14 +92,14 @@ data "aws_subnet" "subnet_gw_secondary" {
 }
 
 locals {
-  hub_primary_private_key_pem_file_path   = var.hub_primary_key_pem_details != null ? var.hub_primary_key_pem_details.private_key_pem_file_path : module.key_pair_hub_primary[0].private_key_file_path
-  hub_primary_public_key_name             = var.hub_primary_key_pem_details != null ? var.hub_primary_key_pem_details.public_key_name : module.key_pair_hub_primary[0].key_pair.key_pair_name
-  hub_secondary_private_key_pem_file_path = var.hub_secondary_key_pem_details != null ? var.hub_secondary_key_pem_details.private_key_pem_file_path : module.key_pair_hub_secondary[0].private_key_file_path
-  hub_secondary_public_key_name           = var.hub_secondary_key_pem_details != null ? var.hub_secondary_key_pem_details.public_key_name : module.key_pair_hub_secondary[0].key_pair.key_pair_name
-  gw_primary_private_key_pem_file_path    = var.gw_primary_key_pem_details != null ? var.gw_primary_key_pem_details.private_key_pem_file_path : module.key_pair_gw_primary[0].private_key_file_path
-  gw_primary_public_key_name              = var.gw_primary_key_pem_details != null ? var.gw_primary_key_pem_details.public_key_name : module.key_pair_gw_primary[0].key_pair.key_pair_name
-  gw_secondary_private_key_pem_file_path  = var.gw_secondary_key_pem_details != null ? var.gw_secondary_key_pem_details.private_key_pem_file_path : module.key_pair_gw_secondary[0].private_key_file_path
-  gw_secondary_public_key_name            = var.gw_secondary_key_pem_details != null ? var.gw_secondary_key_pem_details.public_key_name : module.key_pair_gw_secondary[0].key_pair.key_pair_name
+  hub_primary_private_key_file_path   = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.private_key_file_path : module.key_pair_hub_primary[0].private_key_file_path
+  hub_primary_public_key_name             = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.public_key_name : module.key_pair_hub_primary[0].key_pair.key_pair_name
+  hub_secondary_private_key_file_path = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.private_key_file_path : module.key_pair_hub_secondary[0].private_key_file_path
+  hub_secondary_public_key_name           = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.public_key_name : module.key_pair_hub_secondary[0].key_pair.key_pair_name
+  gw_primary_private_key_file_path    = var.gw_primary_key_pair != null ? var.gw_primary_key_pair.private_key_file_path : module.key_pair_gw_primary[0].private_key_file_path
+  gw_primary_public_key_name              = var.gw_primary_key_pair != null ? var.gw_primary_key_pair.public_key_name : module.key_pair_gw_primary[0].key_pair.key_pair_name
+  gw_secondary_private_key_file_path  = var.gw_secondary_key_pair != null ? var.gw_secondary_key_pair.private_key_file_path : module.key_pair_gw_secondary[0].private_key_file_path
+  gw_secondary_public_key_name            = var.gw_secondary_key_pair != null ? var.gw_secondary_key_pair.public_key_name : module.key_pair_gw_secondary[0].key_pair.key_pair_name
 }
 
 ##############################
@@ -118,7 +118,7 @@ module "hub_primary" {
   ebs                  = var.hub_ebs_details
   ami                  = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_primary_private_key_pem_file_path
+    ssh_private_key_file_path = local.hub_primary_private_key_file_path
     ssh_public_key_name       = local.hub_primary_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
@@ -157,7 +157,7 @@ module "hub_secondary" {
   sonarw_public_key    = module.hub_primary.sonarw_public_key
   sonarw_private_key   = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_secondary_private_key_pem_file_path
+    ssh_private_key_file_path = local.hub_secondary_private_key_file_path
     ssh_public_key_name       = local.hub_secondary_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
@@ -195,7 +195,7 @@ module "agentless_gw_group_primary" {
   hub_sonarw_public_key = module.hub_primary.sonarw_public_key
   ami                   = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_primary_private_key_pem_file_path
+    ssh_private_key_file_path = local.gw_primary_private_key_file_path
     ssh_public_key_name       = local.gw_primary_public_key_name
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_secondary.cidr_block]
@@ -235,7 +235,7 @@ module "agentless_gw_group_secondary" {
   sonarw_private_key    = module.agentless_gw_group_primary[count.index].sonarw_private_key
   ami                   = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_secondary_private_key_pem_file_path
+    ssh_private_key_file_path = local.gw_secondary_private_key_file_path
     ssh_public_key_name       = local.gw_secondary_public_key_name
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_primary.cidr_block]
@@ -265,8 +265,8 @@ module "hub_hadr" {
   dsf_primary_private_ip   = module.hub_primary.private_ip
   dsf_secondary_ip         = module.hub_secondary.private_ip
   dsf_secondary_private_ip = module.hub_secondary.private_ip
-  ssh_key_path             = local.hub_primary_private_key_pem_file_path
-  ssh_key_path_secondary   = local.hub_secondary_private_key_pem_file_path
+  ssh_key_path             = local.hub_primary_private_key_file_path
+  ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
   ssh_user                 = module.hub_primary.ssh_user
   ssh_user_secondary       = module.hub_secondary.ssh_user
   proxy_info = {
@@ -289,8 +289,8 @@ module "agentless_gw_group_hadr" {
   dsf_primary_private_ip   = module.agentless_gw_group_primary[count.index].private_ip
   dsf_secondary_ip         = module.agentless_gw_group_secondary[count.index].private_ip
   dsf_secondary_private_ip = module.agentless_gw_group_secondary[count.index].private_ip
-  ssh_key_path             = local.gw_primary_private_key_pem_file_path
-  ssh_key_path_secondary   = local.gw_secondary_private_key_pem_file_path
+  ssh_key_path             = local.gw_primary_private_key_file_path
+  ssh_key_path_secondary   = local.gw_secondary_private_key_file_path
   ssh_user                 = module.agentless_gw_group_primary[count.index].ssh_user
   ssh_user_secondary       = module.agentless_gw_group_secondary[count.index].ssh_user
   proxy_info = {
@@ -306,10 +306,10 @@ module "agentless_gw_group_hadr" {
 
 locals {
   hub_gws_combinations = setproduct(
-    [{ instance : module.hub_primary, key_pem_file_path : local.hub_primary_private_key_pem_file_path }, { instance : module.hub_secondary, key_pem_file_path : local.hub_secondary_private_key_pem_file_path }],
+    [{ instance : module.hub_primary, private_key_file_path : local.hub_primary_private_key_file_path }, { instance : module.hub_secondary, private_key_file_path : local.hub_secondary_private_key_file_path }],
     concat(
-      [for idx, val in module.agentless_gw_group_primary : { instance : val, key_pem_file_path : local.gw_primary_private_key_pem_file_path }],
-      [for idx, val in module.agentless_gw_group_secondary : { instance : val, key_pem_file_path : local.gw_secondary_private_key_pem_file_path }]
+      [for idx, val in module.agentless_gw_group_primary : { instance : val, private_key_file_path : local.gw_primary_private_key_file_path }],
+      [for idx, val in module.agentless_gw_group_secondary : { instance : val, private_key_file_path : local.gw_secondary_private_key_file_path }]
     )
   )
 }
@@ -320,12 +320,12 @@ module "federation_gws" {
   version = "1.4.7" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gws_combinations[count.index][1].instance.private_ip
-    gw_private_ssh_key_path = local.hub_gws_combinations[count.index][1].key_pem_file_path
+    gw_private_ssh_key_path = local.hub_gws_combinations[count.index][1].private_key_file_path
     gw_ssh_user             = local.hub_gws_combinations[count.index][1].instance.ssh_user
   }
   hub_info = {
     hub_ip_address           = local.hub_gws_combinations[count.index][0].instance.private_ip
-    hub_private_ssh_key_path = local.hub_gws_combinations[count.index][0].key_pem_file_path
+    hub_private_ssh_key_path = local.hub_gws_combinations[count.index][0].private_key_file_path
     hub_ssh_user             = local.hub_gws_combinations[count.index][0].instance.ssh_user
   }
   hub_proxy_info = {

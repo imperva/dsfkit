@@ -186,37 +186,37 @@ variable "gw_skip_instance_health_verification" {
   description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
 }
 
-variable "hub_key_pem_details" {
+variable "hub_key_pair" {
   type = object({
-    private_key_pem_file_path = string
+    private_key_file_path = string
     public_key_name           = string
   })
-  description = "Key pair used to SSH to the DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.hub_key_pem_details == null ||
-      try(var.hub_key_pem_details.private_key_pem_file_path != null && var.hub_key_pem_details.public_key_name != null, false)
+      var.hub_key_pair == null ||
+      try(var.hub_key_pair.private_key_file_path != null && var.hub_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the hub_key_pem_details variable"
+    error_message = "All fields must be specified when specifying the 'hub_key_pair' variable"
   }
 }
 
-variable "gw_key_pem_details" {
+variable "gw_key_pair" {
   type = object({
-    private_key_pem_file_path = string
+    private_key_file_path = string
     public_key_name           = string
   })
-  description = "Key pair used to SSH to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.gw_key_pem_details == null ||
-      try(var.gw_key_pem_details.private_key_pem_file_path != null && var.gw_key_pem_details.public_key_name != null, false)
+      var.gw_key_pair == null ||
+      try(var.gw_key_pair.private_key_file_path != null && var.gw_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the gw_key_pem_details variable"
+    error_message = "All fields must be specified when specifying the 'gw_key_pair' variable"
   }
 }
 

@@ -60,7 +60,7 @@ output "deployment_name" {
 
 output "dsf_private_ssh_key" {
   sensitive = true
-  value     = try(module.key_pair.key_pair_private_pem, null)
+  value     = try(module.key_pair.private_key_content, null)
 }
 
 output "dsf_private_ssh_key_file_path" {
