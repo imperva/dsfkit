@@ -124,8 +124,8 @@ module "hub_secondary" {
   attach_persistent_public_ip = true
   use_public_ip               = true
   hadr_secondary_node         = true
-  sonarw_public_key           = module.hub_primary.sonarw_public_key
-  sonarw_private_key          = module.hub_primary.sonarw_private_key
+  primary_node_sonarw_public_key     = module.hub_primary.sonarw_public_key
+  primary_node_sonarw_private_key    = module.hub_primary.sonarw_private_key
   generate_access_tokens      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -181,8 +181,8 @@ module "agentless_gw_group_secondary" {
   password              = local.password
   hub_sonarw_public_key = module.hub_primary.sonarw_public_key
   hadr_secondary_node   = true
-  sonarw_public_key     = module.agentless_gw_group_primary[count.index].sonarw_public_key
-  sonarw_private_key    = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  primary_node_sonarw_public_key     = module.agentless_gw_group_primary[count.index].sonarw_public_key
+  primary_node_sonarw_private_key    = module.agentless_gw_group_primary[count.index].sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name

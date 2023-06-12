@@ -230,25 +230,25 @@ variable "terraform_script_path_folder" {
   }
 }
 
-variable "internal_hub_private_key_secret_name" {
+variable "sonarw_hub_private_key_secret_name" {
   type        = string
   default     = null
   description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_hub_public_key_file_path" {
+variable "sonarw_hub_public_key_file_path" {
   type        = string
   default     = null
   description = "The DSF Hub sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_gw_private_key_secret_name" {
+variable "sonarw_gw_private_key_secret_name" {
   type        = string
   default     = null
   description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_gw_public_key_file_path" {
+variable "sonarw_gw_public_key_file_path" {
   type        = string
   default     = null
   description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."

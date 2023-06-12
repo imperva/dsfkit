@@ -96,8 +96,8 @@ module "hub_primary" {
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
+  sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
   tags                              = local.tags
 }
@@ -115,8 +115,8 @@ module "hub_secondary" {
   ebs                  = var.hub_ebs_details
   ami                  = var.ami
   hadr_secondary_node  = true
-  sonarw_public_key    = module.hub_primary.sonarw_public_key
-  sonarw_private_key   = module.hub_primary.sonarw_private_key
+  primary_node_sonarw_public_key    = module.hub_primary.sonarw_public_key
+  primary_node_sonarw_private_key   = module.hub_primary.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_private_key_file_path
     ssh_public_key_name       = local.hub_public_key_name
@@ -128,8 +128,8 @@ module "hub_secondary" {
 
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_hub_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_hub_public_key_file_path)), null)
+  sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
+  sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
   tags                              = local.tags
 }
@@ -161,8 +161,8 @@ module "agentless_gw_group" {
   }
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_gw_private_key_secret_name
-  internal_public_key               = try(trimspace(file(var.internal_gw_public_key_file_path)), null)
+  sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
+  sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.gw_instance_profile_name
   tags                              = local.tags
 }
