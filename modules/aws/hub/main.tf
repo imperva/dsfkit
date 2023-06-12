@@ -59,8 +59,8 @@ module "hub_instance" {
   ssh_key_path                  = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location             = var.binaries_location
   hadr_secondary_node           = var.hadr_secondary_node
-  sonarw_public_key             = var.sonarw_public_key
-  sonarw_private_key            = var.sonarw_private_key
+  primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
+  primary_node_sonarw_private_key   = var.primary_node_sonarw_private_key
   proxy_info = {
     proxy_address      = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
@@ -68,7 +68,7 @@ module "hub_instance" {
   }
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
-  internal_private_key_secret_name  = var.internal_private_key_secret_name
-  internal_public_key               = var.internal_public_key
+  sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
+  sonarw_public_key_content         = var.sonarw_public_key_content
   tags                              = var.tags
 }

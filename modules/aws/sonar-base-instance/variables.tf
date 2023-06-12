@@ -149,13 +149,13 @@ variable "hadr_secondary_node" {
   description = "Is this node an HADR secondary one"
 }
 
-variable "sonarw_public_key" {
+variable "primary_node_sonarw_public_key" {
   type        = string
   description = "Public key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
   default     = null
 }
 
-variable "sonarw_private_key" {
+variable "primary_node_sonarw_private_key" {
   type        = string
   description = "Private key of the sonarw user taken from the primary node output. This variable must only be defined for the secondary node."
   default     = null
@@ -195,13 +195,13 @@ variable "terraform_script_path_folder" {
   }
 }
 
-variable "internal_private_key_secret_name" {
+variable "sonarw_private_key_secret_name" {
   type        = string
   default     = null
   description = "Secret name in AWS secrets manager which holds the DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_public_key" {
+variable "sonarw_public_key_content" {
   type        = string
   default     = null
   description = "The DSF node sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."

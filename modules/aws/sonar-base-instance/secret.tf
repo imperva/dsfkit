@@ -17,8 +17,8 @@
 ###################################################################################
 
 data "aws_secretsmanager_secret" "sonarw_private_key_secret_data" {
-  count = var.internal_private_key_secret_name != null ? 1 : 0
-  name  = var.internal_private_key_secret_name
+  count = var.sonarw_private_key_secret_name != null ? 1 : 0
+  name  = var.sonarw_private_key_secret_name
 }
 
 data "aws_secretsmanager_secret" "password_secret_data" {
@@ -27,21 +27,21 @@ data "aws_secretsmanager_secret" "password_secret_data" {
 }
 
 resource "tls_private_key" "sonarw_private_key" {
-  count     = var.internal_private_key_secret_name == null ? 1 : 0
+  count     = var.sonarw_private_key_secret_name == null ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 locals {
-  primary_node_sonarw_public_key  = var.internal_public_key != null ? var.internal_public_key : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.sonarw_public_key)
-  primary_node_sonarw_private_key = var.internal_private_key_secret_name != null ? var.internal_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.sonarw_private_key)
-  sonarw_secret_aws_arn           = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].arn
-  sonarw_secret_aws_name          = var.internal_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
+  primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
+  primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
+  sonarw_secret_aws_arn           = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].arn
+  sonarw_secret_aws_name          = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
 
   password_secret_aws_arn = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
   password_secret_name    = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.password_secret_name
 
-  should_create_sonarw_private_key_in_secrets_manager   = var.internal_private_key_secret_name == null
+  should_create_sonarw_private_key_in_secrets_manager   = var.sonarw_private_key_secret_name == null
   should_create_web_console_password_in_secrets_manager = var.password_secret_name == null
 }
 
