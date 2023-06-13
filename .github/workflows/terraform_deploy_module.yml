@@ -54,7 +54,7 @@ jobs:
           - source_module: "aws/db-with-agent"
             destination_repo: "terraform-aws-dsf-db-with-agent"
           - source_module: "null/agent-gw-cluster-setup"
-            destination_repo: "terraform-null-agent-gw-cluster-setup"
+            destination_repo: "terraform-null-dsf-agent-gw-cluster-setup"
 
           # DRA
           - source_module: "aws/dra-admin"
