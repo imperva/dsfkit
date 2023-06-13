@@ -140,7 +140,7 @@ module "hub_secondary" {
   ]
 }
 
-module "agentless_gw_group_primary" {
+module "agentless_gw_primary" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.4.7" # latest release tag
   count   = var.gw_count
@@ -169,7 +169,7 @@ module "agentless_gw_group_primary" {
   ]
 }
 
-module "agentless_gw_group_secondary" {
+module "agentless_gw_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.4.7" # latest release tag
   count   = var.gw_count
@@ -181,8 +181,8 @@ module "agentless_gw_group_secondary" {
   password              = local.password
   hub_sonarw_public_key = module.hub_primary.sonarw_public_key
   hadr_secondary_node   = true
-  primary_node_sonarw_public_key     = module.agentless_gw_group_primary[count.index].sonarw_public_key
-  primary_node_sonarw_private_key    = module.agentless_gw_group_primary[count.index].sonarw_private_key
+  primary_node_sonarw_public_key     = module.agentless_gw_primary[count.index].sonarw_public_key
+  primary_node_sonarw_private_key    = module.agentless_gw_primary[count.index].sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -218,26 +218,26 @@ module "hub_hadr" {
   ]
 }
 
-module "agentless_gw_group_hadr" {
+module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
   version = "1.4.7" # latest release tag
   count   = var.gw_count
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.agentless_gw_group_primary[count.index].private_ip
-  dsf_primary_private_ip   = module.agentless_gw_group_primary[count.index].private_ip
-  dsf_secondary_ip         = module.agentless_gw_group_secondary[count.index].private_ip
-  dsf_secondary_private_ip = module.agentless_gw_group_secondary[count.index].private_ip
+  dsf_primary_ip           = module.agentless_gw_primary[count.index].private_ip
+  dsf_primary_private_ip   = module.agentless_gw_primary[count.index].private_ip
+  dsf_secondary_ip         = module.agentless_gw_secondary[count.index].private_ip
+  dsf_secondary_private_ip = module.agentless_gw_secondary[count.index].private_ip
   ssh_key_path             = module.key_pair.private_key_file_path
-  ssh_user                 = module.agentless_gw_group_primary[count.index].ssh_user
+  ssh_user                 = module.agentless_gw_primary[count.index].ssh_user
   proxy_info = {
     proxy_address              = module.hub_primary.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
   }
   depends_on = [
-    module.agentless_gw_group_primary,
-    module.agentless_gw_group_secondary
+    module.agentless_gw_primary,
+    module.agentless_gw_secondary
   ]
 }
 
@@ -245,8 +245,8 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub_primary, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group_primary : val],
-      [for idx, val in module.agentless_gw_group_secondary : val]
+      [for idx, val in module.agentless_gw_primary : val],
+      [for idx, val in module.agentless_gw_secondary : val]
     )
   )
 }
@@ -273,7 +273,7 @@ module "federation" {
   }
   depends_on = [
     module.hub_hadr,
-    module.agentless_gw_group_hadr
+    module.agentless_gw_hadr
   ]
 }
 
@@ -315,8 +315,8 @@ module "db_onboarding" {
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub_primary.ssh_user
   }
-  assignee_gw   = module.agentless_gw_group_primary[0].jsonar_uid
-  assignee_role = module.agentless_gw_group_primary[0].iam_role
+  assignee_gw   = module.agentless_gw_primary[0].jsonar_uid
+  assignee_role = module.agentless_gw_primary[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password

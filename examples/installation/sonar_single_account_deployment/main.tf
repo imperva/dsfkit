@@ -134,7 +134,7 @@ module "hub_secondary" {
   tags                              = local.tags
 }
 
-module "agentless_gw_group" {
+module "agentless_gw" {
   count                 = var.gw_count
   source                = "imperva/dsf-agentless-gw/aws"
   version               = "1.4.7" # latest release tag
@@ -188,7 +188,7 @@ locals {
   hub_gw_combinations = setproduct(
     [module.hub_primary, module.hub_secondary],
     concat(
-      [for idx, val in module.agentless_gw_group : val]
+      [for idx, val in module.agentless_gw : val]
     )
   )
 }
@@ -215,6 +215,6 @@ module "federation" {
   }
   depends_on = [
     module.hub_hadr,
-    module.agentless_gw_group
+    module.agentless_gw
   ]
 }

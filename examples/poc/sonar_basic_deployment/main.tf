@@ -104,7 +104,7 @@ module "hub" {
   ]
 }
 
-module "agentless_gw_group" {
+module "agentless_gw" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.4.7" # latest release tag
   count   = var.gw_count
@@ -135,7 +135,7 @@ module "agentless_gw_group" {
 module "federation" {
   source   = "imperva/dsf-federation/null"
   version  = "1.4.7" # latest release tag
-  for_each = { for idx, val in module.agentless_gw_group : idx => val }
+  for_each = { for idx, val in module.agentless_gw : idx => val }
 
   hub_info = {
     hub_ip_address           = module.hub.public_ip
@@ -154,7 +154,7 @@ module "federation" {
   }
   depends_on = [
     module.hub,
-    module.agentless_gw_group,
+    module.agentless_gw,
   ]
 }
 
@@ -196,8 +196,8 @@ module "db_onboarding" {
     hub_ssh_user             = module.hub.ssh_user
   }
 
-  assignee_gw   = module.agentless_gw_group[0].jsonar_uid
-  assignee_role = module.agentless_gw_group[0].iam_role
+  assignee_gw   = module.agentless_gw[0].jsonar_uid
+  assignee_role = module.agentless_gw[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password

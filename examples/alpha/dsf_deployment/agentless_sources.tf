@@ -40,8 +40,8 @@ module "db_onboarding" {
     hub_ssh_user             = module.hub[0].ssh_user
   }
 
-  assignee_gw   = module.agentless_gw_group[0].jsonar_uid
-  assignee_role = module.agentless_gw_group[0].iam_role
+  assignee_gw   = module.agentless_gw[0].jsonar_uid
+  assignee_role = module.agentless_gw[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password
