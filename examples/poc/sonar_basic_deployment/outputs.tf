@@ -1,6 +1,6 @@
-output "dsf_agentless_gw_group" {
+output "dsf_agentless_gw" {
   value = {
-    for idx, val in module.agentless_gw_group : "agentless-gw-${idx}" =>
+    for idx, val in module.agentless_gw : "agentless-gw-${idx}" =>
     {
       private_ip   = try(val.private_ip, null)
       private_dns  = try(val.private_dns, null)
