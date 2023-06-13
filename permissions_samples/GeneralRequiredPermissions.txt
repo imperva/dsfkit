@@ -236,7 +236,7 @@
                 "kms:ScheduleKeyDeletion",
                 "kms:Encrypt"
             ],
-            "Resource": "*"
+            "Resource": "*",
             "Condition": {
                 "StringLike": {
                     "aws:RequestTag/deployment_name": "imperva-dsf-*"
@@ -266,7 +266,7 @@
                 "iam:ListRolePolicies",
                 "iam:PassRole",
                 "iam:PutRolePolicy",
-                "iam:RemoveRoleFromInstanceProfile"
+                "iam:RemoveRoleFromInstanceProfile",
                 "iam:CreateServiceLinkedRole"
             ],
             "Resource": "*"
