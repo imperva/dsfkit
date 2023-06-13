@@ -137,15 +137,15 @@ module "federation" {
   version  = "1.4.7" # latest release tag
   for_each = { for idx, val in module.agentless_gw_group : idx => val }
 
-  gw_info = {
-    gw_ip_address           = each.value.private_ip
-    gw_private_ssh_key_path = module.key_pair.private_key_file_path
-    gw_ssh_user             = each.value.ssh_user
-  }
   hub_info = {
     hub_ip_address           = module.hub.public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub.ssh_user
+  }
+  gw_info = {
+    gw_ip_address           = each.value.private_ip
+    gw_private_ssh_key_path = module.key_pair.private_key_file_path
+    gw_ssh_user             = each.value.ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub.public_ip

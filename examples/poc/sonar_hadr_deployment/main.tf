@@ -256,15 +256,15 @@ module "federation" {
   version = "1.4.7" # latest release tag
   count   = length(local.hub_gw_combinations)
 
-  gw_info = {
-    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
-    gw_private_ssh_key_path = module.key_pair.private_key_file_path
-    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
-  }
   hub_info = {
     hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
+  }
+  gw_info = {
+    gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
+    gw_private_ssh_key_path = module.key_pair.private_key_file_path
+    gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_primary.public_ip
