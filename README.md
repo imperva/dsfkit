@@ -502,7 +502,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.11.0.10.0.7</td><td>4.11.0.10.0.7</td>
+    <td>DRA</td><td>4.11.0.10.0.7</td><td>4.11.0.10.0.7 and up</td>
   </tr>
 </table>
 
