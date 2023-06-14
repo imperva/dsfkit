@@ -324,9 +324,20 @@ The following table lists the released DSFKit versions, their release date and a
    <td>1.4.7
    </td>
    <td>
-      1. Triggered the first replication cycle as part of an HADR setup
-      <br>2. Added LVM support (DSF Hub and Agentless GW)
-      <br>3. Fixed error while onboarding MSSQL RDS
+      1. Triggered the first replication cycle as part of an HADR setup.
+      <br>2. Added LVM support (DSF Hub and Agentless GW).
+      <br>3. Fixed error while onboarding MSSQL RDS.
+   </td>
+  </tr>
+  <tr>
+   <td>14 June 2023
+   </td>
+   <td>1.4.8
+   </td>
+   <td>
+      1. Fixed typo in the required IAM permissions.
+      <br>2. Added support for Terraform version 1.5.0.
+      <br>3. Fixed global tags.
    </td>
   </tr>
 
