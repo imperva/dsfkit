@@ -229,71 +229,71 @@ EOF
   default     = null
 }
 
-variable "hub_primary_key_pem_details" {
+variable "hub_primary_key_pair" {
   type = object({
-    private_key_pem_file_path = string
-    public_key_name           = string
+    private_key_file_path = string
+    public_key_name       = string
   })
-  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.hub_primary_key_pem_details == null ||
-      try(var.hub_primary_key_pem_details.private_key_pem_file_path != null && var.hub_primary_key_pem_details.public_key_name != null, false)
+      var.hub_primary_key_pair == null ||
+      try(var.hub_primary_key_pair.private_key_file_path != null && var.hub_primary_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the 'hub_primary_key_pem_details' variable"
+    error_message = "All fields must be specified when specifying the 'hub_primary_key_pair' variable"
   }
 }
 
-variable "hub_secondary_key_pem_details" {
+variable "hub_secondary_key_pair" {
   type = object({
-    private_key_pem_file_path = string
-    public_key_name           = string
+    private_key_file_path = string
+    public_key_name       = string
   })
-  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.hub_secondary_key_pem_details == null ||
-      try(var.hub_secondary_key_pem_details.private_key_pem_file_path != null && var.hub_secondary_key_pem_details.public_key_name != null, false)
+      var.hub_secondary_key_pair == null ||
+      try(var.hub_secondary_key_pair.private_key_file_path != null && var.hub_secondary_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the 'hub_secondary_key_pem_details' variable"
+    error_message = "All fields must be specified when specifying the 'hub_secondary_key_pair' variable"
   }
 }
 
-variable "gw_primary_key_pem_details" {
+variable "gw_primary_key_pair" {
   type = object({
-    private_key_pem_file_path = string
-    public_key_name           = string
+    private_key_file_path = string
+    public_key_name       = string
   })
-  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.gw_primary_key_pem_details == null ||
-      try(var.gw_primary_key_pem_details.private_key_pem_file_path != null && var.gw_primary_key_pem_details.public_key_name != null, false)
+      var.gw_primary_key_pair == null ||
+      try(var.gw_primary_key_pair.private_key_file_path != null && var.gw_primary_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the 'gw_primary_key_pem_details' variable"
+    error_message = "All fields must be specified when specifying the 'gw_primary_key_pair' variable"
   }
 }
 
-variable "gw_secondary_key_pem_details" {
+variable "gw_secondary_key_pair" {
   type = object({
-    private_key_pem_file_path = string
-    public_key_name           = string
+    private_key_file_path = string
+    public_key_name       = string
   })
-  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Leave this variable empty if you would like us to create it."
+  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.gw_secondary_key_pem_details == null ||
-      try(var.gw_secondary_key_pem_details.private_key_pem_file_path != null && var.gw_secondary_key_pem_details.public_key_name != null, false)
+      var.gw_secondary_key_pair == null ||
+      try(var.gw_secondary_key_pair.private_key_file_path != null && var.gw_secondary_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields should be specified when specifying the 'gw_secondary_key_pem_details' variable"
+    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
   }
 }
 
@@ -313,29 +313,29 @@ variable "terraform_script_path_folder" {
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
-    error_message = "Terraform script path folder can not be an empty string"
+    error_message = "Terraform script path folder cannot be an empty string"
   }
 }
 
-variable "internal_hub_private_key_secret_name" {
+variable "sonarw_hub_private_key_secret_name" {
   type        = string
   default     = null
   description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_hub_public_key_file_path" {
+variable "sonarw_hub_public_key_file_path" {
   type        = string
   default     = null
   description = "The DSF Hub sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_gw_private_key_secret_name" {
+variable "sonarw_gw_private_key_secret_name" {
   type        = string
   default     = null
   description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
-variable "internal_gw_public_key_file_path" {
+variable "sonarw_gw_public_key_file_path" {
   type        = string
   default     = null
   description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."

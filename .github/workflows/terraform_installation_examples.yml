@@ -1,4 +1,4 @@
-name: 'Terraform Single Account'
+name: 'Terraform Sonar Single Account CLI'
 
 concurrency:
   group: single_account

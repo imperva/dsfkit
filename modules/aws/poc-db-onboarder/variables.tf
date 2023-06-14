@@ -81,7 +81,7 @@ variable "terraform_script_path_folder" {
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""
-    error_message = "Terraform script path folder can not be an empty string"
+    error_message = "Terraform script path folder cannot be an empty string"
   }
 }
 

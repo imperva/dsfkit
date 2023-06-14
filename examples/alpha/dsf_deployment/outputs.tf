@@ -4,7 +4,7 @@ output "dsf_deployment_name" {
 
 output "dsf_private_ssh_key" {
   sensitive = true
-  value     = try(module.key_pair.key_pair_private_pem, null)
+  value     = try(module.key_pair.private_key_content, null)
 }
 
 output "dsf_private_ssh_key_file_path" {
@@ -53,7 +53,7 @@ output "sonar" {
       ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
     } : null
     agentless_gw = [
-      for idx, val in module.agentless_gw_group :
+      for idx, val in module.agentless_gw :
       {
         private_ip   = try(val.private_ip, null)
         private_dns  = try(val.private_dns, null)
@@ -64,7 +64,7 @@ output "sonar" {
       }
     ]
     agentless_gw_secondary = var.agentless_gw_hadr ? [
-      for idx, val in module.agentless_gw_group_secondary :
+      for idx, val in module.agentless_gw_secondary :
       {
         private_ip   = try(val.private_ip, null)
         private_dns  = try(val.private_dns, null)

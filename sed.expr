@@ -10,4 +10,7 @@ s;imperva/dsf-poc-db-onboarder/aws;../../../modules/aws/poc-db-onboarder;
 s;imperva/dsf-mx/aws;../../../modules/aws/mx;
 s;imperva/dsf-agent-gw/aws;../../../modules/aws/agent-gw;
 s;imperva/dsf-db-with-agent/aws;../../../modules/aws/db-with-agent;
+s;imperva/dsf-dra-admin/aws;../../../modules/aws/dra-admin;
+s;imperva/dsf-dra-analytics/aws;../../../modules/aws/dra-analytics;
+s;imperva/dsf-agent-gw-cluster-setup/null;../../../modules/null/agent-gw-cluster-setup;
 /latest release tag/c\

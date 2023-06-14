@@ -4,7 +4,7 @@ locals {
 
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version = "1.4.7" # latest release tag
+  version = "1.4.8" # latest release tag
   count   = contains(local.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -14,7 +14,7 @@ module "rds_mysql" {
 
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version = "1.4.7" # latest release tag
+  version = "1.4.8" # latest release tag
   count   = contains(local.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -29,7 +29,7 @@ module "rds_mssql" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.4.7" # latest release tag
+  version  = "1.4.8" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version
@@ -40,8 +40,8 @@ module "db_onboarding" {
     hub_ssh_user             = module.hub[0].ssh_user
   }
 
-  assignee_gw   = module.agentless_gw_group[0].jsonar_uid
-  assignee_role = module.agentless_gw_group[0].iam_role
+  assignee_gw   = module.agentless_gw[0].jsonar_uid
+  assignee_role = module.agentless_gw[0].iam_role
   database_details = {
     db_username   = each.value.db_username
     db_password   = each.value.db_password

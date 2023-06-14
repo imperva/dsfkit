@@ -34,9 +34,8 @@ output "tags" {
   value = {
     terraform_workspace = terraform.workspace
     vendor              = "Imperva"
-    product             = "EDSF"
+    product             = "DSF"
     terraform           = "true"
-    environment         = "demo"
     creation_timestamp  = resource.time_static.current_time.id
   }
 }

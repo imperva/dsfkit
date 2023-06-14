@@ -56,12 +56,12 @@ jobs:
             example_dir: ./examples/poc/sonar_basic_deployment
             aws_region: eu-west-2
             hub_output: '.dsf_hub.value.public_dns'
-            gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".private_ip'
+            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/sonar_hadr_deployment
             aws_region: eu-west-1
             hub_output: '.dsf_hubs.value.primary.public_dns'
-            gw_output: '.dsf_agentless_gw_group.value."agentless-gw-0".primary.private_ip'
+            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".primary.private_ip'
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
@@ -120,7 +120,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
-        terraform_version: ~1.4.0
+        terraform_version: ~1.5.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2

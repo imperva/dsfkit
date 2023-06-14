@@ -13,6 +13,6 @@ variable "create_private_key" {
   default = true
 }
 
-variable "private_key_pem_filename" {
+variable "private_key_filename" {
   type = string
 }
