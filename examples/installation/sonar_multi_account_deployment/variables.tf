@@ -232,7 +232,7 @@ EOF
 variable "hub_primary_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
@@ -249,7 +249,7 @@ variable "hub_primary_key_pair" {
 variable "hub_secondary_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
@@ -266,7 +266,7 @@ variable "hub_secondary_key_pair" {
 variable "gw_primary_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
@@ -283,7 +283,7 @@ variable "gw_primary_key_pair" {
 variable "gw_secondary_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null

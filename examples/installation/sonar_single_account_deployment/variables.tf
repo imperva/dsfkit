@@ -189,7 +189,7 @@ variable "gw_skip_instance_health_verification" {
 variable "hub_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
@@ -206,7 +206,7 @@ variable "hub_key_pair" {
 variable "gw_key_pair" {
   type = object({
     private_key_file_path = string
-    public_key_name           = string
+    public_key_name       = string
   })
   description = "Key pair used to SSH to the Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null

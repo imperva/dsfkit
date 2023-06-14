@@ -30,26 +30,26 @@ resource "random_string" "gw_id" {
 }
 
 module "gw_instance" {
-  source                        = "../../../modules/aws/sonar-base-instance"
-  resource_type                 = "agentless-gw"
-  name                          = var.friendly_name
-  subnet_id                     = var.subnet_id
-  security_groups_config        = local.security_groups_config
-  security_group_ids            = var.security_group_ids
-  key_pair                      = var.ssh_key_pair.ssh_public_key_name
-  ec2_instance_type             = var.instance_type
-  ebs_details                   = var.ebs
-  ami                           = var.ami
-  instance_profile_name         = var.instance_profile_name
-  additional_install_parameters = var.additional_install_parameters
-  password                      = var.password
-  password_secret_name          = var.password_secret_name
-  ssh_key_path                  = var.ssh_key_pair.ssh_private_key_file_path
-  binaries_location             = var.binaries_location
-  hub_sonarw_public_key         = var.hub_sonarw_public_key
-  hadr_secondary_node           = var.hadr_secondary_node
-  primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
-  primary_node_sonarw_private_key   = var.primary_node_sonarw_private_key
+  source                          = "../../../modules/aws/sonar-base-instance"
+  resource_type                   = "agentless-gw"
+  name                            = var.friendly_name
+  subnet_id                       = var.subnet_id
+  security_groups_config          = local.security_groups_config
+  security_group_ids              = var.security_group_ids
+  key_pair                        = var.ssh_key_pair.ssh_public_key_name
+  ec2_instance_type               = var.instance_type
+  ebs_details                     = var.ebs
+  ami                             = var.ami
+  instance_profile_name           = var.instance_profile_name
+  additional_install_parameters   = var.additional_install_parameters
+  password                        = var.password
+  password_secret_name            = var.password_secret_name
+  ssh_key_path                    = var.ssh_key_pair.ssh_private_key_file_path
+  binaries_location               = var.binaries_location
+  hub_sonarw_public_key           = var.hub_sonarw_public_key
+  hadr_secondary_node             = var.hadr_secondary_node
+  primary_node_sonarw_public_key  = var.primary_node_sonarw_public_key
+  primary_node_sonarw_private_key = var.primary_node_sonarw_private_key
   proxy_info = {
     proxy_address      = var.ingress_communication_via_proxy.proxy_address
     proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
