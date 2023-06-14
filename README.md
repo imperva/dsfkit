@@ -367,7 +367,7 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-roles)).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-users-and-roles)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
