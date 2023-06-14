@@ -196,7 +196,8 @@ locals {
 }
 
 module "federation" {
-  source   = "../../../modules/null/federation"
+  source  = "imperva/dsf-federation/null"
+  version = "1.4.7" # latest release tag
   for_each = local.hub_gw_combinations
 
   hub_info = {
