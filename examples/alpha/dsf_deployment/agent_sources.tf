@@ -23,4 +23,7 @@ module "agent_monitored_db" {
     site               = module.mx[0].configuration.default_site
   }
   tags = local.tags
+  depends_on = [
+    module.agent_gw_cluster_setup
+  ]
 }
