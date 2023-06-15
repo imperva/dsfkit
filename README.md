@@ -372,6 +372,7 @@ Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequis
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 5. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
+6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
