@@ -11,7 +11,7 @@ function moveGatewayToCluster() {
   response=$(curl -k -s -X PUT -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gateways/$gw_name/move/${cluster_name}")
 
   if echo $response | grep 'errors' &>/dev/null; then
-    echo "Failed move gateway $gw_name to cluster ${cluster_name}. MX response: $response"
+    echo "Failed to move gateway $gw_name to cluster ${cluster_name}. MX response: $response"
     exit 1
   else
     echo "Gateway $gw_name was moved to cluster ${cluster_name}"
