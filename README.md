@@ -670,14 +670,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     wget https://github.com/imperva/dsfkit/raw/1.4.8/examples/alpha/dsf_deployment/dsf_deployment.zip
     ```
 
-12. Unzip the zip file:
-    ```bash
-    unzip sonar_basic_deployment.zip
-
-    >>>> Change this command depending on the example you chose
-    ```
-
-13. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 3.
+12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.
 
 **IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Installer Machine Undeployment Mode](#installer-machine-undeployment-mode) section.
 
