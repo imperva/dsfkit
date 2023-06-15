@@ -6,6 +6,36 @@ cookie_file=$(mktemp)
 
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
+# Create an empty cluster if doesn't already exist, e.g., from previous Terraform apply
+function maybeCreateCluster() {
+    local local_cluster_id=$1
+    request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
+    response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
+      -d "$request_body" \
+      -H "Content-Type: application/json")
+
+    # Handle response: {"errors":[{"description":"An item with this name already exists - please select a different name","error-code":"IMP-10005"}]}
+    if echo $response | grep 'IMP-10005' &>/dev/null; then
+      echo "Cluster '${cluster_name}' already exists. Getting its Id."
+
+      response=$(curl -k -s -X GET -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters/?clusterName=${cluster_name}")
+      if echo $response | grep 'errors' &>/dev/null; then
+        echo "Failed to get Cluster by name. MX response: $response"
+        exit 1
+      else
+        cluster_id=$(echo "$response" | jq -r '.[] | .id')
+        echo "Cluster '${cluster_name}' already existed with id '$cluster_id'"
+      fi
+    elif echo $response | grep 'errors' &>/dev/null; then
+      echo "Failed to create an empty Cluster. MX response: $response"
+      exit 1
+    else
+      cluster_id=$(echo "$response" | jq -r '.id')
+      echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
+    fi
+    eval $local_cluster_id=$cluster_id
+}
+
 function moveGatewayToCluster() {
   gw_name=$1
   response=$(curl -k -s -X PUT -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/conf/gateways/$gw_name/move/${cluster_name}")
@@ -18,6 +48,7 @@ function moveGatewayToCluster() {
   fi
 }
 
+# Step 1: Login
 response=$(curl -k -s -X POST --cookie-jar $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session" \
   --header "Authorization: Basic ${https_auth_header}")
 
@@ -50,21 +81,10 @@ else
   exit 1
 fi
 
-# Step 3: Create an empty cluster
-request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
-response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
-  -d "$request_body" \
-  -H "Content-Type: application/json")
+# Step 3: Create cluster
+maybeCreateCluster cluster_id
 
-if echo $response | grep 'errors' &>/dev/null; then
-  echo "Failed to create an empty Cluster. MX response: $response"
-  exit 1
-fi
-
-cluster_id=$(echo "$response" | jq -r '.id')
-echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
-
-# Step 6: Move the first two gateways to the cluster
+# Step 4: Move the first two gateways to the cluster
 gw0_name=$${gw_names[0]}
 gw1_name=$${gw_names[1]}
 
