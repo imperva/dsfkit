@@ -8,6 +8,7 @@ trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${
 
 # Create an empty cluster if doesn't already exist, e.g., from previous Terraform apply
 function maybeCreateCluster() {
+    local local_cluster_id=$1
     request_body="{\"name\":\"${cluster_name}\", \"clusterType\":\"REGULAR_CLUSTER\", \"autoLoadBalance\":true, \"hasRedundant\":true, \"networkTopology\":\"Single\"}"
     response=$(curl -k -s -X POST -b $cookie_file "https://${mx_address}:${mx_port}/SecureSphere/api/experimental/plugin/clusters" \
       -d "$request_body" \
@@ -32,7 +33,7 @@ function maybeCreateCluster() {
       cluster_id=$(echo "$response" | jq -r '.id')
       echo "Cluster '${cluster_name}' was created with id '$cluster_id'"
     fi
-    echo $cluster_id
+    eval $local_cluster_id=$cluster_id
 }
 
 function moveGatewayToCluster() {
@@ -81,7 +82,7 @@ else
 fi
 
 # Step 3: Create cluster
-cluster_id=$(maybeCreateCluster)
+maybeCreateCluster cluster_id
 
 # Step 4: Move the first two gateways to the cluster
 gw0_name=$${gw_names[0]}
