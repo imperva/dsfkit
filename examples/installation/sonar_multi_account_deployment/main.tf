@@ -314,7 +314,7 @@ locals {
   )
 }
 
-module "federation_gws" {
+module "federation" {
   count   = length(local.hub_gws_combinations)
   source  = "imperva/dsf-federation/null"
   version = "1.4.8" # latest release tag
