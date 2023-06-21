@@ -183,11 +183,6 @@ module "federation" {
     hub_private_ssh_key_path = local.hub_private_key_pem_file_path
     hub_ssh_user             = each.value[0].ssh_user
   }
-  gw_proxy_info = {
-    proxy_address              = module.hub_primary.private_ip
-    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
-    proxy_ssh_user             = module.hub_primary.ssh_user
-  }
   depends_on = [
     module.hub_hadr,
     module.GROUPA_agentless_gw_group,

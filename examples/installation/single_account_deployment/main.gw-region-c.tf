@@ -143,11 +143,6 @@ module "GROUPC_agentless_gw_group" {
   }
   allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_primary.private_ip
-    proxy_private_ssh_key_path = local.hub_private_key_pem_file_path
-    proxy_ssh_user             = module.hub_primary.ssh_user
-  }
   internal_private_key_secret_name  = var.GROUPC_internal_gw_private_key_secret_name
   internal_public_key               = try(trimspace(file(var.GROUPC_internal_gw_public_key_file_path)), null)
   instance_profile_name             = var.GROUPC_gw_instance_profile_name
