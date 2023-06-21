@@ -236,12 +236,7 @@
                 "kms:ScheduleKeyDeletion",
                 "kms:Encrypt"
             ],
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
-                }
-            }
+            "Resource": "*"
         },
         {
             "Sid": "iamNoConditions",
