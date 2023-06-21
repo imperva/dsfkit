@@ -31,7 +31,6 @@ resource "aws_instance" "dsf_base_instance" {
   user_data     = local.install_script
   root_block_device {
     volume_size = local.disk_size_app
-    tags        = merge(var.tags, { Name = var.name })
   }
   iam_instance_profile = local.instance_profile
   network_interface {
@@ -39,6 +38,7 @@ resource "aws_instance" "dsf_base_instance" {
     device_index         = 0
   }
   tags                        = merge(var.tags, { Name = var.name })
+  volume_tags                 = var.tags
   disable_api_termination     = true
   user_data_replace_on_change = true
   metadata_options {
