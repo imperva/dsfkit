@@ -37,8 +37,8 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids for the ec2 instance"
-  default     = []
+  description = "Security group ids for the ec2 instance"
+  default     = null
 }
 
 variable "attach_persistent_public_ip" {

@@ -40,7 +40,7 @@ variable "security_group_ids" {
     condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
     error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
-  default = []
+  default = null
 }
 
 variable "allowed_agentless_gw_cidrs" {

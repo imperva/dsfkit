@@ -60,8 +60,7 @@ data "aws_subnet" "secondary_hub" {
 # Generating deployment
 ##############################
 module "hub_primary" {
-  source                                 = "imperva/dsf-hub/aws"
-  version                                = "1.4.6" # latest release tag
+  source                                 = "../../../modules/aws/hub"
   friendly_name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
   subnet_id                              = var.subnet_hub_primary
   security_group_ids                     = var.security_group_ids_hub
@@ -94,8 +93,7 @@ module "hub_primary" {
 }
 
 module "hub_secondary" {
-  source                                 = "imperva/dsf-hub/aws"
-  version                                = "1.4.6" # latest release tag
+  source                                 = "../../../modules/aws/hub"
   friendly_name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                              = var.subnet_hub_secondary
   security_group_ids                     = var.security_group_ids_hub

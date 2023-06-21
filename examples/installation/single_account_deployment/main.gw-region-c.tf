@@ -126,8 +126,7 @@ data "aws_subnet" "GROUPC_subnet_gw" {
 ##############################
 module "GROUPC_agentless_gw_group" {
   count                                  = var.GROUPC_gw_count
-  source                                 = "imperva/dsf-agentless-gw/aws"
-  version                                = "1.4.6" # latest release tag
+  source                                 = "../../../modules/aws/agentless-gw"
   friendly_name                          = join("-", [local.deployment_name_salted, "GROUPC", "gw", count.index])
   subnet_id                              = var.GROUPC_subnet_gw
   security_group_ids                     = var.GROUPC_security_group_ids_gw

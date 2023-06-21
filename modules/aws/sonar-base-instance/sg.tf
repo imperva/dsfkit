@@ -7,6 +7,7 @@ data "aws_subnet" "selected_subnet" {
 ##############################################################################
 
 resource "aws_security_group" "dsf_base_sg_out" {
+  count       = var.security_group_ids == null ? 1 : 0
   description = "${var.name} - Allow all out"
   name        = join("-", [var.name, "all", "out"])
 
@@ -25,8 +26,12 @@ resource "aws_security_group" "dsf_base_sg_out" {
 ### Ingress security group 
 ##############################################################################
 
+locals {
+  security_groups_config = var.security_group_ids == null ? var.security_groups_config : []
+}
+
 resource "aws_security_group" "dsf_base_sg_in" {
-  for_each    = { for idx, config in var.security_groups_config : idx => config }
+  for_each    = { for idx, config in local.security_groups_config : idx => config }
   name        = join("-", [var.name, join(" ", each.value.name)])
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
   description = format("%s - %s ingress access", var.name, join(" ", each.value.name))
