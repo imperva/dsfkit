@@ -47,7 +47,7 @@ resource "aws_instance" "dsf_base_instance" {
 }
 
 resource "aws_volume_attachment" "ebs_att" {
-  device_name                    = "/dev/sdb"
+  device_name                    = "/dev/sdc"
   volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
   instance_id                    = aws_instance.dsf_base_instance.id
   stop_instance_before_detaching = true
