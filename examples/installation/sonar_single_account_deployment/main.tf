@@ -142,7 +142,7 @@ module "agentless_gw" {
   subnet_id             = var.subnet_gw
   security_group_ids    = var.security_group_ids_gw
   instance_type         = var.gw_instance_type
-  ebs                   = var.gw_group_ebs_details
+  ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location
   password              = local.password
   password_secret_name  = var.password_secret_name

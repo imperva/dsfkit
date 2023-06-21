@@ -134,7 +134,7 @@ variable "hub_ebs_details" {
   }
 }
 
-variable "gw_group_ebs_details" {
+variable "agentless_gw_ebs_details" {
   type = object({
     disk_size        = number
     provisioned_iops = number

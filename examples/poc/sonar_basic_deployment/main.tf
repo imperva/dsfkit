@@ -111,7 +111,7 @@ module "agentless_gw" {
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id             = local.gw_subnet_id
-  ebs                   = var.gw_group_ebs_details
+  ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location
   password              = local.password
   hub_sonarw_public_key = module.hub.sonarw_public_key

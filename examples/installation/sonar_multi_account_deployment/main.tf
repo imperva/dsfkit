@@ -188,7 +188,7 @@ module "agentless_gw_primary" {
   subnet_id             = var.subnet_gw_primary
   security_group_ids    = var.security_group_ids_gw_primary
   instance_type         = var.gw_instance_type
-  ebs                   = var.gw_group_ebs_details
+  ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location
   password              = local.password
   password_secret_name  = var.password_secret_name
@@ -225,7 +225,7 @@ module "agentless_gw_secondary" {
   subnet_id                       = var.subnet_gw_secondary
   security_group_ids              = var.security_group_ids_gw_secondary
   instance_type                   = var.gw_instance_type
-  ebs                             = var.gw_group_ebs_details
+  ebs                             = var.agentless_gw_ebs_details
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
