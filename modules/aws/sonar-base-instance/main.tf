@@ -9,7 +9,7 @@ locals {
   ebs_state_iops       = var.ebs_details.provisioned_iops
   ebs_state_throughput = var.ebs_details.throughput
 
-  security_group_ids = var.security_group_ids != null ? var.security_group_ids : concat([aws_security_group.dsf_base_sg_out.id], [for sg in aws_security_group.dsf_base_sg_in : sg.id])
+  security_group_ids = var.security_group_ids != null ? var.security_group_ids : concat([aws_security_group.dsf_base_sg_out[0].id], [for sg in aws_security_group.dsf_base_sg_in : sg.id])
 }
 
 resource "aws_eip" "dsf_instance_eip" {
