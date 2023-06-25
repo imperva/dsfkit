@@ -76,7 +76,7 @@ variable "analytics_instance_type" {
 variable "dra_version" {
   description = "The DRA version to install"
   type        = string
-  default     = "4.12.0.10.0.6"
+  default     = "4.11.0.20.0.21"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){5}\\d{1,2}$", var.dra_version))
     error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 1-99 (e.g 4.12.0.10.0.6)"
