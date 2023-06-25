@@ -236,12 +236,12 @@ variable "database_cidr" {
 ##############################
 
 variable "dra_version" {
-  description = "The DRA version to install"
+  description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up"
   type        = string
   default     = "4.11.0.20.0.21"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){5}\\d{1,2}$", var.dra_version))
-    error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 1-99 (e.g 4.12.0.10.0.6)"
+    error_message = "Version must be in the format dd.dd.dd.dd.dd.dd where each dd is a number between 0-99 (e.g 4.12.0.10.0.6)"
   }
 }
 
