@@ -86,6 +86,10 @@ variable "subnet_ids" {
     condition     = var.subnet_ids == null || try(var.subnet_ids.primary_hub_subnet_id != null && var.subnet_ids.secondary_hub_subnet_id != null && var.subnet_ids.primary_gws_subnet_id != null && var.subnet_ids.secondary_gws_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
+  validation {
+    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values({for k,v in var.subnet_ids: k=>v if k != "db_subnet_ids"}) : length(subnet_id) >= 15 && substr(subnet_id, 0, 7) == "subnet-"]), false)
+    error_message = "Subnet id is invalid. Must be subnet-********"
+  }
 }
 
 variable "hub_ebs_details" {
