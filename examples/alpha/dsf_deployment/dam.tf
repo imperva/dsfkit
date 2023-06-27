@@ -66,6 +66,7 @@ module "agent_gw" {
 module "agent_gw_cluster_setup" {
   source  = "imperva/dsf-agent-gw-cluster-setup/null"
   version = "1.4.8" # latest release tag
+  count = local.create_agent_gw_cluster
 
   cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name

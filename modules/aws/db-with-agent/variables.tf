@@ -52,7 +52,7 @@ variable "db_type" {
 variable "os_type" {
   type        = string
   default     = null
-  description = "Os type to provision as EC2"
+  description = "Os type to provision as EC2, available types are: ['Red Hat', 'Ubuntu']"
   validation {
     condition     = var.os_type == null || try(contains(["Red Hat", "Ubuntu"], var.os_type), false)
     error_message = "Valid values should contain at least one of the following: 'Red Hat', 'Ubuntu']"

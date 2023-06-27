@@ -29,10 +29,10 @@ module "hub" {
   allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
-  mx_details = var.enable_dam ? [{
-    name     = module.mx[0].display_name
-    address  = coalesce(module.mx[0].public_dns, module.mx[0].private_dns)
-    username = module.mx[0].web_console_user
+  mx_details = var.enable_dam ? [ for mx in module.mx: {
+    name     = mx.display_name
+    address  = coalesce(mx.public_dns, mx.private_dns)
+    username = mx.web_console_user
     password = local.password
   }] : []
   tags = local.tags
