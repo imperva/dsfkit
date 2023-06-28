@@ -125,11 +125,7 @@ variable "ingress_communication_via_proxy" {
     proxy_ssh_user             = string
   })
   description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default = {
-    proxy_address              = null
-    proxy_private_ssh_key_path = null
-    proxy_ssh_user             = null
-  }
+  default = null
 }
 
 variable "attach_persistent_public_ip" {

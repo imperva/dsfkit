@@ -154,11 +154,11 @@ module "agentless_gw" {
   }
   allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  ingress_communication_via_proxy = {
+  ingress_communication_via_proxy = var.use_hub_as_proxy ? {
     proxy_address              = module.hub_primary.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
-  }
+  } : null
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name

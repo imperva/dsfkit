@@ -340,3 +340,9 @@ variable "sonarw_gw_public_key_file_path" {
   default     = null
   description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }
+
+variable "use_hub_as_proxy" {
+    type = bool
+    default = true
+    description = "Whether to use the DSF Hub as a proxy for ssh into the Agentless Gateways"
+}

@@ -163,16 +163,12 @@ variable "primary_node_sonarw_private_key" {
 
 variable "proxy_info" {
   type = object({
-    proxy_address      = string
-    proxy_ssh_key_path = string
-    proxy_ssh_user     = string
+    proxy_address              = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
   })
   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-  default = {
-    proxy_address      = null
-    proxy_ssh_key_path = null
-    proxy_ssh_user     = null
-  }
+  default = null
 }
 
 variable "hub_sonarw_public_key" {
