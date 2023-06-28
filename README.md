@@ -130,7 +130,7 @@ This guide references the following information and links, some of which are ava
    <td><a href="https://www.terraform.io/downloads">Download Terraform</a>
    </td>
    <td>
-Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
+Latest Supported Terraform Version: 1.5.x. Using a higher version may result in unexpected behavior or errors.
    </td>
   </tr>
   <tr>
