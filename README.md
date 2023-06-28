@@ -1,15 +1,14 @@
 # Data Security Fabric (DSF) Kit Deployment Guide
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-# DSFKit
+# eDSF Kit
 
-Imperva DSFKit is the official Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric.
-The DSF can be easily deployed by following the steps in this guide which are currently available for deployments on AWS only.
+Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric.
 
-DSFKit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
-DAM (Data Activity Monitoring) and DRA (Data Risk Analytics). 
+eDSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
+DAM (Data Activity Monitoring) MX and Agent Gateway and DRA (Data Risk Analytics) Admin and Analytics. 
 
-Currently, DSFKit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
+Currently, eDSF Kit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
 on-premises (vSphere) and hybrid environments.
 
 # About This Guide
@@ -25,7 +24,7 @@ It is also intended for Imperva Professional Services (PS) and customers for act
 This guide covers the following main topics. Additional guides are referenced throughout, as listed in the Quick Links section below.
 
 * How to deploy Imperva’s Data Security Fabric (DSF) with step-by-step instructions.
-* How to verify that the deployment was successful using the DSFKit output.
+* How to verify that the deployment was successful using the eDSF Kit output.
 * How to undeploy DSF with step-by-step instructions.
 
 #### Typographical Conventions
@@ -117,7 +116,7 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8">DSFKit GitHub Repository</a> 
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8">eDSF Kit GitHub Repository</a> 
    </td>
    <td>
    </td>
@@ -149,7 +148,7 @@ Latest Supported Terraform Version: 1.5.x. Using a higher version may result in 
 </table>
 
 #### Version History
-The following table lists the released DSFKit versions, their release date and a high-level summary of each version's content.
+The following table lists the released eDSF Kit versions, their release date and a high-level summary of each version's content.
 
 <table>
   <tr>
@@ -347,12 +346,12 @@ The following table lists the released DSFKit versions, their release date and a
 
 ## Choosing the Deployment Mode
 
-DSFKit offers several deployment modes:
+eDSF Kit offers several deployment modes:
 
 * **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine which must be a Linux machine.
 
   For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
-* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or eDSF Kit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
 
   For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 * **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.
@@ -365,7 +364,7 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 ## Prerequisites
 
-Before using DSFKit to deploy DSF, it is necessary to satisfy a set of prerequisites.
+Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-users-and-roles)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
@@ -382,7 +381,7 @@ e.g., with or without DRA, the number of Agentless Gateways, with or without HAD
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
 
-These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">DSFKit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples">examples</a> directory.
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">eDSF Kit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples">examples</a> directory.
 Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
 For more details about each example, click on the example name.
@@ -471,7 +470,7 @@ For more details about each example, click on the example name.
 </table>
 
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
-The examples make use of the building blocks of the DSFKit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSFKit modules' names have a 'dsf' prefix.
+The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
 
 Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to suit your needs. 
 
@@ -534,7 +533,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">DSFKit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
@@ -599,7 +598,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 ## Installer Machine Deployment Mode
 
-This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or DSFKit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or eDSF Kit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
 
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.
 
@@ -641,7 +640,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     For example: `chmode 400 a_key_pair.pem`
 
 
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">DSFKit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
+11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.4.8">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
     Run:
     ```bash
     wget https://github.com/imperva/dsfkit/raw/1.4.8/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip
@@ -721,10 +720,10 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
     * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run Triggers](https://user-images.githubusercontent.com/52969528/212982564-e12f9b4a-ca3e-480b-9714-76ef69291ee4.png)
       <br>As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
 
-    * Click “Create workspace” to finish and save the new DSFKit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/52969528/212977895-ad9cdc4c-bf44-4a83-b67e-57e7f7e6e6f7.png)
+    * Click “Create workspace” to finish and save the new eDSF Kit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/52969528/212977895-ad9cdc4c-bf44-4a83-b67e-57e7f7e6e6f7.png)
 
 3. **Add the AWS variables:** The next few steps will configure the required AWS variables.
-    * Once the DSFKit workspace is created, click the "Go to workspace overview" button.<br>![Go to Workspace Overview](https://user-images.githubusercontent.com/52969528/212978246-42ce66c1-ffbc-4932-8c0a-4d13188065eb.png)
+    * Once the eDSF Kit workspace is created, click the "Go to workspace overview" button.<br>![Go to Workspace Overview](https://user-images.githubusercontent.com/52969528/212978246-42ce66c1-ffbc-4932-8c0a-4d13188065eb.png)
 
     * Click on the "Configure Variables" button.<br>![Configure Variables](https://user-images.githubusercontent.com/52969528/212978735-afcbfee8-d524-4b08-8e4f-42a12530f490.png)
 
@@ -780,7 +779,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
       >>>> Change the AWS_REGION value in the above screenshot to the AWS region you want to deploy in
       ```
 
-4. **Run the Terraform:** The following steps complete setting up the DSFKit workspace and running the example's Terraform code. 
+4. **Run the Terraform:** The following steps complete setting up the eDSF Kit workspace and running the example's Terraform code. 
     * Click on the **Actions** dropdown button from the top navigation bar, and select the "Start new run" option from the list.</br>![Start New Run](https://user-images.githubusercontent.com/52969528/212980571-9071c3e5-400a-42e7-a7d9-5848b8b9fad7.png)
 
     * Enter a unique, alphanumeric name for the run, and click on the "Start run" button.<br>![Start Run](https://user-images.githubusercontent.com/52969528/212982996-2010be16-79f7-497d-a9c9-13ebc29fa052.png)
@@ -809,7 +808,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
 # IAM Users and Roles
 
-To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSFKit Terraform.
+To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
 1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/GeneralRequiredPermissions.txt).
