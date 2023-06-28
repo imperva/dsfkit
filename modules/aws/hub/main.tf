@@ -70,5 +70,6 @@ module "hub_instance" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content
+  volume_attachment_device_name     = var.volume_attachment_device_name
   tags                              = var.tags
 }

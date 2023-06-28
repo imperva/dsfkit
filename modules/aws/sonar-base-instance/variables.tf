@@ -212,3 +212,9 @@ variable "generate_access_tokens" {
   default     = false
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
 }
+
+variable "volume_attachment_device_name" {
+  type = string
+  default = null
+  description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
+}

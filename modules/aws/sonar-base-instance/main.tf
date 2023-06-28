@@ -9,6 +9,8 @@ locals {
   ebs_state_iops       = var.ebs_details.provisioned_iops
   ebs_state_throughput = var.ebs_details.throughput
 
+  volume_attachment_device_name = var.volume_attachment_device_name == null ? "/dev/sdb" : var.volume_attachment_device_name
+
   security_group_ids = concat(
     [for sg in aws_security_group.dsf_base_sg_in : sg.id],
   var.security_group_ids)
@@ -49,7 +51,7 @@ resource "aws_instance" "dsf_base_instance" {
 }
 
 resource "aws_volume_attachment" "ebs_att" {
-  device_name                    = "/dev/sdb"
+  device_name                    = local.volume_attachment_device_name
   volume_id                      = aws_ebs_volume.ebs_external_data_vol.id
   instance_id                    = aws_instance.dsf_base_instance.id
   stop_instance_before_detaching = true
