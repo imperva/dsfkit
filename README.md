@@ -438,7 +438,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a> (Alpha)
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
@@ -448,7 +448,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dra_basic_deployment/README.md">DRA Basic Deployment</a> (Alpha)
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dra_basic_deployment/README.md">DRA Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
@@ -458,7 +458,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dsf_deployment/README.md">DSF Deployment</a> (Alpha)
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
       </td>
