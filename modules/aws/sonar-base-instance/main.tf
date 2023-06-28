@@ -40,12 +40,12 @@ resource "aws_instance" "dsf_base_instance" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  tags                        = merge(var.tags, { Name = var.name })
   disable_api_termination     = true
   user_data_replace_on_change = true
   metadata_options {
     http_tokens = "required"
   }
+  tags                        = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_volume_attachment" "ebs_att" {
