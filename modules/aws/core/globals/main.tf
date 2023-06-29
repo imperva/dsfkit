@@ -23,7 +23,7 @@ locals {
     "4.11" = "4.11.0.20.0.21"
   }
 
-  dra_version = local.dra_version_map[var.dra_version] != null ? local.dra_version_map[var.dra_version] : var.dra_version
+  dra_version = lookup(local.dra_version_map, var.dra_version, var.dra_version)
 }
 
 resource "random_id" "salt" {
