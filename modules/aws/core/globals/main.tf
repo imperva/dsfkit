@@ -19,8 +19,12 @@ locals {
 
 locals {
   dra_version_map = {
-    "4.12" = "4.12.0.10"
+    "4.12" = "4.12.0.10.0.6"
+    "4.12.0.10" = "4.12.0.10.0.6"
+
     "4.11" = "4.11.0.20.0.21"
+    "4.11.0.20" = "4.11.0.20.0.21"
+    "4.11.0.10" = "4.11.0.10.0.7"
   }
 
   dra_version = lookup(local.dra_version_map, var.dra_version, var.dra_version)
