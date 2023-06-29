@@ -3,6 +3,7 @@ provider "aws" {}
 module "globals" {
   source  = "imperva/dsf-globals/aws"
   version = "1.4.8" # latest release tag
+  dra_version = var.dra_version
   tags    = local.tags
 }
 
@@ -60,7 +61,7 @@ module "dra_admin" {
   source                         = "../../../modules/aws/dra-admin"
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
-  dra_version                    = var.dra_version
+  dra_version                    = module.globals.dra_version
   ebs                            = var.admin_ebs_details
   admin_registration_password    = local.admin_registration_password
   admin_password                 = local.admin_registration_password
@@ -84,7 +85,7 @@ module "analytics_server_group" {
   source                      = "../../../modules/aws/dra-analytics"
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id
-  dra_version                 = var.dra_version
+  dra_version                 = module.globals.dra_version
   ebs                         = var.analytics_group_ebs_details
   admin_registration_password = local.admin_registration_password
   admin_password              = local.admin_registration_password

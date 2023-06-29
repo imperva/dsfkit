@@ -11,6 +11,7 @@ module "globals" {
   version = "1.4.8" # latest release tag
 
   sonar_version = var.sonar_version
+  dra_version = var.dra_version
   tags          = local.tags
 }
 
