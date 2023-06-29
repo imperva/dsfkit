@@ -48,3 +48,7 @@ output "tarball_location" {
     version   = local.s3_object_version
   }
 }
+
+output "dra_version" {
+  value = local.dra_version
+}

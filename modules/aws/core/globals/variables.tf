@@ -4,13 +4,14 @@ variable "tags" {
   default     = {}
 }
 
+# TODO Improve what we do here with the versions
 variable "sonar_version" {
   type        = string
   default     = "4.11"
-  description = "The Sonar version to install. Sonar's supported versions are: ['4.9', '4.10', '4.10.0.1', '4.11']"
+  description = "The Sonar version to install. Supported versions are: 4.9 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
-    condition     = contains(["4.9", "4.10", "4.10.0.1", "4.11"], var.sonar_version)
-    error_message = "The sonar_version value must be from the list [\"4.9\", \"4.10\", \"4.10.0.1\", \"4.11\"]"
+    condition     = contains(["4.9", "4.10", "4.10.0.0", "4.10.0.1", "4.11", "4.11.0.0", "4.12.0.10", "4.12"], var.sonar_version)
+    error_message = "The sonar_version value must be from the list [\"4.9\", \"4.10\", \"4.10.0.0\", \"4.10.0.1\", \"4.11\", \"4.11.0.0\", \"4.12.0.10\", \"4.12\"]"
   }
 }
 
@@ -30,4 +31,11 @@ variable "tarball_s3_key" {
   type        = string
   default     = null
   description = "Name of the installation file in s3 bucket. Keep empty if you prefer to use the sonar_version variable"
+}
+
+# TODO Add validation
+variable "dra_version" {
+  type        = string
+  default     = "4.11"
+  description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
 }
