@@ -233,8 +233,8 @@ variable "database_cidr" {
 
 variable "dra_version" {
   type        = string
-  default     = "4.11.0.20.0.21"
-  description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
+  default     = "4.11"
+  description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
 }
 
 variable "dra_admin_ebs_details" {
