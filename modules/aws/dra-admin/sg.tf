@@ -30,8 +30,8 @@ locals {
     }
   ]
 
-  # remove security groups elements that have no cidr whithin it
-  _security_groups_config = length(var.security_group_ids) == 0 ? {for k,v in local.security_groups_config: k=>v if length(v.cidrs) > 0 || v.internet_access == true && length(var.security_group_ids) == 0} : {}
+  # Skip sg creation if external sg list is given
+  _security_groups_config = length(var.security_group_ids) == 0 ? local.security_groups_config : []
 }
 
 data "aws_subnet" "selected_subnet" {
