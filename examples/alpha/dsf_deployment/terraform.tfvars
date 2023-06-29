@@ -1,5 +1,0 @@
-sonar_version = "4.12"
-dra_version = "4.12"
-dam_version = "14.12.1.10"
-license_file="~/licenses/SecureSphere_Lic14.0_PO0_000000000000_7_6_2023.mprv"
-password="Barbamama12#"

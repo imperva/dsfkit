@@ -491,18 +491,18 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.11</td><td>4.9 and up 
+    <td>Sonar</td><td>4.11.0.0</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.11.1.10</td><td>14.11.1.10
+    <td>DAM</td><td>14.11.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.11.0.20.0.21</td><td>4.11.0.10.0.7 and up</td>
+    <td>DRA</td><td>4.11.0.20</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
@@ -515,6 +515,11 @@ Restrictions on modules may apply</td>
 
    >>>> Change the Sonar version to the one you want to install
    ```
+
+When specifying Sonar and DRA versions, both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch.
+
+When specifying DAM version, only long format is supported.
+
 
 Make sure that the version you are using is supported by all the modules which are part of your deployment.
 To see which versions are supported by each module, refer to the specific module's README. 
