@@ -64,13 +64,13 @@ variable "subnet_gw" {
 variable "security_group_ids_hub" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
 }
 
 variable "security_group_ids_gw" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
 }
 
 variable "hub_instance_profile_name" {
@@ -252,4 +252,10 @@ variable "sonarw_gw_public_key_file_path" {
   type        = string
   default     = null
   description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "use_hub_as_proxy" {
+    type = bool
+    default = true
+    description = "Whether to use the DSF Hub as a proxy for ssh into the Agentless Gateways"
 }

@@ -1,7 +1,7 @@
 locals {
-  bastion_host        = var.proxy_info.proxy_address
-  bastion_private_key = try(file(var.proxy_info.proxy_ssh_key_path), "")
-  bastion_user        = var.proxy_info.proxy_ssh_user
+  bastion_host        = try(var.proxy_info.proxy_address, null)
+  bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
+  bastion_user        = try(var.proxy_info.proxy_ssh_user, null)
 
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = "DSF-${var.resource_type}-${var.name}"

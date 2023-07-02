@@ -2,12 +2,17 @@ data "aws_subnet" "selected_subnet" {
   id = var.subnet_id
 }
 
+locals {
+  # Skip sg creation if external sg list is given
+  _security_groups_config = length(var.security_group_ids) == 0 ? var.security_groups_config : []
+}
+
 ##############################################################################
 ### Ingress security group 
 ##############################################################################
 
 resource "aws_security_group" "dsf_base_sg_in" {
-  for_each    = { for idx, config in var.security_groups_config : idx => config }
+  for_each    = { for idx, config in local._security_groups_config : idx => config }
   name        = join("-", [var.name, join(" ", each.value.name)])
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
   description = format("%s - %s ingress access", var.name, join(" ", each.value.name))

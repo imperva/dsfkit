@@ -38,7 +38,7 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids for the ec2 instance"
+  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
   default     = []
 }
 
@@ -163,16 +163,12 @@ variable "primary_node_sonarw_private_key" {
 
 variable "proxy_info" {
   type = object({
-    proxy_address      = string
-    proxy_ssh_key_path = string
-    proxy_ssh_user     = string
+    proxy_address              = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
   })
   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-  default = {
-    proxy_address      = null
-    proxy_ssh_key_path = null
-    proxy_ssh_user     = null
-  }
+  default = null
 }
 
 variable "hub_sonarw_public_key" {
@@ -211,4 +207,10 @@ variable "generate_access_tokens" {
   type        = bool
   default     = false
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
+}
+
+variable "volume_attachment_device_name" {
+  type = string
+  default = null
+  description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
 }
