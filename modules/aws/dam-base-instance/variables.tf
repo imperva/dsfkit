@@ -33,7 +33,7 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids for the ec2 instance"
+  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
   default     = []
 }
 

@@ -35,7 +35,7 @@ variable "instance_profile_name" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids to attach to the hub instance"
+  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
   validation {
     condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
     error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
@@ -125,11 +125,7 @@ variable "ingress_communication_via_proxy" {
     proxy_ssh_user             = string
   })
   description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default = {
-    proxy_address              = null
-    proxy_private_ssh_key_path = null
-    proxy_ssh_user             = null
-  }
+  default = null
 }
 
 variable "attach_persistent_public_ip" {
@@ -283,4 +279,10 @@ variable "mx_details" {
     error_message = "Each MX must specify username and password"
   }
   default = []
+}
+
+variable "volume_attachment_device_name" {
+  type = string
+  default = null
+  description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
 }

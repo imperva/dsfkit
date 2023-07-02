@@ -31,5 +31,9 @@ resource "aws_instance" "agent" {
   }
   iam_instance_profile = aws_iam_instance_profile.dsf_node_instance_iam_profile.id
   user_data            = local.user_data
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens = "required"
+  }
   tags                 = merge(var.tags, { Name = join("-", [var.friendly_name]) })
 }

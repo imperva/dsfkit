@@ -58,7 +58,9 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source                         = "../../../modules/aws/dra-admin"
+  source  = "imperva/dsf-dra-admin/aws"
+  version = "1.4.8" # latest release tag
+
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
   dra_version                    = module.globals.dra_version
@@ -70,10 +72,7 @@ module "dra_admin" {
   allowed_ssh_cidrs              = var.allowed_ssh_cidrs_to_admin
   instance_type                  = var.admin_instance_type
   attach_persistent_public_ip    = true
-  ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.private_key_file_path
-    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-  }
+  key_pair                       = module.key_pair.key_pair.key_pair_name
   tags = local.tags
   depends_on = [
     module.vpc
@@ -81,8 +80,10 @@ module "dra_admin" {
 }
 
 module "analytics_server_group" {
+  source  = "imperva/dsf-dra-analytics/aws"
+  version = "1.4.8" # latest release tag
   count                       = var.analytics_server_count
-  source                      = "../../../modules/aws/dra-analytics"
+
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id
   dra_version                 = module.globals.dra_version
@@ -92,15 +93,12 @@ module "analytics_server_group" {
   allowed_admin_server_cidrs  = [data.aws_subnet.admin.cidr_block]
   allowed_ssh_cidrs           = var.allowed_ssh_cidrs_to_analytics
   instance_type               = var.analytics_instance_type
-  ssh_key_pair = {
-    ssh_private_key_file_path = module.key_pair.private_key_file_path
-    ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
-  }
-  archiver_user           = local.archiver_user
-  archiver_password       = local.archiver_password
-  admin_server_private_ip = module.dra_admin.private_ip
-  admin_server_public_ip  = module.dra_admin.public_ip
-  tags                    = local.tags
+  key_pair                    = module.key_pair.key_pair.key_pair_name
+  archiver_user               = local.archiver_user
+  archiver_password           = local.archiver_password
+  admin_server_private_ip     = module.dra_admin.private_ip
+  admin_server_public_ip      = module.dra_admin.public_ip
+  tags                        = local.tags
   depends_on = [
     module.vpc
   ]

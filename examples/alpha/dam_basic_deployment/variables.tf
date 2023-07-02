@@ -93,6 +93,10 @@ variable "subnet_ids" {
     condition     = var.subnet_ids == null || try(var.subnet_ids.mx_subnet_id != null && var.subnet_ids.gw_subnet_id != null, false)
     error_message = "Value must either be null or specified for all"
   }
+  validation {
+    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values(var.subnet_ids) : length(subnet_id) >= 15 && substr(subnet_id, 0, 7) == "subnet-"]), false)
+    error_message = "Subnet id is invalid. Must be subnet-********"
+  }
 }
 
 variable "hub_details" {
