@@ -117,7 +117,9 @@ module "agent_gw" {
 }
 
 module "agent_gw_cluster_setup" {
-  source             = "../../../modules/null/agent-gw-cluster-setup"
+  source  = "imperva/dsf-agent-gw-cluster-setup/null"
+  version = "1.4.8" # latest release tag
+
   cluster_name       = local.cluster_name
   gateway_group_name = local.gateway_group_name
   mx_details = {

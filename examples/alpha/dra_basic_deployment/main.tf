@@ -58,7 +58,9 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source                         = "../../../modules/aws/dra-admin"
+  source  = "imperva/dsf-dra-admin/aws"
+  version = "1.4.8" # latest release tag
+
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
   dra_version                    = module.globals.dra_version
@@ -78,8 +80,10 @@ module "dra_admin" {
 }
 
 module "analytics_server_group" {
+  source  = "imperva/dsf-dra-analytics/aws"
+  version = "1.4.8" # latest release tag
   count                       = var.analytics_server_count
-  source                      = "../../../modules/aws/dra-analytics"
+
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id
   dra_version                 = module.globals.dra_version
