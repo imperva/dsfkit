@@ -64,13 +64,13 @@ variable "subnet_gw" {
 variable "security_group_ids_hub" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
 }
 
 variable "security_group_ids_gw" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable."
+  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
 }
 
 variable "hub_instance_profile_name" {
