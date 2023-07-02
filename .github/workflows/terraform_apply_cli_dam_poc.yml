@@ -179,10 +179,10 @@ jobs:
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
-    - name: Terraform Destroy
-      id: destroy
-      if: ${{ always() && inputs.destroy != 'false' }}
-      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
+#    - name: Terraform Destroy
+#      id: destroy
+#      if: ${{ always() && inputs.destroy != 'false' }}
+#      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
       if: always()
