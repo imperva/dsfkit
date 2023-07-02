@@ -24,6 +24,10 @@ on:
       use_modules_from_terraform_registry:
         type: boolean
         required: false
+      destroy:
+        type: boolean
+        required: false
+        default: true
 
   push:
     branches:
@@ -56,6 +60,9 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
+  TF_VAR_sonar_version: "4.11"
+  TF_VAR_dra_version: "4.12"
+  TF_VAR_dam_version: "14.12.1.10"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -68,10 +75,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DAM POC CLI
-            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
-            example_dir: ./examples/alpha/dam_basic_deployment
-            aws_region: ca-central-1
+#          - name: DAM POC CLI
+#            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+#            example_dir: ./examples/alpha/dam_basic_deployment
+#            aws_region: ca-central-1
           - name: DSF POC CLI
             workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/alpha/dsf_deployment
@@ -174,7 +181,7 @@ jobs:
 
     - name: Terraform Destroy
       id: destroy
-      if: always()
+      if: ${{ always() && inputs.destroy != 'false' }}
       run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
