@@ -59,7 +59,8 @@ module "mx" {
   dam_version                  = var.dam_version
   license_file                 = var.license_file
   allowed_all_cidrs            = [data.aws_vpc.selected.cidr_block]
-}```
+}
+```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
 
@@ -80,5 +81,5 @@ API access is required to provision this module. Please make sure to pass the re
 
 ## Additional Information
 
-For more information about the DSF MX and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm). 
+For more information about the DSF MX and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm). <br>
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).
