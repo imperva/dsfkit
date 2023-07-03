@@ -39,6 +39,12 @@ variable "subnet_ids" {
   }
 }
 
+variable "web_console_cidr" {
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+  description = "DRA Admin web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+}
+
 variable "workstation_cidr" {
   type        = list(string)
   default     = null

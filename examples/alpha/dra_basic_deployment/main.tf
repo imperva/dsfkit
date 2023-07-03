@@ -64,7 +64,7 @@ module "dra_admin" {
   ebs                            = var.admin_ebs_details
   admin_registration_password    = local.admin_registration_password
   admin_password                 = local.admin_registration_password
-  allowed_web_console_cidrs      = local.workstation_cidr
+  allowed_web_console_cidrs      = var.web_console_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.analytics.cidr_block]
   allowed_ssh_cidrs              = var.allowed_ssh_cidrs_to_admin
   instance_type                  = var.admin_instance_type
