@@ -4,7 +4,7 @@
 This Terraform module provisions a DSF DRA Analytics instance on AWS as an EC2 instance.
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive.
+* Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An AWS account.
 * Access to DRA software. [Request access here](https://docs.google.com/forms/d/e/1FAIpQLSc7PFqBQWdWajo83yKeaB7u9TFolXCsRAtuJdDFqwVcwAV8xA/viewform).
 
@@ -36,7 +36,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-Please refer to [outputs](outputs.tf)
+Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-dra-analytics/aws/latest?tab=outputs.
 
 ## Usage
 
@@ -77,4 +77,5 @@ module "dsf_dra_admin" {
 ## Additional Information
 
 For more information about the DSF DRA Analytics and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/z-kb-articles-km/page/4e487f3c.html). 
+
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).

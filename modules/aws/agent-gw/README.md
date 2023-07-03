@@ -6,7 +6,7 @@ This Terraform module provisions a DSF Agent Gateway on AWS as an EC2 instance.
 The Gateway performs application and database monitoring, providing full visibility into how data is actually used in the enterprise, regardless of whether it is accessed directly or indirectly via applications.
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive.
+* Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An AWS account.
 * Network access to Management server (MX) on port 8083 (API and WebConsole)
 * Access to DAM AMIs. To request access, subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
@@ -59,7 +59,8 @@ module "agent-gw" {
   dam_version                                              = var.dam_version
   management_server_host_for_registration                  = var.management_server_host_for_registration
   allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
-}```
+}
+```
 
 To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
 
@@ -81,4 +82,5 @@ API access to the DSF Management server is required to provision this module. Pl
 ## Additional Information
 
 For more information about the DSF Agent Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/378.htm). 
+
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).

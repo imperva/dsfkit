@@ -6,7 +6,7 @@ This Terraform module provisions a DSF Management server (AKA mx) on AWS as an E
 Imperva’s Management Server is the manager for DAM components. This includes Agent Gateways and Agents.
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive.
+* Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An AWS account.
 * Network access to port 8083 (API and WebConsole)
 * Access to DAM AMIs. To request access, subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
@@ -81,5 +81,6 @@ API access is required to provision this module. Please make sure to pass the re
 
 ## Additional Information
 
-For more information about the DSF MX and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm). <br>
+For more information about the DSF MX and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm).
+
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).
