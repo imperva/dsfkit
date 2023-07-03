@@ -6,7 +6,7 @@ This Terraform module provisions a DSF DRA Analytics instance on AWS as an EC2 i
 ## Requirements
 * Terraform version between v1.3.1 and v1.4.x, inclusive.
 * An AWS account.
-* Access to DRA software. (TODO how to obtain the sw)
+* Access to DRA software. [Request access here](https://docs.google.com/forms/d/e/1FAIpQLSc7PFqBQWdWajo83yKeaB7u9TFolXCsRAtuJdDFqwVcwAV8xA/viewform).
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 
@@ -17,6 +17,8 @@ This Terraform module provisions several resources on AWS. These resources inclu
 * An IAM role with relevant policies.
 * AWS Secrets that hold the passwords.
 * An AWS Elastic Network Interface (ENI).
+
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The KMS is used for encrypting sensitive data.
 
 ## Inputs
 
@@ -74,5 +76,5 @@ module "dsf_dra_admin" {
 
 ## Additional Information
 
-For more information about the DSF DRA Analytics and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-dam-management-server-manager-user-guide/page/10068.htm). 
+For more information about the DSF DRA Analytics and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/z-kb-articles-km/page/4e487f3c.html). 
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).
