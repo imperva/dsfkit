@@ -60,7 +60,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 2
-  TF_VAR_sonar_version: "4.11"
+  TF_VAR_sonar_version: "4.12"
   TF_VAR_dra_version: "4.12"
   TF_VAR_dam_version: "14.12.1.10"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
