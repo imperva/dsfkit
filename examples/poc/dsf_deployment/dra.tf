@@ -14,7 +14,7 @@ module "dra_admin" {
   ebs                            = var.dra_admin_ebs_details
   admin_registration_password    = local.password
   admin_password                 = local.password
-  allowed_web_console_cidrs      = local.workstation_cidr
+  allowed_web_console_cidrs      = var.web_console_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs              = local.hub_cidr_list
   attach_persistent_public_ip    = true
