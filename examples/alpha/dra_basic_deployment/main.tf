@@ -1,15 +1,13 @@
 provider "aws" {}
 
 module "globals" {
-  source  = "imperva/dsf-globals/aws"
-  version = "1.4.8" # latest release tag
+  source  = "../../../modules/aws/core/globals"
   dra_version = var.dra_version
   tags    = local.tags
 }
 
 module "key_pair" {
-  source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.4.8" # latest release tag
+  source               = "../../../modules/aws/core/key_pair"
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_dra_ssh_key-${terraform.workspace}"
   tags                 = local.tags
@@ -58,8 +56,7 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source  = "imperva/dsf-dra-admin/aws"
-  version = "1.4.8" # latest release tag
+  source  = "../../../modules/aws/dra-admin"
 
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
@@ -80,8 +77,7 @@ module "dra_admin" {
 }
 
 module "analytics_server_group" {
-  source  = "imperva/dsf-dra-analytics/aws"
-  version = "1.4.8" # latest release tag
+  source  = "../../../modules/aws/dra-analytics"
   count                       = var.analytics_server_count
 
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])

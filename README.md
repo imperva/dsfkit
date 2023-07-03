@@ -458,13 +458,13 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dsf_deployment/README.md">DSF Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/alpha/dsf_deployment/dsf_deployment.zip">dsf_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.4.8/examples/poc/dsf_deployment/dsf_deployment.zip">dsf_deployment.zip</a>
       </td>
    </tr>
 </table>
@@ -672,7 +672,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.4.8/examples/alpha/dsf_deployment/dsf_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.4.8/examples/poc/dsf_deployment/dsf_deployment.zip
     ```
 
 12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.

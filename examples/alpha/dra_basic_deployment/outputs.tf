@@ -6,7 +6,7 @@ output "dsf_admin_server" {
     private_dns  = try(module.dra_admin.private_dns, null)
     display_name = try(module.dra_admin.display_name, null)
     role_arn     = try(module.dra_admin.iam_role, null)
-    ssh_command  = try("ssh ${module.dra_admin.ssh_user}@${module.dra_admin.public_dns}", null)
+    ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.dra_admin.ssh_user}@${module.dra_admin.public_dns}", null)
   }
 }
 

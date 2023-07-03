@@ -49,6 +49,12 @@ variable "workstation_cidr" {
   description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
+variable "ssh_cidr" {
+  type        = list(string)
+  default     = null
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+}
+
 variable "vpc_ip_range" {
   type        = string
   default     = "10.0.0.0/16"

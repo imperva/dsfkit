@@ -3,8 +3,7 @@ locals {
 }
 
 module "agent_monitored_db" {
-  source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.4.8" # latest release tag
+  source  = "../../../modules/aws/db-with-agent"
   count   = local.agent_count
 
   friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
