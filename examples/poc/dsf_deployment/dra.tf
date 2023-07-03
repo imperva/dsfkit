@@ -37,6 +37,7 @@ module "analytics_server_group" {
   admin_password              = local.password
   allowed_admin_server_cidrs  = [data.aws_subnet.dra_admin.cidr_block]
   allowed_gateways_cidrs      = distinct(concat(local.agent_gw_cidr_list, local.agentless_gw_cidr_list))
+  allowed_ssh_cidrs           = local.hub_cidr_list
   key_pair                    = module.key_pair.key_pair.key_pair_name
   archiver_password           = local.password
   admin_server_private_ip     = module.dra_admin[0].private_ip
