@@ -7,7 +7,7 @@ This Terraform module provisions an all-in-one data security and compliance plat
 4.9 and up
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive.
+* Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An AWS account.
 * SSH access - key and network path to the DSF Hub instance.
 * Access to the tarball containing Sonar binaries. To request access, [click here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
@@ -94,5 +94,6 @@ SSH access is required to provision this module. To SSH into the DSF Hub instanc
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.10-sonar-user-guide/page/81265.htm). 
+For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.12-sonar-user-guide/page/80401.htm). 
+
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.4.8).
