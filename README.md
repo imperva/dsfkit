@@ -339,6 +339,17 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>3. Fixed global tags.
    </td>
   </tr>
+  <tr>
+   <td>4 July 2023
+   </td>
+   <td>1.5.0
+   </td>
+   <td>
+      1. Added support for the new DSF version '4.12'.
+      <br>2. Full DSF POC example Beta release. 
+      <br>3. Bug fixes. 
+   </td>
+  </tr>
 
 </table>
 
