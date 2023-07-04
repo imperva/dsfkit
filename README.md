@@ -346,7 +346,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
    <td>
       1. Added support for the new DSF version '4.12'.
-      <br>2. Full DSF POC example Beta release. 
+      <br>2. Released full DSF POC example. 
       <br>3. Bug fixes. 
    </td>
   </tr>
