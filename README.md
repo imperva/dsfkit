@@ -490,41 +490,45 @@ Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_I
 When using eDSF Kit there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
 In order to be able to download the installation software during deployment, you must request access beforehand. See [Prerequisites](#prerequisites).
 
-The latest DSF version, Q1 2023, is recommended.
 This includes the following version of the DSF sub-products:
 <table>
   <tr>
     <td><strong>DSF Sub-Product</strong>
     </td>
-    <td><strong>Recommended Version</strong>
+    <td><strong>Default Version</strong>
     </td>
     <td><strong>Supported Versions</strong>
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.11.0.0</td><td>4.9 and up 
+    <td>Sonar</td><td>4.12.0.10</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.11.1.10</td><td>14.11.1.10 and up
+    <td>DAM</td><td>14.12.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.11.0.20</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.12.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
-**For example**: examples/poc/sonar_basic_deployment/variables.tf
+Relevant variables are:
    ```terraform
    variable "sonar_version" {
        type    = string
-       default = "4.11"
    }
 
-   >>>> Change the Sonar version to the one you want to install
+   variable "dam_version" {
+       type    = string
+   }
+
+   variable "dra_version" {
+       type    = string
+   }
    ```
 
 When specifying Sonar and DRA versions, both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch.

@@ -52,3 +52,15 @@ output "tarball_location" {
 output "dra_version" {
   value = local.dra_version
 }
+
+output "sonar_supported_versions" {
+  value = local.sonar_supported_versions
+}
+
+output "sonar_fully_supported_versions" {
+  value = local.sonar_fully_supported_versions
+}
+
+output "dra_supported_versions" {
+  value = local.dra_supported_versions
+}
