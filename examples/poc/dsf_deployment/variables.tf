@@ -166,7 +166,7 @@ variable "sonar_version" {
   default     = "4.12"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
-    condition     = contains(module.globals.sonar_fully_supported_versions, var.sonar_version)
+    condition     = ! startswith(var.sonar_version, "4.9.") && ! startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
 }
@@ -243,7 +243,7 @@ variable "dra_version" {
   default     = "4.12.0.10"
   description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
   validation {
-    condition     = contains(module.globals.dra_supported_versions, var.dra_version)
+    condition     = ! startswith(var.dra_version, "4.10.") && ! startswith(var.dra_version, "4.9.") && ! startswith(var.dra_version, "4.8.") && ! startswith(var.dra_version, "4.3.") && ! startswith(var.dra_version, "4.2.") && ! startswith(var.dra_version, "4.1.")
     error_message = "The dra_version value must be 4.11.0.10 or higher"
   }
 }
