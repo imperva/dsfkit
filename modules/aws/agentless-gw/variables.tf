@@ -111,7 +111,7 @@ variable "ingress_communication_via_proxy" {
     proxy_ssh_user             = string
   })
   description = "Proxy address used for ssh for private Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default = null
+  default     = null
 }
 
 variable "binaries_location" {
@@ -233,7 +233,7 @@ variable "sonarw_public_key_content" {
 }
 
 variable "volume_attachment_device_name" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
 }

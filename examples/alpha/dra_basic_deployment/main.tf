@@ -1,9 +1,9 @@
 provider "aws" {}
 
 module "globals" {
-  source  = "../../../modules/aws/core/globals"
+  source      = "../../../modules/aws/core/globals"
   dra_version = var.dra_version
-  tags    = local.tags
+  tags        = local.tags
 }
 
 module "key_pair" {
@@ -56,7 +56,7 @@ module "vpc" {
 }
 
 module "dra_admin" {
-  source  = "../../../modules/aws/dra-admin"
+  source = "../../../modules/aws/dra-admin"
 
   friendly_name                  = join("-", [local.deployment_name_salted, "admin"])
   subnet_id                      = local.admin_subnet_id
@@ -70,15 +70,15 @@ module "dra_admin" {
   instance_type                  = var.admin_instance_type
   attach_persistent_public_ip    = true
   key_pair                       = module.key_pair.key_pair.key_pair_name
-  tags = local.tags
+  tags                           = local.tags
   depends_on = [
     module.vpc
   ]
 }
 
 module "analytics_server_group" {
-  source  = "../../../modules/aws/dra-analytics"
-  count                       = var.analytics_server_count
+  source = "../../../modules/aws/dra-analytics"
+  count  = var.analytics_server_count
 
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id

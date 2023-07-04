@@ -47,9 +47,9 @@ resource "aws_instance" "dsf_base_instance" {
   user_data_replace_on_change = true
   metadata_options {
     http_endpoint = "enabled"
-    http_tokens = "required"
+    http_tokens   = "required"
   }
-  tags                        = merge(var.tags, { Name = var.friendly_name })
+  tags = merge(var.tags, { Name = var.friendly_name })
 }
 
 resource "aws_network_interface" "eni" {

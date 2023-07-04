@@ -255,7 +255,7 @@ variable "sonarw_gw_public_key_file_path" {
 }
 
 variable "use_hub_as_proxy" {
-    type = bool
-    default = true
-    description = "Whether to use the DSF Hub as a proxy for ssh into the Agentless Gateways"
+  type        = bool
+  default     = true
+  description = "Whether to use the DSF Hub as a proxy for ssh into the Agentless Gateways"
 }

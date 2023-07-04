@@ -168,7 +168,7 @@ variable "proxy_info" {
     proxy_ssh_user             = string
   })
   description = "Proxy address, private key file path and user used for ssh to a private DSF node. Keep empty if a proxy is not used."
-  default = null
+  default     = null
 }
 
 variable "hub_sonarw_public_key" {
@@ -210,7 +210,7 @@ variable "generate_access_tokens" {
 }
 
 variable "volume_attachment_device_name" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
 }

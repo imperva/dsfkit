@@ -10,7 +10,7 @@ locals {
     "4.10.0.1" = "jsonar-4.10.0.1.0.tar.gz"
     "4.10.0.0" = "jsonar-4.10.0.0.0.tar.gz"
 
-    "4.9"      = "jsonar-4.9.c_20221129220420.tar.gz"
+    "4.9" = "jsonar-4.9.c_20221129220420.tar.gz"
   }
   supported_versions = keys(local.tarball_s3_key_map)
   s3_object          = var.tarball_s3_key != null ? var.tarball_s3_key : local.tarball_s3_key_map[var.sonar_version]
@@ -19,10 +19,10 @@ locals {
 
 locals {
   dra_version_map = {
-    "4.12" = "4.12.0.10.0.6"
+    "4.12"      = "4.12.0.10.0.6"
     "4.12.0.10" = "4.12.0.10.0.6"
 
-    "4.11" = "4.11.0.20.0.21"
+    "4.11"      = "4.11.0.20.0.21"
     "4.11.0.20" = "4.11.0.20.0.21"
     "4.11.0.10" = "4.11.0.10.0.7"
   }
