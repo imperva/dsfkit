@@ -30,12 +30,9 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/dam-base-instance'
-      - 'modules/aws/agent-gw/*'
-      - 'modules/aws/mx'
-      - 'modules/null/agent-gw-cluster-setup/*'
-      - 'modules/aws/db-with-agent'
+      - 'modules/*'
       - 'examples/alpha/dam_basic_deployment/*'
+      - 'examples/poc/dsf_deployment/*'
 
   pull_request:
     types:
@@ -45,12 +42,9 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/dam-base-instance'
-      - 'modules/aws/agent-gw/*'
-      - 'modules/aws/mx'
-      - 'modules/null/agent-gw-cluster-setup/*'
-      - 'modules/aws/db-with-agent'
+      - 'modules/*'
       - 'examples/alpha/dam_basic_deployment/*'
+      - 'examples/poc/dsf_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"

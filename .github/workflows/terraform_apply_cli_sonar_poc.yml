@@ -27,7 +27,19 @@ on:
     branches:
       - 'master'
       - 'dev'
-    
+    paths:
+      - 'modules/core/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/poc-db-onboarder/*'
+      - 'modules/aws/rds-mssql-db/*'
+      - 'modules/aws/rds-mysql-db/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/poc/sonar_basic_deployment/*'
+      - 'examples/poc/sonar_hadr_deployment/*'
+
   pull_request:
     types:
       - 'opened'
@@ -35,6 +47,18 @@ on:
     branches:
       - 'master'
       - 'dev'
+    paths:
+      - 'modules/core/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/poc-db-onboarder/*'
+      - 'modules/aws/rds-mssql-db/*'
+      - 'modules/aws/rds-mysql-db/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/poc/sonar_basic_deployment/*'
+      - 'examples/poc/sonar_hadr_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"
