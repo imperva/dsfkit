@@ -3,7 +3,8 @@ locals {
 }
 
 module "rds_mysql" {
-  source  = "../../../modules/aws/rds-mysql-db"
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
+  version = "1.4.8" # latest release tag
   count   = contains(local.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -12,7 +13,8 @@ module "rds_mysql" {
 }
 
 module "rds_mssql" {
-  source  = "../../../modules/aws/rds-mssql-db"
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
+  version = "1.4.8" # latest release tag
   count   = contains(local.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -26,7 +28,8 @@ module "rds_mssql" {
 }
 
 module "db_onboarding" {
-  source   = "../../../modules/aws/poc-db-onboarder"
+  source   = "imperva/dsf-poc-db-onboarder/aws"
+  version  = "1.4.8" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version
