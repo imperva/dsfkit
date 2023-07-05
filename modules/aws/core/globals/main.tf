@@ -1,5 +1,5 @@
 locals {
-  tarball_s3_key_map = {
+  sonar_tarball_s3_key_map = {
     "4.12"      = "jsonar-4.12.0.10.0.tar.gz"
     "4.12.0.10" = "jsonar-4.12.0.10.0.tar.gz"
 
@@ -12,8 +12,9 @@ locals {
 
     "4.9" = "jsonar-4.9.c_20221129220420.tar.gz"
   }
-  supported_versions = keys(local.tarball_s3_key_map)
-  s3_object          = var.tarball_s3_key != null ? var.tarball_s3_key : local.tarball_s3_key_map[var.sonar_version]
+  sonar_supported_versions = keys(local.sonar_tarball_s3_key_map)
+  sonar_fully_supported_versions = setsubtract(local.sonar_supported_versions, ["4.9", "4.10.0.0", "4.10.0.1", "4.10"])
+  s3_object          = var.tarball_s3_key != null ? var.tarball_s3_key : local.sonar_tarball_s3_key_map[var.sonar_version]
   s3_object_version  = regex("\\d\\.\\d*", local.s3_object)
 }
 
@@ -27,6 +28,7 @@ locals {
     "4.11.0.10" = "4.11.0.10.0.7"
   }
 
+  dra_supported_versions = keys(local.dra_version_map)
   dra_version = lookup(local.dra_version_map, var.dra_version, var.dra_version)
 }
 

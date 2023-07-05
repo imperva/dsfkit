@@ -25,11 +25,15 @@ variable "key_pair" {
   description = "key pair"
 }
 
-# TODO Add validation
 variable "dra_version" {
   type        = string
-  default     = "4.11.0.20.0.21"
+  default     = "4.12.0.10.0.6"
   description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Both long and short version formats are supported, for example, 4.11.0.10.0.7 or 4.11. The short format maps to the latest patch."
+  nullable    = false
+  validation {
+    condition     = ! startswith(var.dra_version, "4.10.") && ! startswith(var.dra_version, "4.9.") && ! startswith(var.dra_version, "4.8.") && ! startswith(var.dra_version, "4.3.") && ! startswith(var.dra_version, "4.2.") && ! startswith(var.dra_version, "4.1.")
+    error_message = "The dra_version value must be 4.11.0.10 or higher"
+  }
 }
 
 variable "admin_registration_password" {
