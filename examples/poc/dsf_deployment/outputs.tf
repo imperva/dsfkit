@@ -138,7 +138,7 @@ output "dra" {
 output "audit_sources" {
   value = {
     agent_sources = [
-      for idx, val in module.agent_monitored_db :
+      for idx, val in module.db_with_agent :
       {
         private_ip  = val.private_ip
         private_dns = val.private_dns

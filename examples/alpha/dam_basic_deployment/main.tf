@@ -134,12 +134,12 @@ module "agent_gw_cluster_setup" {
   ]
 }
 
-module "agent_monitored_db" {
+module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
   version = "1.5.0" # latest release tag
   count   = var.agent_count
 
-  friendly_name = join("-", [local.deployment_name_salted, "agent", "monitored", "db", count.index])
+  friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
 
   subnet_id         = local.gw_subnet_id
   key_pair          = module.key_pair.key_pair.key_pair_name
