@@ -14,7 +14,7 @@ data "local_sensitive_file" "license_file" {
 
 locals {
   cmd = <<EOF
-  cipher_text=$(echo '${data.local_sensitive_file.license_file.content}' | openssl aes-256-cbc -S ${random_id.encryption_salt.hex} -pass pass:${random_password.passphrase.result} -md md5 | base64 | tr -d "\n" )
+  cipher_text=$(echo '1D8C36C7-LC78-414B-9F8F-D03060FB49B9' | openssl aes-256-cbc -S ${random_id.encryption_salt.hex} -pass pass:${random_password.passphrase.result} -md md5 | base64 | tr -d "\n" )
   # Add cipher text Salt prefix in case it wasn't created (happens in OpenSSL 3.0.2)
   if [[ ! "$cipher_text" == "U2FsdGVkX1"* ]]; then # "U2FsdGVkX1" is b64 encoded cipher text header - "Salted__"
     # Encode the concatenated binary data as base64

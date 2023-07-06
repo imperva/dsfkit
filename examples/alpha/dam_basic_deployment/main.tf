@@ -2,15 +2,13 @@ provider "aws" {
 }
 
 module "globals" {
-  source  = "imperva/dsf-globals/aws"
-  version = "1.5.0" # latest release tag
+  source  = "../../../modules/aws/core/globals"
 
   tags = local.tags
 }
 
 module "key_pair" {
-  source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.5.0" # latest release tag
+  source  = "../../../modules/aws/core/key_pair"
 
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
@@ -66,8 +64,7 @@ module "vpc" {
 # Generating deployment
 ##############################
 module "mx" {
-  source  = "imperva/dsf-mx/aws"
-  version = "1.5.0" # latest release tag
+  source  = "../../../modules/aws/mx"
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
@@ -91,8 +88,7 @@ module "mx" {
 }
 
 module "agent_gw" {
-  source  = "imperva/dsf-agent-gw/aws"
-  version = "1.5.0" # latest release tag
+  source  = "../../../modules/aws/agent-gw"
 
   count = var.gw_count
 
