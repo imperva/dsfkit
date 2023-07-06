@@ -37,7 +37,7 @@ To use this module, add the following to your Terraform configuration:
 provider "aws" {
 }
 
-module "agent_monitored_db" {
+module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
 
   subnet_id         = var.agent_gw_subnet_id
@@ -60,7 +60,7 @@ See available released versions in the main repo README [here](https://github.co
 Specify the module's version by adding the version parameter. For example:
 
 ```
-module "agent_monitored_db" {
+module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
   version = "x.y.z"
 }

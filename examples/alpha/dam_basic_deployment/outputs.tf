@@ -1,6 +1,6 @@
 output "dsf_agents" {
   value = {
-    for idx, val in module.agent_monitored_db : "agent-${idx}" =>
+    for idx, val in module.db_with_agent : "agent-${idx}" =>
     {
       private_ip  = val.private_ip
       private_dns = val.private_dns

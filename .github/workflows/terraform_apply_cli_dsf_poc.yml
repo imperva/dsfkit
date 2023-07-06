@@ -1,4 +1,4 @@
-name: 'DAM/DSF POC CLI'
+name: 'DSF POC CLI'
 
 on:
   workflow_call:
@@ -25,27 +25,6 @@ on:
         type: boolean
         required: false
 
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-    paths:
-      - 'modules/*'
-      - 'examples/alpha/dam_basic_deployment/*'
-      - 'examples/poc/dsf_deployment/*'
-
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
-    paths:
-      - 'modules/*'
-      - 'examples/alpha/dam_basic_deployment/*'
-      - 'examples/poc/dsf_deployment/*'
-
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
@@ -62,10 +41,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DAM POC CLI
-            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
-            example_dir: ./examples/alpha/dam_basic_deployment
-            aws_region: ca-central-1
           - name: DSF POC CLI
             workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/poc/dsf_deployment
