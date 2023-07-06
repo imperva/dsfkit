@@ -141,7 +141,7 @@ variable "large_scale_mode" {
 
 variable "simulation_db_types_for_agent" {
   type        = list(string)
-  default     = ["PostgreSql"]
+  default     = ["MySql"]
   description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'."
   validation {
     condition = alltrue([
