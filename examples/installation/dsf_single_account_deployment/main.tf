@@ -4,7 +4,6 @@ module "globals" {
 
   sonar_version = var.sonar_version
   dra_version   = var.dra_version
-  dra_version   = var.dra_version
   tags          = local.tags
 }
 
@@ -32,7 +31,7 @@ locals {
   dra_admin_public_key_name                     = var.dra_admin_key_pair != null ? var.dra_admin_key_pair.public_key_name : module.key_pair_dra_admin[0].key_pair.key_pair_name
   dra_analytics_private_key_file_path           = var.dra_analytics_key_pair != null ? var.dra_analytics_key_pair.private_key_file_path : module.key_pair_dra_analytics[0].private_key_file_path
   dra_analytics_public_key_name                 = var.dra_analytics_key_pair != null ? var.dra_analytics_key_pair.public_key_name : module.key_pair_dra_analytics[0].key_pair.key_pair_name
-}}
+}
 
 ##############################
 # Generating ssh keys

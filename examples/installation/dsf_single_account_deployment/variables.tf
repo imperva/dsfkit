@@ -154,7 +154,7 @@ variable "subnet_ids" {
   })
   description = "The IDs of existing subnets to deploy resources in"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_secondary_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_secondary_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.admin_subnet_id != null && var.subnet_ids.analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_primary_subnet_id != null && var.subnet_ids.hub_secondary_subnet_id != null && var.subnet_ids.agentless_gw_primary_subnet_id != null && var.subnet_ids.agentless_gw_secondary_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null, false)
     error_message = "Value must either be null or specified for all"
   }
   validation {

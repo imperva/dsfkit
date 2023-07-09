@@ -1,8 +1,8 @@
-## must have default provider
-#provider "aws" {
-#  profile = var.aws_profile
-#  region  = var.aws_region_1
-#}
+# must have default provider
+provider "aws" {
+  profile = var.aws_profile
+  region  = var.aws_region_1
+}
 
 provider "aws" {
   profile = var.aws_profile

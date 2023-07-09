@@ -104,8 +104,8 @@ module "hub_hadr" {
   dsf_secondary_private_ip = module.hub_secondary[0].private_ip
   ssh_key_path             = local.hub_primary_private_key_file_path
   ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
-  ssh_user                 = module.hub_primary.ssh_user
-  ssh_user_secondary       = module.hub_secondary.ssh_user
+  ssh_user                 = module.hub_primary[0].ssh_user
+  ssh_user_secondary       = module.hub_secondary[0].ssh_user
   proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
