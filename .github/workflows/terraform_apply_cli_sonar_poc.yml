@@ -65,7 +65,7 @@ env:
   TF_INPUT: 0
   TF_VAR_gw_count: 1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
 
 permissions:
   contents: read
