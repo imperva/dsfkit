@@ -11,10 +11,6 @@ output "dsf_private_ssh_key_file_path" {
   value = module.key_pair.private_key_file_path
 }
 
-output "dsf_hub_web_console_url" {
-  value = try(join("", ["https://", module.hub[0].public_dns, ":8443/"]), null)
-}
-
 output "generated_network" {
   value = try({
     vpc             = module.vpc[0].vpc_id

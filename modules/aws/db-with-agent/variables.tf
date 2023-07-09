@@ -29,10 +29,10 @@ variable "key_pair" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
+  description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   validation {
     condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
-    error_message = "One or more of the security group ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
+    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
   }
   default = []
 }

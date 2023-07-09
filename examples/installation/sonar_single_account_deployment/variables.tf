@@ -6,12 +6,12 @@ variable "deployment_name" {
 
 variable "aws_profile" {
   type        = string
-  description = "Aws profile name for the deployed resources"
+  description = "AWS profile name for the deployed resources"
 }
 
 variable "aws_region" {
   type        = string
-  description = "Aws region for the deployed resources (e.g us-east-2)"
+  description = "AWS region for the deployed resources (e.g us-east-2)"
 }
 
 variable "sonar_version" {
@@ -42,35 +42,35 @@ variable "tarball_location" {
     s3_region = string
     s3_key    = string
   })
-  description = "S3 bucket DSF installation location"
+  description = "S3 bucket location of the DSF installation software"
   default     = null
 }
 
 variable "subnet_hub_primary" {
   type        = string
-  description = "Aws subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_hub_secondary" {
   type        = string
-  description = "Aws subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_gw" {
   type        = string
-  description = "Aws subnet id for the primary Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the primary Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "security_group_ids_hub" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to this example's readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
+  description = "AWS security group Ids for the DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
 variable "security_group_ids_gw" {
   type        = list(string)
   default     = []
-  description = "Additional aws security group ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). Please refer to the readme for additional information on the deployment restrictions when running the deployment with this variable. If provided, no security groups are created"
+  description = "AWS security group Ids for the Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
 variable "hub_instance_profile_name" {
@@ -99,7 +99,7 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null
-  description = "Password for all users and components including internal communication (Agentless Gateways and Hub) and also to DSF Hub web console (Randomly generated if not set)"
+  description = "Password for all users and components including internal communication (Agentless Gateways and Hub) and DSF Hub web console. If this and the 'password_secret_name' variables are not set, a random value is generated."
 }
 
 variable "password_secret_name" {
@@ -178,12 +178,12 @@ EOF
 
 variable "hub_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended."
 }
 
 variable "gw_skip_instance_health_verification" {
   default     = false
-  description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended."
 }
 
 variable "hub_key_pair" {

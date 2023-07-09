@@ -114,9 +114,9 @@ For example:
 
   ```tf
   aws_profile = "myProfile"
-  aws_region_x = "us-east-1"
-  aws_region_y = "us-east-2"
-  subnet_ids= {
+  aws_region_1 = "us-east-1"
+  aws_region_2 = "us-east-2"
+  subnet_ids = {
     hub_primary_subnet_id            = "subnet-xxxxxxxxxxxxxxxx1"
     hub_secondary_subnet_id          = "subnet-xxxxxxxxxxxxxxxx2"
     agentless_gw_primary_subnet_id   = "subnet-xxxxxxxxxxxxxxxx3"
@@ -126,12 +126,14 @@ For example:
     dra_admin_subnet_id              = "subnet-xxxxxxxxxxxxxxxx7"
     dra_analytics_subnet_id          = "subnet-xxxxxxxxxxxxxxxx8"
   }
-  security_group_ids_hub             = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
-  security_group_ids_agentless_gw    = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
-  security_group_ids_mx              = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
-  security_group_ids_agent_gw        = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
-  security_group_ids_dra_admin       = ["sg-xxxxxxxxxxxxxxxx51", "sg-xxxxxxxxxxxxxxxx52"]
-  security_group_ids_dra_analytics   = ["sg-xxxxxxxxxxxxxxxx61", "sg-xxxxxxxxxxxxxxxx62"]
+  security_group_ids_hub_primary            = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
+  security_group_ids_hub_secondary          = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
+  security_group_ids_agentless_gw_primary   = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
+  security_group_ids_agentless_gw_secondary = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
+  security_group_ids_mx                     = ["sg-xxxxxxxxxxxxxxxx51", "sg-xxxxxxxxxxxxxxxx52"]
+  security_group_ids_agent_gw               = ["sg-xxxxxxxxxxxxxxxx61", "sg-xxxxxxxxxxxxxxxx62"]
+  security_group_ids_dra_admin              = ["sg-xxxxxxxxxxxxxxxx71", "sg-xxxxxxxxxxxxxxxx72"]
+  security_group_ids_dra_analytics          = ["sg-xxxxxxxxxxxxxxxx81", "sg-xxxxxxxxxxxxxxxx82"]
   tarball_location = {
     s3_bucket = "bucket_name"
     s3_region = "us-east-1"

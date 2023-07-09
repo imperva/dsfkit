@@ -4,6 +4,33 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
+variable "aws_profile" {
+  type        = string
+  description = "AWS profile name for the deployed resources"
+}
+
+variable "aws_region_1" {
+  type        = string
+  description = "The first AWS region for the deployed resources (e.g us-east-2)"
+}
+
+variable "aws_region_2" {
+  type        = string
+  description = "The second AWS region for the deployed resources (e.g us-east-2)"
+}
+
+variable "additional_tags" {
+  type        = list(string)
+  default     = []
+  description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+  validation {
+    condition = alltrue([
+    for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
+    ])
+    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
+  }
+}
+
 variable "enable_dsf_hub" {
   type        = bool
   default     = true
@@ -43,12 +70,46 @@ variable "dra_analytics_server_count" {
 variable "password" {
   sensitive   = true
   type        = string
-  default     = null # Random
-  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Randomly generated if not set)"
+  default     = null
+  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub), MX and DSF Hub web console. If this and the 'password_secret_name' variables are not set, a random value is generated."
+}
+
+variable "password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the password value. If not set, password is used."
+}
+
+# TODO Add ingress_communication_via_proxy variable to DAM and DRA
+variable "proxy_address" {
+  type        = string
+  description = "Proxy address used for ssh to the DSF Hub and the Agentless Gateways"
+  default = null
+}
+
+# TODO Add ingress_communication_via_proxy variable to DAM and DRA
+variable "proxy_private_address" {
+  type        = string
+  description = "Proxy private address used for ssh to the DSF Hub and the Agentless Gateways"
+  default = null
+}
+
+# TODO Add ingress_communication_via_proxy variable to DAM and DRA
+variable "proxy_ssh_key_path" {
+  type        = string
+  description = "Proxy private ssh key file path used for ssh to the DSF Hub and the Agentless Gateways"
+  default = null
+}
+
+# TODO Add ingress_communication_via_proxy variable to DAM and DRA
+variable "proxy_ssh_user" {
+  type        = string
+  description = "Proxy ssh user used for ssh to the DSF Hub and the Agentless Gateways"
+  default = null
 }
 
 ##############################
-#### networking variables ####
+#### Networking variables ####
 ##############################
 variable "web_console_cidr" {
   type        = list(string)
@@ -82,14 +143,14 @@ variable "public_subnets" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id                    = string
+    hub_primary_subnet_id            = string
     hub_secondary_subnet_id          = string
-    agentless_gw_subnet_id           = string
+    agentless_gw_primary_subnet_id   = string
     agentless_gw_secondary_subnet_id = string
     mx_subnet_id                     = string
     agent_gw_subnet_id               = string
-    admin_subnet_id                  = string
-    analytics_subnet_id              = string
+    dra_admin_subnet_id              = string
+    dra_analytics_subnet_id          = string
   })
   description = "The IDs of existing subnets to deploy resources in"
   validation {
@@ -102,57 +163,90 @@ variable "subnet_ids" {
   }
 }
 
-##############################
-####    DAM variables     ####
-##############################
+###################################
+#### Security groups variables ####
+###################################
 
-variable "dam_version" {
-  type        = string
-  description = "The DAM version to install"
-  default     = "14.12.1.10"
-  validation {
-    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
-    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
-  }
-}
-
-variable "license_file" {
-  type        = string
-  description = "DAM license file path"
-}
-
-variable "large_scale_mode" {
-  type = object({
-    mx       = bool
-    agent_gw = bool
-  })
-  description = "DAM large scale mode"
-  validation {
-    condition     = var.large_scale_mode.mx == false || var.large_scale_mode.agent_gw == true
-    error_message = "MX large scale mode requires setting large scale mode in the Agentless Gateway as well"
-  }
-  default = {
-    mx       = false
-    agent_gw = true
-  }
-}
-
-variable "simulation_db_types_for_agent" {
+variable "security_group_ids_hub_primary" {
   type        = list(string)
-  default     = ["MySql"]
-  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'."
+  default     = []
+  description = "AWS security group Ids for the primary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_hub_secondary" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the secondary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_gw_primary" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the primary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_gw_secondary" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the secondary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_mx" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the DAM MX (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_agent_gw" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the Agent Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_dra_admin" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the DRA Admin (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "security_group_ids_dra_analytics" {
+  type        = list(string)
+  default     = []
+  description = "AWS security group Ids for the DRA Analytics (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+}
+
+variable "dra_admin_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the Agent Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
   validation {
-    condition = alltrue([
-    for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql", "MariaDB"], db_type)
-    ])
-    error_message = "Value must be a subset of: ['PostgreSql', 'MySql', 'MariaDB']"
+    condition = (
+    var.dra_admin_key_pair == null ||
+    try(var.dra_admin_key_pair.private_key_file_path != null && var.dra_admin_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
   }
 }
 
-variable "agent_source_os" {
-  type        = string
-  default     = "Ubuntu"
-  description = "Agent OS type"
+variable "dra_analytics_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the Agent Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
+  validation {
+    condition = (
+    var.dra_analytics_key_pair == null ||
+    try(var.dra_analytics_key_pair.private_key_file_path != null && var.dra_analytics_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
+  }
 }
 
 ##############################
@@ -167,6 +261,56 @@ variable "sonar_version" {
     condition     = ! startswith(var.sonar_version, "4.9.") && ! startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
+}
+
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket location of the DSF installation software"
+  default     = null
+}
+
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF Hub"
+}
+
+variable "agentless_gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the Agentless Gateway"
+}
+
+variable "sonar_ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image for the DSF Hub and Agentless Gateway based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
+  default     = null
+}
+
+variable "hub_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the DSF Hub EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
+}
+
+variable "agentless_gw_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the Agentless Gateway EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
 }
 
 variable "hub_hadr" {
@@ -209,27 +353,180 @@ variable "agentless_gw_ebs_details" {
   }
 }
 
+variable "hub_primary_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
+  validation {
+    condition = (
+    var.hub_primary_key_pair == null ||
+    try(var.hub_primary_key_pair.private_key_file_path != null && var.hub_primary_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'hub_primary_key_pair' variable"
+  }
+}
+
+variable "hub_secondary_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
+  validation {
+    condition = (
+    var.hub_secondary_key_pair == null ||
+    try(var.hub_secondary_key_pair.private_key_file_path != null && var.hub_secondary_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'hub_secondary_key_pair' variable"
+  }
+}
+
+variable "agentless_gw_primary_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
+  validation {
+    condition = (
+    var.agentless_gw_primary_key_pair == null ||
+    try(var.agentless_gw_primary_key_pair.private_key_file_path != null && var.agentless_gw_primary_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'agentless_gw_primary_key_pair' variable"
+  }
+}
+
+variable "agentless_gw_secondary_key_pair" {
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  default     = null
+
+  validation {
+    condition = (
+    var.agentless_gw_secondary_key_pair == null ||
+    try(var.agentless_gw_secondary_key_pair.private_key_file_path != null && var.agentless_gw_secondary_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'agentless_gw_secondary_key_pair' variable"
+  }
+}
+
 variable "additional_install_parameters" {
   default     = ""
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
-variable "simulation_db_types_for_agentless" {
-  type        = list(string)
-  default     = ["RDS MySQL"]
-  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'RDS MySQL' and 'RDS MsSQL'. 'RDS MsSQL' includes simulation data."
+variable "hub_skip_instance_health_verification" {
+  default     = false
+  description = "This variable allows the user to skip the verification step that checks the health of the DSF Hub instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended."
+}
+
+variable "agentless_gw_skip_instance_health_verification" {
+  default     = false
+  description = "This variable allows the user to skip the verification step that checks the health of the Agentless Gateway instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended."
+}
+
+variable "sonar_terraform_script_path_folder" {
+  type        = string
+  description = "Terraform script path folder to create terraform temporary script files on the DSF Hub and Agentless Gateway instances. Use '.' to represent the instance home directory"
+  default     = null
   validation {
-    condition = alltrue([
-      for db_type in var.simulation_db_types_for_agentless : contains(["RDS MySQL", "RDS MsSQL"], db_type)
-    ])
-    error_message = "Value must be a subset of: ['RDS MySQL', 'RDS MsSQL']"
+    condition     = var.sonar_terraform_script_path_folder != ""
+    error_message = "Terraform script path folder cannot be an empty string"
   }
 }
 
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
+variable "sonarw_hub_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the DSF Hub sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "sonarw_hub_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The DSF Hub sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "sonarw_gw_private_key_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+variable "sonarw_gw_public_key_file_path" {
+  type        = string
+  default     = null
+  description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
+}
+
+##############################
+####    DAM variables     ####
+##############################
+
+variable "dam_version" {
+  type        = string
+  description = "The DAM version to install"
+  default     = "14.12.1.10"
+  validation {
+    condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
+    error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
+  }
+}
+
+variable "license_file" {
+  type        = string
+  description = "DAM license file path"
+}
+
+variable "large_scale_mode" {
+  type = object({
+    mx       = bool
+    agent_gw = bool
+  })
+  description = "DAM large scale mode"
+  validation {
+    condition     = var.large_scale_mode.mx == false || var.large_scale_mode.agent_gw == true
+    error_message = "MX large scale mode requires setting large scale mode in the Agentless Gateway as well"
+  }
+  default = {
+    mx       = false
+    agent_gw = true
+  }
+}
+
+variable "mx_key_pair" {
+  type = string
+  description = "Key pair used to SSH to the MX"
+  default     = null
+}
+
+variable "agent_gw_key_pair" {
+  type = string
+  description = "Key pair used to SSH to the Agent Gateway"
+  default     = null
+}
+
+variable "mx_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the MX EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
+}
+
+variable "agent_gw_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the Agent Gateway EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
 }
 
 ##############################
@@ -268,4 +565,16 @@ variable "dra_analytics_group_ebs_details" {
     volume_size = 1010
     volume_type = "gp3"
   }
+}
+
+variable "dra_admin_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the DRA Admin EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
+}
+
+variable "dra_analytics_instance_profile_name" {
+  type        = string
+  description = "Instance profile to assign to the DRA Analytics EC2. Keep empty if you wish to create a new instance profile."
+  default     = null
 }

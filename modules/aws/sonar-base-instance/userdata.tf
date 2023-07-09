@@ -12,9 +12,8 @@ locals {
     installation_s3_bucket                 = var.binaries_location.s3_bucket
     installation_s3_region                 = var.binaries_location.s3_region
     installation_s3_key                    = var.binaries_location.s3_key
-    display-name                           = local.display_name
+    display_name                           = local.display_name
     password_secret                        = local.password_secret_name
-    ssh_key_path                           = var.ssh_key_path
     hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
