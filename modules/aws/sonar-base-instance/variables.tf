@@ -38,7 +38,7 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
+  description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   default     = []
 }
 
@@ -178,7 +178,7 @@ variable "hub_sonarw_public_key" {
 }
 
 variable "skip_instance_health_verification" {
-  description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended"
+  description = "This variable allows the user to skip the verification step that checks the health of the EC2 instance after it is launched. Set this variable to true to skip the verification, or false to perform the verification. By default, the verification is performed. Skipping is not recommended."
 }
 
 variable "terraform_script_path_folder" {

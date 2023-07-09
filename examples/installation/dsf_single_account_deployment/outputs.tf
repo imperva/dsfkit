@@ -2,40 +2,24 @@ output "dsf_deployment_name" {
   value = local.deployment_name_salted
 }
 
-output "dsf_private_ssh_key" {
-  sensitive = true
-  value     = try(module.key_pair.private_key_content, null)
-}
-
-output "dsf_private_ssh_key_file_path" {
-  value = module.key_pair.private_key_file_path
-}
-
-output "generated_network" {
-  value = try({
-    vpc             = module.vpc[0].vpc_id
-    public_subnets  = module.vpc[0].public_subnets
-    private_subnets = module.vpc[0].private_subnets
-  }, null)
-}
-
 output "sonar" {
   value = var.enable_dsf_hub ? {
-    hub = {
-      public_ip    = try(module.hub[0].public_ip, null)
-      public_dns   = try(module.hub[0].public_dns, null)
-      private_ip   = try(module.hub[0].private_ip, null)
-      private_dns  = try(module.hub[0].private_dns, null)
-      jsonar_uid   = try(module.hub[0].jsonar_uid, null)
-      display_name = try(module.hub[0].display_name, null)
-      role_arn     = try(module.hub[0].iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub[0].ssh_user}@${module.hub[0].public_dns}", null)
-      tokens       = nonsensitive(module.hub[0].access_tokens)
+    hub_primary = {
+      public_ip    = try(module.hub_primary[0].public_ip, null)
+      public_dns   = try(module.hub_primary[0].public_dns, null)
+      private_ip   = try(module.hub_primary[0].private_ip, null)
+      private_dns  = try(module.hub_primary[0].private_dns, null)
+      jsonar_uid   = try(module.hub_primary[0].jsonar_uid, null)
+      display_name = try(module.hub_primary[0].display_name, null)
+      role_arn     = try(module.hub_primary[0].iam_role, null)
+      ssh_command  = try("ssh -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
+      ssh_command_with_proxy  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
+      tokens       = nonsensitive(module.hub_primary[0].access_tokens)
       web_console = {
-        public_url  = try(join("", ["https://", module.hub[0].public_dns, ":8443/"]), null)
-        private_url = try(join("", ["https://", module.hub[0].private_dns, ":8443/"]), null)
+        public_url  = try(join("", ["https://", module.hub_primary[0].public_dns, ":8443/"]), null)
+        private_url = try(join("", ["https://", module.hub_primary[0].private_dns, ":8443/"]), null)
         password    = nonsensitive(local.password)
-        user        = module.hub[0].web_console_user
+        user        = module.hub_primary[0].web_console_user
       }
     }
     hub_secondary = var.hub_hadr ? {
@@ -46,17 +30,19 @@ output "sonar" {
       jsonar_uid   = try(module.hub_secondary[0].jsonar_uid, null)
       display_name = try(module.hub_secondary[0].display_name, null)
       role_arn     = try(module.hub_secondary[0].iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
+      ssh_command_with_proxy  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
     } : null
-    agentless_gw = [
-      for idx, val in module.agentless_gw :
+    agentless_gw_primary = [
+      for idx, val in module.agentless_gw_primary :
       {
         private_ip   = try(val.private_ip, null)
         private_dns  = try(val.private_dns, null)
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub[0].ssh_user}@${module.hub[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command_with_proxy  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
     agentless_gw_secondary = var.agentless_gw_hadr ? [
@@ -67,7 +53,8 @@ output "sonar" {
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub[0].ssh_user}@${module.hub[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command_with_proxy  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []
   } : null
@@ -82,7 +69,7 @@ output "dam" {
       private_dns      = try(module.mx[0].private_dns, null)
       display_name     = try(module.mx[0].display_name, null)
       role_arn         = try(module.mx[0].iam_role, null)
-      ssh_command      = try("ssh -i ${module.key_pair.private_key_file_path} ${module.mx[0].ssh_user}@${module.mx[0].public_dns}", null)
+      ssh_command      = try("ssh -i ${local.mx_private_key_file_path} ${module.mx[0].ssh_user}@${module.mx[0].public_dns}", null)
       public_url       = try(join("", ["https://", module.mx[0].public_dns, ":8083/"]), null)
       private_url      = try(join("", ["https://", module.mx[0].private_dns, ":8083/"]), null)
       password         = nonsensitive(local.password)
@@ -98,7 +85,7 @@ output "dam" {
         display_name     = try(val.display_name, null)
         role_arn         = try(val.iam_role, null)
         group_id         = try(val.group_id, null)
-        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command      = try("ssh -i ${local.agent_gw_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
         large_scale_mode = val.large_scale_mode
       }
     ]
@@ -114,7 +101,7 @@ output "dra" {
       private_dns  = try(module.dra_admin[0].private_dns, null)
       display_name = try(module.dra_admin[0].display_name, null)
       role_arn     = try(module.dra_admin[0].iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.dra_admin_private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
       web_console = {
         public_url  = try(join("", ["https://", module.dra_admin[0].public_dns, ":8443/"]), null)
         private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
@@ -125,37 +112,18 @@ output "dra" {
         private_ip    = val.private_ip
         private_dns   = val.private_dns
         archiver_user = val.archiver_user
-        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command   = try("ssh -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
   } : null
 }
 
-output "audit_sources" {
-  value = {
-    agent_sources = [
-      for idx, val in module.db_with_agent :
-      {
-        private_ip  = val.private_ip
-        private_dns = val.private_dns
-        db_type     = val.db_type
-        os_type     = val.os_type
-        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-      }
-    ]
-    agentless_sources = var.enable_dsf_hub ? {
-      rds_mysql = try(module.rds_mysql[0], null)
-      rds_mssql = try(module.rds_mssql[0], null)
-    } : null
-  }
-}
-
 output "web_console_dsf_hub" {
   value = try({
-    user        = module.hub[0].web_console_user
+    user        = module.hub_primary[0].web_console_user
     password    = nonsensitive(local.password)
-    public_url  = join("", ["https://", module.hub[0].public_dns, ":8443/"])
-    private_url = join("", ["https://", module.hub[0].private_dns, ":8443/"])
+    public_url  = join("", ["https://", module.hub_primary[0].public_dns, ":8443/"])
+    private_url = join("", ["https://", module.hub_primary[0].private_dns, ":8443/"])
   }, null)
 }
 
@@ -174,3 +142,36 @@ output "web_console_dam" {
     user        = module.mx[0].web_console_user
   }, null)
 }
+
+output "dsf_hub_primary_ssh_key_file_path" {
+  value = local.hub_primary_private_key_file_path
+}
+
+output "dsf_hub_secondary_ssh_key_file_path" {
+  value = local.hub_secondary_private_key_file_path
+}
+
+output "agentless_gw_primary_ssh_key_file_path" {
+  value = local.agentless_gw_primary_private_key_file_path
+}
+
+output "agentless_gw_secondary_ssh_key_file_path" {
+  value = local.agentless_gw_secondary_private_key_file_path
+}
+
+output "mx_ssh_key_file_path" {
+  value = local.mx_private_key_file_path
+}
+
+output "agent_gw_secondary_ssh_key_file_path" {
+  value = local.agent_gw_private_key_file_path
+}
+
+output "dra_admin_primary_ssh_key_file_path" {
+  value = local.dra_admin_private_key_file_path
+}
+
+output "dra_analytics_secondary_ssh_key_file_path" {
+  value = local.dra_analytics_private_key_file_path
+}
+

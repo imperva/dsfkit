@@ -208,11 +208,11 @@ module "federation" {
     gw_private_ssh_key_path = local.gw_private_key_file_path
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
-  gw_proxy_info = {
+  gw_proxy_info = var.use_hub_as_proxy ? {
     proxy_address              = module.hub_primary.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_primary.ssh_user
-  }
+  } : null
   depends_on = [
     module.hub_hadr,
     module.agentless_gw
