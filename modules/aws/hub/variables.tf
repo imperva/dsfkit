@@ -255,7 +255,7 @@ variable "sonarw_public_key_content" {
 variable "generate_access_tokens" {
   type        = bool
   default     = false
-  description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
+  description = "Automatically generate access tokens for connecting to USC / connect DAM to the DSF Hub"
 }
 
 variable "mx_details" {

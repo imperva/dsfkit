@@ -9,12 +9,21 @@ resource "random_id" "encryption_salt" {
 }
 
 data "local_sensitive_file" "license_file" {
-  filename = var.license_file
+  count = local.license_activation_code ? 0 : 1
+  filename = var.license
+}
+
+locals {
+  license_passphrase = random_password.passphrase.result
+  encrypted_license  = data.external.encrypted_license.result.cipher_text
+  license_activation_code = ! fileexists(var.license)
+  license_content = local.license_activation_code ? var.license : data.local_sensitive_file.license_file[0].content
+  license_params = "${local.license_activation_code ? "--flex" : "--encLic"}=${local.encrypted_license} --passPhrase=${local.license_passphrase}"
 }
 
 locals {
   cmd = <<EOF
-  cipher_text=$(echo '${data.local_sensitive_file.license_file.content}' | openssl aes-256-cbc -S ${random_id.encryption_salt.hex} -pass pass:${random_password.passphrase.result} -md md5 | base64 | tr -d "\n" )
+  cipher_text=$(echo '${local.license_content}' | openssl aes-256-cbc -S ${random_id.encryption_salt.hex} -pass pass:${random_password.passphrase.result} -md md5 | base64 | tr -d "\n" )
   # Add cipher text Salt prefix in case it wasn't created (happens in OpenSSL 3.0.2)
   if [[ ! "$cipher_text" == "U2FsdGVkX1"* ]]; then # "U2FsdGVkX1" is b64 encoded cipher text header - "Salted__"
     # Encode the concatenated binary data as base64
