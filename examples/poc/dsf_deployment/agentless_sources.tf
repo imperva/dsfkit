@@ -1,11 +1,11 @@
 locals {
-  db_types_to_onboard = local.agentless_gw_count > 0 ? var.db_types_to_onboard : []
+  db_types_for_agentless = local.agentless_gw_count > 0 ? var.simulation_db_types_for_agentless : []
 }
 
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
   version = "1.5.0" # latest release tag
-  count   = contains(local.db_types_to_onboard, "RDS MySQL") ? 1 : 0
+  count   = contains(local.db_types_for_agentless, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
@@ -15,7 +15,7 @@ module "rds_mysql" {
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
   version = "1.5.0" # latest release tag
-  count   = contains(local.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
+  count   = contains(local.db_types_for_agentless, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr

@@ -139,16 +139,16 @@ variable "large_scale_mode" {
   }
 }
 
-variable "agent_count" {
-  type        = number
-  default     = 1
-  description = "The agent sources to provision. Each with a database and a monitoring agent"
-}
-
-variable "agent_source_db" {
-  type        = string
-  default     = "PostgreSql"
-  description = "Agent DB type"
+variable "simulation_db_types_for_agent" {
+  type        = list(string)
+  default     = ["MySql"]
+  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'."
+  validation {
+    condition = alltrue([
+    for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql", "MariaDB"], db_type)
+    ])
+    error_message = "Value must be a subset of: ['PostgreSql', 'MySql', 'MariaDB']"
+  }
 }
 
 variable "agent_source_os" {
@@ -216,15 +216,15 @@ variable "additional_install_parameters" {
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
 
-variable "db_types_to_onboard" {
+variable "simulation_db_types_for_agentless" {
   type        = list(string)
   default     = ["RDS MySQL"]
-  description = "DB types to onboard, available types are - 'RDS MySQL', 'RDS MsSQL' with data"
+  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'RDS MySQL' and 'RDS MsSQL'. 'RDS MsSQL' includes simulation data."
   validation {
     condition = alltrue([
-      for db_type in var.db_types_to_onboard : contains(["RDS MySQL", "RDS MsSQL"], db_type)
+      for db_type in var.simulation_db_types_for_agentless : contains(["RDS MySQL", "RDS MsSQL"], db_type)
     ])
-    error_message = "Valid values should contain at least one of the following: 'RDS MySQL', 'RDS MsSQL'."
+    error_message = "Value must be a subset of: ['RDS MySQL', 'RDS MsSQL']"
   }
 }
 

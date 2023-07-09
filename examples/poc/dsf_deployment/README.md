@@ -82,9 +82,9 @@ Several variables in the `variables.tf` file are important for configuring the d
 ### Networking
 - `subnet_ids`: IDs of the subnets for the deployment. If not specified, a new vpc is created.
 
-### Audit Sources
-- `db_types_to_onboard`: Types of databases to onboard
-- `agent_count`: Number of Agent audit sources
+### Audit Sources for Simulation Purposes
+- `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway
+- `simulation_db_types_for_agent`: Types of databases to provision for Agent Gateways
 
 ## Default Example
 To perform the default deployment, run the following command:

@@ -1,0 +1,179 @@
+name: 'DSF POC CLI'
+
+on:
+  workflow_call:
+    inputs:
+      use_modules_from_terraform_registry:
+        required: true
+        type: boolean
+      explicit_ref:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      DAM_LICENSE:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
+env:
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+  TF_VAR_gw_count: 2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: DSF POC CLI
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            example_dir: ./examples/poc/dsf_deployment
+            aws_region: eu-west-2
+
+    name: '${{ matrix.name }}'
+    runs-on: ubuntu-latest
+    env:
+      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
+      AWS_REGION: ${{ matrix.aws_region }}
+    environment: test
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Pick ref
+      run: |
+        if [ -z "${{ inputs.explicit_ref }}" ]; then
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+        else
+          echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+        fi
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ env.REF }}
+
+    - name: Change the modules source to local
+      if: ${{ inputs.use_modules_from_terraform_registry == false }}
+      run: | 
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+
+    - name: Sets env vars for environment
+      run: |
+        echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/"master"'
+
+    - name: Create terraform backend file
+      run: |
+        cat << EOF > $EXAMPLE_DIR/backend.tf
+        terraform {
+          backend "s3" {
+            bucket         = "terraform-state-bucket-dsfkit-github-tests"
+            key            = "states/terraform.tfstate"
+            dynamodb_table = "terraform-state-lock"
+            region         = "us-east-1"
+          }
+        }
+        EOF
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+        terraform_version: ~1.5.0
+
+    - name: Setup jq
+      uses: sergeysova/jq-action@v2
+
+    - name: Create License File
+      env:
+        MY_SECRET: ${{ secrets.DAM_LICENSE }}
+      run: |
+        echo "${{ secrets.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
+        cat $EXAMPLE_DIR/license.mprv
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
+      env:
+        TF_WORKSPACE: default
+
+    - name: Terraform Create Workspace
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+        
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: |
+        terraform -chdir=$EXAMPLE_DIR workspace list
+        terraform -chdir=$EXAMPLE_DIR plan -var license_file=license.mprv
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -var license_file=license.mprv -auto-approve
+
+    - name: Terraform Output
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Terraform Destroy
+      id: destroy
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -var license_file=license.mprv -auto-approve
+
+    - name: Terraform Delete Workspace
+      if: always()
+      run: |
+        if [ '${{ steps.destroy.conclusion }}' == 'success' ]
+        then
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        fi
+      env:
+        TF_WORKSPACE: default
+
+    - name: Check how was the workflow run
+      id: check-trigger
+      if: ${{ failure() }}
+      run: |
+        if [ "${{ github.event_name }}" == "schedule" ]; then
+          echo "run-by=Automation" >> $GITHUB_OUTPUT
+        else
+          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+        fi
+
+      # Send job failure to Slack
+    - name: Send Slack When Failure
+      run: |
+        if [ ${{ env.REF }} == 'master' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        if [ ${{ env.REF }} == 'dev' ]; then
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        else
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        fi
+      if: ${{ failure() }}
