@@ -1,7 +1,7 @@
 locals {
   dra_analytics_server_count = var.enable_dra ? var.dra_analytics_server_count : 0
 
-  dra_admin_cidr_list = concat([data.aws_subnet.dra_admin.cidr_block], var.enable_dra ? [format("%s/32", module.dra_admin[0].public_ip)] : [])
+  dra_admin_cidr_list = [data.aws_subnet.dra_admin.cidr_block]
 }
 
 module "dra_admin" {
