@@ -55,10 +55,10 @@ output "dsf_hub_secondary_ssh_key_file_path" {
   value = local.hub_secondary_private_key_file_path
 }
 
-output "dsf_gw_primary_ssh_key_file_path" {
+output "agentless_gw_primary_ssh_key_file_path" {
   value = local.gw_primary_private_key_file_path
 }
 
-output "dsf_gw_secondary_ssh_key_file_path" {
+output "agentless_gw_secondary_ssh_key_file_path" {
   value = local.gw_secondary_private_key_file_path
 }

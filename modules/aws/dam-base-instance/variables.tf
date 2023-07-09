@@ -33,7 +33,7 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "Additional Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored"
+  description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   default     = []
 }
 
@@ -125,7 +125,7 @@ variable "secure_password" {
 }
 
 variable "instance_readiness_params" {
-  description = "This variable allows the user to configure how to check the readiness and health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended"
+  description = "This variable allows the user to configure how to check the readiness and health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended."
   type = object({
     enable   = bool
     commands = string

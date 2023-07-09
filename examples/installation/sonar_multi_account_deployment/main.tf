@@ -125,7 +125,7 @@ module "hub_primary" {
   allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.use_hub_as_proxy ? {
+  ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
@@ -164,7 +164,7 @@ module "hub_secondary" {
   allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_primary.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.use_hub_as_proxy ? {
+  ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
@@ -201,7 +201,7 @@ module "agentless_gw_primary" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_secondary.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.use_hub_as_proxy ? {
+  ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
@@ -241,7 +241,7 @@ module "agentless_gw_secondary" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_primary.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.use_hub_as_proxy ? {
+  ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
@@ -269,11 +269,11 @@ module "hub_hadr" {
   ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
   ssh_user                 = module.hub_primary.ssh_user
   ssh_user_secondary       = module.hub_secondary.ssh_user
-  proxy_info = {
+  proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
-  }
+  } : null
   depends_on = [
     module.hub_primary,
     module.hub_secondary
@@ -293,11 +293,11 @@ module "agentless_gw_hadr" {
   ssh_key_path_secondary   = local.gw_secondary_private_key_file_path
   ssh_user                 = module.agentless_gw_primary[count.index].ssh_user
   ssh_user_secondary       = module.agentless_gw_secondary[count.index].ssh_user
-  proxy_info = {
+  proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
-  }
+  } : null
   depends_on = [
     module.agentless_gw_primary,
     module.agentless_gw_secondary
@@ -328,16 +328,16 @@ module "federation" {
     hub_private_ssh_key_path = local.hub_gws_combinations[count.index][0].private_key_file_path
     hub_ssh_user             = local.hub_gws_combinations[count.index][0].instance.ssh_user
   }
-  hub_proxy_info = {
+  hub_proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
-  }
-  gw_proxy_info = {
+  } : null
+  gw_proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
-  }
+  } : null
   depends_on = [
     module.hub_hadr,
     module.agentless_gw_hadr

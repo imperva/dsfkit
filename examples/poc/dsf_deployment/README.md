@@ -1,4 +1,4 @@
-# DSF Deployment Example
+# DSF Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 This example provides a full DSF (Data Security Fabric) deployment with DSF Hub, Agentless Gateways, DAM (Database Activity Monitoring), DRA (Data Risk Analytics) and Agent and Agentless audit sources.
