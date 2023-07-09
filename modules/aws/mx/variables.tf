@@ -177,12 +177,16 @@ variable "large_scale_mode" {
   default     = false
 }
 
-variable "license_file" {
+variable "license" {
+  description = <<EOF
+  License information. Must be one of the following:
+  1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+  2. License file path
+  EOF
   type        = string
-  description = "DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time"
   validation {
-    condition     = fileexists(var.license_file)
-    error_message = "No such file on disk (${var.license_file})"
+    condition = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
+    error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
   }
 }
 

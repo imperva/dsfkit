@@ -1,6 +1,4 @@
 locals {
-  license_passphrase = random_password.passphrase.result
-  encrypted_license  = data.external.encrypted_license.result.cipher_text
   dam_model          = "AVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
@@ -57,7 +55,7 @@ locals {
 locals {
   large_scale_arg = var.large_scale_mode == true ? "--large_scale" : ""
   user_data_commands = [
-    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode --user=${var.ssh_user} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services --encLic=${local.encrypted_license} --passPhrase=${local.license_passphrase} ${local.large_scale_arg}"
+    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode --user=${var.ssh_user} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services ${local.license_params} ${local.large_scale_arg}"
   ]
   iam_actions = [
     "ec2:DescribeInstances"
