@@ -19,17 +19,14 @@ echo "Waiting for first ADC content update:"
 while true; do
   http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \
     --request GET 'https://${mx_address}:8083/SecureSphere/api/v1/administration/adc/timestamp')
-  if [ "$http_code" -ne 200 ]; then
-    echo "Failed to get last ADC content update: http_code: $http_code"
-    cat $response_file
-    exit 1
+  if [ "$http_code" -eq 200 ]; then
+    if ! grep '"adcTimestamp" *: *0' $response_file; then
+      echo "ADC content update is complete."
+      cat $response_file
+      break
+    fi
   fi
   
-  if ! grep '"adcTimestamp" *: *0' $response_file; then
-    echo "ADC content update is complete."
-    cat $response_file
-    break
-  fi
   echo "sleep 1m"
   sleep 60
 done

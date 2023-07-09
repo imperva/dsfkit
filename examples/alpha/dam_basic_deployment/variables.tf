@@ -18,10 +18,6 @@ variable "gw_count" {
   type        = number
   default     = 2
   description = "Number of DSF Agent Gateways"
-  validation {
-    condition     = var.gw_count >= 2
-    error_message = "Must be greater or equal to 2"
-  }
 }
 
 variable "agent_count" {
@@ -79,13 +75,17 @@ variable "gw_group_id" {
   description = "Gw group id. Keep empty for random generated one"
 }
 
-variable "license_file" {
-  type = string
+variable "license" {
+  description = <<EOF
+  License information. Must be one of the following:
+  1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+  2. License file path
+  EOF
+  type        = string
   validation {
-    condition     = fileexists(var.license_file)
-    error_message = "File doesn't exist"
+    condition = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
+    error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
   }
-  description = "DAM license file path"
 }
 
 variable "subnet_ids" {

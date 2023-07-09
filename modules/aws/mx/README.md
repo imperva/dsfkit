@@ -34,7 +34,7 @@ The following input variables are **required**:
 * `mx_password`: MX password
 * `secure_password`: The password used for communication between the Management Server and the Agent Gateway
 * `dam_version`: Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)
-* `license_file`: DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
+* `license`: DAM license file path or activation key. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
@@ -57,7 +57,7 @@ module "mx" {
   mx_password                  = var.mx_password
   secure_password              = var.secure_password
   dam_version                  = var.dam_version
-  license_file                 = var.license_file
+  license                      = var.license
   allowed_all_cidrs            = [data.aws_vpc.selected.cidr_block]
 }
 ```

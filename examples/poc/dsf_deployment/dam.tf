@@ -14,7 +14,7 @@ module "mx" {
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
   subnet_id                         = local.mx_subnet_id
-  license_file                      = var.license_file
+  license                           = var.license
   key_pair                          = module.key_pair.key_pair.key_pair_name
   secure_password                   = local.password
   mx_password                       = local.password
