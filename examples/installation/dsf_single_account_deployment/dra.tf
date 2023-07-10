@@ -43,4 +43,7 @@ module "analytics_server_group" {
   admin_server_private_ip     = module.dra_admin[0].private_ip
   admin_server_public_ip      = module.dra_admin[0].public_ip
   tags                        = local.tags
+  providers = {
+    aws = aws.provider-2
+  }
 }
