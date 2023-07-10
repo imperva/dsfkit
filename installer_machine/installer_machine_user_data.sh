@@ -18,4 +18,6 @@ export PATH=$PATH:/usr/local/bin
 
 yum -y install wget
 
+yum -y install jq
+
 pwd
