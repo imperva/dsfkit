@@ -1,5 +1,8 @@
 locals {
   sonar_tarball_s3_key_map = {
+    "4.13"      = "jsonar-4.13.drasonarintegration_20230706093447.tar.gz"
+    "4.13.0.10" = "jsonar-4.13.drasonarintegration_20230706093447.tar.gz"
+
     "4.12"      = "jsonar-4.12.0.10.0.tar.gz"
     "4.12.0.10" = "jsonar-4.12.0.10.0.tar.gz"
 
@@ -20,6 +23,9 @@ locals {
 
 locals {
   dra_version_map = {
+    "4.13"      = "4.13.0.0.0.3"
+    "4.13.0.0.0.3" = "4.13.0.0.0.3"
+
     "4.12"      = "4.12.0.10.0.6"
     "4.12.0.10" = "4.12.0.10.0.6"
 
