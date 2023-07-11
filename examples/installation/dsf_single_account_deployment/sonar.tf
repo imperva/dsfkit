@@ -11,7 +11,7 @@ module "hub_primary" {
   version = "1.5.0" # latest release tag
   count   = var.enable_dsf_hub ? 1 : 0
 
-  friendly_name               = join("-", [local.deployment_name_salted, "hub"])
+  friendly_name               = join("-", [local.deployment_name_salted, "hub", "primary"])
   instance_type               = var.hub_instance_type
   subnet_id                   = var.subnet_ids.hub_primary_subnet_id
   security_group_ids          = var.security_group_ids_hub_primary
