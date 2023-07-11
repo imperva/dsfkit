@@ -37,7 +37,7 @@ data "aws_subnet" "selected_subnet" {
 
 resource "aws_security_group" "dsf_base_sg_in" {
   for_each    = { for idx, config in local._security_groups_config : idx => config }
-  name        = join("-", [var.friendly_name, join(" ", each.value.name)])
+  name        = join("-", [var.friendly_name, join("-", each.value.name)])
   vpc_id      = data.aws_subnet.selected_subnet.vpc_id
   description = format("%s - %s ingress access", var.friendly_name, join(" ", each.value.name))
 
