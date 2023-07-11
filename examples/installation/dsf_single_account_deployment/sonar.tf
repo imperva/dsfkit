@@ -66,6 +66,7 @@ module "hub_secondary" {
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
+  hadr_secondary_node             = true
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_secondary_private_key_file_path
     ssh_public_key_name       = local.hub_secondary_public_key_name
@@ -98,9 +99,9 @@ module "hub_hadr" {
   count   = length(module.hub_secondary) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.hub_primary[0].public_ip
+  dsf_primary_ip           = module.hub_primary[0].private_ip
   dsf_primary_private_ip   = module.hub_primary[0].private_ip
-  dsf_secondary_ip         = module.hub_secondary[0].public_ip
+  dsf_secondary_ip         = module.hub_secondary[0].private_ip
   dsf_secondary_private_ip = module.hub_secondary[0].private_ip
   ssh_key_path             = local.hub_primary_private_key_file_path
   ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
