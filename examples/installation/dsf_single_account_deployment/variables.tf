@@ -80,28 +80,24 @@ variable "password_secret_name" {
   description = "Secret name in AWS secrets manager which holds the password value. If not set, password is used."
 }
 
-# TODO Add ingress_communication_via_proxy variable to DAM and DRA
 variable "proxy_address" {
   type        = string
   description = "Proxy address used for ssh to the DSF Hub and the Agentless Gateways"
   default = null
 }
 
-# TODO Add ingress_communication_via_proxy variable to DAM and DRA
 variable "proxy_private_address" {
   type        = string
   description = "Proxy private address used for ssh to the DSF Hub and the Agentless Gateways"
   default = null
 }
 
-# TODO Add ingress_communication_via_proxy variable to DAM and DRA
 variable "proxy_ssh_key_path" {
   type        = string
   description = "Proxy private ssh key file path used for ssh to the DSF Hub and the Agentless Gateways"
   default = null
 }
 
-# TODO Add ingress_communication_via_proxy variable to DAM and DRA
 variable "proxy_ssh_user" {
   type        = string
   description = "Proxy ssh user used for ssh to the DSF Hub and the Agentless Gateways"
