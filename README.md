@@ -971,7 +971,7 @@ Review the following issues and troubleshooting remediations.
    </td>
    <td>error deleting security group: DependencyViolation: resource sg-xxxxxxxxxxxxx has a dependent object  
    </td>
-   <td>According to AWS support, and ENI can take up to 24 hours to be deleted. Suggestion: Try to delete the ENI from AWS console or wait for 24 hours.
+   <td>According to AWS support, an ENI can take up to 24 hours to be deleted. Suggestion: Try to delete the ENI from AWS console or wait for 24 hours.
    </td>
   </tr>
   <tr>
@@ -990,7 +990,7 @@ Review the following issues and troubleshooting remediations.
    <td>timeout - last error: Error connecting to bastion: ssh: handshake failed: <br>
        ssh: unable to authenticate, attempted methods [none publickey],  no supported methods remain
    </td>
-   <td>Check the SSH keys you are using and SSH keys variables
+   <td>Check the SSH keys you are using and the SSH keys variables values that you are passing.
    </td>
   </tr>
   <tr>
@@ -1005,10 +1005,9 @@ Review the following issues and troubleshooting remediations.
    <td>Sonar HADR setup internal error
    </td>
    <td>Replication failed! <br>
-       and <br>
        Replication script exited with code 1
    </td>
-   <td>Collect Sonar logs for investigation and contact Imperva Technical Support.
+   <td>Contact Imperva Technical Support.
    </td>
   </tr>
   <tr>
