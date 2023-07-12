@@ -85,7 +85,7 @@ jobs:
       run: terraform output -json
 
     - name: Terraform Destroy
-      if: always()
+#      if: always()
       run: terraform destroy -auto-approve
 
     - name: Check how was the workflow run
