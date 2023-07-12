@@ -935,35 +935,98 @@ Review the following issues and troubleshooting remediations.
    </td>
   </tr>
   <tr>
-   <td>Vpc quota exceeded
+   <td>VPC quota exceeded
    </td>
    <td>error creating EC2 VPC: VpcLimitExceeded: The maximum number of VPCs has been reached
    </td>
-   <td>Remove unneeded vpc via <a href="https://console.aws.amazon.com/vpc/home#vpcs:">vpc dashboard</a>, or increase vpc quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/vpc/quotas/L-F678F1CE">this page</a> and run again
+   <td>Remove unneeded vpc via <a href="https://console.aws.amazon.com/vpc/home#vpcs:">vpc dashboard</a>, or increase vpc quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/vpc/quotas/L-F678F1CE">this page</a> and run again.
    </td>
   </tr>
   <tr>
-   <td>EIP quota exceeded
+   <td>Elastic IP quota exceeded
    </td>
    <td>Error creating EIP: AddressLimitExceeded: The maximum number of addresses has been reached
    </td>
-   <td>Remove unneeded elastic ip via <a href="https://console.aws.amazon.com/ec2/home#Addresses:">this dashboard</a>, or increase elastic ip quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/ec2/quotas/L-0263D0A3">this page</a> and run again
+   <td>Remove unneeded Elastic IPs via <a href="https://console.aws.amazon.com/ec2/home#Addresses:">this dashboard</a>, or increase Elastic IP quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/ec2/quotas/L-0263D0A3">this page</a> and run again.
    </td>
   </tr>
   <tr>
-   <td>AWS internal glitches
-   </td>
-   <td>Error: creating EC2 Instance: InvalidNetworkInterfaceID.NotFound: The networkInterface ID 'eni-xxx does not exist
-   </td>
-   <td>Rerun “terraform apply” to overcome aws internal sync issues
-   </td>
-  </tr>
-  <tr>
-   <td>AWS Option Groups quota exceeded
+   <td>Option Group quota exceeded
    </td>
    <td>Error: "Cannot create more than 20 option groups". Remediation similar to the other exceeded errors
    </td>
-   <td>Remove unneeded Option Groups <a href="https://console.aws.amazon.com/rds/home#option-groups-list:">here</a>, or increase elastic ip quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/rds/quotas/L-9FA33840">this page</a> and run again
+   <td>Remove unneeded Option Groups <a href="https://console.aws.amazon.com/rds/home#option-groups-list:">here</a>, or increase Option Group quota via <a href="https://console.aws.amazon.com/servicequotas/home/services/rds/quotas/L-9FA33840">this page</a> and run again.
+   </td>
+  </tr>
+  <tr>
+   <td>AWS glitch
+   </td>
+   <td>Error: creating EC2 Instance: InvalidNetworkInterfaceID.NotFound: The networkInterface ID 'eni-xxx does not exist
+   </td>
+   <td>Rerun “terraform apply”.
+   </td>
+  </tr>
+  <tr>
+   <td>AWS ENI deletion limitation
+   </td>
+   <td>error deleting security group: DependencyViolation: resource sg-xxxxxxxxxxxxx has a dependent object  
+   </td>
+   <td>According to AWS support, and ENI can take up to 24 hours to be deleted. Suggestion: Try to delete the ENI from AWS console or wait for 24 hours.
+   </td>
+  </tr>
+  <tr>
+   <td>Blocked by Security Group or Network
+   </td>
+   <td>timeout - last error: dial tcp x.y.z.w:22: i/o timeout <br>
+       or <br>
+       timeout - last error: Error connecting to bastion: dial tcp x.y.z.w:22: connect: connection timed out
+   </td>
+   <td>Check your security group and network configuration
+   </td>
+  </tr>
+  <tr>
+   <td>Invalid EC2 SSH Keys
+   </td>
+   <td>timeout - last error: Error connecting to bastion: ssh: handshake failed: <br>
+       ssh: unable to authenticate, attempted methods [none publickey],  no supported methods remain
+   </td>
+   <td>Check the SSH keys you are using and SSH keys variables
+   </td>
+  </tr>
+  <tr>
+   <td>No outbound internet access
+   </td>
+   <td>Error: No outbound internet access. Either enable outbound internet access, or make sure x is installed in the base ami
+   </td>
+   <td>If you intended the DSF node to have outbound intent access, then make sure the private subnets have routing to a NAT gateway or equivalent. If you didn't intend the DSF node to have outbound internet access, follow the instructions for 'Deploying DSF Nodes without Outbound Internet Access' in your example's README.  
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar HADR setup internal error
+   </td>
+   <td>Replication failed! <br>
+       and <br>
+       Replication script exited with code 1
+   </td>
+   <td>Collect Sonar logs for investigation and contact Imperva Technical Support.
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar federation internal error
+   </td>
+   <td>python_commons.http_client.UnexpectedStatusCode: Failed to run: federated_asset_connection_sync. Check /data_vol/sonar-dsf/jsonar/logs/sonarfinder/catalina.out for details., <br>
+       status: 500, data: None <br>
+       See log "/data_vol/sonar-dsf/jsonar/logs/sonarg/federated.log" for details
+   </td>
+   <td>Contact Imperva Technical Support. 
+   </td>
+  </tr>
+  <tr>
+   <td>DAM configuration script exists with status code 28
+   </td>
+   <td>: exit status 28. Output: + set -e
+   </td>
+   <td>Rerun “terraform apply”. 
    </td>
   </tr>
 </table>
