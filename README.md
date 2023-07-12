@@ -730,7 +730,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/52969528/212977394-60f79882-008b-44ef-bb05-9af629b1a88a.png)
 
-    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/sonar_basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://user-images.githubusercontent.com/52969528/212981545-31063817-e9ef-43e4-bb9c-b4a8e5391568.png)
+    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/poc/sonar_basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://github-production-user-asset-6210df.s3.amazonaws.com/87799317/252918341-edfcf6a6-c782-4863-9c55-100f25e680ed.png)
       ```
       >>>> Change the directory in the above screenshot depending on the example you chose  
       ```
