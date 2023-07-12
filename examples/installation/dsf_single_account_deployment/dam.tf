@@ -55,6 +55,9 @@ module "agent_gw" {
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
+  providers = {
+    aws = aws.provider-2
+  }
 }
 
 module "agent_gw_cluster_setup" {

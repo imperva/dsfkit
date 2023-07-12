@@ -18,6 +18,7 @@ module "dra_admin" {
   allowed_web_console_cidrs      = var.web_console_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs              = local.hub_cidr_list
+  attach_persistent_public_ip    = true
   key_pair                       = local.dra_admin_public_key_name
   instance_profile_name          = var.dra_admin_instance_profile_name
   tags                           = local.tags
@@ -26,8 +27,8 @@ module "dra_admin" {
 module "analytics_server_group" {
   source  = "imperva/dsf-dra-analytics/aws"
   version = "1.5.0" # latest release tag
-
   count                       = local.dra_analytics_server_count
+
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "analytics", "server", count.index])
   subnet_id                   = var.subnet_ids.dra_analytics_subnet_id
   dra_version                 = module.globals.dra_version
@@ -43,4 +44,7 @@ module "analytics_server_group" {
   admin_server_private_ip     = module.dra_admin[0].private_ip
   admin_server_public_ip      = module.dra_admin[0].public_ip
   tags                        = local.tags
+  providers = {
+    aws = aws.provider-2
+  }
 }

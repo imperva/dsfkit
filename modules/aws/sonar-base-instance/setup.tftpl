@@ -31,7 +31,7 @@ function internet_access() {
 
 function install_yum_deps_from_internet() {
     if ! internet_access; then
-        echo "Error: No outbound internet access. Please make sure $@ is installed in the base ami"
+        echo "Error: No outbound internet access. Either enable outbound internet access, or make sure $@ is installed in the base ami"
         exit 1
     fi
     packages=$@
@@ -42,7 +42,7 @@ function install_yum_deps_from_internet() {
 
 function install_awscli_from_internet() {
     if ! internet_access; then
-        echo "Error: No outbound internet access. Please make sure awscli is installed in the base ami"
+        echo "Error: No outbound internet access. Either enable outbound internet access, or make sure awscli is installed in the base ami"
         exit 1
     fi
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
