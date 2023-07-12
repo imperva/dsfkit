@@ -100,11 +100,11 @@ This guide references the following information and links, some of which are ava
    </tr>
   <tr>
    <td>
-   <a href="https://docs.imperva.com/howto/ed55ac24">Sonar v4.11</a>
+   <a href="https://docs.imperva.com/howto/ee19c683">Sonar v4.12</a>
 
-   <a href="https://docs.imperva.com/howto/66707580">DAM v14.11</a>
+   <a href="https://docs.imperva.com/howto/3f513830">DAM v14.12</a>
 
-   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.11</a>
+   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.12</a>
    </td>
    <td>DSF Components Overview
    </td>
@@ -478,12 +478,22 @@ For more details about each example, click on the example name.
       <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/poc/dsf_deployment/dsf_deployment.zip">dsf_deployment.zip</a>
       </td>
    </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
+      </td>
+      <td>PS/Customer
+      </td>
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment.zip">dsf_single_account_deployment.zip</a>
+      </td>
+   </tr>
 </table>
 
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
 
-Feel free to [fill out this form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to suit your needs. 
+Fill out this [form](https://docs.google.com/forms/d/e/1FAIpQLSe3_IoAtuIyLUf9crqXiJwo540iuTZ9l0K1I-uQ-CXRbZL7xA/viewform) if you need help choosing or customizing an example to fit your use case. 
 
 ## Installation Software Location and Versioning
 
@@ -533,7 +543,7 @@ Relevant variables are:
 
 When specifying Sonar and DRA versions, both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch.
 
-When specifying DAM version, only long format is supported.
+When specifying a DAM version, only long format is supported.
 
 
 Make sure that the version you are using is supported by all the modules which are part of your deployment.
@@ -688,6 +698,10 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     or
  
     wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/poc/dsf_deployment/dsf_deployment.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment.zip
     ```
 
 12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.

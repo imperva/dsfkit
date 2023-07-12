@@ -11,7 +11,7 @@ This deployment consists of:
 4. DSF Hub HADR setup
 5. Federation
 
-This example is intended for Professional Service and customers who want to bring their own networking, security groups, etc.</br>
+This example is intended for Professional Services and customers who want to bring their own networking, security groups, etc.</br>
 It is mandatory to provide as input to this example the following variables:
 1. The AWS profile of the DSF Hub and Agentless Gateways' AWS account
 2. The AWS region of the DSF Hubs and Agentless Gateways
