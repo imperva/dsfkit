@@ -31,12 +31,6 @@ output "sonar" {
       role_arn     = try(module.hub[0].iam_role, null)
       ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub[0].ssh_user}@${module.hub[0].public_dns}", null)
       tokens       = nonsensitive(module.hub[0].access_tokens)
-      web_console = {
-        public_url  = try(join("", ["https://", module.hub[0].public_dns, ":8443/"]), null)
-        private_url = try(join("", ["https://", module.hub[0].private_dns, ":8443/"]), null)
-        password    = nonsensitive(local.password)
-        user        = module.hub[0].web_console_user
-      }
     }
     hub_secondary = var.hub_hadr ? {
       public_ip    = try(module.hub_secondary[0].public_ip, null)
@@ -115,10 +109,6 @@ output "dra" {
       display_name = try(module.dra_admin[0].display_name, null)
       role_arn     = try(module.dra_admin[0].iam_role, null)
       ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
-      web_console = {
-        public_url  = try(join("", ["https://", module.dra_admin[0].public_dns, ":8443/"]), null)
-        private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
-      }
     }
     analytics = [
       for idx, val in module.analytics_server_group : {

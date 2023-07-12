@@ -15,12 +15,6 @@ output "sonar" {
       ssh_command  = try("ssh -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
       ssh_command_with_proxy  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
       tokens       = nonsensitive(module.hub_primary[0].access_tokens)
-      web_console = {
-        public_url  = try(join("", ["https://", module.hub_primary[0].public_dns, ":8443/"]), null)
-        private_url = try(join("", ["https://", module.hub_primary[0].private_dns, ":8443/"]), null)
-        password    = nonsensitive(local.password)
-        user        = module.hub_primary[0].web_console_user
-      }
     }
     hub_secondary = var.hub_hadr ? {
       public_ip    = try(module.hub_secondary[0].public_ip, null)
@@ -102,10 +96,6 @@ output "dra" {
       display_name = try(module.dra_admin[0].display_name, null)
       role_arn     = try(module.dra_admin[0].iam_role, null)
       ssh_command  = try("ssh -i ${local.dra_admin_private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
-      web_console = {
-        public_url  = try(join("", ["https://", module.dra_admin[0].public_dns, ":8443/"]), null)
-        private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
-      }
     }
     analytics = [
       for idx, val in module.analytics_server_group : {
