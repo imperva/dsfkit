@@ -18,6 +18,7 @@ module "dra_admin" {
   allowed_web_console_cidrs      = var.web_console_cidr
   allowed_analytics_server_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs              = local.hub_cidr_list
+  allowed_ssh_cidrs              = local.workstation_cidr
   attach_persistent_public_ip    = true
   key_pair                       = local.dra_admin_public_key_name
   instance_profile_name          = var.dra_admin_instance_profile_name
