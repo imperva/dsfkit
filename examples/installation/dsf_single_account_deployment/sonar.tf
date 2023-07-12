@@ -67,6 +67,8 @@ module "hub_secondary" {
   password                        = local.password
   password_secret_name            = var.password_secret_name
   hadr_secondary_node             = true
+  primary_node_sonarw_public_key  = module.hub_primary[0].sonarw_public_key
+  primary_node_sonarw_private_key = module.hub_primary[0].sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_secondary_private_key_file_path
     ssh_public_key_name       = local.hub_secondary_public_key_name
