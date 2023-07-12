@@ -829,7 +829,7 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
     * Scroll to the bottom to find the "State versions created" link which can be helpful to investigate issues.<br>![State Version Created](https://user-images.githubusercontent.com/52969528/212992756-dfd183ac-640e-4891-8875-c1b8683d8d8d.png)
 
     * Scroll up to view the "Outputs" of the run which should be expanded already. Depending on your deployment, 
-      locate the "web_console_dsf_hub", "web_console_dam" or "web_console_dra" JSON object. Copy the "public_url" or "private_url" and "admin_password" fields' values for later use (there is no initial login password for DRA), for example: <br>![Outputs Console](https://user-images.githubusercontent.com/52969528/212992062-d44b9cce-6050-4095-b0d5-ecc0a21954fb.png)
+      locate the "web_console_dsf_hub", "web_console_dam" or "web_console_dra" JSON object. Copy the "public_url" or "private_url" and "admin_password" fields' values for later use (there is no initial login password for DRA), for example: <br>![Outputs Console](https://github-production-user-asset-6210df.s3.amazonaws.com/52969528/252985761-7a6b034c-3fc9-43c7-955a-6c3444fa4a78.png)
    
     * Enter the "public_url" or "private_url" value you copied into a web browser. For example, enter the "web_console_dsf_hub" URL to access the Imperva Data Security Fabric (DSF) login screen.<br>![login](https://user-images.githubusercontent.com/87799317/203822712-5f1c859f-abff-4e47-92a8-2007015e0272.png)
 
