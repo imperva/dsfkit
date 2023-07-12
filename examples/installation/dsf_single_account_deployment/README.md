@@ -6,18 +6,18 @@ deployed in a single account and two regions.
 
 This deployment consists of:
 
-1. Primary and secondary DSF Hub in region X
-2. Primary and secondary Agentless Gateway Hub in region Y
-3. DAM MX in region X
-4. DAM Agent Gateway in region Y
-5. DRA Admin in region X
-6. DRA Analytics server in region Y
+1. Primary and secondary DSF Hub in region 1
+2. Primary and secondary Agentless Gateway Hub in region 2
+3. DAM MX in region 1
+4. DAM Agent Gateway in region 2
+5. DRA Admin in region 1
+6. DRA Analytics server in region 2
 7. DSF Hub HADR setup
 8. Agentless Gateway HADR setup
 9. Federation of both primary and secondary DSF Hub with all primary and secondary Agentless Gateways
 10. Integration from MX to DSF Hub (Audit from Agent source and Security Issues)
 
-This example is intended for Professional Service and customers who want to bring their own networking, security groups, etc.</br>
+This example is intended for Professional Services and customers who want to bring their own networking, security groups, etc.</br>
 It is mandatory to provide as input to this example the following variables:
 1. The AWS profile of the DSF nodes' AWS account
 2. The AWS regions of the DSF nodes
@@ -140,6 +140,7 @@ For example:
     s3_key    = "tarball_name"
   }
   workstation_cidr = ["10.0.0.0/24"]
+  license="licenses/SecureSphere_license.mprv"
   ```
 
 Then run the deployment as usual with the following command:
