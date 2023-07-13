@@ -144,13 +144,13 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Cleaning envrionment
-      run: |
-        mv $EXAMPLE_DIR/main.tf{,_}
-        mv $EXAMPLE_DIR/outputs.tf{,_}
-        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-        mv $EXAMPLE_DIR/main.tf{_,}
-        mv $EXAMPLE_DIR/outputs.tf{_,}
+#    - name: Cleaning envrionment
+#      run: |
+#        mv $EXAMPLE_DIR/main.tf{,_}
+#        mv $EXAMPLE_DIR/outputs.tf{,_}
+#        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+#        mv $EXAMPLE_DIR/main.tf{_,}
+#        mv $EXAMPLE_DIR/outputs.tf{_,}
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
