@@ -16,9 +16,9 @@ on:
         required: true
         type: string
     secrets:
-      AWS_ACCESS_KEY_ID:
+      AWS_ACCESS_KEY_ID_STAGE:
         required: true
-      AWS_SECRET_ACCESS_KEY:
+      AWS_SECRET_ACCESS_KEY_STAGE:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
@@ -35,8 +35,8 @@ env:
   TF_VAR_gw_count: 1
   EXAMPLE_DIR: ./examples/installation/dsf_single_account_deployment
   AWS_REGION: ap-southeast-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   TF_WORKSPACE: "dsf_single_account"
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
@@ -108,8 +108,8 @@ jobs:
 
     - name: Add Profile Credentials to ~/.aws/credentials
       run: |
-        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID --profile ${{ vars.DEV_PROFILE_NAME }}
-        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile ${{ vars.DEV_PROFILE_NAME }}
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }} --profile ${{ vars.STAGE_PROFILE_NAME }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }} --profile ${{ vars.STAGE_PROFILE_NAME }}
 
     - name: Get The Public IP
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
