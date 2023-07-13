@@ -480,9 +480,17 @@ variable "dam_version" {
   }
 }
 
-variable "license_file" {
+variable "license" {
+  description = <<EOF
+  License information. Must be one of the following:
+  1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
+  2. License file path
+  EOF
   type        = string
-  description = "DAM license file path"
+  validation {
+    condition = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
+    error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
+  }
 }
 
 variable "large_scale_mode" {
@@ -498,6 +506,30 @@ variable "large_scale_mode" {
   default = {
     mx       = false
     agent_gw = true
+  }
+}
+
+variable "mx_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "MX compute instance volume attributes"
+  default = {
+    volume_size = 160
+    volume_type = "gp2"
+  }
+}
+
+variable "agent_gw_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Agent Gateway compute instance volume attributes"
+  default = {
+    volume_size = 160
+    volume_type = "gp2"
   }
 }
 
@@ -525,6 +557,12 @@ variable "agent_gw_instance_profile_name" {
   default     = null
 }
 
+variable "cluster_name" {
+  type = string
+  description = "The name of the Agent Gateway Cluster to provision when agent_gw_count >= 2. Keep empty to use an auto-generated name."
+  default = null
+}
+
 ##############################
 ####    DRA variables   ####
 ##############################
@@ -544,19 +582,19 @@ variable "dra_admin_ebs_details" {
     volume_size = number
     volume_type = string
   })
-  description = "Admin Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 260
     volume_type = "gp3"
   }
 }
 
-variable "dra_analytics_group_ebs_details" {
+variable "dra_analytics_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
   })
-  description = "Analytics Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 1010
     volume_type = "gp3"

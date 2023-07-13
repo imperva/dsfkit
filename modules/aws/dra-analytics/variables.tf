@@ -181,7 +181,7 @@ variable "ebs" {
     volume_size = number
     volume_type = string
   })
-  description = "Compute instance volume attributes for the Analytics Server"
+  description = "Compute instance volume attributes for the DRA Analytics"
   default = {
     volume_size = 1010
     volume_type = "gp3"

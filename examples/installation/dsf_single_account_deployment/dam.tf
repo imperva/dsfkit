@@ -13,8 +13,9 @@ module "mx" {
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
+  ebs                               = var.mx_ebs_details
   subnet_id                         = var.subnet_ids.mx_subnet_id
-  license_file                      = var.license_file
+  license                           = var.license
   key_pair                          = local.mx_public_key_name
   secure_password                   = local.password
   mx_password                       = local.password
@@ -40,6 +41,7 @@ module "agent_gw" {
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
+  ebs                                     = var.agent_gw_ebs_details
   subnet_id                               = var.subnet_ids.agent_gw_subnet_id
   key_pair                                = local.agent_gw_public_key_name
   secure_password                         = local.password
@@ -65,7 +67,7 @@ module "agent_gw_cluster_setup" {
   version = "1.5.0" # latest release tag
   count   = local.create_agent_gw_cluster
 
-  cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
+  cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name
   mx_details = {
     address  = module.mx[0].public_ip
