@@ -35,8 +35,10 @@ env:
   TF_VAR_gw_count: 1
   EXAMPLE_DIR: ./examples/installation/dsf_single_account_deployment
   AWS_REGION: ap-southeast-1
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+  AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   TF_WORKSPACE: "dsf_single_account"
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
@@ -115,6 +117,10 @@ jobs:
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
 
     - name: Set IP in AWS Security Group
+      env:
+        AWS_REGION: ap-southeast-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       run: |
         aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
         echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
@@ -172,6 +178,10 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Delete Security Group
+      env:
+        AWS_REGION: ap-southeast-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       if: always()
       run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
 
