@@ -77,6 +77,7 @@ module "agent_gw" {
   dam_version            = var.dam_version
   resource_type          = local.resource_type
   dam_model              = local.dam_model
+  ebs                    = var.ebs
   mx_password            = var.mx_password
   secure_password        = var.secure_password
   security_groups_config = local.security_groups_config

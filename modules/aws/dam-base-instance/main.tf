@@ -42,6 +42,12 @@ resource "aws_instance" "dsf_base_instance" {
   instance_type        = local.mapper.instance_type[var.dam_model]
   key_name             = var.key_pair
   user_data            = local.userdata
+  root_block_device {
+    volume_size           = var.ebs.volume_size
+    volume_type           = var.ebs.volume_type
+    delete_on_termination = true
+    tags                  = merge(var.tags, { Name = var.name })
+  }
   iam_instance_profile = local.instance_profile
   network_interface {
     network_interface_id = aws_network_interface.eni.id

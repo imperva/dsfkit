@@ -13,6 +13,7 @@ module "mx" {
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
   dam_version                       = var.dam_version
+  ebs                               = var.mx_ebs_details
   subnet_id                         = local.mx_subnet_id
   license                           = var.license
   key_pair                          = module.key_pair.key_pair.key_pair_name
@@ -45,6 +46,7 @@ module "agent_gw" {
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   dam_version                             = var.dam_version
+  ebs                                     = var.agent_gw_ebs_details
   subnet_id                               = local.agent_gw_subnet_id
   key_pair                                = module.key_pair.key_pair.key_pair_name
   secure_password                         = local.password

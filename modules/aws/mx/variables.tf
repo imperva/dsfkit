@@ -21,6 +21,18 @@ variable "subnet_id" {
   }
 }
 
+variable "ebs" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Compute instance volume attributes for the MX"
+  default = {
+    volume_size = 160
+    volume_type = "gp2"
+  }
+}
+
 variable "instance_profile_name" {
   type        = string
   default     = null

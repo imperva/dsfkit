@@ -33,7 +33,7 @@ module "analytics_server_group" {
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "analytics", "server", count.index])
   subnet_id                   = var.subnet_ids.dra_analytics_subnet_id
   dra_version                 = module.globals.dra_version
-  ebs                         = var.dra_analytics_group_ebs_details
+  ebs                         = var.dra_analytics_ebs_details
   admin_registration_password = local.password
   admin_password              = local.password
   allowed_admin_server_cidrs  = [data.aws_subnet.dra_admin.cidr_block]

@@ -156,7 +156,9 @@ Make sure that the user running the deployment has read and write access to this
 
 ## Deploying DSF Nodes without Outbound Internet Access
 
-Follow these steps to deploy a DSF node (Hub, Agentless Gateway, MX, Agent Gateway, DAR Admin or DRA Analytics server) in an environment without outbound internet access.
+Follow these steps to deploy a DSF node (Hub, Agentless Gateway, DAR Admin or DRA Analytics server) in an environment without outbound internet access.
+
+Currently, deploying an MX and an Agent Gateway in an environment without internet access is not supported.
 1. Provide a custom AMI with the following dependencies: AWS CLI, unzip, lvm2 and jq.
    You can create a custom AMI with these dependencies installed by launching an Amazon EC2 instance, installing the dependencies, and creating an AMI from the instance.
    You can then use this custom AMI when launching the DSF Hub and/or Agentless Gateway instances.

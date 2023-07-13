@@ -47,6 +47,14 @@ variable "key_pair" {
   description = "Key pair for the DSF base instance"
 }
 
+variable "ebs" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Compute instance volume attributes for the DAM base instance"
+}
+
 variable "instance_profile_name" {
   type        = string
   default     = null

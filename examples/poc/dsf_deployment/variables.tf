@@ -147,6 +147,30 @@ variable "large_scale_mode" {
   }
 }
 
+variable "mx_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "MX compute instance volume attributes"
+  default = {
+    volume_size = 160
+    volume_type = "gp2"
+  }
+}
+
+variable "agent_gw_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "Agent Gateway compute instance volume attributes"
+  default = {
+    volume_size = 160
+    volume_type = "gp2"
+  }
+}
+
 variable "simulation_db_types_for_agent" {
   type        = list(string)
   default     = ["MySql"]
@@ -261,19 +285,19 @@ variable "dra_admin_ebs_details" {
     volume_size = number
     volume_type = string
   })
-  description = "Admin Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 260
     volume_type = "gp3"
   }
 }
 
-variable "dra_analytics_group_ebs_details" {
+variable "dra_analytics_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
   })
-  description = "Analytics Server compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 1010
     volume_type = "gp3"
