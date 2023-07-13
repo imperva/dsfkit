@@ -25,6 +25,10 @@ on:
       JUMP_SERVER_KEY:
         required: true
 
+  push:
+    branches:
+      - 'sprint_10_segev'
+
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
@@ -51,11 +55,18 @@ jobs:
       run:
         shell: bash
     steps:
+    - name: Pick ref
+      run: |
+        if [ -z "${{ inputs.explicit_ref }}" ]; then
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+        else
+          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
+        fi
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ inputs.branch }}
+        ref: ${{ env.REF }}
 
     - name: Change the modules source to local
       run: |
