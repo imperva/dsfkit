@@ -14,6 +14,16 @@ variable "sonar_version" {
   }
 }
 
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket location of the DSF installation software"
+  default     = null
+}
+
 variable "gw_count" {
   type        = number
   default     = 1

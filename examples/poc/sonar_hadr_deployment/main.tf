@@ -33,7 +33,7 @@ locals {
   password                = var.password != null ? var.password : module.globals.random_password
   workstation_cidr        = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   database_cidr           = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
-  tarball_location        = module.globals.tarball_location
+  tarball_location        = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags                    = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   primary_hub_subnet_id   = var.subnet_ids != null ? var.subnet_ids.primary_hub_subnet_id : module.vpc[0].public_subnets[0]
   secondary_hub_subnet_id = var.subnet_ids != null ? var.subnet_ids.secondary_hub_subnet_id : module.vpc[0].public_subnets[1]
