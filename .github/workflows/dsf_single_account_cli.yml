@@ -70,9 +70,9 @@ jobs:
       with:
         ref: ${{ env.REF }}
 
-#    - name: Change the modules source to local
-#      run: |
-#        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+    - name: Change the modules source to local
+      run: |
+        find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     - name: Sets env vars for environment
       run: |
