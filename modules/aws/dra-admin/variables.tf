@@ -115,11 +115,11 @@ variable "security_group_ids" {
   default = []
 }
 
-variable "allowed_analytics_server_cidrs" {
+variable "allowed_analytics_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing the Analytics Server to access the DSF Admin Server instance"
   validation {
-    condition     = alltrue([for item in var.allowed_analytics_server_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_analytics_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default = []

@@ -71,7 +71,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `enable_dra`: Enable DRA module
 
 ### Server Count
-- `dra_analytics_server_count`: Number of DRA analytic servers
+- `dra_analytics_count`: Number of DRA Analytic servers
 - `agentless_gw_count`: Number of Agentless Gateways
 - `agent_gw_count`: Number of Agent Gateways
 

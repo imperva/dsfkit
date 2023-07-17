@@ -20,7 +20,7 @@ output "web_console_dra" {
 output "dra_analytics" {
   sensitive = true
   value = {
-    for idx, val in module.analytics_server_group : "analytics-${idx}" =>
+    for idx, val in module.dra_analytics : "analytics-${idx}" =>
     {
       private_ip    = try(val.analytics_private_ip, null)
       archiver_user = try(val.archiver_user, null)

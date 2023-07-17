@@ -93,7 +93,7 @@ variable "dra_version" {
   }
 }
 
-variable "analytics_server_count" {
+variable "dra_analytics_count" {
   type        = number
   default     = 1
   description = "Number of Analytics Servers"
