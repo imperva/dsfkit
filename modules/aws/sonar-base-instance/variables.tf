@@ -69,7 +69,7 @@ variable "ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "Compute instance volume attributes"
+  description = "Compute instance external volume attributes"
   validation {
     condition     = var.ebs_details.disk_size >= 150
     error_message = "Disk size must be at least 150 GB"
