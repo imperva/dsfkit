@@ -7,7 +7,8 @@ locals {
 }
 
 module "mx" {
-  source  = "../../../modules/aws/mx"
+  source  = "imperva/dsf-mx/aws"
+  version = "1.5.0" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
@@ -35,7 +36,8 @@ module "mx" {
 }
 
 module "agent_gw" {
-  source  = "../../../modules/aws/agent-gw"
+  source  = "imperva/dsf-agent-gw/aws"
+  version = "1.5.0" # latest release tag
   count   = local.agent_gw_count
 
   friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
@@ -63,7 +65,8 @@ module "agent_gw" {
 }
 
 module "agent_gw_cluster_setup" {
-  source  = "../../../modules/null/agent-gw-cluster-setup"
+  source  = "imperva/dsf-agent-gw-cluster-setup/null"
+  version = "1.5.0" # latest release tag
   count   = local.create_agent_gw_cluster
 
   cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
