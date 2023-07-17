@@ -350,6 +350,17 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>3. Bug fixes. 
    </td>
   </tr>
+  <tr>
+   <td>18 July 2023
+   </td>
+   <td>1.5.1
+   </td>
+   <td>
+      1. Released full DSF installation example.
+      <br>2. Added support for DAM activation code in addition to the already supported option of a license file. 
+      <br>3. Improvements and bug fixes. 
+   </td>
+  </tr>
 
 </table>
 
