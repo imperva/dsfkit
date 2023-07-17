@@ -40,7 +40,7 @@ module "dra_analytics" {
   admin_password              = local.password
   allowed_admin_cidrs          = [data.aws_subnet.dra_admin.cidr_block]
   allowed_agent_gateways_cidrs = local.agent_gw_cidr_list
-  allowed_ssh_cidrs           = local.hub_cidr_list
+  allowed_hub_cidrs           = local.hub_cidr_list
   key_pair                    = local.dra_analytics_public_key_name
   instance_profile_name       = var.dra_analytics_instance_profile_name
   archiver_password           = local.password

@@ -20,6 +20,13 @@ locals {
       udp             = []
       tcp             = [22]
       cidrs           = concat(var.allowed_agent_gateways_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["hub"]
+      internet_access = false
+      udp             = []
+      tcp             = [22]
+      cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     }
   ]
 
