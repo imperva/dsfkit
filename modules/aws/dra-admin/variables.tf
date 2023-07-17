@@ -167,8 +167,8 @@ variable "allowed_all_cidrs" {
 
 variable "attach_persistent_public_ip" {
   type        = bool
-  default     = false
-  description = "Create and attach elastic public IP for the instance"
+  default     = true
+  description = "Create and attach an Elastic public IP for the instance. If false, a dynamic public IP is used. Relevant only if the DRA Admin is in a public subnet (ignored if in a private subnet). Currently, due to a DRA limitation, must only be true."
 }
 
 variable "ebs" {
