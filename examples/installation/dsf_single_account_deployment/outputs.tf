@@ -98,7 +98,7 @@ output "dra" {
       ssh_command  = try("ssh -i ${local.dra_admin_private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
     }
     analytics = [
-      for idx, val in module.analytics_server_group : {
+      for idx, val in module.dra_analytics : {
         private_ip    = val.private_ip
         private_dns   = val.private_dns
         archiver_user = val.archiver_user

@@ -15,11 +15,11 @@ locals {
       cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
-      name            = ["analytics", "server"]
+      name            = ["dra", "analytics"]
       internet_access = false
       udp             = []
       tcp             = [61617, 8443, 8501]
-      cidrs           = concat(var.allowed_analytics_server_cidrs, var.allowed_all_cidrs)
+      cidrs           = concat(var.allowed_analytics_cidrs, var.allowed_all_cidrs)
     },
     {
       name            = ["hub"]
