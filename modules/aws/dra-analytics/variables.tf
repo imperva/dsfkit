@@ -136,11 +136,11 @@ variable "security_group_ids" {
   default = []
 }
 
-variable "allowed_admin_server_cidrs" {
+variable "allowed_admin_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing the Admin Server to access the Analytics Server instance"
   validation {
-    condition     = alltrue([for item in var.allowed_admin_server_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_admin_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default = []
@@ -156,11 +156,11 @@ variable "allowed_ssh_cidrs" {
   default = []
 }
 
-variable "allowed_gateways_cidrs" {
+variable "allowed_agent_gateways_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing agent and agentless gateway access"
+  description = "List of ingress CIDR patterns allowing agent gateway access for legacy deployment"
   validation {
-    condition     = alltrue([for item in var.allowed_gateways_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_agent_gateways_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default = []

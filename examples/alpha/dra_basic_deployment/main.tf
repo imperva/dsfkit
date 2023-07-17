@@ -65,7 +65,7 @@ module "dra_admin" {
   admin_registration_password    = local.admin_registration_password
   admin_password                 = local.admin_registration_password
   allowed_web_console_cidrs      = var.web_console_cidr
-  allowed_analytics_server_cidrs = [data.aws_subnet.analytics.cidr_block]
+  allowed_analytics_cidrs = [data.aws_subnet.analytics.cidr_block]
   allowed_ssh_cidrs              = var.allowed_ssh_cidrs_to_admin
   instance_type                  = var.admin_instance_type
   attach_persistent_public_ip    = true
@@ -76,9 +76,9 @@ module "dra_admin" {
   ]
 }
 
-module "analytics_server_group" {
+module "dra_analytics" {
   source = "../../../modules/aws/dra-analytics"
-  count  = var.analytics_server_count
+  count  = var.dra_analytics_count
 
   friendly_name               = join("-", [local.deployment_name_salted, "analytics-server", count.index])
   subnet_id                   = local.analytics_subnet_id
@@ -86,7 +86,7 @@ module "analytics_server_group" {
   ebs                         = var.analytics_group_ebs_details
   admin_registration_password = local.admin_registration_password
   admin_password              = local.admin_registration_password
-  allowed_admin_server_cidrs  = [data.aws_subnet.admin.cidr_block]
+  allowed_admin_cidrs  = [data.aws_subnet.admin.cidr_block]
   allowed_ssh_cidrs           = var.allowed_ssh_cidrs_to_analytics
   instance_type               = var.analytics_instance_type
   key_pair                    = module.key_pair.key_pair.key_pair_name

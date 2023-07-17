@@ -11,7 +11,7 @@ This deployment consists of:
 3. DAM MX in region 1
 4. DAM Agent Gateway in region 2
 5. DRA Admin in region 1
-6. DRA Analytics server in region 2
+6. DRA Analytics in region 2
 7. DSF Hub HADR setup
 8. Agentless Gateway HADR setup
 9. Federation of both primary and secondary DSF Hub with all primary and secondary Agentless Gateways
@@ -90,7 +90,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `enable_dra`: Enable DRA module
 
 ### Server Count
-- `dra_analytics_server_count`: Number of DRA analytic servers
+- `dra_analytics_count`: Number of DRA Analytic servers
 - `agentless_gw_count`: Number of Agentless Gateways
 - `agent_gw_count`: Number of Agent Gateways
 
@@ -156,7 +156,7 @@ Make sure that the user running the deployment has read and write access to this
 
 ## Deploying DSF Nodes without Outbound Internet Access
 
-Follow these steps to deploy a DSF node (Hub, Agentless Gateway, DAR Admin or DRA Analytics server) in an environment without outbound internet access.
+Follow these steps to deploy a DSF node (Hub, Agentless Gateway, DAR Admin or DRA Analytics) in an environment without outbound internet access.
 
 Currently, deploying an MX and an Agent Gateway in an environment without internet access is not supported.
 1. Provide a custom AMI with the following dependencies: AWS CLI, unzip, lvm2 and jq.

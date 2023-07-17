@@ -61,7 +61,7 @@ variable "agent_gw_count" {
   description = "Number of Agent Gateways. Provisioning Agent Gateways requires the enable_dam variable to be set to 'true'."
 }
 
-variable "dra_analytics_server_count" {
+variable "dra_analytics_count" {
   type        = number
   default     = 1
   description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
