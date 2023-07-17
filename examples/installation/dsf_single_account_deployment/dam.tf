@@ -14,6 +14,7 @@ module "mx" {
   dam_version                       = var.dam_version
   ebs                               = var.mx_ebs_details
   subnet_id                         = var.subnet_ids.mx_subnet_id
+  security_group_ids                = var.security_group_ids_mx
   license                           = var.license
   key_pair                          = local.mx_public_key_name
   secure_password                   = local.password
@@ -41,6 +42,7 @@ module "agent_gw" {
   dam_version                             = var.dam_version
   ebs                                     = var.agent_gw_ebs_details
   subnet_id                               = var.subnet_ids.agent_gw_subnet_id
+  security_group_ids                      = var.security_group_ids_agent_gw
   key_pair                                = local.agent_gw_public_key_name
   secure_password                         = local.password
   mx_password                             = local.password
