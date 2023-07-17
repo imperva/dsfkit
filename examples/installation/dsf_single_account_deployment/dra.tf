@@ -11,6 +11,7 @@ module "dra_admin" {
 
   friendly_name                  = join("-", [local.deployment_name_salted, "dra", "admin"])
   subnet_id                      = var.subnet_ids.dra_admin_subnet_id
+  security_group_ids             = var.security_group_ids_dra_admin
   dra_version                    = module.globals.dra_version
   ebs                            = var.dra_admin_ebs_details
   admin_registration_password    = local.password
@@ -32,6 +33,7 @@ module "analytics_server_group" {
 
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "analytics", "server", count.index])
   subnet_id                   = var.subnet_ids.dra_analytics_subnet_id
+  security_group_ids          = var.security_group_ids_dra_analytics
   dra_version                 = module.globals.dra_version
   ebs                         = var.dra_analytics_ebs_details
   admin_registration_password = local.password
