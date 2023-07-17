@@ -459,16 +459,6 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/alpha/dra_basic_deployment/README.md">DRA Basic Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A DSF deployment with an DRA Admin, DRA Analytics and networking.   
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip">dra_basic_deployment.zip</a>
-      </td>
-   </tr>
-   <tr>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/poc/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
@@ -691,10 +681,6 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
  
     wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
     
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip
-
     or
  
     wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/poc/dsf_deployment/dsf_deployment.zip
