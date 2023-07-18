@@ -38,10 +38,10 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_instance" "dsf_base_instance" {
-  ami                  = data.aws_ami.selected-ami.image_id
-  instance_type        = local.mapper.instance_type[var.dam_model]
-  key_name             = var.key_pair
-  user_data            = local.userdata
+  ami           = data.aws_ami.selected-ami.image_id
+  instance_type = local.mapper.instance_type[var.dam_model]
+  key_name      = var.key_pair
+  user_data     = local.userdata
   root_block_device {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type

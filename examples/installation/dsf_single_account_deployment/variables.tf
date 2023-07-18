@@ -25,7 +25,7 @@ variable "additional_tags" {
   description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
   validation {
     condition = alltrue([
-    for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
+      for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
     ])
     error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
   }
@@ -83,25 +83,25 @@ variable "password_secret_name" {
 variable "proxy_address" {
   type        = string
   description = "Proxy address used for ssh to the DSF Hub and the Agentless Gateways"
-  default = null
+  default     = null
 }
 
 variable "proxy_private_address" {
   type        = string
   description = "Proxy private address used for ssh to the DSF Hub and the Agentless Gateways"
-  default = null
+  default     = null
 }
 
 variable "proxy_ssh_key_path" {
   type        = string
   description = "Proxy private ssh key file path used for ssh to the DSF Hub and the Agentless Gateways"
-  default = null
+  default     = null
 }
 
 variable "proxy_ssh_user" {
   type        = string
   description = "Proxy ssh user used for ssh to the DSF Hub and the Agentless Gateways"
-  default = null
+  default     = null
 }
 
 ##############################
@@ -221,8 +221,8 @@ variable "dra_admin_key_pair" {
 
   validation {
     condition = (
-    var.dra_admin_key_pair == null ||
-    try(var.dra_admin_key_pair.private_key_file_path != null && var.dra_admin_key_pair.public_key_name != null, false)
+      var.dra_admin_key_pair == null ||
+      try(var.dra_admin_key_pair.private_key_file_path != null && var.dra_admin_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
   }
@@ -238,8 +238,8 @@ variable "dra_analytics_key_pair" {
 
   validation {
     condition = (
-    var.dra_analytics_key_pair == null ||
-    try(var.dra_analytics_key_pair.private_key_file_path != null && var.dra_analytics_key_pair.public_key_name != null, false)
+      var.dra_analytics_key_pair == null ||
+      try(var.dra_analytics_key_pair.private_key_file_path != null && var.dra_analytics_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
   }
@@ -254,7 +254,7 @@ variable "sonar_version" {
   default     = "4.12"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
-    condition     = ! startswith(var.sonar_version, "4.9.") && ! startswith(var.sonar_version, "4.10.")
+    condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
 }
@@ -359,8 +359,8 @@ variable "hub_primary_key_pair" {
 
   validation {
     condition = (
-    var.hub_primary_key_pair == null ||
-    try(var.hub_primary_key_pair.private_key_file_path != null && var.hub_primary_key_pair.public_key_name != null, false)
+      var.hub_primary_key_pair == null ||
+      try(var.hub_primary_key_pair.private_key_file_path != null && var.hub_primary_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'hub_primary_key_pair' variable"
   }
@@ -376,8 +376,8 @@ variable "hub_secondary_key_pair" {
 
   validation {
     condition = (
-    var.hub_secondary_key_pair == null ||
-    try(var.hub_secondary_key_pair.private_key_file_path != null && var.hub_secondary_key_pair.public_key_name != null, false)
+      var.hub_secondary_key_pair == null ||
+      try(var.hub_secondary_key_pair.private_key_file_path != null && var.hub_secondary_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'hub_secondary_key_pair' variable"
   }
@@ -393,8 +393,8 @@ variable "agentless_gw_primary_key_pair" {
 
   validation {
     condition = (
-    var.agentless_gw_primary_key_pair == null ||
-    try(var.agentless_gw_primary_key_pair.private_key_file_path != null && var.agentless_gw_primary_key_pair.public_key_name != null, false)
+      var.agentless_gw_primary_key_pair == null ||
+      try(var.agentless_gw_primary_key_pair.private_key_file_path != null && var.agentless_gw_primary_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'agentless_gw_primary_key_pair' variable"
   }
@@ -410,8 +410,8 @@ variable "agentless_gw_secondary_key_pair" {
 
   validation {
     condition = (
-    var.agentless_gw_secondary_key_pair == null ||
-    try(var.agentless_gw_secondary_key_pair.private_key_file_path != null && var.agentless_gw_secondary_key_pair.public_key_name != null, false)
+      var.agentless_gw_secondary_key_pair == null ||
+      try(var.agentless_gw_secondary_key_pair.private_key_file_path != null && var.agentless_gw_secondary_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'agentless_gw_secondary_key_pair' variable"
   }
@@ -488,7 +488,7 @@ variable "license" {
   EOF
   type        = string
   validation {
-    condition = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
+    condition     = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
     error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
   }
 }
@@ -534,13 +534,13 @@ variable "agent_gw_ebs_details" {
 }
 
 variable "mx_key_pair" {
-  type = string
+  type        = string
   description = "Key pair used to SSH to the MX"
   default     = null
 }
 
 variable "agent_gw_key_pair" {
-  type = string
+  type        = string
   description = "Key pair used to SSH to the Agent Gateway"
   default     = null
 }
@@ -558,9 +558,9 @@ variable "agent_gw_instance_profile_name" {
 }
 
 variable "cluster_name" {
-  type = string
+  type        = string
   description = "The name of the Agent Gateway Cluster to provision when agent_gw_count >= 2. Keep empty to use an auto-generated name."
-  default = null
+  default     = null
 }
 
 ##############################
@@ -572,7 +572,7 @@ variable "dra_version" {
   default     = "4.12.0.10"
   description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
   validation {
-    condition     = ! startswith(var.dra_version, "4.10.") && ! startswith(var.dra_version, "4.9.") && ! startswith(var.dra_version, "4.8.") && ! startswith(var.dra_version, "4.3.") && ! startswith(var.dra_version, "4.2.") && ! startswith(var.dra_version, "4.1.")
+    condition     = !startswith(var.dra_version, "4.10.") && !startswith(var.dra_version, "4.9.") && !startswith(var.dra_version, "4.8.") && !startswith(var.dra_version, "4.3.") && !startswith(var.dra_version, "4.2.") && !startswith(var.dra_version, "4.1.")
     error_message = "The dra_version value must be 4.11.0.10 or higher"
   }
 }

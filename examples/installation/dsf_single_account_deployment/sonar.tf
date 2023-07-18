@@ -8,18 +8,18 @@ locals {
 
 module "hub_primary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
-  friendly_name               = join("-", [local.deployment_name_salted, "hub", "primary"])
-  instance_type               = var.hub_instance_type
-  subnet_id                   = var.subnet_ids.hub_primary_subnet_id
-  security_group_ids          = var.security_group_ids_hub_primary
-  ebs                         = var.hub_ebs_details
-  ami                         = var.sonar_ami
-  binaries_location           = local.tarball_location
-  password                    = local.password
-  password_secret_name        = var.password_secret_name
+  friendly_name        = join("-", [local.deployment_name_salted, "hub", "primary"])
+  instance_type        = var.hub_instance_type
+  subnet_id            = var.subnet_ids.hub_primary_subnet_id
+  security_group_ids   = var.security_group_ids_hub_primary
+  ebs                  = var.hub_ebs_details
+  ami                  = var.sonar_ami
+  binaries_location    = local.tarball_location
+  password             = local.password
+  password_secret_name = var.password_secret_name
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_primary_private_key_file_path
     ssh_public_key_name       = local.hub_primary_public_key_name
@@ -46,7 +46,7 @@ module "hub_primary" {
     password = local.password
   }] : []
   generate_access_tokens = true
-  tags = local.tags
+  tags                   = local.tags
   providers = {
     aws = aws.provider-1
   }
@@ -54,7 +54,7 @@ module "hub_primary" {
 
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
@@ -88,8 +88,8 @@ module "hub_secondary" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
-  generate_access_tokens = true
-  tags = local.tags
+  generate_access_tokens            = true
+  tags                              = local.tags
   providers = {
     aws = aws.provider-1
   }
@@ -97,7 +97,7 @@ module "hub_secondary" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = length(module.hub_secondary) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
@@ -122,18 +122,18 @@ module "hub_hadr" {
 
 module "agentless_gw_primary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = local.agentless_gw_count
 
-  friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
-  instance_type         = var.agentless_gw_instance_type
-  subnet_id             = var.subnet_ids.agentless_gw_primary_subnet_id
-  security_group_ids    = var.security_group_ids_gw_primary
-  ebs                   = var.agentless_gw_ebs_details
-  ami                   = var.sonar_ami
-  binaries_location     = local.tarball_location
-  password              = local.password
-  password_secret_name  = var.password_secret_name
+  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
+  instance_type        = var.agentless_gw_instance_type
+  subnet_id            = var.subnet_ids.agentless_gw_primary_subnet_id
+  security_group_ids   = var.security_group_ids_gw_primary
+  ebs                  = var.agentless_gw_ebs_details
+  ami                  = var.sonar_ami
+  binaries_location    = local.tarball_location
+  password             = local.password
+  password_secret_name = var.password_secret_name
   ssh_key_pair = {
     ssh_private_key_file_path = local.agentless_gw_primary_private_key_file_path
     ssh_public_key_name       = local.agentless_gw_primary_public_key_name
@@ -144,15 +144,15 @@ module "agentless_gw_primary" {
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
-  allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_hub_cidrs          = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
-  allowed_all_cidrs          = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_secondary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
+  allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.sonar_terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.agentless_gw_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.provider-2
   }
@@ -160,7 +160,7 @@ module "agentless_gw_primary" {
 
 module "agentless_gw_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
@@ -185,15 +185,15 @@ module "agentless_gw_secondary" {
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
-  allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_primary.cidr_block]
-  allowed_hub_cidrs          = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
-  allowed_all_cidrs          = local.workstation_cidr
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_primary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
+  allowed_all_cidrs                 = local.workstation_cidr
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.sonar_terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.agentless_gw_instance_profile_name
-  tags = local.tags
+  tags                              = local.tags
   providers = {
     aws = aws.provider-2
   }
@@ -201,7 +201,7 @@ module "agentless_gw_secondary" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = length(module.agentless_gw_secondary)
 
   sonar_version            = module.globals.tarball_location.version
@@ -231,8 +231,8 @@ locals {
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    var.enable_sonar ? [ { instance : module.hub_primary[0], private_key_file_path : local.hub_primary_private_key_file_path } ] : [],
-    var.enable_sonar && var.hub_hadr ? [ { instance : module.hub_secondary[0], private_key_file_path : local.hub_secondary_private_key_file_path } ] : []
+    var.enable_sonar ? [{ instance : module.hub_primary[0], private_key_file_path : local.hub_primary_private_key_file_path }] : [],
+    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], private_key_file_path : local.hub_secondary_private_key_file_path }] : []
   )
   hubs_keys = compact([
     var.enable_sonar ? "hub-primary" : null,
@@ -247,7 +247,7 @@ locals {
 
 module "federation" {
   source   = "imperva/dsf-federation/null"
-  version  = "1.5.0" # latest release tag
+  version  = "1.5.1" # latest release tag
   for_each = local.hub_gw_combinations
 
   hub_info = {
