@@ -29,7 +29,7 @@ locals {
       cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     {
-      name            = ["dra", "admin", "server"]
+      name            = ["dra", "admin"]
       internet_access = false
       udp             = []
       tcp             = [10674, 8443]
