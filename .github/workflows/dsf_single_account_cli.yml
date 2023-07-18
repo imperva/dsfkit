@@ -130,7 +130,7 @@ jobs:
       run: |
         aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
         echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
-        aws_sg_for_singapore=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.SINGAPORE_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
+        aws_sg_for_singapore=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.SINGAPORE_SG_ID }} --protocol tcp --port 8443 --cidr $curr_ip/32)
         echo sg_id_for_singapore=$(echo $aws_sg_for_singapore | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
 
     - name: Set IP in AWS Security Group - Sydney
@@ -139,7 +139,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       run: |
-        aws_sg_for_sydney=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.SYDNEY_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
+        aws_sg_for_sydney=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.SYDNEY_SG_ID }} --protocol tcp --port 8443 --cidr $curr_ip/32)
         echo sg_id_for_sydney=$(echo $aws_sg_for_sydney | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
 
     - name: Create Key File
