@@ -2,7 +2,7 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_dsf_hub ? var.agentless_gw_count : 0
 
-  hub_cidr_list          = compact([data.aws_subnet.hub_primary.cidr_block, try(format("%s/32", module.hub_primary[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
+  hub_cidr_list          = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, try(format("%s/32", module.hub_primary[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
 }
 
