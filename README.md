@@ -357,8 +357,9 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
    <td>
       1. Released full DSF installation example.
-      <br>2. Added support for DAM activation code in addition to the already supported option of a license file. 
-      <br>3. Improvements and bug fixes. 
+      <br>2. Added support for DAM activation code in addition to the already supported option of a license file.
+      <br>3. Added security groups samples to the documentation.
+      <br>4. Improvements and bug fixes. 
    </td>
   </tr>
 
@@ -849,6 +850,11 @@ The permissions are separated to different policies. Use the relevant policies a
 
 Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
+
+# Security Groups
+
+If you are running an installation example and want to provide your own security groups as variables, you can find samples of the 
+required security groups rules here - [Security Groups samples](/security_groups_samples).
 
 # Undeployment
 

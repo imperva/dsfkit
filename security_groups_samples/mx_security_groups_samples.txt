@@ -1,0 +1,22 @@
+Allow web console and API access:
+
+- TCP port 8083 from the IP range from which the MX web console and API will be accessed
+
+Allow access from the Agent Gateways:
+
+- TCP ports 8083, 8085 from the Agent Gateways subnets IP range
+
+Allow access from the DSF Hub:
+
+- TCP port 8083 from the DSF Hub IP range
+
+Allow access for debugging purposes:
+
+- TCP port 22 from the installer machine IP range
+
+
+Notes:
+
+* If DSF Hub HADR is configured, include primary and secondary nodes' information
+
+

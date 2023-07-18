@@ -1,0 +1,22 @@
+Allow web console access:
+
+- TCP port 8443 from the IP range from which the DRA Admin web console will be accessed
+
+Allow access from DRA Analytics:
+
+- TPC ports 61617, 8443, 8501 from DRA Analytics IP range
+
+Allow access from the DSF Hub:
+
+- TPC ports 8443, 61617, 8501 from the DSF Hub IP ranges
+- TCP ports 8443, 61617, 8501 from the DSF Hub public IP if exits
+
+Allow access for debugging purposes:
+
+- TCP port 22 from the installer machine IP range
+
+
+Notes:
+
+* You may need to run a gradual deployment since the DSF Hub public IP is not known before running the deployment
+* If DSF Hub HADR is configured, include primary and secondary nodes' information

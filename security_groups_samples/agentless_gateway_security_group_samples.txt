@@ -1,0 +1,19 @@
+Allow access from the DSF Hub:
+
+- TCP ports 22, 8443 from the DSF Hub IP range
+- TCP ports 22, 8443 from the installer machine, or proxy if used, IP range
+
+Allow access from the Agentless Gateways's replica set:
+
+- TCP ports 3030, 27117, 22 from the Agentless Gateway's replica set IP range
+- TCP ports 3030, 27117, 22 from the installer machine, or proxy if used, IP range
+
+Allow access for debugging purposes:
+
+- TCP port 22 from the installer machine, or proxy if used, IP range
+
+
+Notes:
+
+* If DSF Hub HADR is configured, include primary and secondary nodes' information
+* If Agentless Gateway HADR is configured, include primary and secondary nodes' information

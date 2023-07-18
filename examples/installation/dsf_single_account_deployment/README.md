@@ -23,7 +23,10 @@ It is mandatory to provide as input to this example the following variables:
 2. The AWS regions of the DSF nodes
 3. The subnets in which to deploy the DSF nodes, they can be in the same or in different subnets
 
-It is not mandatory to provide the security groups Ids of the DSF nodes, but in case they are provided, you should add the relevant CIDRs and ports to the security groups before running the deployment.<br/>
+It is not mandatory to provide the security groups Ids of the DSF nodes, but in case they are provided, you should add the relevant CIDRs and ports to the security groups before running the deployment, 
+and possibly, depending on your configuration, run a gradual deployment in order to pass variables between the different parts of the deployment.
+You can find the required security group rules samples [here](/security_groups_samples).
+<br/>
 
 
 ## Modularity
