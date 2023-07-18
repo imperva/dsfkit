@@ -76,7 +76,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/terraform_nightly_manager.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
     with:
       branch: master
     secrets:
@@ -89,7 +89,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/terraform_nightly_manager.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
     with:
       branch: dev
     secrets:
