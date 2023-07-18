@@ -130,6 +130,8 @@ jobs:
       run: |
         aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
         echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
+        aws_sg_for_singapore=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.SINGAPORE_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
+        echo sg_id_for_singapore=$(echo $aws_sg_for_singapore | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
 
     - name: Set IP in AWS Security Group - Sydney
       env:
@@ -200,6 +202,7 @@ jobs:
       if: always()
       run: |
         aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
+        aws ec2 revoke-security-group-ingress --group-id ${{ vars.SINGAPORE_SG_ID }} --security-group-rule-ids ${{ env.sg_id_for_singapore }}
 
     - name: Delete Security Group - Sydney
       env:
