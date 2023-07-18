@@ -31,6 +31,45 @@ on:
       DAM_LICENSE:
         required: true
 
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/agent-gw/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/core/*'
+      - 'modules/aws/dam-base-instance/*'
+      - 'modules/aws/dra-admin/*'
+      - 'modules/aws/dra-analytics/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/mx/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/null/agent-gw-cluster-setup/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/installation/dsf_single_account_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/agent-gw/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/core/*'
+      - 'modules/aws/dam-base-instance/*'
+      - 'modules/aws/dra-admin/*'
+      - 'modules/aws/dra-analytics/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/mx/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/null/agent-gw-cluster-setup/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/installation/dsf_single_account_deployment/*'
+
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
