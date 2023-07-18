@@ -20,7 +20,7 @@ output "generated_network" {
 }
 
 output "sonar" {
-  value = var.enable_dsf_hub ? {
+  value = var.enable_sonar ? {
     hub = {
       public_ip    = try(module.hub[0].public_ip, null)
       public_dns   = try(module.hub[0].public_dns, null)
@@ -133,7 +133,7 @@ output "audit_sources" {
         ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
-    agentless_sources = var.enable_dsf_hub ? {
+    agentless_sources = var.enable_sonar ? {
       rds_mysql = try(module.rds_mysql[0], null)
       rds_mssql = try(module.rds_mssql[0], null)
     } : null

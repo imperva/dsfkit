@@ -1,7 +1,7 @@
 locals {
   database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location   = module.globals.tarball_location
-  agentless_gw_count = var.enable_dsf_hub ? var.agentless_gw_count : 0
+  agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_secondary.cidr_block, try(format("%s/32", module.hub[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
@@ -10,7 +10,7 @@ locals {
 module "hub" {
   source  = "imperva/dsf-hub/aws"
   version = "1.5.0" # latest release tag
-  count   = var.enable_dsf_hub ? 1 : 0
+  count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   subnet_id                   = local.hub_subnet_id
@@ -44,7 +44,7 @@ module "hub" {
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
   version = "1.5.0" # latest release tag
-  count   = var.enable_dsf_hub && var.hub_hadr ? 1 : 0
+  count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
   subnet_id                       = local.hub_secondary_subnet_id
@@ -181,12 +181,12 @@ locals {
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    var.enable_dsf_hub ? [module.hub[0]] : [],
-    var.enable_dsf_hub && var.hub_hadr ? [module.hub_secondary[0]] : []
+    var.enable_sonar ? [module.hub[0]] : [],
+    var.enable_sonar && var.hub_hadr ? [module.hub_secondary[0]] : []
   )
   hubs_keys = compact([
-    var.enable_dsf_hub ? "hub-primary" : null,
-    var.enable_dsf_hub && var.hub_hadr ? "hub-secondary" : null,
+    var.enable_sonar ? "hub-primary" : null,
+    var.enable_sonar && var.hub_hadr ? "hub-secondary" : null,
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)

@@ -26,7 +26,7 @@ module "mx" {
   allowed_hub_cidrs                 = local.hub_cidr_list
   instance_profile_name             = var.mx_instance_profile_name
 
-  hub_details = var.enable_dsf_hub ? {
+  hub_details = var.enable_sonar ? {
     address      = coalesce(module.hub_primary[0].public_dns, module.hub_primary[0].private_dns)
     access_token = module.hub_primary[0].access_tokens["dam-to-hub"].token
     port         = 8443
