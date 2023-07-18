@@ -9,16 +9,16 @@ resource "random_id" "encryption_salt" {
 }
 
 data "local_sensitive_file" "license_file" {
-  count = local.license_activation_code ? 0 : 1
+  count    = local.license_activation_code ? 0 : 1
   filename = var.license
 }
 
 locals {
-  license_passphrase = random_password.passphrase.result
-  encrypted_license  = data.external.encrypted_license.result.cipher_text
-  license_activation_code = ! fileexists(var.license)
-  license_content = local.license_activation_code ? var.license : data.local_sensitive_file.license_file[0].content
-  license_params = "${local.license_activation_code ? "--flex" : "--encLic"}=${local.encrypted_license} --passPhrase=${local.license_passphrase}"
+  license_passphrase      = random_password.passphrase.result
+  encrypted_license       = data.external.encrypted_license.result.cipher_text
+  license_activation_code = !fileexists(var.license)
+  license_content         = local.license_activation_code ? var.license : data.local_sensitive_file.license_file[0].content
+  license_params          = "${local.license_activation_code ? "--flex" : "--encLic"}=${local.encrypted_license} --passPhrase=${local.license_passphrase}"
 }
 
 locals {

@@ -8,7 +8,7 @@ locals {
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
@@ -31,28 +31,28 @@ module "mx" {
     access_token = module.hub_primary[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null
-  large_scale_mode    = var.large_scale_mode.mx
-  tags                = local.tags
+  large_scale_mode = var.large_scale_mode.mx
+  tags             = local.tags
 }
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = local.agent_gw_count
 
-  friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
-  dam_version                             = var.dam_version
-  ebs                                     = var.agent_gw_ebs_details
-  subnet_id                               = var.subnet_ids.agent_gw_subnet_id
-  security_group_ids                      = var.security_group_ids_agent_gw
-  key_pair                                = local.agent_gw_public_key_name
-  secure_password                         = local.password
-  mx_password                             = local.password
-  allowed_agent_cidrs                     = [data.aws_subnet.agent_gw.cidr_block]
-  allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
-  allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
-  allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
-  instance_profile_name                   = var.agent_gw_instance_profile_name
+  friendly_name             = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
+  dam_version               = var.dam_version
+  ebs                       = var.agent_gw_ebs_details
+  subnet_id                 = var.subnet_ids.agent_gw_subnet_id
+  security_group_ids        = var.security_group_ids_agent_gw
+  key_pair                  = local.agent_gw_public_key_name
+  secure_password           = local.password
+  mx_password               = local.password
+  allowed_agent_cidrs       = [data.aws_subnet.agent_gw.cidr_block]
+  allowed_mx_cidrs          = [data.aws_subnet.mx.cidr_block]
+  allowed_ssh_cidrs         = [data.aws_subnet.mx.cidr_block]
+  allowed_gw_clusters_cidrs = [data.aws_subnet.agent_gw.cidr_block]
+  instance_profile_name     = var.agent_gw_instance_profile_name
 
   management_server_host_for_registration = module.mx[0].private_ip
   management_server_host_for_api_access   = module.mx[0].public_ip
@@ -66,7 +66,7 @@ module "agent_gw" {
 
 module "agent_gw_cluster_setup" {
   source  = "imperva/dsf-agent-gw-cluster-setup/null"
-  version = "1.5.0" # latest release tag
+  version = "1.5.1" # latest release tag
   count   = local.create_agent_gw_cluster
 
   cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])

@@ -9,7 +9,7 @@ variable "sonar_version" {
   default     = "4.12"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
-    condition     = ! startswith(var.sonar_version, "4.9.") && ! startswith(var.sonar_version, "4.10.")
+    condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
 }

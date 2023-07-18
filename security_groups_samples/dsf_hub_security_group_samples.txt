@@ -1,0 +1,28 @@
+Allow web console and API access:
+
+- TCP port 8443 from the IP range from which the DSF Hub web console and API will be accessed
+- TCP port 8443 from the installer machine, or proxy if used, IP range
+
+Allow access from the Agentless Gateways:
+
+- TCP ports 8443, 61617 from the Agentless Gateways subnets IP range
+- TCP ports 8443, 61617 from the installer machine, or proxy if used, IP range
+
+Allow access from the DSF Hub's replica set:
+
+- TCP ports 22, 3030, 27117, 61617 from the DSF Hub's replica set IP range
+- TCP ports 22, 3030, 27117, 61617 from the installer machine, or proxy if used, IP range
+
+Allow access from DRA Admin:
+
+- TCP ports 10674, 8443 from DRA Admin IP range
+- TCP ports 10674, 8443 from the installer machine, or proxy if used, IP range
+
+Allow access for debugging purposes:
+
+- TCP port 22 from the installer machine, or proxy if used, IP range
+
+
+Notes:
+
+* If Agentless Gateway HADR is configured, include primary and secondary nodes' information

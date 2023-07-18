@@ -1,0 +1,19 @@
+Allow access from DRA Admin:
+
+- TCP port 8443 from DRA Admin IP ranges
+
+Allow access from the DSF Hub:
+
+- TPC port 22 from the DSF Hub IP ranges
+- TCP port 22 from the DSF Hub public IP if exits
+
+Allow access from the Agent Gateway for legacy deployment:
+
+- TCP port 22 from Agent Gateway IP ranges
+
+
+Notes:
+
+* You may need to run a gradual deployment since the DSF Hub public IP is not known before running the deployment
+* If DSF Hub HADR is configured, include primary and secondary nodes' information
+* If Agentless Gateway HADR is configured, include primary and secondary nodes' information

@@ -1,0 +1,19 @@
+Allow access from the MX:
+
+- TCP port 443 from the MX IP range
+
+Allow access from the Agent:
+
+- TCP port 443 from the Agent IP range
+
+Allow access from the Agent Gateway Cluster:
+
+- TCP ports 3792, 7700 from the Agent Gateways IP range
+- UDP port 3792 from the Agent Gateways IP range
+
+Allow access for debugging purposes:
+
+- TCP port 22 from the MX IP range
+
+
+

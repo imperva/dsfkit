@@ -197,7 +197,7 @@ variable "license" {
   EOF
   type        = string
   validation {
-    condition = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
+    condition     = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
     error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
   }
 }
