@@ -31,10 +31,6 @@ on:
       DAM_LICENSE:
         required: true
 
-  push:
-    branches:
-      - 'sprint_10_segev'
-
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
