@@ -19,7 +19,6 @@ module "dra_admin" {
   allowed_analytics_cidrs = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs              = local.hub_cidr_list
   allowed_ssh_cidrs              = local.workstation_cidr
-  attach_persistent_public_ip    = true
   key_pair                       = module.key_pair.key_pair.key_pair_name
   tags                           = local.tags
   depends_on = [

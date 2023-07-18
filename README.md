@@ -350,6 +350,17 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>3. Bug fixes. 
    </td>
   </tr>
+  <tr>
+   <td>18 July 2023
+   </td>
+   <td>1.5.1
+   </td>
+   <td>
+      1. Released full DSF installation example.
+      <br>2. Added support for DAM activation code in addition to the already supported option of a license file. 
+      <br>3. Improvements and bug fixes. 
+   </td>
+  </tr>
 
 </table>
 
@@ -456,16 +467,6 @@ For more details about each example, click on the example name.
       <td>A DSF deployment with an MX, an Agent Gateway, networking and onboarding of an Agent with a randomly selected DB type: PostgreSql, MySql or MariaDB.   
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip">dam_basic_deployment.zip</a>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/alpha/dra_basic_deployment/README.md">DRA Basic Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A DSF deployment with an DRA Admin, DRA Analytics and networking.   
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.0/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip">dra_basic_deployment.zip</a>
       </td>
    </tr>
    <tr>
@@ -691,10 +692,6 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
  
     wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
     
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/alpha/dra_basic_deployment/dra_basic_deployment.zip
-
     or
  
     wget https://github.com/imperva/dsfkit/raw/1.5.0/examples/poc/dsf_deployment/dsf_deployment.zip
