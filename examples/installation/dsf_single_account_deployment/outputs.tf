@@ -3,7 +3,7 @@ output "dsf_deployment_name" {
 }
 
 output "sonar" {
-  value = var.enable_dsf_hub ? {
+  value = var.enable_sonar ? {
     hub_primary = {
       public_ip    = try(module.hub_primary[0].public_ip, null)
       public_dns   = try(module.hub_primary[0].public_dns, null)

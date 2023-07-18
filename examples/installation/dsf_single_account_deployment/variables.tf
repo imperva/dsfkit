@@ -31,7 +31,7 @@ variable "additional_tags" {
   }
 }
 
-variable "enable_dsf_hub" {
+variable "enable_sonar" {
   type        = bool
   default     = true
   description = "Provision DSF Hub and Agentless Gateways (formerly Sonar). To provision only a DSF Hub, set agentless_gw_count to 0."
@@ -52,7 +52,7 @@ variable "enable_dra" {
 variable "agentless_gw_count" {
   type        = number
   default     = 1
-  description = "Number of Agentless Gateways. Provisioning Agentless Gateways requires the enable_dsf_hub variable to be set to 'true'."
+  description = "Number of Agentless Gateways. Provisioning Agentless Gateways requires the enable_sonar variable to be set to 'true'."
 }
 
 variable "agent_gw_count" {

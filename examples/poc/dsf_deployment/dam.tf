@@ -24,7 +24,7 @@ module "mx" {
   allowed_ssh_cidrs                 = local.workstation_cidr
   allowed_hub_cidrs                 = local.hub_cidr_list
 
-  hub_details = var.enable_dsf_hub ? {
+  hub_details = var.enable_sonar ? {
     address      = coalesce(module.hub[0].public_dns, module.hub[0].private_dns)
     access_token = module.hub[0].access_tokens["dam-to-hub"].token
     port         = 8443

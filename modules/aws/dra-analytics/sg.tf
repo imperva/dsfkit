@@ -77,5 +77,5 @@ resource "aws_security_group" "dsf_base_sg_in" {
     ipv6_cidr_blocks = each.value.internet_access ? ["::/0"] : []
   }
 
-  tags = merge(var.tags, { Name = var.friendly_name })
+  tags = merge(var.tags, { Name = join("-", [var.friendly_name, join("-", each.value.name)]) })
 }

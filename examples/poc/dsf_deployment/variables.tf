@@ -4,7 +4,7 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
-variable "enable_dsf_hub" {
+variable "enable_sonar" {
   type        = bool
   default     = true
   description = "Provision DSF Hub and Agentless Gateways (formerly Sonar). To provision only a DSF Hub, set agentless_gw_count to 0."
@@ -25,7 +25,7 @@ variable "enable_dra" {
 variable "agentless_gw_count" {
   type        = number
   default     = 1
-  description = "Number of Agentless Gateways. Provisioning Agentless Gateways requires the enable_dsf_hub variable to be set to 'true'."
+  description = "Number of Agentless Gateways. Provisioning Agentless Gateways requires the enable_sonar variable to be set to 'true'."
 }
 
 variable "agent_gw_count" {
