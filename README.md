@@ -389,7 +389,7 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Role section](#iam-users-and-roles)).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
@@ -838,7 +838,9 @@ If you want to use Imperva's Terraform Cloud account, the first thing to do is t
 
 **The Terraform Cloud Deployment is now complete and a functioning version of DSF is now available.**
 
-# IAM Users and Roles
+# IAM Permissions
+
+## IAM Permissions for Running eDSF Kit
 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
@@ -848,8 +850,13 @@ The permissions are separated to different policies. Use the relevant policies a
 3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
 4. In order to onboard a MsSQL RDS with audit configured and with synthetic data, use the permissions specified here - [onboard MsSQL RDS with synthetic data permissions](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
 
-Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
+**NOTE:** When running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
+
+## IAM Permissions for the DSF Instances
+
+If you are running an installation example and want to provide your own instance profiles as variables, you can find samples of the
+required permissions here - [DSF Instances Permissions](/dsf_instances_permissions_samples).
 
 # Security Groups
 
