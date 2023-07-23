@@ -75,7 +75,7 @@ output "dam" {
         display_name     = try(val.display_name, null)
         role_arn         = try(val.iam_role, null)
         group_id         = try(val.group_id, null)
-        ssh_command      = try("ssh -i ${local.agent_gw_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command      = var.proxy_address == null ? try("ssh -i ${local.agent_gw_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agent_gw_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
         large_scale_mode = val.large_scale_mode
       }
     ]
@@ -99,7 +99,7 @@ output "dra" {
         private_dns   = val.private_dns
         archiver_user = val.archiver_user
         role_arn     = val.iam_role
-        ssh_command   = try("ssh -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command   = var.proxy_address == null ? try("ssh -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
   } : null
