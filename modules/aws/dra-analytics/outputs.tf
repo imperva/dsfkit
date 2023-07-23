@@ -18,6 +18,11 @@ output "private_dns" {
   value       = aws_network_interface.eni.private_dns_name
 }
 
+output "iam_role" {
+  description = "IAM Role ARN of the DSF node"
+  value       = local.role_arn
+}
+
 output "archiver_user" {
   value = var.archiver_user
 }
