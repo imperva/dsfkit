@@ -495,7 +495,7 @@ For more details about each example, click on the example name.
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
 
-Fill out this [form](https://forms.gle/CNMhdTuymYi4n7zB9) if you need help choosing or customizing an example to fit your use case. 
+Fill out the [eDSF Kit pre-deployment questionnaire](https://forms.gle/CNMhdTuymYi4n7zB9) google form if you need help choosing or customizing an example to fit your use case. 
 
 ## Installation Software Location and Versioning
 
