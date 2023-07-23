@@ -125,7 +125,7 @@ module "agentless_gw_primary" {
   version = "1.5.1" # latest release tag
   count   = local.agentless_gw_count
 
-  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
+  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", "primary", count.index])
   instance_type        = var.agentless_gw_instance_type
   subnet_id            = var.subnet_ids.agentless_gw_primary_subnet_id
   security_group_ids   = var.security_group_ids_gw_primary
