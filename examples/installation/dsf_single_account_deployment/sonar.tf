@@ -2,7 +2,9 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_cidr_list          = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, try(format("%s/32", module.hub_primary[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
+  hub_primary_public_ip   = length(module.hub_primary[0].public_ip) > 0 ? format("%s/32", module.hub_primary[0].public_ip) : null
+  hub_secondary_public_ip = length(module.hub_secondary[0].public_ip) > 0 ? format("%s/32", module.hub_secondary[0].public_ip) : null
+  hub_cidr_list           = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, local.hub_primary_public_ip, local.hub_secondary_public_ip])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
   hub_primary_ip = length(module.hub_primary[0].public_dns) > 0 ? module.hub_primary[0].public_dns : module.hub_primary[0].private_dns
   hub_secondary_ip = length(module.hub_secondary[0].public_dns) > 0 ? module.hub_secondary[0].public_dns : module.hub_secondary[0].private_dns
