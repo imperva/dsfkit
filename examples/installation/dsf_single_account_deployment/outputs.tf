@@ -12,8 +12,7 @@ output "sonar" {
       jsonar_uid             = try(module.hub_primary[0].jsonar_uid, null)
       display_name           = try(module.hub_primary[0].display_name, null)
       role_arn               = try(module.hub_primary[0].iam_role, null)
-      ssh_command            = try("ssh -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
-      ssh_command_with_proxy = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].public_dns}", null)
+      ssh_command            = var.proxy_address == null ? try("ssh -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${local.hub_primary_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_primary_private_key_file_path} ${module.hub_primary[0].ssh_user}@${module.hub_primary[0].private_dns}", null)
       tokens                 = nonsensitive(module.hub_primary[0].access_tokens)
     }
     hub_secondary = var.hub_hadr ? {
@@ -24,8 +23,7 @@ output "sonar" {
       jsonar_uid             = try(module.hub_secondary[0].jsonar_uid, null)
       display_name           = try(module.hub_secondary[0].display_name, null)
       role_arn               = try(module.hub_secondary[0].iam_role, null)
-      ssh_command            = try("ssh -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
-      ssh_command_with_proxy = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
+      ssh_command            = var.proxy_address == null ? try("ssh -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${local.hub_secondary_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.hub_secondary_private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].private_dns}", null)
     } : null
     agentless_gw_primary = [
       for idx, val in module.agentless_gw_primary :
@@ -35,8 +33,7 @@ output "sonar" {
         jsonar_uid             = try(val.jsonar_uid, null)
         display_name           = try(val.display_name, null)
         role_arn               = try(val.iam_role, null)
-        ssh_command            = try("ssh -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-        ssh_command_with_proxy = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command            = var.proxy_address == null ? try("ssh -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_primary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
     agentless_gw_secondary = var.agentless_gw_hadr ? [
@@ -47,8 +44,7 @@ output "sonar" {
         jsonar_uid             = try(val.jsonar_uid, null)
         display_name           = try(val.display_name, null)
         role_arn               = try(val.iam_role, null)
-        ssh_command            = try("ssh -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-        ssh_command_with_proxy = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command            = var.proxy_address == null ? try("ssh -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_secondary_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []
   } : null

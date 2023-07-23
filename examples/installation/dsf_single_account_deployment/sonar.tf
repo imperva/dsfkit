@@ -4,6 +4,8 @@ locals {
 
   hub_cidr_list          = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, try(format("%s/32", module.hub_primary[0].public_ip), null), try(format("%s/32", module.hub_secondary[0].public_ip), null)])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
+  hub_primary_ip = length(module.hub_primary[0].public_dns) > 0 ? module.hub_primary[0].public_dns : module.hub_primary[0].private_dns
+  hub_secondary_ip = length(module.hub_secondary[0].public_dns) > 0 ? module.hub_secondary[0].public_dns : module.hub_secondary[0].private_dns
 }
 
 module "hub_primary" {
@@ -231,8 +233,8 @@ locals {
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    var.enable_sonar ? [{ instance : module.hub_primary[0], private_key_file_path : local.hub_primary_private_key_file_path }] : [],
-    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], private_key_file_path : local.hub_secondary_private_key_file_path }] : []
+    var.enable_sonar ? [{ instance : module.hub_primary[0], ip : hub_primary_ip, private_key_file_path : local.hub_primary_private_key_file_path }] : [],
+    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], ip : hub_secondary_ip, private_key_file_path : local.hub_secondary_private_key_file_path }] : []
   )
   hubs_keys = compact([
     var.enable_sonar ? "hub-primary" : null,
@@ -251,7 +253,7 @@ module "federation" {
   for_each = local.hub_gw_combinations
 
   hub_info = {
-    hub_ip_address           = each.value[0].instance.public_ip
+    hub_ip_address           = each.value[0].ip
     hub_private_ssh_key_path = each.value[0].private_key_file_path
     hub_ssh_user             = each.value[0].instance.ssh_user
   }
@@ -260,6 +262,11 @@ module "federation" {
     gw_private_ssh_key_path = each.value[1].private_key_file_path
     gw_ssh_user             = each.value[1].instance.ssh_user
   }
+  hub_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
   gw_proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
