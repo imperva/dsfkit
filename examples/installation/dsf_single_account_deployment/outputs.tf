@@ -102,6 +102,7 @@ output "dra" {
         private_ip    = val.private_ip
         private_dns   = val.private_dns
         archiver_user = val.archiver_user
+        role_arn     = val.iam_role
         ssh_command   = try("ssh -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
