@@ -4,7 +4,7 @@ locals {
   bastion_user        = try(var.proxy_info.proxy_ssh_user, null)
 
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
-  display_name     = "DSF-${var.resource_type}-${var.name}"
+  display_name     = var.name
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tftpl", {

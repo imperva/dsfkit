@@ -1,0 +1,48 @@
+Replace the following placeholders with their values:
+${sonarw_secret_aws_arn}
+${password_secret_aws_arn}
+${dam-to-hub-access-token_secret_arn}
+${usc-access-token_secret_arn}
+${tarball_s3_bucket_name}
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ec2AssumeRole",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Principal": {
+                "Service": [
+                    "ec2.amazonaws.com"
+                ]
+            }
+        },
+        {
+            "Sid": "secretRead",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                ${sonarw_secret_aws_arn},
+                ${password_secret_aws_arn},
+                ${dam-to-hub-access-token_secret_arn},
+                ${usc-access-token_secret_arn}
+            ]
+        },
+        {
+            "Sid": "s3Read"
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${tarball_s3_bucket_name}",
+                "arn:aws:s3:::${tarball_s3_bucket_name}/*"
+            ]
+        }
+}
