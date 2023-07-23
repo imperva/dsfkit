@@ -109,7 +109,7 @@ output "web_console_dsf_hub" {
   value = try({
     user        = module.hub_primary[0].web_console_user
     password    = nonsensitive(local.password)
-    public_url  = join("", ["https://", module.hub_primary[0].public_dns, ":8443/"])
+    public_url  = length(module.hub_primary[0].public_dns) > 0 ? join("", ["https://", module.hub_primary[0].public_dns, ":8443/"]) : null
     private_url = join("", ["https://", module.hub_primary[0].private_dns, ":8443/"])
   }, null)
 }

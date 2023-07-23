@@ -235,8 +235,8 @@ locals {
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    var.enable_sonar ? [{ instance : module.hub_primary[0], ip : hub_primary_ip, private_key_file_path : local.hub_primary_private_key_file_path }] : [],
-    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], ip : hub_secondary_ip, private_key_file_path : local.hub_secondary_private_key_file_path }] : []
+    var.enable_sonar ? [{ instance : module.hub_primary[0], ip : local.hub_primary_ip, private_key_file_path : local.hub_primary_private_key_file_path }] : [],
+    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], ip : local.hub_secondary_ip, private_key_file_path : local.hub_secondary_private_key_file_path }] : []
   )
   hubs_keys = compact([
     var.enable_sonar ? "hub-primary" : null,
