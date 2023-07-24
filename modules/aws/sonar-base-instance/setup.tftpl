@@ -83,7 +83,7 @@ function create_lvm() {
     # Create logical volumes with lowercase names
     lvcreate --name logs -L 20G $volume_group_name
     lvcreate --name local -L 20G $volume_group_name
-    lvcreate --name apps -L 20G $volume_group_name
+    lvcreate --name apps -L 30G $volume_group_name
     lvcreate -l 100%FREE --name data $volume_group_name
 
     # Format the logical volumes with desired filesystem (e.g., xfs)
