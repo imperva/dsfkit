@@ -5,7 +5,7 @@ locals {
   hub_primary_public_ip   = length(module.hub_primary[0].public_ip) > 0 ? format("%s/32", module.hub_primary[0].public_ip) : null
   hub_secondary_public_ip = length(module.hub_secondary[0].public_ip) > 0 ? format("%s/32", module.hub_secondary[0].public_ip) : null
   hub_cidr_list           = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, local.hub_primary_public_ip, local.hub_secondary_public_ip])
-  agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
+  agentless_gw_cidr_list  = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
   hub_primary_ip = length(module.hub_primary[0].public_dns) > 0 ? module.hub_primary[0].public_dns : module.hub_primary[0].private_dns
   hub_secondary_ip = length(module.hub_secondary[0].public_dns) > 0 ? module.hub_secondary[0].public_dns : module.hub_secondary[0].private_dns
 }
