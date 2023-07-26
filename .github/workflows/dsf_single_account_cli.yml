@@ -58,18 +58,19 @@ jobs:
       run:
         shell: bash
     steps:
-    - name: Pick ref
-      run: |
-        if [ -z "${{ inputs.explicit_ref }}" ]; then
-          echo REF=${{ github.ref }} >> $GITHUB_ENV;
-        else
-          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
-        fi
+#    - name: Pick ref
+#      run: |
+#        if [ -z "${{ inputs.explicit_ref }}" ]; then
+#          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+#        else
+#          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
+#        fi
     # Checkout the repository to the GitHub Actions runner
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ env.REF }}
+        ref: ${{ inputs.branch }}
 
     - name: Change the modules source to local
       run: |
