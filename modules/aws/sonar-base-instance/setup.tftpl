@@ -200,8 +200,7 @@ function setup() {
 function set_environment_vars() {
     echo Setting environment vars
     if [ ! -f /etc/profile.d/jsonar.sh ]; then
-        sudo cat /etc/sysconfig/jsonar $LOCAL_DIR/sonarg/sysconfig/machine | \
-            sed -e 's/^/'"export "'/' | sudo tee /etc/profile.d/jsonar.sh
+        echo 'export $(cat /etc/sysconfig/jsonar $LOCAL_DIR/sonarg/sysconfig/machine)' | sudo tee /etc/profile.d/jsonar.sh
     fi
     . /etc/sysconfig/jsonar
 }
