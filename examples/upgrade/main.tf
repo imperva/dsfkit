@@ -2,7 +2,7 @@
 
 module "sonar_upgrader"{
   # map of target machines 
-  source = "../upgrade/modules/sonar_upgrader"
+  source = "./modules/sonar_upgrader"
   target_gws_by_id = [
       {
         "id" = "instance-id-111232"
