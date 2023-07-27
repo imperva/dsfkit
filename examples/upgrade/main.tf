@@ -2,32 +2,24 @@
 
 module "sonar_upgrader"{
   # map of target machines 
-  source = "./modules/sonar_upgrader"
-  target_gws_by_id = [
+  source = "./modules/sonar_upgrader_python"
+  target_agentless_gws = [
       {
-        "id" = "instance-id-111232"
-        "ssh_key" = "ssh_key"
-      },
-      {
-        "id" = "instance-id-d13332"
-        "ssh_key" = "ssh_key"
+        "ip" = "10.0.1.1" # can be private or public
+        "ssh_private_key_file_path" = "/home/ssh_key1.pem"
+        "proxy" = {
+          "ip" = "200.1.1.1" # can be private or public
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        }
       }
-    ]
-
-    target_hubs_by_id = [{
-      "id" = "instance-id-a"
-      "ssh_key" = "ssh_key"
-    },{
-      "id" = "instance-id-b"
-      "ssh_key" = "ssh_key"
-    }]
+  ]
 
   # target version
-  target_version = 4.15
+  target_version = 4.12
   # options
-  run_preflight_validation = true
-  run_postflight_validation = true
-  custom_validations_scripts = ["path1","path2"]
+  run_preflight_validations = true
+  run_postflight_validations = true
+  custom_validations_scripts = ["validation1", "validation2"]
 }
 
 

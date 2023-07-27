@@ -1,44 +1,28 @@
-# variable "gw_list" {
-#   type        = map(string)
-#   default     = {}
-# }
 
-# variable "hub_list" {
-#   type        = map(string)
-#   default     = {}
-# }
+variable "target_agentless_gws" {
+  type = list(object({
+    ip                        = string
+    ssh_private_key_file_path = string
+    proxy = object({
+      ip                        = string
+      ssh_private_key_file_path = string
+    })
+  }))
 
-variable "gw_list" {
-  type        = string
-  default     = null
+  default     = []
 }
 
-variable "target_gws_by_id" {
+variable "target_hubs" {
   type        = list(map(string))
   default     = []
 }
 
-
-variable "target_hubs_by_id" {
-  type        = list(map(string))
-  default     = []
-}
-  
-  
-
-
-variable "hub_list" {
-  type        = string
-  default     = null
-}
-
-
-variable "run_preflight_validation" {
+variable "run_preflight_validations" {
     type        = bool
     default     = true
 }
     
-variable "run_postflight_validation" {
+variable "run_postflight_validations" {
     type        = bool
     default     = true
 }
