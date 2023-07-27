@@ -92,6 +92,22 @@ provider "aws" {
   alias = "GROUPD"
 }
 
+variable "GROUPD_ami" {
+  type = object({
+    id               = string
+    name             = string
+    username         = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name, username, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*". The "username" field is mandatory and used to specify the AMI username.
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
+  default     = null
+}
+
 locals {
   GROUPD_should_create_gw_key_pair  = var.GROUPD_gw_key_pem_details == null ? true : false
 }
@@ -136,7 +152,7 @@ module "GROUPD_agentless_gw_group" {
   web_console_admin_password             = local.web_console_admin_password
   web_console_admin_password_secret_name = var.GROUPD_web_console_admin_password_secret_name
   hub_sonarw_public_key                  = module.hub_primary.sonarw_public_key
-  ami                                    = var.ami
+  ami                                    = var.GROUPD_ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.GROUPD_gw_private_key_pem_file_path
     ssh_public_key_name       = local.GROUPD_gw_public_key_name
