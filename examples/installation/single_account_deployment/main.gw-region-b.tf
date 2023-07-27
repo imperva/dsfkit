@@ -143,7 +143,7 @@ data "aws_subnet" "GROUPB_subnet_gw" {
 module "GROUPB_agentless_gw_group" {
   count                                  = var.GROUPB_gw_count
   source                                 = "../../../modules/aws/agentless-gw"
-  friendly_name                          = join("-", [local.deployment_name_salted, "GROUPB", "gw", count.index])
+  friendly_name                          = join("-", [local.deployment_name_salted, "b", "gw", count.index])
   subnet_id                              = var.GROUPB_subnet_gw
   security_group_ids                     = var.GROUPB_security_group_ids_gw
   instance_type                          = var.GROUPB_gw_instance_type

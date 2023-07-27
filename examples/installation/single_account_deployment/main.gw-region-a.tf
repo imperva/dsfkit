@@ -143,7 +143,7 @@ data "aws_subnet" "GROUPA_subnet_gw" {
 module "GROUPA_agentless_gw_group" {
   count                                  = var.GROUPA_gw_count
   source                                 = "../../../modules/aws/agentless-gw"
-  friendly_name                          = join("-", [local.deployment_name_salted, "GROUPA", "gw", count.index])
+  friendly_name                          = join("-", [local.deployment_name_salted, "a", "gw", count.index])
   subnet_id                              = var.GROUPA_subnet_gw
   security_group_ids                     = var.GROUPA_security_group_ids_gw
   instance_type                          = var.GROUPA_gw_instance_type

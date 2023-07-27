@@ -44,7 +44,7 @@ module "key_pair_hub" {
 locals {
   hub_private_key_pem_file_path = var.hub_key_pem_details != null ? var.hub_key_pem_details.private_key_pem_file_path : module.key_pair_hub[0].private_key_file_path
   hub_public_key_name           = var.hub_key_pem_details != null ? var.hub_key_pem_details.public_key_name : module.key_pair_hub[0].key_pair.key_pair_name
-  gw_private_key_pem_file_path  = var.GROUPA_gw_key_pem_details.private_key_pem_file_path 
+  gw_private_key_pem_file_path  = var.GROUPA_gw_key_pem_details.private_key_pem_file_path
   gw_public_key_name            = var.GROUPA_gw_key_pem_details.public_key_name
 }
 
@@ -61,7 +61,7 @@ data "aws_subnet" "secondary_hub" {
 ##############################
 module "hub_primary" {
   source                                 = "../../../modules/aws/hub"
-  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "pri"])
   subnet_id                              = var.subnet_hub_primary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location
@@ -94,7 +94,7 @@ module "hub_primary" {
 
 module "hub_secondary" {
   source                                 = "../../../modules/aws/hub"
-  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "sec"])
   subnet_id                              = var.subnet_hub_secondary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location
