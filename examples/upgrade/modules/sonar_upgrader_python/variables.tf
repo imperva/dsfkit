@@ -1,10 +1,12 @@
 
 variable "target_agentless_gws" {
   type = list(object({
-    ip                        = string
+    ip                        = string # can be private or public
+    ssh_user                  = string
     ssh_private_key_file_path = string
     proxy = object({
-      ip                        = string
+      ip                        = string # can be private or public
+      ssh_user                  = string
       ssh_private_key_file_path = string
     })
   }))

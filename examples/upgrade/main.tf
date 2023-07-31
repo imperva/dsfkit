@@ -5,10 +5,12 @@ module "sonar_upgrader"{
   source = "./modules/sonar_upgrader_python"
   target_agentless_gws = [
       {
-        "ip" = "10.0.1.1" # can be private or public
+        "ip" = "10.0.1.1"
+        "ssh_user" = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key1.pem"
         "proxy" = {
-          "ip" = "200.1.1.1" # can be private or public
+          "ip" = "200.1.1.1"
+          "ssh_user" = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         }
       }
