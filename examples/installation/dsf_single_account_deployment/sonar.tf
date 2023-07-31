@@ -191,7 +191,7 @@ module "agentless_gw_secondary" {
   } : null
   allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_primary.cidr_block]
   allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
-  allowed_all_cidrs                 = local.workstation_cidr
+  allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.sonar_terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
