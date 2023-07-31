@@ -206,7 +206,7 @@ variable "dra_admin_key_pair" {
       var.dra_admin_key_pair == null ||
       try(var.dra_admin_key_pair.private_key_file_path != null && var.dra_admin_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'dra_admin_key_pair' variable"
   }
 }
 
@@ -223,7 +223,7 @@ variable "dra_analytics_key_pair" {
       var.dra_analytics_key_pair == null ||
       try(var.dra_analytics_key_pair.private_key_file_path != null && var.dra_analytics_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'dra_analytics_key_pair' variable"
   }
 }
 
@@ -516,15 +516,39 @@ variable "agent_gw_ebs_details" {
 }
 
 variable "mx_key_pair" {
-  type        = string
-  description = "Key pair used to SSH to the MX"
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the MX. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
+
+  validation {
+    condition = (
+    var.mx_key_pair == null ||
+    try(var.mx_key_pair.private_key_file_path != null && var.mx_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'mx_key_pair' variable"
+  }
+
 }
 
 variable "agent_gw_key_pair" {
-  type        = string
-  description = "Key pair used to SSH to the Agent Gateway"
+  type = object({
+    private_key_file_path = string
+    public_key_name       = string
+  })
+  description = "Key pair used to SSH to the Agent Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
+
+  validation {
+    condition = (
+    var.agent_gw_key_pair == null ||
+    try(var.agent_gw_key_pair.private_key_file_path != null && var.agent_gw_key_pair.public_key_name != null, false)
+    )
+    error_message = "All fields must be specified when specifying the 'agent_gw_key_pair' variable"
+  }
+
 }
 
 variable "mx_instance_profile_name" {
