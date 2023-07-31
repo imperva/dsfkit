@@ -119,24 +119,6 @@ variable "workstation_cidr" {
   description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
-variable "vpc_ip_range" {
-  type        = string
-  default     = "10.0.0.0/16"
-  description = "VPC cidr range"
-}
-
-variable "private_subnets" {
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "VPC private subnet cidr range"
-}
-
-variable "public_subnets" {
-  type        = list(string)
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
-  description = "VPC public subnet cidr range"
-}
-
 variable "subnet_ids" {
   type = object({
     hub_primary_subnet_id            = string
