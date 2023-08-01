@@ -3,6 +3,7 @@
 import argparse
 import time
 import json
+import os
 from remote_executor import run_remote_script, run_remote_script_via_proxy
 
 
@@ -10,9 +11,25 @@ def slp(duration):
     time.sleep(duration)
 
 
+def read_bash_script(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            script_content = file.read()
+        return script_content
+    except FileNotFoundError:
+        print(f"File not found: {file_path}")
+        return None
+
+
 def run_upgrade_script(gw_json, target_version):
-    # TODO ssh to gw_json.ip via gw_json.proxy.ip if available and run upgrade_v4_10.sh script
-    remote_script = 'ls -l /home'
+    # Get the absolute path of the currently executing script
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Construct the absolute path to the bash script file
+    script_file_path = os.path.join(script_dir, 'dummy_upgrade_script.sh')
+
+    remote_script = read_bash_script(script_file_path)
+    if remote_script is None:
+        return False
     if "proxy" in gw_json:
         script_output = run_remote_script_via_proxy(gw_json.get("ip"),
                                                     gw_json.get("ssh_user"),
@@ -28,6 +45,7 @@ def run_upgrade_script(gw_json, target_version):
                                           remote_script)
 
     print(f"Script output: {script_output}")
+    return True
 
 
 def upgrade_gw(gw_json, gw_type, target_version):
@@ -37,11 +55,15 @@ def upgrade_gw(gw_json, gw_type, target_version):
     print(f"----- upgrade gateway {gw_type}")
     slp(short_sleep_seconds)
     print("run upgrade script")
-    run_upgrade_script(gw_json, target_version)
-    print("----- run post upgrade script")
-    slp(short_sleep_seconds)
-    print(f"----- move traffic to {gw_type}")
-    slp(short_sleep_seconds)
+    result = run_upgrade_script(gw_json, target_version)
+    if result:
+        print(f"Upgrading gateway {gw_json} was successful")
+        print("----- run post upgrade script")
+        slp(short_sleep_seconds)
+        print(f"----- move traffic to {gw_type}")
+        slp(short_sleep_seconds)
+    else:
+        print(f"Upgrading gateway {gw_json} failed")
 
 
 def print_gw(target_agentless_gws_json):
