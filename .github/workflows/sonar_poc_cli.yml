@@ -28,7 +28,7 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/core/*'
+      - 'modules/aws/core/*'
       - 'modules/aws/sonar-base-instance/*'
       - 'modules/aws/hub/*'
       - 'modules/aws/agentless-gw/*'
@@ -48,7 +48,7 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/core/*'
+      - 'modules/aws/core/*'
       - 'modules/aws/sonar-base-instance/*'
       - 'modules/aws/hub/*'
       - 'modules/aws/agentless-gw/*'
