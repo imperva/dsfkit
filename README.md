@@ -318,7 +318,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
   </tr>
   <tr>
-   <td>11 June 2023
+   <td>11 Jun 2023
    </td>
    <td>1.4.7
    </td>
@@ -329,7 +329,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
   </tr>
   <tr>
-   <td>14 June 2023
+   <td>14 Jun 2023
    </td>
    <td>1.4.8
    </td>
@@ -340,7 +340,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
   </tr>
   <tr>
-   <td>4 July 2023
+   <td>4 Jul 2023
    </td>
    <td>1.5.0
    </td>
@@ -351,7 +351,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
   </tr>
   <tr>
-   <td>18 July 2023
+   <td>18 Jul 2023
    </td>
    <td>1.5.1
    </td>
@@ -360,6 +360,16 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>2. Added support for DAM activation code in addition to the already supported option of a license file.
       <br>3. Added security groups samples to the documentation.
       <br>4. Improvements and bug fixes. 
+   </td>
+  </tr>
+  <tr>
+   <td>1 Aug 2023
+   </td>
+   <td>1.5.2
+   </td>
+   <td>
+      1. Added DSF instances' required IAM permissions samples to the documentation.
+      <br>2. Improvements and bug fixes.
    </td>
   </tr>
 
