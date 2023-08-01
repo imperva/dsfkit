@@ -521,8 +521,8 @@ variable "mx_key_pair" {
 
   validation {
     condition = (
-    var.mx_key_pair == null ||
-    try(var.mx_key_pair.private_key_file_path != null && var.mx_key_pair.public_key_name != null, false)
+      var.mx_key_pair == null ||
+      try(var.mx_key_pair.private_key_file_path != null && var.mx_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'mx_key_pair' variable"
   }
@@ -539,8 +539,8 @@ variable "agent_gw_key_pair" {
 
   validation {
     condition = (
-    var.agent_gw_key_pair == null ||
-    try(var.agent_gw_key_pair.private_key_file_path != null && var.agent_gw_key_pair.public_key_name != null, false)
+      var.agent_gw_key_pair == null ||
+      try(var.agent_gw_key_pair.private_key_file_path != null && var.agent_gw_key_pair.public_key_name != null, false)
     )
     error_message = "All fields must be specified when specifying the 'agent_gw_key_pair' variable"
   }

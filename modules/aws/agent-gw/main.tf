@@ -58,7 +58,7 @@ locals {
     "s3:PutObjectTagging",
     "s3:PutObjectVersionAcl",
     "s3:PutObjectVersionTagging",
-    "ec2:DescribeInstances"]
+  "ec2:DescribeInstances"]
   https_auth_header = base64encode("admin:${var.mx_password}")
   timeout           = 60 * 25
 
