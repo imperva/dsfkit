@@ -144,13 +144,13 @@ jobs:
 
   deploy_modules:
     needs: tag_branch
-    uses: ./.github/workflows/terraform_deploy_module.yml
+    uses: ./.github/workflows/deploy_module.yml
     secrets:
       PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
 
   test_plan:
     needs: deploy_modules
-    uses: ./.github/workflows/terraform_plan_cli_sonar.yml
+    uses: ./.github/workflows/plan_sonar_cli.yml
     with:
       use_modules_from_terraform_registry: true
       explicit_ref: master
@@ -162,7 +162,7 @@ jobs:
 
   test_apply:
     needs: test_plan
-    uses: ./.github/workflows/terraform_apply_cli_sonar_poc.yml
+    uses: ./.github/workflows/sonar_poc_cli.yml
     with:
       use_modules_from_terraform_registry: true
       explicit_ref: master
