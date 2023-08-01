@@ -41,7 +41,7 @@ resource "aws_instance" "dsf_base_instance" {
     device_index         = 0
   }
   disable_api_termination     = true
-  user_data_replace_on_change = true
+  user_data_replace_on_change = false
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
