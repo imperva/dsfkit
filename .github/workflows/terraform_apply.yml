@@ -1,4 +1,4 @@
-name: 'Terraform Apply - Cloud'
+name: 'Sonar POC Terraform Cloud'
 
 on:
   workflow_dispatch: {}
