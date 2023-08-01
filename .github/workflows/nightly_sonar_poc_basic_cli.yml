@@ -1,4 +1,4 @@
-name: 'Cli (basic) Nightly'
+name: 'Nightly Sonar POC Basic CLI'
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: 'Terraform Sonar Multi Account CLI'
+name: 'Sonar Multi Account CLI'
 
 concurrency:
   group: multi_account

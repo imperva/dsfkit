@@ -1,4 +1,4 @@
-name: 'Deploy module'
+name: 'Deploy Module'
 
 on:
   workflow_call:
