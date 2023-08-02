@@ -8,11 +8,6 @@ output "private_ip" {
   value       = azurerm_network_interface.nic.private_ip_address
 }
 
-output "sg_id" {
-  description = "Security group for DSF base instance"
-  value       = local.security_group_id
-}
-
 output "sonarw_public_key" {
   value = local.primary_node_sonarw_public_key
 }

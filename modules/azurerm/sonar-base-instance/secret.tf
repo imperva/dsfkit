@@ -3,13 +3,14 @@
 #################################
 
 resource "tls_private_key" "sonarw_private_key" {
+  count     = var.sonarw_private_key_secret_name == null ? 1 : 0
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
 locals {
-  primary_node_sonarw_public_key  = !var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key.public_key_openssh)} produced-by-terraform" : var.sonarw_public_key
-  primary_node_sonarw_private_key = !var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key.private_key_pem) : var.sonarw_private_key
+  primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
+  primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
 }
 
 data "azurerm_client_config" "current" {}
