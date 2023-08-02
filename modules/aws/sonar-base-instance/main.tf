@@ -12,7 +12,7 @@ locals {
   volume_attachment_device_name = var.volume_attachment_device_name == null ? "/dev/sdb" : var.volume_attachment_device_name
 
   security_group_ids = concat(
-    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+    [for sg in aws_security_group.dsf_base_sg : sg.id],
   var.security_group_ids)
 }
 
@@ -43,7 +43,7 @@ resource "aws_instance" "dsf_base_instance" {
     device_index         = 0
   }
   disable_api_termination     = true
-  user_data_replace_on_change = true
+  user_data_replace_on_change = false
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
@@ -58,7 +58,6 @@ resource "aws_volume_attachment" "ebs_att" {
   stop_instance_before_detaching = true
 }
 
-# use the ebs id in the userdata identify this volume https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/device_naming.html?icmpid=docs_ec2_console & https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/nvme-ebs-volumes.html
 resource "aws_ebs_volume" "ebs_external_data_vol" {
   size              = local.ebs_state_disk_size
   type              = local.ebs_state_disk_type

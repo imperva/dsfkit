@@ -23,11 +23,11 @@ locals {
   vm_default_user = "adminuser"
   vm_user         = var.vm_user != null ? var.vm_user : local.vm_default_user
 
-  security_group_id = var.security_group_id != null ? var.security_group_id : azurerm_network_security_group.dsf_base_sg[0].id
+  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  count               = var.create_and_attach_public_elastic_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
@@ -36,7 +36,7 @@ resource "azurerm_public_ip" "vm_public_ip" {
 }
 
 data "azurerm_public_ip" "vm_public_ip" {
-  count               = var.create_and_attach_public_elastic_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   resource_group_name = var.resource_group.name
   depends_on = [
@@ -81,6 +81,13 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 
   identity {
     type = "SystemAssigned"
+  }
+
+  # Ignore changes to the custom_data attribute (Don't replace on userdata change)
+  lifecycle {
+    ignore_changes = [
+      custom_data,
+    ]
   }
 }
 

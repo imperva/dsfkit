@@ -6,10 +6,6 @@ output "private_ip" {
   value = module.hub_instance.private_ip
 }
 
-output "sg_id" {
-  value = module.hub_instance.sg_id
-}
-
 # output "iam_role" {
 #   value = local.role_arn
 # }

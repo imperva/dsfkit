@@ -22,8 +22,8 @@ variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF hub instance"
   validation {
-    condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
-    error_message = "Subnet id is invalid. Must be subnet-********"
+    condition = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
   }
 }
 
