@@ -80,7 +80,7 @@ function runSonargSetup() {
 function run_upgrade() {
     download_and_extract_tarball
     unsetEnvironmentVariables
-#    runSonargSetup
+    runSonargSetup
 }
 
 run_upgrade
