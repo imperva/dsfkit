@@ -1,8 +1,9 @@
 #!/bin/bash
 
+# TODO install/create/activate the virtual environment
+
 pip install -r ${path}/python_upgrader/requirements.txt
 
-# TODO revert to python
 python3 -u ${path}/python_upgrader/main.py \
   --target_version "${target_version}" \
   --target_agentless_gws '${target_agentless_gws}' \
