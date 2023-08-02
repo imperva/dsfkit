@@ -21,20 +21,32 @@ def read_bash_script(file_path):
         return None
 
 
+def replace_script_args(script_contents, script_args):
+    return script_contents.replace("$1", script_args[0])\
+        .replace("$2", script_args[1])\
+        .replace("$3", script_args[2])
+
+
 def run_upgrade_script(gw_json, target_version):
     # Get the absolute path of the currently executing script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     # Construct the absolute path to the bash script file
-    script_file_path = os.path.join(script_dir, 'dummy_upgrade_script.sh')
+    if run_dummy_upgrade:
+        script_file_path = os.path.join(script_dir, 'dummy_upgrade_script.sh')
+    else:
+        script_file_path = os.path.join(script_dir, 'upgrade_v4_10.sh')
 
-    remote_script = read_bash_script(script_file_path)
-    if remote_script is None:
+    script_contents = read_bash_script(script_file_path)
+    if script_contents is None:
         return False
+    script_args = ["1ef8de27-ed95-40ff-8c08-7969fc1b7901", "jsonar-4.12.0.10.0.tar.gz", "us-east-1"]
+    script_contents_with_args = replace_script_args(script_contents, script_args)
+
     if "proxy" in gw_json:
         script_output = run_remote_script_via_proxy(gw_json.get("ip"),
                                                     gw_json.get("ssh_user"),
                                                     gw_json.get("ssh_private_key_file_path"),
-                                                    remote_script,
+                                                    script_contents_with_args,
                                                     gw_json.get("proxy").get("ip"),
                                                     gw_json.get("proxy").get("ssh_user"),
                                                     gw_json.get("proxy").get("ssh_private_key_file_path"))
@@ -42,9 +54,9 @@ def run_upgrade_script(gw_json, target_version):
         script_output = run_remote_script(gw_json.get("ip"),
                                           gw_json.get("ssh_user"),
                                           gw_json.get("ssh_private_key_file_path"),
-                                          remote_script)
+                                          script_contents_with_args)
 
-    print(f"Script output: {script_output}")
+    print(f"Bash script output ################ : {script_output}")
     return True
 
 
@@ -138,5 +150,6 @@ if __name__ == "__main__":
     short_sleep_seconds = 0  # 3
     long_sleep_seconds = 0  # 5
     very_long_sleep_seconds = 0  # 10
+    run_dummy_upgrade = False
 
     main()
