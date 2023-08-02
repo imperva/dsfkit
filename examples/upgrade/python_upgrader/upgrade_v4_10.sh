@@ -37,34 +37,44 @@ TARBALL_FILE=$(basename ${installation_s3_key})
 STATE_DIR=/imperva
 APPS_DIR=$STATE_DIR/apps
 
-function download_tarball() {
-    if [ -e ./$TARBALL_FILE ]; then
-      echo "Tarball file already exists on disk"
+function extract_tarball() {
+    echo "Extracting tarball..."
+    sudo tar -xf ./$TARBALL_FILE -gz -C $APPS_DIR
+    sudo chown -R sonarw:sonar $APPS_DIR
+    echo "Extracting tarball completed"
+}
+
+function download_and_extract_tarball() {
+    VERSION="${TARBALL_FILE#*-}"
+    VERSION="${VERSION%.tar.gz}"
+    echo "Version: $VERSION"
+
+    if [ -e $APPS_DIR/jsonar/apps/$VERSION ]; then
+        echo "Tarball file is already extracted"
+    elif [ -e ./$TARBALL_FILE ]; then
+        echo "Tarball file already exists on disk"
+        extract_tarball
+        rm ./$TARBALL_FILE
     else
       echo "Downloading tarball ${installation_s3_key}, in bucket ${installation_s3_bucket}, in region ${installation_s3_region}..."
       /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
       echo "Downloading tarball completed"
+      extract_tarball
+      rm ./$TARBALL_FILE
     fi
 }
 
-#function extract_tarball() {
-#    echo Extracting tarball..
-#    sudo tar -xf ./$TARBALL_FILE -gz -C $APPS_DIR
-#    rm ./$TARBALL_FILE
-#    sudo chown -R sonarw:sonar $APPS_DIR
-#}
-#
-#function unsetEnvironmentVariables() {
-#    unset JSONAR_LOCALDIR JSONAR_BASEDIR JSONAR_VERSION JSONAR_DATADIR JSONAR_LOGDIR
-#}
-#
+function unsetEnvironmentVariables() {
+    unset JSONAR_LOCALDIR JSONAR_BASEDIR JSONAR_VERSION JSONAR_DATADIR JSONAR_LOGDIR
+    echo "Unset environment variables"
+}
+
 #function runSonargSetup() {
 #    sudo $APPS_DIR/jsonar/apps/4.12.0.10.0/bin/sonarg-setup --no-interactive
 #}
 
 function run_upgrade() {
-  download_tarball
-#    extract_tarball
+    download_and_extract_tarball
 #    unsetEnvironmentVariables
 #    runSonargSetup
 }
