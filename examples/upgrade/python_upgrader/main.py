@@ -57,7 +57,7 @@ def run_upgrade_script(gw_json, target_version):
                                           script_contents_with_args)
 
     print(f"Bash script output ################ : {script_output}")
-    return True
+    return "Upgrade completed" in script_output
 
 
 def upgrade_gw(gw_json, gw_type, target_version):
