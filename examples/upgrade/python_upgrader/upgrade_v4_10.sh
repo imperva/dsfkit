@@ -27,6 +27,7 @@ echo "Running in directory: $(pwd)"
 installation_s3_bucket="$1"
 installation_s3_key="$2"
 installation_s3_region="$3"
+echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bucket}, in region: ${installation_s3_region}"
 
 #installation_s3_bucket="1ef8de27-ed95-40ff-8c08-7969fc1b7901"
 #installation_s3_key="jsonar-4.12.0.10.0.tar.gz"
@@ -37,6 +38,13 @@ TARBALL_FILE=$(basename ${installation_s3_key})
 STATE_DIR=/imperva
 APPS_DIR=$STATE_DIR/apps
 
+VERSION="${TARBALL_FILE#*-}"
+VERSION="${VERSION%.tar.gz}"
+echo "Version: $VERSION"
+
+EXTRACTION_DIR="${APPS_DIR}/jsonar/apps/${VERSION}"
+echo "Tarball extraction directory: $EXTRACTION_DIR"
+
 function extract_tarball() {
     echo "Extracting tarball..."
     sudo tar -xf ./$TARBALL_FILE -gz -C $APPS_DIR
@@ -45,18 +53,14 @@ function extract_tarball() {
 }
 
 function download_and_extract_tarball() {
-    VERSION="${TARBALL_FILE#*-}"
-    VERSION="${VERSION%.tar.gz}"
-    echo "Version: $VERSION"
-
-    if [ -e $APPS_DIR/jsonar/apps/$VERSION ]; then
+    if [ -e $EXTRACTION_DIR ]; then
         echo "Tarball file is already extracted"
     elif [ -e ./$TARBALL_FILE ]; then
         echo "Tarball file already exists on disk"
         extract_tarball
         rm ./$TARBALL_FILE
     else
-      echo "Downloading tarball ${installation_s3_key}, in bucket ${installation_s3_bucket}, in region ${installation_s3_region}..."
+      echo "Downloading tarball..."
       /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
       echo "Downloading tarball completed"
       extract_tarball
@@ -66,16 +70,16 @@ function download_and_extract_tarball() {
 
 function unsetEnvironmentVariables() {
     unset JSONAR_LOCALDIR JSONAR_BASEDIR JSONAR_VERSION JSONAR_DATADIR JSONAR_LOGDIR
-    echo "Unset environment variables"
+    echo "Environment variables were unset"
 }
 
-#function runSonargSetup() {
-#    sudo $APPS_DIR/jsonar/apps/4.12.0.10.0/bin/sonarg-setup --no-interactive
-#}
+function runSonargSetup() {
+    sudo $EXTRACTION_DIR/bin/sonarg-setup --no-interactive
+}
 
 function run_upgrade() {
     download_and_extract_tarball
-#    unsetEnvironmentVariables
+    unsetEnvironmentVariables
 #    runSonargSetup
 }
 
