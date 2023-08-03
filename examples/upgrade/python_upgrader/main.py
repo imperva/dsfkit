@@ -42,7 +42,7 @@ def run_upgrade_script(gw_json, target_version):
     script_args = ["1ef8de27-ed95-40ff-8c08-7969fc1b7901", "jsonar-4.12.0.10.0.tar.gz", "us-east-1"]
     script_contents_with_args = replace_script_args(script_contents, script_args)
 
-    if "proxy" in gw_json:
+    if gw_json.get("proxy") is not None:
         script_output = run_remote_script_via_proxy(gw_json.get("ip"),
                                                     gw_json.get("ssh_user"),
                                                     gw_json.get("ssh_private_key_file_path"),

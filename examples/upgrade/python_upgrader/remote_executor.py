@@ -20,7 +20,7 @@ def _run_remote_script(remote_host, remote_user, remote_key_filename, script_con
 
 
 def run_remote_script(remote_host, remote_user, remote_key_filename, script_contents):
-    return _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, 'None')
+    return _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, None)
 
 
 def run_remote_script_via_proxy(remote_host, remote_user, remote_key_filename, script_contents,

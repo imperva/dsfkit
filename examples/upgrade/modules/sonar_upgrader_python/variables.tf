@@ -4,11 +4,11 @@ variable "target_agentless_gws" {
     ip                        = string # can be private or public
     ssh_user                  = string
     ssh_private_key_file_path = string
-    proxy = object({
+    proxy = optional(object({
       ip                        = string # can be private or public
       ssh_user                  = string
       ssh_private_key_file_path = string
-    })
+    }))
   }))
 
   default     = []
