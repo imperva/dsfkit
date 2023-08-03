@@ -16,7 +16,7 @@ if [ ! -w "/var/log" ]; then
 fi
 exec > >(tee -a /var/log/upgrade.log) 2>&1
 
-echo "-----------------------------------------------------------"
+echo -e "\n-----------------------------------------------------------"
 echo "Running upgrade bash script at $(date)"
 
 cd /root
@@ -35,7 +35,10 @@ echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bu
 
 TARBALL_FILE=$(basename ${installation_s3_key})
 
-STATE_DIR=/imperva
+JSONAR_BASEDIR=$(grep "^JSONAR_BASEDIR=" /etc/sysconfig/jsonar | cut -d"=" -f2)
+# In deployments by eDSF Kit, the value is /imperva
+STATE_DIR=$(echo "$JSONAR_BASEDIR" | sed "s|/apps/jsonar/apps.*||")
+echo "State directory: ${STATE_DIR}"
 APPS_DIR=$STATE_DIR/apps
 
 VERSION="${TARBALL_FILE#*-}"
@@ -84,3 +87,6 @@ function run_upgrade() {
 }
 
 run_upgrade
+
+echo "Upgrade bash script completed at $(date)"
+echo "-------------------------------------------------------------"

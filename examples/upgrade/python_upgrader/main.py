@@ -56,7 +56,7 @@ def run_upgrade_script(gw_json, target_version):
                                           gw_json.get("ssh_private_key_file_path"),
                                           script_contents_with_args)
 
-    print(f"Bash script output ################ : {script_output}")
+    print(f"Bash script output: {script_output}")
     return "Upgrade completed" in script_output
 
 
@@ -69,13 +69,13 @@ def upgrade_gw(gw_json, gw_type, target_version):
     print("run upgrade script")
     result = run_upgrade_script(gw_json, target_version)
     if result:
-        print(f"Upgrading gateway {gw_json} was successful")
+        print(f"Upgrading gateway {gw_json} was ### successful ###")
         print("----- run post upgrade script")
         slp(short_sleep_seconds)
         print(f"----- move traffic to {gw_type}")
         slp(short_sleep_seconds)
     else:
-        print(f"Upgrading gateway {gw_json} failed")
+        print(f"Upgrading gateway {gw_json} ### failed ### ")
 
 
 def print_gw(target_agentless_gws_json):
