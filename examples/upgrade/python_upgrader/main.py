@@ -4,6 +4,7 @@ import argparse
 import time
 import json
 import os
+import re
 from remote_executor import run_remote_bash_script, run_remote_bash_script_via_proxy
 
 
@@ -56,10 +57,11 @@ def run_remote_bash_script_maybe_with_proxy(gw_json, script_contents):
 
 
 def extract_python_location(script_output):
-    marker = "Python location:"
-    index = script_output.find(marker)
-    if index != -1:
-        return script_output[index + len(marker):].strip()
+    pattern = r'Python location: (\S+)'
+    match = re.search(pattern, script_output)
+
+    if match:
+        return match.group(1)
     else:
         raise Exception("String 'Python location:' not found in 'Get python location' script output")
 

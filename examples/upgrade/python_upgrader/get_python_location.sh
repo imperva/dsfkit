@@ -8,7 +8,7 @@ set -u
 # Redirect stderr to stdout
 exec 2>&1
 
-echo -e "\n-----------------------------------------------------------"
+echo -e "\n-----------------------------------------------------------------------"
 echo "Running get_python_location bash script at $(date)"
 
 echo "Running as user: $(whoami)"
@@ -18,3 +18,4 @@ JSONAR_BASEDIR=$(grep "^JSONAR_BASEDIR=" /etc/sysconfig/jsonar | cut -d"=" -f2)
 PYTHON_LOCATION="$JSONAR_BASEDIR/bin/python3"
 # The string "Python location:" is part of the protocol, if you change it, change its usage
 echo "Python location: $PYTHON_LOCATION"
+echo "-----------------------------------------------------------------------"
