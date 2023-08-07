@@ -4,11 +4,22 @@ import argparse
 import time
 import json
 import os
-from remote_executor import run_remote_script, run_remote_script_via_proxy
+from remote_executor import run_remote_bash_script, run_remote_bash_script_via_proxy
 
 
 def slp(duration):
     time.sleep(duration)
+
+
+# Get the absolute path of the currently executing script
+def get_current_directory():
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+# Get the absolute path to a script file in the same directory as this
+def get_script_file_path(script_file_name):
+    script_dir = get_current_directory()
+    return os.path.join(script_dir, script_file_name)
 
 
 def read_bash_script(file_path):
@@ -27,14 +38,66 @@ def replace_script_args(script_contents, script_args):
         .replace("$3", script_args[2])
 
 
-def run_upgrade_script(gw_json, target_version):
-    # Get the absolute path of the currently executing script
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Construct the absolute path to the bash script file
-    if run_dummy_upgrade:
-        script_file_path = os.path.join(script_dir, 'dummy_upgrade_script.sh')
+def run_remote_bash_script_maybe_with_proxy(gw_json, script_contents):
+    if gw_json.get("proxy") is not None:
+        script_output = run_remote_bash_script_via_proxy(gw_json.get("ip"),
+                                                         gw_json.get("ssh_user"),
+                                                         gw_json.get("ssh_private_key_file_path"),
+                                                         script_contents,
+                                                         gw_json.get("proxy").get("ip"),
+                                                         gw_json.get("proxy").get("ssh_user"),
+                                                         gw_json.get("proxy").get("ssh_private_key_file_path"))
     else:
-        script_file_path = os.path.join(script_dir, 'upgrade_v4_10.sh')
+        script_output = run_remote_bash_script(gw_json.get("ip"),
+                                               gw_json.get("ssh_user"),
+                                               gw_json.get("ssh_private_key_file_path"),
+                                               script_contents)
+    return script_output
+
+
+def extract_python_location(script_output):
+    marker = "Python location:"
+    index = script_output.find(marker)
+    if index != -1:
+        return script_output[index + len(marker):].strip()
+    else:
+        raise Exception("String 'Python location:' not found in 'Get python location' script output")
+
+
+def run_get_python_location_script(gw_json):
+    script_file_path = get_script_file_path('get_python_location.sh')
+
+    script_contents = read_bash_script(script_file_path)
+    if script_contents is None:
+        return False
+
+    script_output = run_remote_bash_script_maybe_with_proxy(gw_json, script_contents)
+
+    print(f"'Get python location' bash script output: {script_output}")
+    python_location = extract_python_location(script_output)
+    print(f"Python location in Agentless Gateway {gw_json.get('ip')} is {python_location}")
+    return python_location
+
+
+def run_preflight_validations(target_agentless_gws_json):
+    print("----- Pre-flight validations")
+    print("check the version of the gateway")
+    python_location = run_get_python_location_script(target_agentless_gws_json[0])
+    # TODO run validations
+    # print("version: 4.11")
+    # print("check the version of the hub")
+    # print("version: 4.11")
+    # print(f"compare the version of the gateway and hub and target version: {args.target_version}")
+    print("check disk space")
+    slp(very_long_sleep_seconds)
+
+
+def run_upgrade_script(gw_json, target_version):
+    if run_dummy_upgrade:
+        script_file_name = 'dummy_upgrade_script.sh'
+    else:
+        script_file_name = 'upgrade_v4_10.sh'
+    script_file_path = get_script_file_path(script_file_name)
 
     script_contents = read_bash_script(script_file_path)
     if script_contents is None:
@@ -42,21 +105,9 @@ def run_upgrade_script(gw_json, target_version):
     script_args = ["1ef8de27-ed95-40ff-8c08-7969fc1b7901", "jsonar-4.12.0.10.0.tar.gz", "us-east-1"]
     script_contents_with_args = replace_script_args(script_contents, script_args)
 
-    if gw_json.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(gw_json.get("ip"),
-                                                    gw_json.get("ssh_user"),
-                                                    gw_json.get("ssh_private_key_file_path"),
-                                                    script_contents_with_args,
-                                                    gw_json.get("proxy").get("ip"),
-                                                    gw_json.get("proxy").get("ssh_user"),
-                                                    gw_json.get("proxy").get("ssh_private_key_file_path"))
-    else:
-        script_output = run_remote_script(gw_json.get("ip"),
-                                          gw_json.get("ssh_user"),
-                                          gw_json.get("ssh_private_key_file_path"),
-                                          script_contents_with_args)
+    script_output = run_remote_bash_script_maybe_with_proxy(gw_json, script_contents_with_args)
 
-    print(f"Bash script output: {script_output}")
+    print(f"Upgrade bash script output: {script_output}")
     return "Upgrade completed" in script_output
 
 
@@ -104,9 +155,10 @@ def main():
     parser.add_argument("--target_version", required=True, help="Target version to upgrade")
     parser.add_argument("--target_agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
     parser.add_argument("--target_hubs", required=True, help="JSON-encoded DSF Hub list")
-    parser.add_argument("--run_preflight_validations", type=str_to_bool, help="Run preflight validations")
-    parser.add_argument("--run_postflight_validations", type=str_to_bool, help="Run postflight validations")
+    parser.add_argument("--run_preflight_validations", type=str_to_bool, help="Whether to run preflight validations")
+    parser.add_argument("--run_postflight_validations", type=str_to_bool, help="Whether to run postflight validations")
     parser.add_argument("--custom_validations_scripts", required=True, help="List of custom validation scripts")
+    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
 
     args = parser.parse_args()
     target_agentless_gws_json = json.loads(args.target_agentless_gws)
@@ -120,24 +172,21 @@ def main():
     print(f"run_preflight_validations {args.run_preflight_validations}")
     print(f"run_postflight_validations {args.run_postflight_validations}")
     print(f"custom_validations_scripts {args.custom_validations_scripts}")
+    print(f"run_upgrade {args.run_upgrade}")
 
     print("********** Start ************")
-    slp(long_sleep_seconds)
-    print("----- Pre-flight validations")
-    print("check the version of the gateway")
-    print("version: 4.11")
-    # print("check the version of the hub")
-    # print("version: 4.11")
-    print(f"compare the version of the gateway and hub and target version: {args.target_version}")
-    print("check disk space")
-    slp(very_long_sleep_seconds)
+    if args.run_preflight_validations:
+        run_preflight_validations(target_agentless_gws_json)
+
     print("----- Custom validations")
     print(f"run: {args.custom_validations_scripts}")
-    slp(very_long_sleep_seconds)
-    print("----- upgrade Agentless Gateway DR")
-    upgrade_gw(target_agentless_gws_json[0], "DR", args.target_version)
-    # print("----- upgrade gw Main")
-    # upgrade_gw("Main", args.target_version)
+
+    if args.run_upgrade:
+        slp(very_long_sleep_seconds)
+        print("----- upgrade Agentless Gateway DR")
+        upgrade_gw(target_agentless_gws_json[0], "DR", args.target_version)
+        # print("----- upgrade gw Main")
+        # upgrade_gw("Main", args.target_version)
 
     print("----- Post-flight validations")
     print("check the version of the gateway")

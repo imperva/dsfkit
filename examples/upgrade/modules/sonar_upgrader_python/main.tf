@@ -7,6 +7,7 @@ locals {
     run_preflight_validations  = tostring(var.run_preflight_validations)
     run_postflight_validations = tostring(var.run_postflight_validations)
     custom_validations_scripts = var.custom_validations_scripts[0]
+    run_upgrade                = tostring(var.run_upgrade)
   })
 }
 

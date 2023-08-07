@@ -40,5 +40,8 @@ variable "custom_validations_scripts" {
     type        = string
     default     = null
   }
-    
-  
+
+variable "run_upgrade" {
+  type        = bool
+  default     = true
+}

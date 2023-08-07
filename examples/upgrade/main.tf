@@ -1,7 +1,6 @@
 
 
 module "sonar_upgrader"{
-  # map of target machines 
   source = "./modules/sonar_upgrader_python"
   target_agentless_gws = [
       {
@@ -16,13 +15,10 @@ module "sonar_upgrader"{
       }
   ]
 
-  # target version
   target_version = 4.12
   # options
   run_preflight_validations = true
   run_postflight_validations = true
   custom_validations_scripts = ["validation1", "validation2"]
+  run_upgrade = false
 }
-
-
-
