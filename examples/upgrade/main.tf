@@ -15,7 +15,7 @@ module "sonar_upgrader"{
       }
   ]
 
-  target_version = 4.12
+  target_version = "4.12.0.10.0"
   # options
   run_preflight_validations = true
   run_postflight_validations = true

@@ -29,6 +29,7 @@ def _run_remote_script(remote_host, remote_user, remote_key_filename, script_con
 
     script_output = stdout.read().decode('utf-8')
     # print(f"Script output: {script_output}")
+    print(f"Script stderr: {stderr.read().decode('utf-8')}")
 
     remote_client.close()
 

@@ -38,8 +38,8 @@ def build_bash_script_run_command(script_contents, args=""):
     return f"sudo bash -c '{script_contents}' {args}"
 
 
-def build_python_script_run_command(script_contents, python_location):
-    return f"sudo {python_location} '{script_contents}'"
+def build_python_script_run_command(script_contents, args, python_location):
+    return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
 def run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command):
@@ -68,13 +68,14 @@ def extract_python_location(script_output):
     if match:
         return match.group(1)
     else:
-        raise Exception("String 'Python location:' not found in 'Get python location' script output")
+        raise Exception("Pattern 'Python location: ...' not found in 'Get python location' script output")
 
 
 def run_get_python_location_script(gw_json):
     script_file_path = get_script_file_path("get_python_location.sh")
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
+
     script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
@@ -83,16 +84,40 @@ def run_get_python_location_script(gw_json):
     return python_location
 
 
-def run_preflight_validations_script(gw_json, python_location):
+def extract_preflight_validations_result(script_output):
+    pattern = r'Preflight validations result: ({.+})'
+    match = re.search(pattern, script_output)
+
+    if match:
+        return match.group(1)
+    else:
+        raise Exception("Pattern 'Preflight validations result: ...' not found in 'Run preflight validations' "
+                        "script output")
+
+
+def run_preflight_validations_script(gw_json, target_version, python_location):
     script_file_path = get_script_file_path("run_preflight_validations.py")
     script_contents = read_file_contents(script_file_path)
-    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents)
+    script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
+    # print(f"script_run_command: {script_run_command}")
+
+    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
+    print(f"'Run preflight validations' python script output: {script_output}")
+    preflight_validations_result = extract_preflight_validations_result(script_output)
+    print(f"Preflight validation results in Agentless Gateway {gw_json.get('ip')} are {preflight_validations_result}")
+    return preflight_validations_result
 
 
-def run_preflight_validations(target_agentless_gws_json):
+def run_preflight_validations(target_agentless_gws_json, target_version):
     print("----- Preflight validations")
     print("check the version of the gateway")
     python_location = run_get_python_location_script(target_agentless_gws_json[0])
+
+    preflight_validations_result_json = run_preflight_validations_script(target_agentless_gws_json[0], target_version,
+                                                                         python_location)
+
+    preflight_validations_result = json.loads(preflight_validations_result_json)
+    return preflight_validations_result
 
     # TODO run validations
     # print("version: 4.11")
@@ -118,6 +143,7 @@ def run_upgrade_script(gw_json, target_version):
     script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
 
     print(f"Upgrade bash script output: {script_output}")
+    # This relies on the fact that Sonar outputs the string "Upgrade completed"
     return "Upgrade completed" in script_output
 
 
@@ -131,17 +157,14 @@ def upgrade_gw(gw_json, gw_type, target_version):
     result = run_upgrade_script(gw_json, target_version)
     if result:
         print(f"Upgrading gateway {gw_json} was ### successful ###")
-        print("----- run post upgrade script")
-        slp(short_sleep_seconds)
-        print(f"----- move traffic to {gw_type}")
-        slp(short_sleep_seconds)
     else:
         print(f"Upgrading gateway {gw_json} ### failed ### ")
+    return result
 
 
 def run_upgrade(target_agentless_gws_json, target_version):
     print("----- upgrade Agentless Gateway DR")
-    upgrade_gw(target_agentless_gws_json[0], "DR", target_version)
+    return upgrade_gw(target_agentless_gws_json[0], "DR", target_version)
     # print("----- upgrade gw Main")
     # upgrade_gw("Main", args.target_version)
 
@@ -185,6 +208,7 @@ def main():
     parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
 
     args = parser.parse_args()
+    # TODO remove json from target_agentless_gws_json, json.loads converts a json string to an object
     target_agentless_gws_json = json.loads(args.target_agentless_gws)
 
     print("********** Reading Inputs ************")
@@ -199,16 +223,19 @@ def main():
     print(f"run_upgrade {args.run_upgrade}")
 
     print("********** Start ************")
+
+    preflight_validations_passed = True
     if args.run_preflight_validations:
-        run_preflight_validations(target_agentless_gws_json)
+        preflight_validations_passed = run_preflight_validations(target_agentless_gws_json, args.target_version)
 
     print("----- Custom validations")
     print(f"run: {args.custom_validations_scripts}")
 
-    if args.run_upgrade:
-        run_upgrade(target_agentless_gws_json, args.target_version)
+    upgrade_succeeded = True
+    if preflight_validations_passed and args.run_upgrade:
+        upgrade_succeeded = run_upgrade(target_agentless_gws_json, args.target_version)
 
-    if args.run_postflight_validations:
+    if upgrade_succeeded and args.run_postflight_validations:
         run_postflight_validations()
 
     print("********** End ************")
