@@ -5,7 +5,7 @@ import time
 import json
 import os
 import re
-from remote_executor import run_remote_bash_script, run_remote_bash_script_via_proxy
+from remote_executor import run_remote_script, run_remote_script_via_proxy
 
 
 def slp(duration):
@@ -23,36 +23,41 @@ def get_script_file_path(script_file_name):
     return os.path.join(script_dir, script_file_name)
 
 
-def read_bash_script(file_path):
+def read_file_contents(file_path):
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             script_content = file.read()
         return script_content
     except FileNotFoundError:
-        print(f"File not found: {file_path}")
-        return None
+        raise Exception(f"File not found: {file_path}")
+    except Exception:
+        raise Exception(f"Failed to read contents of file: {file_path}")
 
 
-def replace_script_args(script_contents, script_args):
-    return script_contents.replace("$1", script_args[0])\
-        .replace("$2", script_args[1])\
-        .replace("$3", script_args[2])
+def build_bash_script_run_command(script_contents, args=""):
+    return f"sudo bash -c '{script_contents}' {args}"
 
 
-def run_remote_bash_script_maybe_with_proxy(gw_json, script_contents):
+def build_python_script_run_command(script_contents, python_location):
+    return f"sudo {python_location} '{script_contents}'"
+
+
+def run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command):
     if gw_json.get("proxy") is not None:
-        script_output = run_remote_bash_script_via_proxy(gw_json.get("ip"),
-                                                         gw_json.get("ssh_user"),
-                                                         gw_json.get("ssh_private_key_file_path"),
-                                                         script_contents,
-                                                         gw_json.get("proxy").get("ip"),
-                                                         gw_json.get("proxy").get("ssh_user"),
-                                                         gw_json.get("proxy").get("ssh_private_key_file_path"))
+        script_output = run_remote_script_via_proxy(gw_json.get("ip"),
+                                                    gw_json.get("ssh_user"),
+                                                    gw_json.get("ssh_private_key_file_path"),
+                                                    script_contents,
+                                                    script_run_command,
+                                                    gw_json.get("proxy").get("ip"),
+                                                    gw_json.get("proxy").get("ssh_user"),
+                                                    gw_json.get("proxy").get("ssh_private_key_file_path"))
     else:
-        script_output = run_remote_bash_script(gw_json.get("ip"),
-                                               gw_json.get("ssh_user"),
-                                               gw_json.get("ssh_private_key_file_path"),
-                                               script_contents)
+        script_output = run_remote_script(gw_json.get("ip"),
+                                          gw_json.get("ssh_user"),
+                                          gw_json.get("ssh_private_key_file_path"),
+                                          script_contents,
+                                          script_run_command)
     return script_output
 
 
@@ -67,13 +72,10 @@ def extract_python_location(script_output):
 
 
 def run_get_python_location_script(gw_json):
-    script_file_path = get_script_file_path('get_python_location.sh')
-
-    script_contents = read_bash_script(script_file_path)
-    if script_contents is None:
-        return False
-
-    script_output = run_remote_bash_script_maybe_with_proxy(gw_json, script_contents)
+    script_file_path = get_script_file_path("get_python_location.sh")
+    script_contents = read_file_contents(script_file_path)
+    script_run_command = build_bash_script_run_command(script_contents)
+    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
     python_location = extract_python_location(script_output)
@@ -81,10 +83,17 @@ def run_get_python_location_script(gw_json):
     return python_location
 
 
+def run_preflight_validations_script(gw_json, python_location):
+    script_file_path = get_script_file_path("run_preflight_validations.py")
+    script_contents = read_file_contents(script_file_path)
+    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents)
+
+
 def run_preflight_validations(target_agentless_gws_json):
-    print("----- Pre-flight validations")
+    print("----- Preflight validations")
     print("check the version of the gateway")
     python_location = run_get_python_location_script(target_agentless_gws_json[0])
+
     # TODO run validations
     # print("version: 4.11")
     # print("check the version of the hub")
@@ -100,14 +109,13 @@ def run_upgrade_script(gw_json, target_version):
     else:
         script_file_name = 'upgrade_v4_10.sh'
     script_file_path = get_script_file_path(script_file_name)
+    script_contents = read_file_contents(script_file_path)
 
-    script_contents = read_bash_script(script_file_path)
-    if script_contents is None:
-        return False
-    script_args = ["1ef8de27-ed95-40ff-8c08-7969fc1b7901", "jsonar-4.12.0.10.0.tar.gz", "us-east-1"]
-    script_contents_with_args = replace_script_args(script_contents, script_args)
+    args = "1ef8de27-ed95-40ff-8c08-7969fc1b7901 jsonar-4.12.0.10.0.tar.gz us-east-1"
+    script_run_command = build_bash_script_run_command(script_contents, args)
+    # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_bash_script_maybe_with_proxy(gw_json, script_contents_with_args)
+    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
 
     print(f"Upgrade bash script output: {script_output}")
     return "Upgrade completed" in script_output
@@ -131,6 +139,13 @@ def upgrade_gw(gw_json, gw_type, target_version):
         print(f"Upgrading gateway {gw_json} ### failed ### ")
 
 
+def run_upgrade(target_agentless_gws_json, target_version):
+    print("----- upgrade Agentless Gateway DR")
+    upgrade_gw(target_agentless_gws_json[0], "DR", target_version)
+    # print("----- upgrade gw Main")
+    # upgrade_gw("Main", args.target_version)
+
+
 def print_gw(target_agentless_gws_json):
     for item in target_agentless_gws_json:
         # Extract values from the JSON
@@ -145,6 +160,13 @@ def print_gw(target_agentless_gws_json):
         print(f"SSH Key: {ssh_key}")
         print(f"Proxy: {proxy}")
         print("---")
+
+
+def run_postflight_validations():
+    print("----- Postflight validations")
+    # TODO
+    print("check the version of the gateway")
+    print("version: 4.12")
 
 
 def str_to_bool(arg):
@@ -184,15 +206,10 @@ def main():
     print(f"run: {args.custom_validations_scripts}")
 
     if args.run_upgrade:
-        slp(very_long_sleep_seconds)
-        print("----- upgrade Agentless Gateway DR")
-        upgrade_gw(target_agentless_gws_json[0], "DR", args.target_version)
-        # print("----- upgrade gw Main")
-        # upgrade_gw("Main", args.target_version)
+        run_upgrade(target_agentless_gws_json, args.target_version)
 
-    print("----- Post-flight validations")
-    print("check the version of the gateway")
-    print("version: 4.12")
+    if args.run_postflight_validations:
+        run_postflight_validations()
 
     print("********** End ************")
 

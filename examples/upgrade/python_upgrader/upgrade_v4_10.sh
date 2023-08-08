@@ -24,9 +24,10 @@ cd /root
 echo "Running as user: $(whoami)"
 echo "Running in directory: $(pwd)"
 
-installation_s3_bucket="$1"
-installation_s3_key="$2"
-installation_s3_region="$3"
+# starting the argument count from 0 since this script is run by "bash -c"
+installation_s3_bucket="$0"
+installation_s3_key="$1"
+installation_s3_region="$2"
 echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bucket}, in region: ${installation_s3_region}"
 
 #installation_s3_bucket="1ef8de27-ed95-40ff-8c08-7969fc1b7901"
