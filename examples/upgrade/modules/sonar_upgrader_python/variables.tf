@@ -1,4 +1,3 @@
-
 variable "agentless_gws" {
   type = list(object({
     ip                        = string # can be private or public
@@ -33,13 +32,11 @@ variable "custom_validations_scripts" {
     type        = list(string)
     default     = []
 }
-    
-  
 
-  variable "target_version" {
-    type        = string
-    default     = null
-  }
+variable "target_version" {
+  type        = string
+  default     = null
+}
 
 variable "run_upgrade" {
   type        = bool
