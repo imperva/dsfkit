@@ -108,12 +108,12 @@ def run_preflight_validations_script(gw_json, target_version, python_location):
     return preflight_validations_result
 
 
-def run_preflight_validations(target_agentless_gws_json, target_version):
+def run_preflight_validations(agentless_gws_json, target_version):
     print("----- Preflight validations")
     print("check the version of the gateway")
-    python_location = run_get_python_location_script(target_agentless_gws_json[0])
+    python_location = run_get_python_location_script(agentless_gws_json[0])
 
-    preflight_validations_result_json = run_preflight_validations_script(target_agentless_gws_json[0], target_version,
+    preflight_validations_result_json = run_preflight_validations_script(agentless_gws_json[0], target_version,
                                                                          python_location)
 
     preflight_validations_result = json.loads(preflight_validations_result_json)
@@ -162,15 +162,15 @@ def upgrade_gw(gw_json, gw_type, target_version):
     return result
 
 
-def run_upgrade(target_agentless_gws_json, target_version):
+def run_upgrade(agentless_gws_json, target_version):
     print("----- upgrade Agentless Gateway DR")
-    return upgrade_gw(target_agentless_gws_json[0], "DR", target_version)
+    return upgrade_gw(agentless_gws_json[0], "DR", target_version)
     # print("----- upgrade gw Main")
     # upgrade_gw("Main", args.target_version)
 
 
-def print_gw(target_agentless_gws_json):
-    for item in target_agentless_gws_json:
+def print_gw(agentless_gws_json):
+    for item in agentless_gws_json:
         # Extract values from the JSON
         ip = item.get("ip")
         ssh_user = item.get("ssh_user")
@@ -200,21 +200,21 @@ def str_to_bool(arg):
 def main():
     parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
     parser.add_argument("--target_version", required=True, help="Target version to upgrade")
-    parser.add_argument("--target_agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
-    parser.add_argument("--target_hubs", required=True, help="JSON-encoded DSF Hub list")
+    parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
+    parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
     parser.add_argument("--run_preflight_validations", type=str_to_bool, help="Whether to run preflight validations")
     parser.add_argument("--run_postflight_validations", type=str_to_bool, help="Whether to run postflight validations")
     parser.add_argument("--custom_validations_scripts", required=True, help="List of custom validation scripts")
     parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
 
     args = parser.parse_args()
-    # TODO remove json from target_agentless_gws_json, json.loads converts a json string to an object
-    target_agentless_gws_json = json.loads(args.target_agentless_gws)
+    # TODO remove json from agentless_gws_json, json.loads converts a json string to an object
+    agentless_gws_json = json.loads(args.agentless_gws)
 
     print("********** Reading Inputs ************")
     slp(long_sleep_seconds)
     print("gw list:")
-    print_gw(target_agentless_gws_json)
+    print_gw(agentless_gws_json)
     print("hub list: []")
     print(f"target_version {args.target_version}")
     print(f"run_preflight_validations {args.run_preflight_validations}")
@@ -226,14 +226,14 @@ def main():
 
     preflight_validations_passed = True
     if args.run_preflight_validations:
-        preflight_validations_passed = run_preflight_validations(target_agentless_gws_json, args.target_version)
+        preflight_validations_passed = run_preflight_validations(agentless_gws_json, args.target_version)
 
     print("----- Custom validations")
     print(f"run: {args.custom_validations_scripts}")
 
     upgrade_succeeded = True
     if preflight_validations_passed and args.run_upgrade:
-        upgrade_succeeded = run_upgrade(target_agentless_gws_json, args.target_version)
+        upgrade_succeeded = run_upgrade(agentless_gws_json, args.target_version)
 
     if upgrade_succeeded and args.run_postflight_validations:
         run_postflight_validations()

@@ -2,7 +2,7 @@
 
 module "sonar_upgrader"{
   source = "./modules/sonar_upgrader_python"
-  target_agentless_gws = [
+  agentless_gws = [
       {
         "ip" = "10.0.1.1"
         "ssh_user" = "ec2-user"

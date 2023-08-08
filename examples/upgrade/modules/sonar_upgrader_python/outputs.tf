@@ -2,11 +2,11 @@
 
 
     output "agentless_gw_list" {
-      value = var.target_agentless_gws
+      value = var.agentless_gws
     }
     
     output "hub_list" {
-      value = var.target_hubs
+      value = var.dsf_hubs
     }
 
     output "target_version" {

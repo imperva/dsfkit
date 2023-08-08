@@ -1,5 +1,5 @@
 
-variable "target_agentless_gws" {
+variable "agentless_gws" {
   type = list(object({
     ip                        = string # can be private or public
     ssh_user                  = string
@@ -14,7 +14,7 @@ variable "target_agentless_gws" {
   default     = []
 }
 
-variable "target_hubs" {
+variable "dsf_hubs" {
   type        = list(map(string))
   default     = []
 }
