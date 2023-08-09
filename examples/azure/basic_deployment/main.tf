@@ -14,12 +14,16 @@ module "globals" {
 }
 
 locals {
+  deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
+}
+
+locals {
   workstation_cidr_24        = [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))]
   web_console_admin_password = var.web_console_admin_password != null ? var.web_console_admin_password : module.globals.random_password
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   # database_cidr              = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location = module.globals.tarball_location
-  tags = merge(module.globals.tags, { "deployment_name" = var.deployment_name })
+  tags = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   resource_group = {
     location = azurerm_resource_group.rg.location
     name     = azurerm_resource_group.rg.name
@@ -27,7 +31,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = var.deployment_name
+  name     = local.deployment_name_salted
   location = var.location
 }
 
@@ -45,7 +49,7 @@ resource "local_sensitive_file" "ssh_key" {
 # network
 module "network" {
   source              = "Azure/network/azurerm"
-  vnet_name           = "${var.deployment_name}-${module.globals.current_user_name}"
+  vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = azurerm_resource_group.rg.name
   address_spaces      = [var.network_ip_range]
   subnet_prefixes     = var.private_subnets
@@ -66,7 +70,7 @@ module "hub" {
   source = "../../../modules/azurerm/hub"
   # version                             = "1.3.5" # latest release tag
 
-  friendly_name              = join("-", [var.deployment_name, "hub", "primary"])
+  friendly_name              = join("-", [local.deployment_name_salted, "hub", "main"])
   resource_group             = local.resource_group
   subnet_id                  = module.network.vnet_subnets[0]
   binaries_location          = local.tarball_location
@@ -100,7 +104,7 @@ module "agentless_gw_group" {
   source = "../../../modules/azurerm/agentless-gw"
   # version                             = "1.3.5" # latest release tag
 
-  friendly_name                       = join("-", [var.deployment_name, "gw", count.index])
+  friendly_name                       = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
   resource_group                      = local.resource_group
   subnet_id                           = module.network.vnet_subnets[0]
   storage_details                     = var.hub_managed_disk_details

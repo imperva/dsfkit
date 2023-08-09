@@ -8,6 +8,10 @@ locals {
   blob_object_version = regex("\\d\\.\\d*", local.blob_object)
 }
 
+locals {
+  is_service_principal = data.azuread_directory_object.current.type == "ServicePrincipal"
+}
+
 resource "random_id" "salt" {
   byte_length = 2
 }
@@ -28,7 +32,17 @@ data "http" "workstation_public_ip" {
 data "azurerm_client_config" "current" {
 }
 
+data "azuread_directory_object" "current" {
+  object_id = data.azurerm_client_config.current.object_id
+}
+
+data "azuread_service_principal" "current" {
+  count = local.is_service_principal ? 1 : 0
+  object_id = data.azurerm_client_config.current.object_id
+}
+
 data "azuread_user" "current" {
+  count = local.is_service_principal ? 0 : 1
   object_id = data.azurerm_client_config.current.object_id
 }
 
