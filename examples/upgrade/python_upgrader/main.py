@@ -49,22 +49,6 @@ def build_python_script_run_command(script_contents, args, python_location):
     return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
-def print_gw(agentless_gws):
-    for item in agentless_gws:
-        # Extract values from the JSON
-        ip = item.get("ip")
-        ssh_user = item.get("ssh_user")
-        ssh_key = item.get("ssh_private_key_file_path")
-        proxy = item.get("proxy")
-
-        # Use the extracted values
-        print(f"IP: {ip}")
-        print(f"SSH User: {ssh_user}")
-        print(f"SSH Key: {ssh_key}")
-        print(f"Proxy: {proxy}")
-        print("---")
-
-
 def run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command):
     if agentless_gw.get("proxy") is not None:
         script_output = run_remote_script_via_proxy(agentless_gw.get("ip"),
@@ -87,37 +71,25 @@ def run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
-    parser.add_argument("--target_version", required=True, help="Target version to upgrade")
-    parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
-    parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
-    parser.add_argument("--run_preflight_validations", type=str_to_bool, help="Whether to run preflight validations")
-    parser.add_argument("--run_postflight_validations", type=str_to_bool, help="Whether to run postflight validations")
-    parser.add_argument("--custom_validations_scripts", required=True, help="List of custom validation scripts")
-    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
-
-    args = parser.parse_args()
+    args = parse_args()
     agentless_gws = json.loads(args.agentless_gws)
+    hubs = json.loads(args.dsf_hubs)
 
-    print("********** Reading Inputs ************")
-    slp(long_sleep_seconds)
-    print("gw list:")
-    print_gw(agentless_gws)
-    print("hub list: []")
-    print(f"target_version {args.target_version}")
-    print(f"run_preflight_validations {args.run_preflight_validations}")
-    print(f"run_postflight_validations {args.run_postflight_validations}")
-    print(f"custom_validations_scripts {args.custom_validations_scripts}")
-    print(f"run_upgrade {args.run_upgrade}")
+    print("********** Inputs ************")
+
+    print_inputs(agentless_gws, hubs, args)
 
     print("********** Start ************")
 
     preflight_validations_passed = True
     if args.run_preflight_validations:
-        preflight_validations_passed = run_preflight_validations(agentless_gws, args.target_version)
+        preflight_validations_passed = run_all_preflight_validations(agentless_gws, hubs, args.target_version)
 
-    print("----- Custom validations")
-    print(f"run: {args.custom_validations_scripts}")
+    if preflight_validations_passed:
+        print(f"### Preflight validations passed")
+    else:
+        print(f"Aborting upgrade...")
+        return
 
     upgrade_succeeded = True
     if preflight_validations_passed and args.run_upgrade:
@@ -129,37 +101,86 @@ def main():
     print("********** End ************")
 
 
-def run_preflight_validations(agentless_gws, target_version):
+def parse_args():
+    parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
+    parser.add_argument("--agentless_gws", help="JSON-encoded Agentless Gateway list")
+    parser.add_argument("--dsf_hubs", help="JSON-encoded DSF Hub list")
+    parser.add_argument("--target_version", required=True, help="Target version to upgrade")
+    parser.add_argument("--run_preflight_validations", type=str_to_bool, help="Whether to run preflight validations")
+    parser.add_argument("--run_postflight_validations", type=str_to_bool, help="Whether to run postflight validations")
+    parser.add_argument("--custom_validations_scripts", help="List of custom validation scripts")
+    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
+    args = parser.parse_args()
+    return args
+
+
+def print_inputs(agentless_gws, hubs, args):
+    print("List of Agentless Gateways:")
+    print_dsf_nodes(agentless_gws)
+    print("List of DSF Hubs:")
+    print_dsf_nodes(hubs)
+    print(f"target_version: {args.target_version}")
+    print(f"run_preflight_validations: {args.run_preflight_validations}")
+    print(f"run_postflight_validations: {args.run_postflight_validations}")
+    print(f"custom_validations_scripts: {args.custom_validations_scripts}")
+    print(f"run_upgrade: {args.run_upgrade}")
+
+
+def print_dsf_nodes(dsf_nodes):
+    print("---")
+    for item in dsf_nodes:
+        print(f"IP: {item.get('ip')}")
+        print(f"SSH User: {item.get('ssh_user')}")
+        print(f"SSH Key: {item.get('ssh_private_key_file_path')}")
+        print(f"Proxy: {item.get('proxy')}")
+        print("---")
+
+
+def run_all_preflight_validations(agentless_gws, hubs, target_version):
     print("----- Preflight validations")
-    print("check the version of the gateway")
-    python_location = run_get_python_location_script(agentless_gws[0])
 
-    preflight_validations_result_json = run_preflight_validations_script(agentless_gws[0], target_version,
-                                                                         python_location)
+    preflight_validations_passed, ip = run_preflight_validations_for_dsf_nodes(agentless_gws, target_version,
+                                                                               "run_preflight_validations.py")
+    if not preflight_validations_passed:
+        print(f"### Preflight validations didn't pass for Agentless Gateway {ip}")
+        return False
+    preflight_validations_passed, ip = run_preflight_validations_for_dsf_nodes(hubs, target_version,
+                                                                               "run_preflight_validations.py")
+    if not preflight_validations_passed:
+        print(f"### Preflight validations didn't pass for DSF Hub {ip}")
+        return False
+    return True
 
+
+def run_preflight_validations_for_dsf_nodes(dsf_nodes, target_version, script_file_name):
+    for dsf_node in dsf_nodes:
+        preflight_validations_result = run_preflight_validations(dsf_node, target_version, script_file_name)
+        if not are_preflight_validations_passed(preflight_validations_result):
+            return False, dsf_node.get('ip')
+    return True, None
+
+
+def run_preflight_validations(dsf_node, target_version, script_file_name):
+    print(f"Running preflight validations for DSF node {dsf_node.get('ip')}")
+    python_location = run_get_python_location_script(dsf_node)
+    print(f"Python location in DSF node {dsf_node.get('ip')} is {python_location}")
+
+    preflight_validations_result_json = run_preflight_validations_script(dsf_node, target_version, python_location,
+                                                                         script_file_name)
     preflight_validations_result = json.loads(preflight_validations_result_json)
+    print(f"Preflight validations result in DSF node {dsf_node.get('ip')} is {preflight_validations_result}")
     return preflight_validations_result
 
-    # TODO run validations
-    # print("version: 4.11")
-    # print("check the version of the hub")
-    # print("version: 4.11")
-    # print(f"compare the version of the gateway and hub and target version: {args.target_version}")
-    print("check disk space")
-    slp(very_long_sleep_seconds)
 
-
-def run_get_python_location_script(agentless_gw):
+def run_get_python_location_script(dsf_node):
     script_file_path = get_script_file_path("get_python_location.sh")
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
 
-    script_output = run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command)
+    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
-    python_location = extract_python_location(script_output)
-    print(f"Python location in Agentless Gateway {agentless_gw.get('ip')} is {python_location}")
-    return python_location
+    return extract_python_location(script_output)
 
 
 def extract_python_location(script_output):
@@ -172,17 +193,15 @@ def extract_python_location(script_output):
         raise Exception("Pattern 'Python location: ...' not found in 'Get python location' script output")
 
 
-def run_preflight_validations_script(agentless_gw, target_version, python_location):
-    script_file_path = get_script_file_path("run_preflight_validations.py")
+def run_preflight_validations_script(dsf_node, target_version, python_location, script_file_name):
+    script_file_path = get_script_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command)
+    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
     print(f"'Run preflight validations' python script output: {script_output}")
-    preflight_validations_result = extract_preflight_validations_result(script_output)
-    print(f"Preflight validation results in Agentless Gateway {agentless_gw.get('ip')} are {preflight_validations_result}")
-    return preflight_validations_result
+    return extract_preflight_validations_result(script_output)
 
 
 def extract_preflight_validations_result(script_output):
@@ -194,6 +213,12 @@ def extract_preflight_validations_result(script_output):
     else:
         raise Exception("Pattern 'Preflight validations result: ...' not found in 'Run preflight validations' "
                         "script output")
+
+
+def are_preflight_validations_passed(preflight_validations_result):
+    return not preflight_validations_result.get('same_version') \
+           and preflight_validations_result.get('min_version') \
+           and preflight_validations_result.get('max_version_hop')
 
 
 def run_upgrade(agentless_gws, target_version):

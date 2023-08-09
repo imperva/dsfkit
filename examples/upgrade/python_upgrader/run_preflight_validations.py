@@ -2,7 +2,7 @@
 # Note: This script must not contain an apostrophe, since its contents are wrapped by apostrophes when run
 import sys
 import json
-
+from decimal import Decimal
 
 def get_sonar_version():
     jsonar_file_path = "/etc/sysconfig/jsonar"
@@ -28,7 +28,7 @@ def extract_major_version(version):
     second_period_index = version.find(".", version.find(".") + 1)
     if second_period_index != -1:
         major_version_str = version[:second_period_index]
-        return float(major_version_str)
+        return Decimal(major_version_str)
     else:
         raise Exception(f"Invalid version format: {version}, must be x.x.x.x.x")
 
@@ -38,9 +38,10 @@ def validate_min_version(source_major_version):
 
 
 def validate_max_version_hop(source_major_version, target_major_version):
+    # TODO handle when 5.x will be released
     hop = target_major_version - source_major_version
     print(f"Version hop: {hop}")
-    return hop <= 2
+    return hop <= 0.02
 
 
 def validate_sonar_version(source_version, target_version):
@@ -70,7 +71,7 @@ def main(target_version):
     result = {
         "same_version": same_version,
         "min_version": min_version_validation_passed, 
-        "version_hop": max_version_hop_validation_passed
+        "max_version_hop": max_version_hop_validation_passed
     }
     result_json_string = json.dumps(result)
     # The string "Preflight validations result:" is part of the protocol, if you change it, change its usage
