@@ -5,7 +5,7 @@ variable "location" {
 
 variable "deployment_name" {
   type    = string
-  default = "imperva-dsf"
+  default = "impv-dsf"
 }
 
 variable "sonar_version" {

@@ -19,7 +19,7 @@ output "current_user_object_id" {
 }
 
 output "current_user_name" {
-  value = data.azuread_user.current.mail_nickname
+  value = length(data.azuread_service_principal.current) > 0 ? data.azuread_service_principal.current[0].display_name : data.azuread_user.current[0].display_name
 }
 
 output "tags" {
