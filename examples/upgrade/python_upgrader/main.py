@@ -42,20 +42,20 @@ def build_python_script_run_command(script_contents, args, python_location):
     return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
-def run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command):
-    if gw_json.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(gw_json.get("ip"),
-                                                    gw_json.get("ssh_user"),
-                                                    gw_json.get("ssh_private_key_file_path"),
+def run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command):
+    if agentless_gw.get("proxy") is not None:
+        script_output = run_remote_script_via_proxy(agentless_gw.get("ip"),
+                                                    agentless_gw.get("ssh_user"),
+                                                    agentless_gw.get("ssh_private_key_file_path"),
                                                     script_contents,
                                                     script_run_command,
-                                                    gw_json.get("proxy").get("ip"),
-                                                    gw_json.get("proxy").get("ssh_user"),
-                                                    gw_json.get("proxy").get("ssh_private_key_file_path"))
+                                                    agentless_gw.get("proxy").get("ip"),
+                                                    agentless_gw.get("proxy").get("ssh_user"),
+                                                    agentless_gw.get("proxy").get("ssh_private_key_file_path"))
     else:
-        script_output = run_remote_script(gw_json.get("ip"),
-                                          gw_json.get("ssh_user"),
-                                          gw_json.get("ssh_private_key_file_path"),
+        script_output = run_remote_script(agentless_gw.get("ip"),
+                                          agentless_gw.get("ssh_user"),
+                                          agentless_gw.get("ssh_private_key_file_path"),
                                           script_contents,
                                           script_run_command)
     return script_output
@@ -71,16 +71,16 @@ def extract_python_location(script_output):
         raise Exception("Pattern 'Python location: ...' not found in 'Get python location' script output")
 
 
-def run_get_python_location_script(gw_json):
+def run_get_python_location_script(agentless_gw):
     script_file_path = get_script_file_path("get_python_location.sh")
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
 
-    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
+    script_output = run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
     python_location = extract_python_location(script_output)
-    print(f"Python location in Agentless Gateway {gw_json.get('ip')} is {python_location}")
+    print(f"Python location in Agentless Gateway {agentless_gw.get('ip')} is {python_location}")
     return python_location
 
 
@@ -95,25 +95,25 @@ def extract_preflight_validations_result(script_output):
                         "script output")
 
 
-def run_preflight_validations_script(gw_json, target_version, python_location):
+def run_preflight_validations_script(agentless_gw, target_version, python_location):
     script_file_path = get_script_file_path("run_preflight_validations.py")
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
+    script_output = run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command)
     print(f"'Run preflight validations' python script output: {script_output}")
     preflight_validations_result = extract_preflight_validations_result(script_output)
-    print(f"Preflight validation results in Agentless Gateway {gw_json.get('ip')} are {preflight_validations_result}")
+    print(f"Preflight validation results in Agentless Gateway {agentless_gw.get('ip')} are {preflight_validations_result}")
     return preflight_validations_result
 
 
-def run_preflight_validations(agentless_gws_json, target_version):
+def run_preflight_validations(agentless_gws, target_version):
     print("----- Preflight validations")
     print("check the version of the gateway")
-    python_location = run_get_python_location_script(agentless_gws_json[0])
+    python_location = run_get_python_location_script(agentless_gws[0])
 
-    preflight_validations_result_json = run_preflight_validations_script(agentless_gws_json[0], target_version,
+    preflight_validations_result_json = run_preflight_validations_script(agentless_gws[0], target_version,
                                                                          python_location)
 
     preflight_validations_result = json.loads(preflight_validations_result_json)
@@ -128,7 +128,7 @@ def run_preflight_validations(agentless_gws_json, target_version):
     slp(very_long_sleep_seconds)
 
 
-def run_upgrade_script(gw_json, target_version):
+def run_upgrade_script(agentless_gw, target_version):
     if run_dummy_upgrade:
         script_file_name = 'dummy_upgrade_script.sh'
     else:
@@ -140,37 +140,37 @@ def run_upgrade_script(gw_json, target_version):
     script_run_command = build_bash_script_run_command(script_contents, args)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(gw_json, script_contents, script_run_command)
+    script_output = run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command)
 
     print(f"Upgrade bash script output: {script_output}")
     # This relies on the fact that Sonar outputs the string "Upgrade completed"
     return "Upgrade completed" in script_output
 
 
-def upgrade_gw(gw_json, gw_type, target_version):
-    print(f"----- upgrade gw {gw_json} of type {gw_type}")
+def upgrade_gw(agentless_gw, gw_type, target_version):
+    print(f"----- upgrade gw {agentless_gw} of type {gw_type}")
     print("take backup of the gateway")
     slp(short_sleep_seconds)
     print(f"----- upgrade gateway {gw_type}")
     slp(short_sleep_seconds)
     print("run upgrade script")
-    result = run_upgrade_script(gw_json, target_version)
+    result = run_upgrade_script(agentless_gw, target_version)
     if result:
-        print(f"Upgrading gateway {gw_json} was ### successful ###")
+        print(f"Upgrading gateway {agentless_gw} was ### successful ###")
     else:
-        print(f"Upgrading gateway {gw_json} ### failed ### ")
+        print(f"Upgrading gateway {agentless_gw} ### failed ### ")
     return result
 
 
-def run_upgrade(agentless_gws_json, target_version):
+def run_upgrade(agentless_gws, target_version):
     print("----- upgrade Agentless Gateway DR")
-    return upgrade_gw(agentless_gws_json[0], "DR", target_version)
+    return upgrade_gw(agentless_gws[0], "DR", target_version)
     # print("----- upgrade gw Main")
     # upgrade_gw("Main", args.target_version)
 
 
-def print_gw(agentless_gws_json):
-    for item in agentless_gws_json:
+def print_gw(agentless_gws):
+    for item in agentless_gws:
         # Extract values from the JSON
         ip = item.get("ip")
         ssh_user = item.get("ssh_user")
@@ -208,13 +208,12 @@ def main():
     parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
 
     args = parser.parse_args()
-    # TODO remove json from agentless_gws_json, json.loads converts a json string to an object
-    agentless_gws_json = json.loads(args.agentless_gws)
+    agentless_gws = json.loads(args.agentless_gws)
 
     print("********** Reading Inputs ************")
     slp(long_sleep_seconds)
     print("gw list:")
-    print_gw(agentless_gws_json)
+    print_gw(agentless_gws)
     print("hub list: []")
     print(f"target_version {args.target_version}")
     print(f"run_preflight_validations {args.run_preflight_validations}")
@@ -226,14 +225,14 @@ def main():
 
     preflight_validations_passed = True
     if args.run_preflight_validations:
-        preflight_validations_passed = run_preflight_validations(agentless_gws_json, args.target_version)
+        preflight_validations_passed = run_preflight_validations(agentless_gws, args.target_version)
 
     print("----- Custom validations")
     print(f"run: {args.custom_validations_scripts}")
 
     upgrade_succeeded = True
     if preflight_validations_passed and args.run_upgrade:
-        upgrade_succeeded = run_upgrade(agentless_gws_json, args.target_version)
+        upgrade_succeeded = run_upgrade(agentless_gws, args.target_version)
 
     if upgrade_succeeded and args.run_postflight_validations:
         run_postflight_validations()
