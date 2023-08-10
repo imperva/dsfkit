@@ -52,7 +52,7 @@ jobs:
     env:
       EXAMPLE_DIR: ./examples/poc/dsf_deployment
       TF_WORKSPACE: ${{ matrix.workspace }}
-      AWS_REGION: il-central-1
+      AWS_REGION: eu-west-2
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
