@@ -123,9 +123,6 @@ jobs:
       env:
         TF_WORKSPACE: default
 
-    - name: Print GitHub context
-      run: echo ${{ toJSON(github) }}
-
     - name: Terraform Create Workspace
       run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
         
@@ -147,6 +144,14 @@ jobs:
     - name: Terraform Output
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Terraform Destroy
       id: destroy
