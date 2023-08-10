@@ -3,6 +3,7 @@
 import sys
 import json
 from decimal import Decimal
+from datetime import datetime
 
 def get_sonar_version():
     jsonar_file_path = "/etc/sysconfig/jsonar"
@@ -45,12 +46,8 @@ def validate_max_version_hop(source_major_version, target_major_version):
 
 
 def validate_sonar_version(source_version, target_version):
-    same_version = source_version == target_version
-    if same_version:
-        print("Source and target versions are the same")
-        min_version_validation_passed = True
-        max_version_hop_validation_passed = True
-    else:
+    different_version = source_version != target_version
+    if different_version:
         source_major_version = extract_major_version(source_version)
         target_major_version = extract_major_version(target_version)
         min_version_validation_passed = validate_min_version(source_major_version)
@@ -59,23 +56,30 @@ def validate_sonar_version(source_version, target_version):
         if not min_version_validation_passed or not max_version_hop_validation_passed:
             print(f"Sonar version validation failed for source version: {source_version} "
                   f"and target_version {target_major_version}")
+    else:
+        print("Source and target versions are the same")
+        min_version_validation_passed = True
+        max_version_hop_validation_passed = True
 
-    return same_version, min_version_validation_passed, max_version_hop_validation_passed
+    return different_version, min_version_validation_passed, max_version_hop_validation_passed
 
 
 def main(target_version):
-    print("********** Running Upgrade Preflight Validations ************")
+    print("---------------------------------------------------------------------")
+    time = datetime.now().strftime("%a %b %d %H:%M:%S UTC %Y")
+    print(f"Running upgrade preflight validations at {time}")
     source_version = get_sonar_version()
-    same_version, min_version_validation_passed, max_version_hop_validation_passed = \
+    different_version, min_version_validation_passed, max_version_hop_validation_passed = \
         validate_sonar_version(source_version, target_version)
     result = {
-        "same_version": same_version,
-        "min_version": min_version_validation_passed, 
+        "different_version": different_version,
+        "min_version": min_version_validation_passed,
         "max_version_hop": max_version_hop_validation_passed
     }
     result_json_string = json.dumps(result)
     # The string "Preflight validations result:" is part of the protocol, if you change it, change its usage
     print(f"Preflight validations result: {result_json_string}")
+    print("---------------------------------------------------------------------")
 
 
 if __name__ == "__main__":

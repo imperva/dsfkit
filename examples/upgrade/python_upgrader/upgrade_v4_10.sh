@@ -1,5 +1,5 @@
 #!/bin/bash
-# upgrade_v4_10.sh
+# upgrade_v4_10.sh: Upgrades DSF Hub or Agentless Gateway nodes which version (source version) is 4.10 and up
 # Note: This script must not contain an apostrophe, since its contents are wrapped by apostrophes when run
 set -e
 #set -x

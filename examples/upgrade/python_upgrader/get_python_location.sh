@@ -9,7 +9,7 @@ set -u
 exec 2>&1
 
 echo -e "\n-----------------------------------------------------------------------"
-echo "Running get_python_location bash script at $(date)"
+echo "Running get python location bash script at $(date)"
 
 echo "Running as user: $(whoami)"
 echo "Running in directory: $(pwd)"
