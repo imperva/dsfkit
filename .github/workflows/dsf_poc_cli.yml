@@ -43,15 +43,19 @@ jobs:
         include:
           - name: DSF POC CLI
             workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
-            example_dir: ./examples/poc/dsf_deployment
-            aws_region: eu-west-2
+            enable_sonar: true
+            enable_dam: false
+            enable_dra: false
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
-      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      EXAMPLE_DIR: ./examples/poc/dsf_deployment
       TF_WORKSPACE: ${{ matrix.workspace }}
-      AWS_REGION: ${{ matrix.aws_region }}
+      AWS_REGION: il-central-1
+      TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
+      TF_VAR_enable_dam: ${{ matrix.enable_dam }}
+      TF_VAR_enable_dra: ${{ matrix.enable_dra }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -119,6 +123,9 @@ jobs:
       env:
         TF_WORKSPACE: default
 
+    - name: Print GitHub context
+      run: echo ${{ toJSON(github) }}
+
     - name: Terraform Create Workspace
       run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
         
@@ -143,7 +150,7 @@ jobs:
 
     - name: Terraform Destroy
       id: destroy
-      if: always()
+#      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -var license=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
