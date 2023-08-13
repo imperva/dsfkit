@@ -73,6 +73,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   os_disk {
     caching              = local.disk_app_cache
     storage_account_type = local.disk_app_type
+    disk_size_gb         = local.disk_app_size
   }
 
   source_image_reference {
@@ -97,28 +98,29 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 data "azurerm_subscription" "primary" {
 }
 
+# tbd: this shouldnt be owner
 resource "azurerm_role_assignment" "dsf_base_role_assignment" {
   scope                = data.azurerm_subscription.primary.id
   role_definition_name = "Owner"
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
-# app disk
-resource "azurerm_virtual_machine_data_disk_attachment" "app_disk_attachment" {
-  managed_disk_id    = azurerm_managed_disk.external_app_vol.id
-  virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id
-  lun                = "10"
-  caching            = local.disk_app_cache
-}
+# # app disk
+# resource "azurerm_virtual_machine_data_disk_attachment" "app_disk_attachment" {
+#   managed_disk_id    = azurerm_managed_disk.external_app_vol.id
+#   virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id
+#   lun                = "10"
+#   caching            = local.disk_app_cache
+# }
 
-resource "azurerm_managed_disk" "external_app_vol" {
-  name                 = join("-", [var.name, "app", "disk"])
-  location             = var.resource_group.location
-  resource_group_name  = var.resource_group.name
-  storage_account_type = local.disk_app_type
-  create_option        = "Empty"
-  disk_size_gb         = local.disk_app_size
-}
+# resource "azurerm_managed_disk" "external_app_vol" {
+#   name                 = join("-", [var.name, "app", "disk"])
+#   location             = var.resource_group.location
+#   resource_group_name  = var.resource_group.name
+#   storage_account_type = local.disk_app_type
+#   create_option        = "Empty"
+#   disk_size_gb         = local.disk_app_size
+# }
 
 # data disk
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {

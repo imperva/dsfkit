@@ -7,16 +7,13 @@ locals {
   display_name     = var.name
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
-  install_script = templatefile("${path.module}/setup.tpl", {
+  install_script = templatefile("${path.module}/setup.tftpl", {
     resource_type                          = var.resource_type
     az_storage_account                     = var.binaries_location.az_storage_account
     az_container                           = var.binaries_location.az_container
     az_blob                                = var.binaries_location.az_blob
     display_name                           = local.display_name
-    web_console_admin_password             = var.password
-    secweb_console_admin_password          = var.password
-    sonarg_pasword                         = var.password
-    sonargd_pasword                        = var.password
+    password_secret                        = local.password_secret_name
     hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     primary_node_sonarw_private_key_vault  = azurerm_key_vault.vault.name
