@@ -144,7 +144,7 @@ function setup() {
 
     sudo /opt/sonar-dsf/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
         --accept-eula \
-        --jsonar-uid-display-name "${display-name}" \
+        --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \
         --newadmin-pass="${web_console_admin_password}" \
         --secadmin-pass="${web_console_admin_password}" \
@@ -153,7 +153,7 @@ function setup() {
         --jsonar-datadir=$STATE_DIR/data \
         --jsonar-localdir=$STATE_DIR/local \
         --jsonar-logdir=$STATE_DIR/logs \
-        --jsonar-uid ${uuid} \
+        --jsonar-uid ${jsonar_uuid} \
         --instance-IP-or-DNS=$instance_fqdn \
         $(test "${resource_type}" == "gw" && echo "--remote-machine") ${additional_install_parameters}
 }
