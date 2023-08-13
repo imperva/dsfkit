@@ -72,3 +72,65 @@ resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
     azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
 }
+
+# resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
+#   key_vault_id = azurerm_key_vault.vault.id
+#   tenant_id    = data.azurerm_client_config.current.tenant_id
+#   object_id    = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+
+#   key_permissions = [
+#     "Decrypt"
+#   ]
+# }
+
+# resource "azurerm_key_vault_key" "key" {
+#   name         = join("-", [var.name, "enc", "key"])
+#   key_vault_id = azurerm_key_vault.vault.id
+#   key_type     = "RSA"
+#   key_size     = 4096
+#   key_opts = [
+#     "decrypt",
+#     "encrypt",
+#   ]
+#   tags = var.tags
+#   depends_on = [
+#     azurerm_key_vault_access_policy.vault_owner_access_policy
+#   ]
+# }
+
+# resource "local_sensitive_file" "foo" {
+#   content  = chomp(local.primary_node_sonarw_private_key)
+#   filename = "foo.bar"
+# }
+
+# locals {
+#   secrets = {
+#     "password" = var.password
+#     "sonarw_private_key_secret" = chomp(local.primary_node_sonarw_private_key)
+#   }
+#   _secrets = { for k,v in local.secrets: k => {
+#     plain_text = v
+#     cipher_text = data.azurerm_key_vault_encrypted_value.encrypted_string[k].encrypted_data
+#   }}
+# }
+
+# output "sdf" {
+#   value = local._secrets
+# }
+
+# data "azurerm_key_vault_encrypted_value" "encrypted_string" {
+#   for_each = local.secrets
+#   key_vault_key_id       = azurerm_key_vault_key.key.id
+#   plain_text_value         = base64encode(each.value)
+#   algorithm        = local.encryption_algorithm
+# }
+
+# # resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
+# #   name         = join("-", [var.name, "sonarw", "private", "key"])
+# #   value        = chomp(local.primary_node_sonarw_private_key)
+# #   key_vault_id = azurerm_key_vault.vault.id
+# #   content_type = "sonarw ssh private key"
+# #   depends_on = [
+# #     azurerm_key_vault_access_policy.vault_owner_access_policy
+# #   ]
+# # }
