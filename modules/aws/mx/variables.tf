@@ -198,7 +198,11 @@ variable "license" {
   type        = string
   validation {
     condition     = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
-    error_message = "Invalid license details. Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
+    error_message = "Invalid license file (No such file on disk). Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
+  }
+  validation {
+    condition     = ! fileexists(var.license) || can(regex(".*AV[2,6]500.*", file(var.license)))
+    error_message = "License is invalid. It must allow AWS DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
   }
 }
 
