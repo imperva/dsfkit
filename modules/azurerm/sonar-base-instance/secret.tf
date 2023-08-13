@@ -11,6 +11,8 @@ resource "tls_private_key" "sonarw_private_key" {
 locals {
   primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
   primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
+#  password_secret_aws_arn = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
+  password_secret_name    = azurerm_key_vault_secret.password_key_secret.name
 }
 
 data "azurerm_client_config" "current" {}
@@ -72,6 +74,17 @@ resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
     azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
 }
+
+resource "azurerm_key_vault_secret" "password_key_secret" {
+  name         = join("-", [var.name, "password"])
+  value        = chomp(var.password)
+  key_vault_id = azurerm_key_vault.vault.id
+  content_type = "password"
+  depends_on = [
+    azurerm_key_vault_access_policy.vault_owner_access_policy
+  ]
+}
+
 
 # resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
 #   key_vault_id = azurerm_key_vault.vault.id
