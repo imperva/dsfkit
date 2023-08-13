@@ -31,6 +31,8 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
       destination_address_prefix  = "*"
     }
   }
+  tags = var.tags
+
 
   # dynamic "security_rule" {
   #   for_each = { for idx, port in each.value.udp : idx => port }
