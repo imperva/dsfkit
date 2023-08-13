@@ -1,5 +1,6 @@
 aws_profile="default"
 workstation_cidr=["10.0.0.0/8"]
+deployment_name="dev-aud-01"
 
 additional_tags=[]
 aws_region_hub="us-west-2"

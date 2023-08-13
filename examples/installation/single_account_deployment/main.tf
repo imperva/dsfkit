@@ -25,7 +25,7 @@ locals {
   workstation_cidr           = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location           = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags            = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
-  tags                       = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
+  tags                       = merge(module.globals.tags, { "deployment_name" = var.deployment_name }, local.additional_tags)
   should_create_hub_key_pair = var.hub_key_pem_details == null ? true : false
 }
 
@@ -61,7 +61,7 @@ data "aws_subnet" "secondary_hub" {
 ##############################
 module "hub_primary" {
   source                                 = "../../../modules/aws/hub"
-  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "pri"])
+  friendly_name                          = join("-", [var.deployment_name, "hub1"])
   subnet_id                              = var.subnet_hub_primary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location
@@ -94,7 +94,7 @@ module "hub_primary" {
 
 module "hub_secondary" {
   source                                 = "../../../modules/aws/hub"
-  friendly_name                          = join("-", [local.deployment_name_salted, "hub", "sec"])
+  friendly_name                          = join("-", [var.deployment_name, "hub2"])
   subnet_id                              = var.subnet_hub_secondary
   security_group_ids                     = var.security_group_ids_hub
   binaries_location                      = local.tarball_location

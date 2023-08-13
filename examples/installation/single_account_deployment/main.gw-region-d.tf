@@ -26,6 +26,12 @@ variable "GROUPD_gw_count" {
   description = "Number of Agentless Gateways"
 }
 
+variable "GROUPD_start_index" {
+  type        = number
+  default     = 192
+  description = "The starting index for the 'GROUPA' group, which will be converted to a hexadecimal value."
+}
+
 variable "GROUPD_gw_group_ebs_details" {
   type = object({
     disk_size        = number
@@ -143,7 +149,7 @@ data "aws_subnet" "GROUPD_subnet_gw" {
 module "GROUPD_agentless_gw_group" {
   count                                  = var.GROUPD_gw_count
   source                                 = "../../../modules/aws/agentless-gw"
-  friendly_name                          = join("-", [local.deployment_name_salted, "d", "gw", count.index])
+  friendly_name                          = join("-", [var.deployment_name, "gw${format("%x", var.GROUPD_start_index + count.index)}"])
   subnet_id                              = var.GROUPD_subnet_gw
   security_group_ids                     = var.GROUPD_security_group_ids_gw
   instance_type                          = var.GROUPD_gw_instance_type

@@ -37,7 +37,7 @@ output "dsf_hub_web_console" {
 }
 
 output "deployment_name" {
-  value = local.deployment_name_salted
+  value = var.deployment_name
 }
 
 output "dsf_hub_ssh_key_file_path" {
