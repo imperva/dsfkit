@@ -173,7 +173,7 @@ function setup() {
     VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
     echo Setup sonar $VERSION
 
-    password=$(az keyvault secret show --vault-name ${primary_node_sonarw_private_key_vault} --name ${password_secret} --query 'value' --output tsv)
+    password=$(az keyvault secret show --vault-name ${vault_name} --name ${password_secret} --query 'value' --output tsv)
 
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
@@ -211,7 +211,7 @@ function install_ssh_keys() {
     touch /home/sonarw/.ssh/authorized_keys
 
     # install the generated primary node public and private keys in the primary node and the secondary node
-    az keyvault secret show --vault-name ${primary_node_sonarw_private_key_vault} --name ${primary_node_sonarw_private_key_secret} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
+    az keyvault secret show --vault-name ${vault_name} --name ${primary_node_sonarw_private_key_secret} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
     echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
 
     # enable communication between a pair of primary and secondary nodes
@@ -246,7 +246,11 @@ __EOF__
         echo 'Creating ${token_value.name} token:'
         reason='${token_value.name}'
         scopes='${token_value.scopes}'
-        access_token=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${token_value.secret_name} --query SecretString --output text)
+        access_token=$(az keyvault secret show --vault-name ${vault_name} --name ${token_value.secret_name} --query 'value' --output tsv)
+        if [ -z "$access_token" ]; then
+            echo "access_token is empty"
+            exit 1
+        fi
         $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
 use admin
 db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
