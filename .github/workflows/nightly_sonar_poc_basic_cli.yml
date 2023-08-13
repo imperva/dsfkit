@@ -127,6 +127,14 @@ jobs:
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
+
     - name: Set Environment Variables
       run: |
         echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
