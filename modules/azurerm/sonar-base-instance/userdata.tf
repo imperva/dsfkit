@@ -16,7 +16,7 @@ locals {
     password_secret                        = local.password_secret_name
     hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
-    primary_node_sonarw_private_key_vault  = azurerm_key_vault.vault.name
+    vault_name  = azurerm_key_vault.vault.name
     primary_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name
     public_fqdn                            = var.use_public_ip ? "True" : ""
     jsonar_uuid                            = random_uuid.jsonar_uuid.result

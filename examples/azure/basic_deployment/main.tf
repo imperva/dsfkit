@@ -85,6 +85,7 @@ module "hub" {
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
   use_public_ip = true
+  generate_access_tokens = true
 
   depends_on = [
     azurerm_resource_group.rg,

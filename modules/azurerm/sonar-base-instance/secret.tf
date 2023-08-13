@@ -54,14 +54,7 @@ resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
   object_id    = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 
   secret_permissions = [
-    "Backup",
-    "Delete",
     "Get",
-    "List",
-    "Purge",
-    "Recover",
-    "Restore",
-    "Set",
   ]
 }
 
@@ -85,6 +78,16 @@ resource "azurerm_key_vault_secret" "password_key_secret" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "access_tokens" {
+  count       = length(local.access_tokens)
+  name         = join("-", [var.name, local.access_tokens[count.index].name, "access", "token"])
+  value        = random_uuid.access_tokens[count.index].result
+  key_vault_id = azurerm_key_vault.vault.id
+  content_type = "access token"
+  depends_on = [
+    azurerm_key_vault_access_policy.vault_owner_access_policy
+  ]
+}
 
 # resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
 #   key_vault_id = azurerm_key_vault.vault.id
