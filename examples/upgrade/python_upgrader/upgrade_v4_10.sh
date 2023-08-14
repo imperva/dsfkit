@@ -72,19 +72,19 @@ function download_and_extract_tarball() {
     fi
 }
 
-function unsetEnvironmentVariables() {
+function unset_environment_variables() {
     unset JSONAR_LOCALDIR JSONAR_BASEDIR JSONAR_VERSION JSONAR_DATADIR JSONAR_LOGDIR
     echo "Environment variables were unset"
 }
 
-function runSonargSetup() {
+function run_sonarg_setup() {
     sudo $EXTRACTION_DIR/bin/sonarg-setup --no-interactive
 }
 
 function run_upgrade() {
     download_and_extract_tarball
-    unsetEnvironmentVariables
-    runSonargSetup
+    unset_environment_variables
+    run_sonarg_setup
 }
 
 run_upgrade
