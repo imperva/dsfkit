@@ -1,6 +1,21 @@
-#################################
+###################################################################################
 # Generating a key pair for remote Agentless Gateway federation, HADR, etc.
-#################################
+# A key pair is generated only for the HADR primary nodes, and then "copied"
+# to the HADR secondary nodes.
+# To do that, the public key is passed to the user data of the EC2 in clear text,
+# but The private key is put in AWS secret manager, and the script of the EC2 user
+# data fetches it from there.
+# Currently we don't delete the private key from the secret manager once the
+# deployment is completed, we may need it in the future.
+# In addition, both the primary and secondary nodes put the same private key
+# in the key manager under a different unique name. Consider optimizing in the
+# future.
+#
+# TODO the private key is stored unencrypted in the TF state file - handle this
+# See Security notice:
+# https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key
+###################################################################################
+
 
 resource "tls_private_key" "sonarw_private_key" {
   count     = var.sonarw_private_key_secret_name == null ? 1 : 0
@@ -12,6 +27,8 @@ locals {
   primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
   primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
   password_secret_name    = azurerm_key_vault_secret.password_key_secret.name
+
+  secret_names = [for v in azurerm_key_vault_secret.access_tokens: v.name]
 }
 
 data "azurerm_client_config" "current" {}
@@ -34,13 +51,9 @@ resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
   secret_permissions = [
-    "Backup",
     "Delete",
     "Get",
-    "List",
     "Purge",
-    "Recover",
-    "Restore",
     "Set",
   ]
 }

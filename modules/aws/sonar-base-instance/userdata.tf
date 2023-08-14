@@ -23,8 +23,6 @@ locals {
   })
 }
 
-data "aws_region" "current" {}
-
 resource "random_uuid" "jsonar_uuid" {}
 
 resource "null_resource" "readiness" {

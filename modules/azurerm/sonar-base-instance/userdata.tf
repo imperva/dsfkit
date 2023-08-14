@@ -18,7 +18,6 @@ locals {
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     vault_name  = azurerm_key_vault.vault.name
     primary_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name
-    public_fqdn                            = var.use_public_ip ? "True" : ""
     jsonar_uuid                            = random_uuid.jsonar_uuid.result
     additional_install_parameters          = var.additional_install_parameters
     firewall_ports                         = join(" ", flatten([ for i in var.security_groups_config : i.tcp ]))

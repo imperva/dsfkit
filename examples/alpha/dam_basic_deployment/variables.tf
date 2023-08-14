@@ -100,7 +100,7 @@ variable "subnet_ids" {
     error_message = "Value must either be null or specified for all"
   }
   validation {
-    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values(var.subnet_ids) : length(subnet_id) >= 15 && substr(subnet_id, 0, 7) == "subnet-"]), false)
+  condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values(var.subnet_ids) : length(subnet_id) >= 15 && substr(subnet_id, 0, 7) == "subnet-"]), false)
     error_message = "Subnet id is invalid. Must be subnet-********"
   }
 }

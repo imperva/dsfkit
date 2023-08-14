@@ -1,4 +1,6 @@
 next:
+    Azure kms equivalent - value with keys (az keyvault key encrypt --value "$val" --vault-name eytan-remove-me --name eytan-remove-me --algorithm RSA-OAEP)
+    Investigate CTT on azure
     Make sure the new disk approach is robust against termiantion and userdata change
     unify the disk approach for aws & azure
     azure nat - for each subnet
