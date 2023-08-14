@@ -91,6 +91,7 @@ module "hub_primary" {
   version = "1.5.2" # latest release tag
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "primary"])
+  instance_type               = var.hub_instance_type
   subnet_id                   = local.primary_hub_subnet_id
   binaries_location           = local.tarball_location
   password                    = local.password
@@ -117,6 +118,7 @@ module "hub_secondary" {
   version = "1.5.2" # latest release tag
 
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  instance_type                   = var.hub_instance_type
   subnet_id                       = local.secondary_hub_subnet_id
   binaries_location               = local.tarball_location
   password                        = local.password
@@ -146,6 +148,7 @@ module "agentless_gw_primary" {
   count   = var.gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
+  instance_type         = var.agentless_gw_instance_type
   subnet_id             = local.primary_gws_subnet_id
   ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location
@@ -175,6 +178,7 @@ module "agentless_gw_secondary" {
   count   = var.gw_count
 
   friendly_name                   = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
+  instance_type                   = var.agentless_gw_instance_type
   subnet_id                       = local.secondary_gws_subnet_id
   ebs                             = var.agentless_gw_ebs_details
   binaries_location               = local.tarball_location

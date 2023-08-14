@@ -84,6 +84,7 @@ module "hub" {
   version = "1.5.2" # latest release tag
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
+  instance_type               = var.hub_instance_type
   subnet_id                   = local.hub_subnet_id
   binaries_location           = local.tarball_location
   password                    = local.password
@@ -110,6 +111,7 @@ module "agentless_gw" {
   count   = var.gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index])
+  instance_type         = var.agentless_gw_instance_type
   subnet_id             = local.gw_subnet_id
   ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location

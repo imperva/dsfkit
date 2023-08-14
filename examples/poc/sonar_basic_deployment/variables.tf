@@ -86,6 +86,18 @@ variable "subnet_ids" {
   }
 }
 
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF Hub"
+}
+
+variable "agentless_gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the Agentless Gateway"
+}
+
 variable "hub_ebs_details" {
   type = object({
     disk_size        = number
