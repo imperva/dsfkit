@@ -103,7 +103,7 @@ module "agentless_gw_group" {
   source = "../../../modules/azurerm/agentless-gw"
   # version                             = "1.3.5" # latest release tag
 
-  friendly_name                       = join("-", [var.deployment_name, "gw", count.index])
+  friendly_name                       = join("-", [var.deployment_name_salted, "gw", count.index])
   resource_group                      = local.resource_group
   subnet_id                           = module.network.vnet_subnets[0]
   storage_details                     = var.hub_managed_disk_details
