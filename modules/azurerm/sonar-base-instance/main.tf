@@ -13,19 +13,6 @@ locals {
   disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
 
-  # vm image
-  vm_image_default = {
-    publisher = "RedHat"
-    offer     = "RHEL"
-    sku       = "8_7"
-    version   = "latest"
-  }
-  vm_image = var.vm_image != null ? var.vm_image : local.vm_image_default
-
-  # vm user
-  vm_default_user = "adminuser"
-  vm_user         = var.vm_user != null ? var.vm_user : local.vm_default_user
-
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 }
 
@@ -92,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   # Ignore changes to the custom_data attribute (Don't replace on userdata change)
   lifecycle {
     ignore_changes = [
-      custom_data,
+      custom_data
     ]
   }
 }
@@ -107,11 +94,11 @@ resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
-resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
-  scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
-  role_definition_name = "Reader"
-  principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
-}
+# resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
+#   scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
+#   role_definition_name = "Reader"
+#   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+# }
 
 # data disk
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {

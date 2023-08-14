@@ -17,7 +17,7 @@ locals {
       name        = local.access_tokens[i].name,
       scopes      = local.access_tokens[i].scopes,
       token       = random_uuid.access_tokens[i].result,
-      secret_name = aws_secretsmanager_secret.access_token[i].name
+      secret_name = local.secret_names[i]
     }
   ]
 }

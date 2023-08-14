@@ -43,6 +43,8 @@ locals {
 
   should_create_sonarw_private_key_in_secrets_manager   = var.sonarw_private_key_secret_name == null
   should_create_web_console_password_in_secrets_manager = var.password_secret_name == null
+  
+  secret_names = [for v in aws_secretsmanager_secret.access_tokens: v.name]
 }
 
 # generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
@@ -72,7 +74,7 @@ resource "aws_secretsmanager_secret_version" "password_ver" {
   secret_string = var.password
 }
 
-resource "aws_secretsmanager_secret" "access_token" {
+resource "aws_secretsmanager_secret" "access_tokens" {
   count       = length(local.access_tokens)
   name_prefix = "${var.name}-${local.access_tokens[count.index].name}-access-token"
   description = "Imperva EDSF ${local.access_tokens[count.index].name} access token"
