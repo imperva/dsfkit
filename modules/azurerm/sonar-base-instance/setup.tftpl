@@ -39,22 +39,23 @@ function install_yum_deps_from_internet() {
     done
 }
 
-function install_awscli_from_internet() {
+function install_azcli_from_internet() {
     if ! internet_access; then
-        echo "Error: No outbound internet access. Either enable outbound internet access, or make sure awscli is installed in the base ami"
+        echo "Error: No outbound internet access. Either enable outbound internet access, or make sure az cli is installed in the base image"
         exit 1
     fi
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip -q awscliv2.zip
-    aws/install
-    rm -rf aws awscliv2.zip
+    rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+    dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+    dnf install azure-cli -y
+    az login --identity
 }
 
 function install_deps() {
     command -v unzip || install_yum_deps_from_internet unzip
     command -v lvm2 || install_yum_deps_from_internet lvm2
     command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
-    test -f /usr/local/bin/aws || install_awscli_from_internet
+    command -v az || install_azcli_from_internet
 }
 
 function create_users_and_groups() {
@@ -141,8 +142,8 @@ function attach_disk() {
 function install_tarball() {
     echo Downloading tarball..
     # Download installation tarball
-    TARBALL_FILE=$APPS_DIR/$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} $TARBALL_FILE --region ${installation_s3_region} >/dev/null
+    TARBALL_FILE=$APPS_DIR/$(basename ${az_blob})
+    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --name ${az_blob} --file $TARBALL_FILE >/dev/null
 
     echo Installing tarball..
     # Installing tarball
@@ -152,7 +153,7 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.local_ipv4)
+    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.imds.network.interface[0].ipv4.ipAddress[0].privateIpAddress)
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1
@@ -172,7 +173,7 @@ function setup() {
     VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
     echo Setup sonar $VERSION
 
-    password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
+    password=$(az keyvault secret show --vault-name ${vault_name} --name ${password_secret} --query 'value' --output tsv)
 
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
@@ -210,7 +211,7 @@ function install_ssh_keys() {
     touch /home/sonarw/.ssh/authorized_keys
 
     # install the generated primary node public and private keys in the primary node and the secondary node
-    /usr/local/bin/aws secretsmanager get-secret-value --secret-id ${primary_node_sonarw_private_key_secret} --query SecretString --output text > /home/sonarw/.ssh/id_rsa
+    az keyvault secret show --vault-name ${vault_name} --name ${primary_node_sonarw_private_key_secret} --query 'value' --output tsv > /home/sonarw/.ssh/id_rsa
     echo "${primary_node_sonarw_public_key}" > /home/sonarw/.ssh/id_rsa.pub
 
     # enable communication between a pair of primary and secondary nodes
@@ -245,7 +246,7 @@ __EOF__
         echo 'Creating ${token_value.name} token:'
         reason='${token_value.name}'
         scopes='${token_value.scopes}'
-        access_token=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${token_value.secret_name} --query SecretString --output text)
+        access_token=$(az keyvault secret show --vault-name ${vault_name} --name ${token_value.secret_name} --query 'value' --output tsv)
         if [ -z "$access_token" ]; then
             echo "access_token is empty"
             exit 1
@@ -258,6 +259,13 @@ __EOF__
     fi
 }
 
+function firewall_open_ports() {
+    for port in ${firewall_ports}; do
+        firewall-offline-cmd --add-port=$port/tcp
+    done
+    systemctl restart firewalld
+}
+
 STATE_DIR=/imperva
 DATA_DIR=$STATE_DIR/data
 LOGS_DIR=$STATE_DIR/logs
@@ -265,15 +273,16 @@ LOCAL_DIR=$STATE_DIR/local
 APPS_DIR=$STATE_DIR/apps
 
 install_deps
+firewall_open_ports || true
 create_users_and_groups
 attach_disk
 
 LAST_INSTALLATION_SOURCE=$DATA_DIR/last_install_source.txt
 
-if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "s3://${installation_s3_bucket}/${installation_s3_key}" ]; then
+if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "blob://${az_storage_account}/${az_container}/${az_blob}" ]; then
     install_tarball
     setup
-    echo "s3://${installation_s3_bucket}/${installation_s3_key}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
+    echo "blob://${az_storage_account}/${az_container}/${az_blob}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi
 
 set_environment_vars

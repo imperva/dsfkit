@@ -1,6 +1,42 @@
-#################################
-# Actual Hub instance
-#################################
+locals {
+  security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
+    {
+      name            = ["web", "console", "and", "api"]
+      internet_access = false
+      udp             = []
+      tcp             = [8443]
+      cidrs           = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["other"]
+      internet_access = true
+      udp             = []
+      tcp             = [22]
+      cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["agentless", "gateway"]
+      internet_access = false
+      udp             = []
+      tcp             = [8443, 61617]
+      cidrs           = concat(var.allowed_agentless_gw_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["hub", "replica", "set"]
+      internet_access = false
+      udp             = []
+      tcp             = [22, 3030, 27117, 61617]
+      cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["dra", "admin"]
+      internet_access = false
+      udp             = []
+      tcp             = [10674, 8443]
+      cidrs           = concat(var.allowed_dra_admin_cidrs, var.allowed_all_cidrs)
+    }
+  ]
+}
 
 module "hub_instance" {
   source            = "../../../modules/azurerm/sonar-base-instance"
@@ -8,28 +44,27 @@ module "hub_instance" {
   resource_group    = var.resource_group
   name              = var.friendly_name
   subnet_id         = var.subnet_id
-  security_group_id = var.security_group_id
   public_ssh_key    = var.ssh_key.ssh_public_key
   instance_type     = var.instance_type
   storage_details   = var.storage_details
   vm_image          = var.vm_image
   vm_user           = var.vm_user
-  web_console_cidr  = var.ingress_communication.additional_web_console_access_cidr_list
-  sg_ingress_cidr   = var.ingress_communication.full_access_cidr_list
-  #  role_arn                            = var.role_arn
-  create_and_attach_public_elastic_ip = var.create_and_attach_public_elastic_ip
-  use_public_ip                       = var.ingress_communication.use_public_ip
+  security_groups_config            = local.security_groups_config
+  security_group_ids = var.security_group_ids
+  attach_persistent_public_ip = var.attach_persistent_public_ip
+  use_public_ip                       = var.use_public_ip
   additional_install_parameters       = var.additional_install_parameters
-  web_console_admin_password          = var.web_console_admin_password
-  ssh_key_path                        = var.ssh_key.ssh_private_key_file_path
-  binaries_location                   = var.binaries_location
-  hadr_secondary_node                 = var.hadr_secondary_node
-  sonarw_public_key                   = var.sonarw_public_key
-  sonarw_private_key                  = var.sonarw_private_key
-  proxy_info = {
-    proxy_address      = var.ingress_communication_via_proxy.proxy_address
-    proxy_ssh_key_path = var.ingress_communication_via_proxy.proxy_private_ssh_key_path
-    proxy_ssh_user     = var.ingress_communication_via_proxy.proxy_ssh_user
-  }
+  password          = var.password
+  generate_access_tokens            = var.generate_access_tokens
+  ssh_key_path                      = var.ssh_key.ssh_private_key_file_path
+  binaries_location                 = var.binaries_location
+  hadr_secondary_node               = var.hadr_secondary_node
+  primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
+  primary_node_sonarw_private_key   = var.primary_node_sonarw_private_key
+  proxy_info                        = var.ingress_communication_via_proxy
   skip_instance_health_verification = var.skip_instance_health_verification
+  terraform_script_path_folder      = var.terraform_script_path_folder
+  sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
+  sonarw_public_key_content         = var.sonarw_public_key_content
+  tags = var.tags
 }

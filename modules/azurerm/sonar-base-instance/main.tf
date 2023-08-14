@@ -1,42 +1,33 @@
 locals {
-  # app disk details
-  disk_app_size  = 100
-  disk_app_type  = "Standard_LRS"
-  disk_app_cache = "ReadWrite"
+  public_ip  = azurerm_linux_virtual_machine.dsf_base_instance.public_ip_address
+  private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
-  # data disk details
+  # root volume details
+  root_volume_size  = 100
+  root_volume_type  = "Standard_LRS"
+  root_volume_cache = "ReadWrite"
+
+  # state volume details
   disk_data_size  = var.storage_details.disk_size
   disk_data_type  = var.storage_details.storage_account_type
   disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
 
-  # vm image
-  vm_image_default = {
-    publisher = "RedHat"
-    offer     = "RHEL"
-    sku       = "8_7"
-    version   = "latest"
-  }
-  vm_image = var.vm_image != null ? var.vm_image : local.vm_image_default
-
-  # vm user
-  vm_default_user = "adminuser"
-  vm_user         = var.vm_user != null ? var.vm_user : local.vm_default_user
-
-  security_group_id = var.security_group_id != null ? var.security_group_id : azurerm_network_security_group.dsf_base_sg[0].id
+  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  count               = var.create_and_attach_public_elastic_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
+  tags = var.tags
 }
 
 data "azurerm_public_ip" "vm_public_ip" {
-  count               = var.create_and_attach_public_elastic_ip ? 1 : 0
+  count = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   resource_group_name = var.resource_group.name
   depends_on = [
@@ -68,8 +59,9 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 
   os_disk {
-    caching              = local.disk_app_cache
-    storage_account_type = local.disk_app_type
+    disk_size_gb         = local.root_volume_size
+    caching              = local.root_volume_cache
+    storage_account_type = local.root_volume_type
   }
 
   source_image_reference {
@@ -82,35 +74,31 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   identity {
     type = "SystemAssigned"
   }
+  tags = merge(var.tags, { Name = var.name })
+
+  # Ignore changes to the custom_data attribute (Don't replace on userdata change)
+  lifecycle {
+    ignore_changes = [
+      custom_data
+    ]
+  }
 }
 
 data "azurerm_subscription" "primary" {
 }
 
-resource "azurerm_role_assignment" "dsf_base_role_assignment" {
-  scope                = data.azurerm_subscription.primary.id
+resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
+  scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/eytan-resource-group"
   role_definition_name = "Owner"
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
-# app disk
-resource "azurerm_virtual_machine_data_disk_attachment" "app_disk_attachment" {
-  managed_disk_id    = azurerm_managed_disk.external_app_vol.id
-  virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id
-  lun                = "10"
-  caching            = local.disk_app_cache
-}
+# resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
+#   scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
+#   role_definition_name = "Reader"
+#   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+# }
 
-resource "azurerm_managed_disk" "external_app_vol" {
-  name                 = join("-", [var.name, "app", "disk"])
-  location             = var.resource_group.location
-  resource_group_name  = var.resource_group.name
-  storage_account_type = local.disk_app_type
-  create_option        = "Empty"
-  disk_size_gb         = local.disk_app_size
-}
-
-# data disk
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
   managed_disk_id    = azurerm_managed_disk.external_data_vol.id
   virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id
@@ -126,6 +114,7 @@ resource "azurerm_managed_disk" "external_data_vol" {
   create_option        = "Empty"
   disk_size_gb         = local.disk_data_size
   disk_iops_read_write = local.disk_data_iops
+  tags = var.tags
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -139,4 +128,5 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = try(azurerm_public_ip.vm_public_ip[0].id, null)
   }
+  tags = var.tags
 }

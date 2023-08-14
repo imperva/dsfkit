@@ -4,7 +4,7 @@ locals {
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   security_group_ids = concat(
-    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+    [for sg in aws_security_group.dsf_base_sg : sg.id],
     var.security_group_ids
   )
 
@@ -44,7 +44,7 @@ resource "aws_instance" "dsf_base_instance" {
     device_index         = 0
   }
   disable_api_termination     = true
-  user_data_replace_on_change = true
+  user_data_replace_on_change = false
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
