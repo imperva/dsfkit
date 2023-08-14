@@ -105,7 +105,7 @@ variable "allowed_all_cidrs" {
 
 variable "instance_type" {
   type        = string
-  default     = "r6i.xlarge"
+  default     = "r6i.xlarge" # 4 cores & 32GB ram
   description = "EC2 instance type for the DSF hub"
 }
 

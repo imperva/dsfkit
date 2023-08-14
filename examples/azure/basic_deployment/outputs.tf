@@ -1,17 +1,15 @@
-# output "dsf_agentless_gw_group" {
-#   value = {
-#     for idx, val in module.agentless_gw_group : "gw-${idx}" =>
-#     {
-#       private_ip = try(val.private_ip, null)
-#       public_ip  = try(val.public_ip, null)
-#       # private_dns  = try(val.private_dns, null)
-#       jsonar_uid   = try(val.jsonar_uid, null)
-#       display_name = try(val.display_name, null)
-#       # role_arn     = try(val.iam_role, null)
-#       ssh_command = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local_sensitive_file.ssh_key.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.public_ip}' -i ${local_sensitive_file.ssh_key.filename} ${val.ssh_user}@${val.private_ip}", null)
-#     }
-#   }
-# }
+output "dsf_agentless_gw_group" {
+  value = {
+    for idx, val in module.agentless_gw_group : "gw-${idx}" =>
+    {
+      private_ip = try(val.private_ip, null)
+      public_ip  = try(val.public_ip, null)
+      jsonar_uid   = try(val.jsonar_uid, null)
+      display_name = try(val.display_name, null)
+      ssh_command = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local_sensitive_file.ssh_key.filename} -W %h:%p ${module.hub.ssh_user}@${module.hub.public_ip}' -i ${local_sensitive_file.ssh_key.filename} ${val.ssh_user}@${val.private_ip}", null)
+    }
+  }
+}
 
 output "dsf_hubs" {
   value = {

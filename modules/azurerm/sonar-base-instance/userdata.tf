@@ -14,7 +14,7 @@ locals {
     az_blob                                = var.binaries_location.az_blob
     display_name                           = local.display_name
     password_secret                        = local.password_secret_name
-    hub_sonarw_public_key                  = var.resource_type == "gw" ? var.hub_sonarw_public_key : ""
+    hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
     primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
     vault_name  = azurerm_key_vault.vault.name
     primary_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name

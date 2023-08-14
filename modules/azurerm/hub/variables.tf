@@ -28,7 +28,11 @@ variable "friendly_name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF hub instance"
+  description = "Subnet id for the DSF base instance"
+  validation {
+    condition = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
+  }
 }
 
 variable "security_group_ids" {
@@ -109,9 +113,9 @@ variable "instance_type" {
 
 variable "storage_details" {
   type = object({
-    storage_account_type = string
-    disk_iops_read_write = number
     disk_size            = number
+    disk_iops_read_write = number
+    storage_account_type = string
   })
   description = "Compute instance volume attributes"
 }
@@ -176,7 +180,7 @@ variable "password" {
   }
 }
 
-variable "ssh_key_pair" {
+variable "ssh_key" {
   type = object({
     ssh_public_key            = string
     ssh_private_key_file_path = string
@@ -202,12 +206,6 @@ variable "vm_user" {
   default     = null
   description = "VM user to use for SSH. Keep empty to use the default user."
 }
-
-#variable "role_arn" {
-#  type        = string
-#  default     = null
-#  description = "IAM role to assign to DSF hub. Keep empty if you wish to create a new role."
-#}
 
 variable "additional_install_parameters" {
   default     = ""
