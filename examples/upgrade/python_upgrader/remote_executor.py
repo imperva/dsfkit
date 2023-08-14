@@ -1,6 +1,19 @@
 import paramiko
 
 
+def run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command):
+    return _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command, None)
+
+
+def run_remote_script_via_proxy(remote_host, remote_user, remote_key_filename, script_contents, script_run_command,
+                                proxy_host, proxy_user, proxy_key_filename):
+    proxy_channel, proxy_client = _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host)
+    script_output = _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents,
+                                       script_run_command, proxy_channel)
+    proxy_client.close()
+    return script_output
+
+
 def _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host):
     proxy_client = paramiko.SSHClient()
     # Automatically add the remote host's public key to the 'known_hosts' file of the proxy, if not there already,
@@ -33,18 +46,5 @@ def _run_remote_script(remote_host, remote_user, remote_key_filename, script_con
 
     remote_client.close()
 
-    return script_output
-
-
-def run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command):
-    return _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command, None)
-
-
-def run_remote_script_via_proxy(remote_host, remote_user, remote_key_filename, script_contents, script_run_command,
-                                proxy_host, proxy_user, proxy_key_filename):
-    proxy_channel, proxy_client = _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host)
-    script_output = _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents,
-                                       script_run_command, proxy_channel)
-    proxy_client.close()
     return script_output
 
