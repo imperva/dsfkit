@@ -2,12 +2,12 @@ locals {
   public_ip  = azurerm_linux_virtual_machine.dsf_base_instance.public_ip_address
   private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
-  # app disk details
-  disk_app_size  = 100
-  disk_app_type  = "Standard_LRS"
-  disk_app_cache = "ReadWrite"
+  # root volume details
+  root_volume_size  = 100
+  root_volume_type  = "Standard_LRS"
+  root_volume_cache = "ReadWrite"
 
-  # data disk details
+  # state volume details
   disk_data_size  = var.storage_details.disk_size
   disk_data_type  = var.storage_details.storage_account_type
   disk_data_iops  = var.storage_details.disk_iops_read_write
@@ -59,9 +59,11 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 
   os_disk {
-    caching              = local.disk_app_cache
-    storage_account_type = local.disk_app_type
-    disk_size_gb         = local.disk_app_size
+    disk_size_gb         = local.root_volume_size
+    caching              = local.root_volume_cache
+    storage_account_type = local.root_volume_type
+
+    tags        = merge(var.tags, { Name = var.name })
   }
 
   source_image_reference {
@@ -74,7 +76,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   identity {
     type = "SystemAssigned"
   }
-  tags = var.tags
+  tags = merge(var.tags, { Name = var.name })
 
   # Ignore changes to the custom_data attribute (Don't replace on userdata change)
   lifecycle {
@@ -87,7 +89,6 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 data "azurerm_subscription" "primary" {
 }
 
-# tbd: make this scope smaller
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
   scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/eytan-resource-group"
   role_definition_name = "Owner"
@@ -100,7 +101,6 @@ resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
 #   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 # }
 
-# data disk
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
   managed_disk_id    = azurerm_managed_disk.external_data_vol.id
   virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id
