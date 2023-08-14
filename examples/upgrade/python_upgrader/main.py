@@ -81,17 +81,18 @@ def main():
 
     print("********** Start ************")
 
-    preflight_validations_passed = True
-    python_location_dict = {}
-    if args.run_preflight_validations:
-        preflight_validations_passed, python_location_dict = run_all_preflight_validations(agentless_gws, hubs,
-                                                                                           args.target_version)
+    dsf_nodes_dict = {"Agentless Gateway": agentless_gws, "DSF Hub": hubs}
+    python_location_dict = collect_python_locations(dsf_nodes_dict)
 
-    if preflight_validations_passed:
-        print(f"### Preflight validations passed")
-    else:
-        print(f"Aborting upgrade...")
-        return
+    preflight_validations_passed = True
+    if args.run_preflight_validations:
+        preflight_validations_passed = run_all_preflight_validations(agentless_gws, hubs, args.target_version,
+                                                                     python_location_dict)
+        if preflight_validations_passed:
+            print(f"### Preflight validations passed")
+        else:
+            print(f"Aborting upgrade...")
+            return
 
     if preflight_validations_passed:
         success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
@@ -147,46 +148,53 @@ def print_dsf_nodes(dsf_nodes):
         print("---")
 
 
-def run_all_preflight_validations(agentless_gws, hubs, target_version):
+def collect_python_locations(dsf_nodes_dict):
+    python_location_dict = {}
+    for dsf_node_type in dsf_nodes_dict.keys():
+        for dsf_node in dsf_nodes_dict[dsf_node_type]:
+            python_location = run_get_python_location_script(dsf_node)
+            python_location_dict[dsf_node.get('ip')] = python_location
+            print(f"Python location in {dsf_node_type} {dsf_node.get('ip')} is {python_location}")
+    return python_location_dict
+
+
+def run_all_preflight_validations(agentless_gws, hubs, target_version, python_location_dict):
     print("----- Preflight validations")
 
-    python_location_dict = {}
     preflight_validations_passed = run_preflight_validations_for_dsf_nodes(agentless_gws, "Agentless Gateway",
                                                                            target_version,
                                                                            "run_preflight_validations.py",
                                                                            python_location_dict)
     if not preflight_validations_passed:
-        return False, python_location_dict
+        return False
     preflight_validations_passed = run_preflight_validations_for_dsf_nodes(hubs, "DSF Hub", target_version,
                                                                            "run_preflight_validations.py",
                                                                            python_location_dict)
-    return preflight_validations_passed, python_location_dict
+    return preflight_validations_passed
 
 
 def run_preflight_validations_for_dsf_nodes(dsf_nodes, dsf_node_type, target_version, script_file_name,
                                             python_location_dict):
     for dsf_node in dsf_nodes:
-        preflight_validations_result, python_location = run_preflight_validations(dsf_node, dsf_node_type,
-                                                                                  target_version, script_file_name)
-        python_location_dict[dsf_node.get('ip')] = python_location
+        python_location = python_location_dict[dsf_node.get('ip')]
+        preflight_validations_result = run_preflight_validations(dsf_node, dsf_node_type, target_version,
+                                                                 script_file_name, python_location)
         if are_preflight_validations_passed(preflight_validations_result):
             print(f"### Preflight validations passed for {dsf_node_type} {dsf_node.get('ip')}")
         else:
             print(f"### Preflight validations didn't pass for {dsf_node_type} {dsf_node.get('ip')}")
             return False
-    return True, python_location_dict
+    return True
 
 
-def run_preflight_validations(dsf_node, dsf_node_type, target_version, script_file_name):
+def run_preflight_validations(dsf_node, dsf_node_type, target_version, script_file_name, python_location):
     print(f"Running preflight validations for {dsf_node_type} {dsf_node.get('ip')}")
-    python_location = run_get_python_location_script(dsf_node)
-    print(f"Python location in {dsf_node_type} {dsf_node.get('ip')} is {python_location}")
 
     preflight_validations_result_json = run_preflight_validations_script(dsf_node, target_version, python_location,
                                                                          script_file_name)
     preflight_validations_result = json.loads(preflight_validations_result_json)
     print(f"Preflight validations result in {dsf_node_type} {dsf_node.get('ip')} is {preflight_validations_result}")
-    return preflight_validations_result, python_location
+    return preflight_validations_result
 
 
 def run_get_python_location_script(dsf_node):
@@ -240,7 +248,8 @@ def are_preflight_validations_passed(preflight_validations_result):
 
 def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrade, run_postflight_validations,
                                  python_location_dict):
-    print("----- Upgrade")
+    if run_upgrade:
+        print("----- Upgrade")
 
     upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_dsf_nodes(agentless_gws, "Agentless Gateway",
                                                                               target_version, "upgrade_v4_10.sh",
