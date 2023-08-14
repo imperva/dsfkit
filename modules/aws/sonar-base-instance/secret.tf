@@ -42,7 +42,7 @@ locals {
   password_secret_name    = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.password_secret_name
 
   should_create_sonarw_private_key_in_secrets_manager   = var.sonarw_private_key_secret_name == null
-  should_create_web_console_password_in_secrets_manager = var.password_secret_name == null
+  should_create_password_in_secrets_manager = var.password_secret_name == null
   
   secret_names = [for v in aws_secretsmanager_secret.access_tokens: v.name]
 }
@@ -62,14 +62,14 @@ resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
 }
 
 resource "aws_secretsmanager_secret" "password_secret" {
-  count       = local.should_create_web_console_password_in_secrets_manager == true ? 1 : 0
+  count       = local.should_create_password_in_secrets_manager == true ? 1 : 0
   name_prefix = "${var.name}-password"
   description = "Imperva DSF node password"
   tags        = var.tags
 }
 
 resource "aws_secretsmanager_secret_version" "password_ver" {
-  count         = local.should_create_web_console_password_in_secrets_manager == true ? 1 : 0
+  count         = local.should_create_password_in_secrets_manager == true ? 1 : 0
   secret_id     = aws_secretsmanager_secret.password_secret[0].id
   secret_string = var.password
 }

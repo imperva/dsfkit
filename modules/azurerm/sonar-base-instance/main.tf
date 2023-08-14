@@ -62,8 +62,6 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     disk_size_gb         = local.root_volume_size
     caching              = local.root_volume_cache
     storage_account_type = local.root_volume_type
-
-    tags        = merge(var.tags, { Name = var.name })
   }
 
   source_image_reference {

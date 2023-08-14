@@ -18,11 +18,6 @@ output "private_dns" {
   value       = module.hub_instance.private_dns
 }
 
-#output "iam_role" {
-#  description = "IAM Role ARN of the DSF node"
-#  value       = module.hub_instance.iam_role
-#}
-
 output "display_name" {
   description = "Display name of the instance under the DSF web console"
   value       = module.hub_instance.display_name

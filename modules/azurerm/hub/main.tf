@@ -1,6 +1,3 @@
-#################################
-# Actual Hub instance
-#################################
 locals {
   security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-sonar-installation-and-setup-guide/page/78702.htm
     {
@@ -47,19 +44,19 @@ module "hub_instance" {
   resource_group    = var.resource_group
   name              = var.friendly_name
   subnet_id         = var.subnet_id
-  security_groups_config            = local.security_groups_config
-  security_group_ids = var.security_group_ids
-  public_ssh_key    = var.ssh_key_pair.ssh_public_key
+  public_ssh_key    = var.ssh_key.ssh_public_key
   instance_type     = var.instance_type
   storage_details   = var.storage_details
   vm_image          = var.vm_image
   vm_user           = var.vm_user
+  security_groups_config            = local.security_groups_config
+  security_group_ids = var.security_group_ids
   attach_persistent_public_ip = var.attach_persistent_public_ip
   use_public_ip                       = var.use_public_ip
   additional_install_parameters       = var.additional_install_parameters
   password          = var.password
   generate_access_tokens            = var.generate_access_tokens
-  ssh_key_path                      = var.ssh_key_pair.ssh_private_key_file_path
+  ssh_key_path                      = var.ssh_key.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
   hadr_secondary_node               = var.hadr_secondary_node
   primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
