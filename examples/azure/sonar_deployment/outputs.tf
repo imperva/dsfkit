@@ -29,16 +29,14 @@ output "sonar" {
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub[0].ssh_user}@${module.hub[0].public_ip}", null)
       tokens       = nonsensitive(module.hub[0].access_tokens)
     }
-    # hub_secondary = var.hub_hadr ? {
-    #   public_ip    = try(module.hub_secondary[0].public_ip, null)
-    #   public_dns   = try(module.hub_secondary[0].public_dns, null)
-    #   private_ip   = try(module.hub_secondary[0].private_ip, null)
-    #   private_dns  = try(module.hub_secondary[0].private_dns, null)
-    #   jsonar_uid   = try(module.hub_secondary[0].jsonar_uid, null)
-    #   display_name = try(module.hub_secondary[0].display_name, null)
-    #   principal_id     = try(module.hub_secondary[0].principal_id, null)
-    #   ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_dns}", null)
-    # } : null
+    hub_secondary = var.hub_hadr ? {
+      public_ip    = try(module.hub_secondary[0].public_ip, null)
+      private_ip   = try(module.hub_secondary[0].private_ip, null)
+      jsonar_uid   = try(module.hub_secondary[0].jsonar_uid, null)
+      display_name = try(module.hub_secondary[0].display_name, null)
+      principal_id     = try(module.hub_secondary[0].principal_id, null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_ip}", null)
+    } : null
     agentless_gw = [
       for idx, val in module.agentless_gw :
       {

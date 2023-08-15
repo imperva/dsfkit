@@ -3,7 +3,7 @@ output "salt" {
 }
 
 output "my_ip" {
-  value = trimspace(data.http.workstation_public_ip.response_body)
+  value = try(trimspace(data.http.workstation_public_ip.response_body), null)
 }
 
 output "now" {
@@ -26,9 +26,8 @@ output "tags" {
   value = {
     terraform_workspace = terraform.workspace
     vendor              = "Imperva"
-    product             = "EDSF"
+    product             = "DSF"
     terraform           = "true"
-    environment         = "demo"
     creation_timestamp  = resource.time_static.current_time.id
   }
 }
@@ -38,5 +37,14 @@ output "tarball_location" {
     az_storage_account = var.tarball_location.storage_account
     az_container       = var.tarball_location.container
     az_blob            = local.blob_object
+    version   = local.blob_object_version
   }
+}
+
+output "sonar_supported_versions" {
+  value = local.sonar_supported_versions
+}
+
+output "sonar_fully_supported_versions" {
+  value = local.sonar_fully_supported_versions
 }
