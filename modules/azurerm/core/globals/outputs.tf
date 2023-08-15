@@ -37,7 +37,7 @@ output "tarball_location" {
     az_storage_account = var.tarball_location.storage_account
     az_container       = var.tarball_location.container
     az_blob            = local.blob_object
-    version   = local.blob_object_version
+    version            = local.blob_object_version
   }
 }
 

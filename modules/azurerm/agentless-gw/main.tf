@@ -30,24 +30,24 @@ resource "random_string" "gw_id" {
 }
 
 module "gw_instance" {
-  source            = "../../../modules/azurerm/sonar-base-instance"
-  resource_type     = "agentless-gw"
-  resource_group    = var.resource_group
-  name              = var.friendly_name
-  subnet_id         = var.subnet_id
+  source                            = "../../../modules/azurerm/sonar-base-instance"
+  resource_type                     = "agentless-gw"
+  resource_group                    = var.resource_group
+  name                              = var.friendly_name
+  subnet_id                         = var.subnet_id
   security_groups_config            = local.security_groups_config
-  security_group_ids = var.security_group_ids
-  public_ssh_key    = var.ssh_key.ssh_public_key
-  instance_type     = var.instance_type
-  storage_details   = var.storage_details
-  vm_image          = var.vm_image
-  vm_user           = var.vm_user
-  additional_install_parameters       = var.additional_install_parameters
+  security_group_ids                = var.security_group_ids
+  public_ssh_key                    = var.ssh_key.ssh_public_key
+  instance_type                     = var.instance_type
+  storage_details                   = var.storage_details
+  vm_image                          = var.vm_image
+  vm_user                           = var.vm_user
+  additional_install_parameters     = var.additional_install_parameters
   password                          = var.password
   ssh_key_path                      = var.ssh_key.ssh_private_key_file_path
-  binaries_location                   = var.binaries_location
-  hub_sonarw_public_key               = var.hub_sonarw_public_key
-  hadr_secondary_node                 = var.hadr_secondary_node
+  binaries_location                 = var.binaries_location
+  hub_sonarw_public_key             = var.hub_sonarw_public_key
+  hadr_secondary_node               = var.hadr_secondary_node
   primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
   primary_node_sonarw_private_key   = var.primary_node_sonarw_private_key
   proxy_info                        = var.ingress_communication_via_proxy

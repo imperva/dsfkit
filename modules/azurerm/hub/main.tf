@@ -39,22 +39,22 @@ locals {
 }
 
 module "hub_instance" {
-  source            = "../../../modules/azurerm/sonar-base-instance"
-  resource_type     = "hub"
-  resource_group    = var.resource_group
-  name              = var.friendly_name
-  subnet_id         = var.subnet_id
-  public_ssh_key    = var.ssh_key.ssh_public_key
-  instance_type     = var.instance_type
-  storage_details   = var.storage_details
-  vm_image          = var.vm_image
-  vm_user           = var.vm_user
+  source                            = "../../../modules/azurerm/sonar-base-instance"
+  resource_type                     = "hub"
+  resource_group                    = var.resource_group
+  name                              = var.friendly_name
+  subnet_id                         = var.subnet_id
+  public_ssh_key                    = var.ssh_key.ssh_public_key
+  instance_type                     = var.instance_type
+  storage_details                   = var.storage_details
+  vm_image                          = var.vm_image
+  vm_user                           = var.vm_user
   security_groups_config            = local.security_groups_config
-  security_group_ids = var.security_group_ids
-  attach_persistent_public_ip = var.attach_persistent_public_ip
-  use_public_ip                       = var.use_public_ip
-  additional_install_parameters       = var.additional_install_parameters
-  password          = var.password
+  security_group_ids                = var.security_group_ids
+  attach_persistent_public_ip       = var.attach_persistent_public_ip
+  use_public_ip                     = var.use_public_ip
+  additional_install_parameters     = var.additional_install_parameters
+  password                          = var.password
   generate_access_tokens            = var.generate_access_tokens
   ssh_key_path                      = var.ssh_key.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
@@ -66,5 +66,5 @@ module "hub_instance" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content
-  tags = var.tags
+  tags                              = var.tags
 }

@@ -1,17 +1,17 @@
 output "public_ip" {
   description = "Public elastic IP address of the DSF base instance"
   value       = local.public_ip
-  depends_on = [ 
+  depends_on = [
     azurerm_network_interface_security_group_association.nic_ip_association
-   ]
+  ]
 }
 
 output "private_ip" {
   description = "Private IP address of the DSF base instance"
   value       = local.private_ip
-  depends_on = [ 
+  depends_on = [
     azurerm_network_interface_security_group_association.nic_ip_association
-   ]
+  ]
 }
 
 output "public_dns" {
