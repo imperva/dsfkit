@@ -116,7 +116,6 @@ module "agentless_gw_group" {
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
   allowed_hub_cidrs = module.network.vnet_address_space
-  allowed_all_cidrs = ["82.167.106.0/24"]
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.public_ip
     proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
