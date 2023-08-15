@@ -14,8 +14,23 @@ variable "agentless_gws" {
 }
 
 variable "dsf_hubs" {
-  type        = list(map(string))
+  type = list(object({
+    ip                        = string # can be private or public
+    ssh_user                  = string
+    ssh_private_key_file_path = string
+    proxy = optional(object({
+      ip                        = string # can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
+    }))
+  }))
+
   default     = []
+}
+
+variable "target_version" {
+  type        = string
+  default     = null
 }
 
 variable "run_preflight_validations" {
@@ -31,11 +46,6 @@ variable "run_postflight_validations" {
 variable "custom_validations_scripts" {
     type        = list(string)
     default     = []
-}
-
-variable "target_version" {
-  type        = string
-  default     = null
 }
 
 variable "run_upgrade" {
