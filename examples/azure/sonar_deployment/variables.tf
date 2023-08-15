@@ -113,9 +113,9 @@ variable "hub_storage_details" {
     storage_account_type = string
   })
   default = {
-    disk_size        = 250
+    disk_size            = 250
     disk_iops_read_write = null
-    storage_account_type       = "Standard_LRS"
+    storage_account_type = "Standard_LRS"
   }
   description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }
@@ -127,9 +127,9 @@ variable "agentless_gw_storage_details" {
     storage_account_type = string
   })
   default = {
-    disk_size        = 150
+    disk_size            = 150
     disk_iops_read_write = null
-    storage_account_type       = "Standard_LRS"
+    storage_account_type = "Standard_LRS"
   }
   description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }

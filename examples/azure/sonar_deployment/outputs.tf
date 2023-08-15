@@ -13,8 +13,8 @@ output "dsf_private_ssh_key_file_path" {
 
 output "generated_network" {
   value = try({
-    vnet             = module.network[0].vnet_id
-    subnets    = module.network[0].vnet_subnets
+    vnet    = module.network[0].vnet_id
+    subnets = module.network[0].vnet_subnets
   }, null)
 }
 
@@ -25,7 +25,7 @@ output "sonar" {
       private_ip   = try(module.hub[0].private_ip, null)
       jsonar_uid   = try(module.hub[0].jsonar_uid, null)
       display_name = try(module.hub[0].display_name, null)
-      principal_id     = try(module.hub[0].principal_id, null)
+      principal_id = try(module.hub[0].principal_id, null)
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub[0].ssh_user}@${module.hub[0].public_ip}", null)
       tokens       = nonsensitive(module.hub[0].access_tokens)
     }
@@ -34,7 +34,7 @@ output "sonar" {
       private_ip   = try(module.hub_secondary[0].private_ip, null)
       jsonar_uid   = try(module.hub_secondary[0].jsonar_uid, null)
       display_name = try(module.hub_secondary[0].display_name, null)
-      principal_id     = try(module.hub_secondary[0].principal_id, null)
+      principal_id = try(module.hub_secondary[0].principal_id, null)
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_secondary[0].ssh_user}@${module.hub_secondary[0].public_ip}", null)
     } : null
     agentless_gw = [
@@ -44,7 +44,7 @@ output "sonar" {
         private_dns  = try(val.private_dns, null)
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
-        principal_id     = try(val.principal_id, null)
+        principal_id = try(val.principal_id, null)
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub[0].ssh_user}@${module.hub[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]

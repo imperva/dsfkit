@@ -7,7 +7,7 @@ provider "azurerm" {
 }
 
 module "globals" {
-  source        = "../../../modules/azurerm/core/globals"
+  source = "../../../modules/azurerm/core/globals"
   # version       = "1.3.5" # latest release tag
 
   sonar_version = var.sonar_version

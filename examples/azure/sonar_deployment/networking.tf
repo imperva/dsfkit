@@ -12,7 +12,7 @@
 
 # network
 module "network" {
-  count = 1
+  count               = 1
   source              = "Azure/network/azurerm"
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = azurerm_resource_group.rg.name
