@@ -9,6 +9,11 @@ output "private_ip" {
 }
 
 
+output "principal_id" {
+  description = "Principal ID of the DSF node"
+  value       = module.gw_instance.principal_id
+}
+
 output "display_name" {
   description = "Display name of the instance under the DSF web console"
   value       = module.gw_instance.display_name

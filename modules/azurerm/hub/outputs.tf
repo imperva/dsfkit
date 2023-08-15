@@ -18,6 +18,11 @@ output "private_dns" {
   value       = module.hub_instance.private_dns
 }
 
+output "principal_id" {
+  description = "Principal ID of the DSF node"
+  value       = module.hub_instance.principal_id
+}
+
 output "display_name" {
   description = "Display name of the instance under the DSF web console"
   value       = module.hub_instance.display_name
