@@ -26,9 +26,9 @@ resource "tls_private_key" "sonarw_private_key" {
 locals {
   primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
   primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
-  password_secret_name    = azurerm_key_vault_secret.password_key_secret.name
+  password_secret_name            = azurerm_key_vault_secret.password_key_secret.name
 
-  secret_names = [for v in azurerm_key_vault_secret.access_tokens: v.name]
+  secret_names = [for v in azurerm_key_vault_secret.access_tokens : v.name]
 }
 
 data "azurerm_client_config" "current" {}
@@ -73,7 +73,7 @@ resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
   value        = chomp(local.primary_node_sonarw_private_key)
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "sonarw ssh private key"
-  tags = var.tags
+  tags         = var.tags
   depends_on = [
     azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
@@ -84,19 +84,19 @@ resource "azurerm_key_vault_secret" "password_key_secret" {
   value        = chomp(var.password)
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "password"
-  tags = var.tags
+  tags         = var.tags
   depends_on = [
     azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
 }
 
 resource "azurerm_key_vault_secret" "access_tokens" {
-  count       = length(local.access_tokens)
+  count        = length(local.access_tokens)
   name         = join("-", [var.name, local.access_tokens[count.index].name, "access", "token"])
   value        = random_uuid.access_tokens[count.index].result
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "access token"
-  tags = var.tags
+  tags         = var.tags
   depends_on = [
     azurerm_key_vault_access_policy.vault_owner_access_policy
   ]

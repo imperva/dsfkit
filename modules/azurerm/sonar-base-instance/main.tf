@@ -17,17 +17,17 @@ locals {
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  count = var.attach_persistent_public_ip ? 1 : 0
+  count               = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
   sku                 = "Standard"
   allocation_method   = "Static"
-  tags = var.tags
+  tags                = var.tags
 }
 
 data "azurerm_public_ip" "vm_public_ip" {
-  count = var.attach_persistent_public_ip ? 1 : 0
+  count               = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   resource_group_name = var.resource_group.name
   depends_on = [
@@ -114,7 +114,7 @@ resource "azurerm_managed_disk" "external_data_vol" {
   create_option        = "Empty"
   disk_size_gb         = local.disk_data_size
   disk_iops_read_write = local.disk_data_iops
-  tags = var.tags
+  tags                 = var.tags
 }
 
 resource "azurerm_network_interface" "nic" {

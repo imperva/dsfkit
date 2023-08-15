@@ -19,7 +19,7 @@ variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF base instance"
   validation {
-    condition = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
     error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
   }
 }
@@ -48,10 +48,10 @@ variable "security_group_ids" {
   type        = list(string)
   description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   validation {
-    condition = length(var.security_group_ids) == 0 || length(var.security_group_ids) == 1
+    condition     = length(var.security_group_ids) == 0 || length(var.security_group_ids) == 1
     error_message = "Can't contain more than a single element"
   }
-  default     = []
+  default = []
 }
 
 variable "attach_persistent_public_ip" {

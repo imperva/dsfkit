@@ -30,7 +30,7 @@ variable "subnet_id" {
   type        = string
   description = "Subnet id for the DSF base instance"
   validation {
-    condition = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
     error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
   }
 }
