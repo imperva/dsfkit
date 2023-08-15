@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# TODO install/create/activate the virtual environment
+# Install, create and activate the virtual environment
+pip3 install virtualenv
+python3 -m virtualenv lenv
+source lenv/bin/activate
 
-pip install -r ${path}/python_upgrader/requirements.txt
+pip3 install -r ${path}/python_upgrader/requirements.txt
 
 python3 -u ${path}/python_upgrader/main.py \
   --target_version "${target_version}" \
