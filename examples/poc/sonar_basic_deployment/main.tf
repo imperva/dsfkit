@@ -11,7 +11,6 @@ module "globals" {
   version = "1.5.1" # latest release tag
 
   sonar_version = var.sonar_version
-  tags          = local.tags
 }
 
 module "key_pair" {

@@ -4,7 +4,6 @@ module "globals" {
 
   sonar_version = var.sonar_version
   dra_version   = var.dra_version
-  tags          = local.tags
 }
 
 locals {

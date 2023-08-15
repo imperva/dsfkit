@@ -81,6 +81,7 @@ variable "storage_details" {
     error_message = "Disk size must be at least 150 GB"
   }
 }
+
 variable "vm_image" {
   type = object({
     publisher = string

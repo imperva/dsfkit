@@ -4,8 +4,6 @@ provider "aws" {
 module "globals" {
   source  = "imperva/dsf-globals/aws"
   version = "1.5.1" # latest release tag
-
-  tags = local.tags
 }
 
 module "key_pair" {
