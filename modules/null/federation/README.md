@@ -7,4 +7,4 @@ This Terraform module provisions a registration of an Agentless Gateway to an DS
 4.9 and up
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive
+* [Terraform version](versions.tf)

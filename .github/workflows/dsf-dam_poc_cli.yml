@@ -1,4 +1,4 @@
-name: 'DAM/DSF POC CLI'
+name: 'DSF & DAM POC CLI'
 
 on:
   workflow_call:
@@ -166,9 +166,17 @@ jobs:
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
+
     - name: Terraform Destroy
       id: destroy
-      if: always()
+#      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -var license=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
@@ -196,7 +204,7 @@ jobs:
       run: |
         if [ ${{ env.REF }} == 'master' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        if [ ${{ env.REF }} == 'dev' ]; then
+        elif [ ${{ env.REF }} == 'dev' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}

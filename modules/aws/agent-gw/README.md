@@ -83,4 +83,4 @@ API access to the DSF Management server is required to provision this module. Pl
 
 For more information about the DSF Agent Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/378.htm). 
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.5.1).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.5.3).

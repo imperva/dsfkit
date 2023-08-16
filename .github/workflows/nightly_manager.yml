@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   master_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@master
+    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@master
     with:
       branch: master
       workspace: simple_cli_master_nightly
@@ -20,7 +20,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/terraform_simple_cli_nightly.yml@dev
+    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
     with:
       branch: dev
       workspace: simple_cli_dev_nightly
@@ -30,7 +30,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_single_account:
-    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@master
+    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
     with:
       branch: master
     secrets:
@@ -41,7 +41,7 @@ jobs:
 
   dev_single_account:
     needs: master_single_account
-    uses: imperva/dsfkit/.github/workflows/terraform_installation_examples.yml@dev
+    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
     with:
       branch: dev
     secrets:
@@ -51,7 +51,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_multi_account:
-    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@master
     with:
       branch: master
     secrets:
@@ -64,7 +64,7 @@ jobs:
 
   dev_multi_account:
     needs: master_multi_account
-    uses: imperva/dsfkit/.github/workflows/terraform_multi_account_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
     with:
       branch: dev
     secrets:
@@ -102,7 +102,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   master_dam_dsf:
-      uses: imperva/dsfkit/.github/workflows/terraform_apply_cli_dam_poc.yml@master
+      uses: imperva/dsfkit/.github/workflows/dsf-dam_poc_cli.yml@master
       with:
         use_modules_from_terraform_registry: true
         explicit_ref: master
@@ -113,7 +113,29 @@ jobs:
         DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dam_dsf:
-    uses: imperva/dsfkit/.github/workflows/terraform_apply_cli_dam_poc.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf-dam_poc_cli.yml@dev
+    with:
+      use_modules_from_terraform_registry: false
+      explicit_ref: dev
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+
+  master_dsf_poc:
+      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+      with:
+        use_modules_from_terraform_registry: true
+        explicit_ref: master
+      secrets:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+
+  dev_dsf_poc:
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
     with:
       use_modules_from_terraform_registry: false
       explicit_ref: dev

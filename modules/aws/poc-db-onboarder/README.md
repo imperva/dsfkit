@@ -5,4 +5,4 @@
 4.11 and up
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive
+* [Terraform version](versions.tf)

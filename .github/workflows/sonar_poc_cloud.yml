@@ -1,4 +1,4 @@
-name: 'Terraform Apply - Cloud'
+name: 'Sonar POC Terraform Cloud'
 
 on:
   workflow_dispatch: {}
@@ -12,7 +12,6 @@ on:
       - 'master'
 
 env:
-  TF_WORKSPACE: dsfkit-ci-cd
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
 
@@ -82,7 +81,20 @@ jobs:
       run: terraform apply -auto-approve
 
     - name: Terraform Output
+      if: always()
       run: terraform output -json
+
+    - name: Save The Keys
+      if: always()
+      run: terraform output dsf_private_ssh_key > key.txt
+
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          key.txt
 
     - name: Terraform Destroy
 #      if: always()

@@ -41,17 +41,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DSF POC CLI
-            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
-            example_dir: ./examples/poc/dsf_deployment
-            aws_region: eu-west-2
+          - name: DSF POC - SONAR
+            workspace: dsf_cli-sonar-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            enable_sonar: true
+            enable_dam: false
+            enable_dra: false
+          - name: DSF POC - DAM
+            workspace: dsf_cli-dam-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            enable_sonar: false
+            enable_dam: true
+            enable_dra: false
+          - name: DSF POC - DRA
+            workspace: dsf_cli-dra-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            enable_sonar: false
+            enable_dam: false
+            enable_dra: true
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
-      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      EXAMPLE_DIR: ./examples/poc/dsf_deployment
       TF_WORKSPACE: ${{ matrix.workspace }}
-      AWS_REGION: ${{ matrix.aws_region }}
+      AWS_REGION: eu-west-2
+      TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
+      TF_VAR_enable_dam: ${{ matrix.enable_dam }}
+      TF_VAR_enable_dra: ${{ matrix.enable_dra }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -141,9 +155,17 @@ jobs:
       if: always()
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
+
     - name: Terraform Destroy
       id: destroy
-      if: always()
+#      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -var license=license.mprv -auto-approve
 
     - name: Terraform Delete Workspace
@@ -171,7 +193,7 @@ jobs:
       run: |
         if [ ${{ env.REF }} == 'master' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-        if [ ${{ env.REF }} == 'dev' ]; then
+        elif [ ${{ env.REF }} == 'dev' ]; then
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
         else
           curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -16,7 +16,7 @@ This module performs the following operations in this order:
 7. Deletes the now obsolete Gateway Group (depending on input)
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive
+* [Terraform version](versions.tf)
 
 ## Inputs
 

@@ -46,7 +46,7 @@ resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.instance_profile_name == null ? 1 : 0
-  description         = "${var.friendly_name}-dra-analytics-role-${var.friendly_name}"
+  name                = "${var.friendly_name}-role"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {

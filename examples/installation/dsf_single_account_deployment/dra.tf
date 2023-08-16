@@ -6,7 +6,7 @@ locals {
 
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/aws"
-  version = "1.5.1" # latest release tag
+  version = "1.5.3" # latest release tag
   count   = var.enable_dra ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "admin"])
@@ -27,7 +27,7 @@ module "dra_admin" {
 
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
-  version = "1.5.1" # latest release tag
+  version = "1.5.3" # latest release tag
   count   = local.dra_analytics_count
 
   friendly_name                = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])

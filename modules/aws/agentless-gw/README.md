@@ -7,7 +7,7 @@ This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 4.9 and up
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive
+* [Terraform version](versions.tf)
 * An AWS account
 * SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
@@ -100,4 +100,4 @@ SSH access is required to provision this module. To SSH into the Agentless Gatew
 
 For more information about the Agentless Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.12-sonar-user-guide/page/80401.htm). 
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.5.1).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.5.3).

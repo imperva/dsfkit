@@ -1,0 +1,34 @@
+Replace the following placeholders with their values:
+${analytics_archiver_password_secret_arn}
+${admin_analytics_registration_password_secret_arn}
+${admin_password_secret_arn}
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ec2AssumeRole",
+            "Effect": "Allow",
+            "Action": [
+                "sts:AssumeRole"
+            ],
+            "Principal": {
+                "Service": [
+                    "ec2.amazonaws.com"
+                ]
+            },
+            "Resource": "*"
+        },
+        {
+            "Sid": "secretRead",
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                ${analytics_archiver_password_secret_arn},
+                ${admin_analytics_registration_password_secret_arn},
+                ${admin_password_secret_arn}
+            ]
+        }
+}

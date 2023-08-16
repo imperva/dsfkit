@@ -1,10 +1,15 @@
 #!/bin/bash
-set -x
+# set -x
 set -e
 
 cookie_file=$(mktemp)
 
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
+
+if ! command -v jq; then
+  echo "jq utility is required to run this module. Please refer to jq installation steps in your worksation platform."
+  exit 1
+fi
 
 # Create an empty cluster if doesn't already exist, e.g., from previous Terraform apply
 function maybeCreateCluster() {

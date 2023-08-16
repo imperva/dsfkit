@@ -83,7 +83,7 @@ function create_lvm() {
     # Create logical volumes with lowercase names
     lvcreate --name logs -L 20G $volume_group_name
     lvcreate --name local -L 20G $volume_group_name
-    lvcreate --name apps -L 20G $volume_group_name
+    lvcreate --name apps -L 30G $volume_group_name
     lvcreate -l 100%FREE --name data $volume_group_name
 
     # Format the logical volumes with desired filesystem (e.g., xfs)
@@ -200,8 +200,7 @@ function setup() {
 function set_environment_vars() {
     echo Setting environment vars
     if [ ! -f /etc/profile.d/jsonar.sh ]; then
-        sudo cat /etc/sysconfig/jsonar $LOCAL_DIR/sonarg/sysconfig/machine | \
-            sed -e 's/^/'"export "'/' | sudo tee /etc/profile.d/jsonar.sh
+        echo 'export $(cat /etc/sysconfig/jsonar '$LOCAL_DIR'/sonarg/sysconfig/machine)' | sudo tee /etc/profile.d/jsonar.sh
     fi
     . /etc/sysconfig/jsonar
 }

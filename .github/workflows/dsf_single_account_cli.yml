@@ -41,7 +41,6 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
   AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-  TF_WORKSPACE: "dsf_single_account"
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
 
@@ -59,18 +58,19 @@ jobs:
       run:
         shell: bash
     steps:
-    - name: Pick ref
-      run: |
-        if [ -z "${{ inputs.explicit_ref }}" ]; then
-          echo REF=${{ github.ref }} >> $GITHUB_ENV;
-        else
-          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
-        fi
+#    - name: Pick ref
+#      run: |
+#        if [ -z "${{ inputs.explicit_ref }}" ]; then
+#          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+#        else
+#          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
+#        fi
     # Checkout the repository to the GitHub Actions runner
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ env.REF }}
+        ref: ${{ inputs.branch }}
 
     - name: Change the modules source to local
       run: |
@@ -80,6 +80,14 @@ jobs:
       run: |
         echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
       if: inputs.branch != 'master'
+
+    - name: Set Workspace
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ] ||  [ ${{ inputs.branch }} == 'dev' ]; then
+          echo "TF_WORKSPACE=dsf_single_account_${{ inputs.branch }}" >> $GITHUB_ENV
+        else
+          echo "TF_WORKSPACE=dsf_single_account" >> $GITHUB_ENV
+        fi
 
     - name: Create terraform backend file
       run: |
@@ -97,7 +105,7 @@ jobs:
     - name: Create tfvars File
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        ${{ vars.TFVAR_PARAMETERS_DSF_SINGLE_ACCOUNT_AUTOMATION }}
+        ${{ vars.TFVAR_PARAMETERS_DSF_SINGLE_ACCOUNT_AUTOMATION_PRIVATE_SUBNETS }}
         EOF
 
     - name: Cat tfvars File
