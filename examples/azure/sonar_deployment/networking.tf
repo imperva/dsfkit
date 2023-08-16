@@ -81,12 +81,13 @@ resource "azurerm_nat_gateway" "nat_gw" {
   idle_timeout_in_minutes = 10
 }
 
-resource "azurerm_subnet_nat_gateway_association" "nat_gw_vnet_association" {
-  subnet_id      = module.network[0].vnet_subnets[0]
-  nat_gateway_id = azurerm_nat_gateway.nat_gw.id
-}
-
 resource "azurerm_nat_gateway_public_ip_association" "nat_gw_public_ip_association" {
   nat_gateway_id       = azurerm_nat_gateway.nat_gw.id
   public_ip_address_id = azurerm_public_ip.nat_gw_public_ip.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "nat_gw_vnet_association" {
+  count          = length(local.subnet_prefixes)
+  subnet_id      = module.network[0].vnet_subnets[count.index]
+  nat_gateway_id = azurerm_nat_gateway.nat_gw.id
 }
