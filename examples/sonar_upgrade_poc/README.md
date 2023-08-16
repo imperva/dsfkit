@@ -17,7 +17,7 @@ Prerequisites 1-4 should be satisfied in your installer machine of choice.
 1. Install [git](https://git-scm.com).
 2. Install [Terraform](https://developer.hashicorp.com/terraform). Latest Supported Terraform Version is 1.5.x. Using a higher version may result in unexpected behavior or errors.
 3. Install [Python 3](https://www.python.org/).
-4. Network access to the deployed environment on AWS which is being upgraded.
+4. Network access to the deployed environment on AWS to be upgraded.
 5. Request access to the Sonar installation software in S3 bucket [here](https://docs.google.com/forms/d/1xG_TNwAiu_WGCYoXs-YfV3Ds3nEMb60xlVBojoOXCJc).
 
 ## Running the Example
