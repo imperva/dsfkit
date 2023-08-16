@@ -34,7 +34,7 @@ locals {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "vault" {
-  name                       = var.name
+  name                       = trim(substr(var.name, -24, -1), "-")
   location                   = var.resource_group.location
   resource_group_name        = var.resource_group.name
   enabled_for_deployment     = true
