@@ -14,8 +14,14 @@ module "globals" {
 }
 
 resource "azurerm_resource_group" "rg" {
+  count = var.resource_group == null ? 1 : 0
   name     = "${local.deployment_name_salted}-${module.globals.current_user_name}"
-  location = var.location
+  location = var.resource_group_location
+}
+
+data "azurerm_resource_group" "rg" {
+  count = var.resource_group != null ? 1 : 0
+  name = var.resource_group
 }
 
 # create key
@@ -36,8 +42,11 @@ locals {
   workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tags                   = merge(module.globals.tags, var.tags, { "deployment_name" = local.deployment_name_salted })
   private_key_file_path  = local_sensitive_file.ssh_key.filename
-  resource_group = {
-    location = azurerm_resource_group.rg.location
-    name     = azurerm_resource_group.rg.name
+  resource_group = var.resource_group == null ? {
+    location = azurerm_resource_group.rg[0].location
+    name     = azurerm_resource_group.rg[0].name
+  } : {
+    location = data.azurerm_resource_group.rg[0].location
+    name     = data.azurerm_resource_group.rg[0].name
   }
 }

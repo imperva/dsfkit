@@ -4,9 +4,16 @@ variable "tags" {
   default     = {}
 }
 
-variable "location" {
+variable "resource_group" {
   type    = string
-  default = "East US"
+  description = "Azure exisiting resource group. Keep empty if you wish to create a new resource group"
+  default = null
+}
+
+variable "resource_group_location" {
+  type    = string
+  description = "In case var.resource_group is not provided and a new resource group is craeted. It will be created in this location"
+  default = null
 }
 
 variable "deployment_name" {

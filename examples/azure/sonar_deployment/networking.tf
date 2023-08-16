@@ -19,7 +19,7 @@ module "network" {
   count               = 1
   source              = "Azure/network/azurerm"
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = local.resource_group.name
   address_spaces      = [var.vnet_ip_range]
   subnet_prefixes     = local.subnet_prefixes
   subnet_names        = formatlist("subnet-%d", range(length(local.subnet_prefixes)))
@@ -67,16 +67,16 @@ module "network" {
 
 resource "azurerm_public_ip" "nat_gw_public_ip" {
   name                = join("-", [var.deployment_name, "nat", "public", "ip"])
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = local.resource_group.location
+  resource_group_name = local.resource_group.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 
 resource "azurerm_nat_gateway" "nat_gw" {
   name                    = join("-", [var.deployment_name, "nat", "gw"])
-  location                = azurerm_resource_group.rg.location
-  resource_group_name     = azurerm_resource_group.rg.name
+  location                = local.resource_group.location
+  resource_group_name     = local.resource_group.name
   sku_name                = "Standard"
   idle_timeout_in_minutes = 10
 }
