@@ -46,7 +46,7 @@ variable "security_groups_config" {
 
 variable "security_group_ids" {
   type        = list(string)
-  description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   validation {
     condition     = length(var.security_group_ids) == 0 || length(var.security_group_ids) == 1
     error_message = "Can't contain more than a single element"

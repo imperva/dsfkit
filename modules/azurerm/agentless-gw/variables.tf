@@ -35,13 +35,16 @@ variable "subnet_id" {
   }
 }
 
-
 variable "security_group_ids" {
   type        = list(string)
-  description = "AWS security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   validation {
-    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
-    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
+    condition     = length(var.security_group_ids) == 0 || length(var.security_group_ids) == 1
+    error_message = "Can't contain more than a single element"
+  }
+  validation {
+    condition     = alltrue([for item in var.security_group_ids : can(regex(".*Microsoft.Network/networkSecurityGroups/.*", item))])
+    error_message = "One or more of the security group ids list is invalid. Each item should match the pattern '.*Microsoft.Network/networkSecurityGroups/<network-security-group-name>"
   }
   default = []
 }
