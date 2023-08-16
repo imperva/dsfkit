@@ -27,7 +27,7 @@ Enter the details of DSF Hubs and Agentless Gateways in the [main.tf](./main.tf)
 terraform init
 terraform apply
 ```
-To re-apply when there are no Terraform changes (the Terraform infrastructure matches the configuration), run the example as follows:
+To re-apply when there are no Terraform changes (the Terraform infrastructure matches the configuration), run:
 ```bash
 terraform apply -replace="module.sonar_upgrader.null_resource.sonar_upgrader"
 ```
