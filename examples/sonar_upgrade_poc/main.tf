@@ -43,7 +43,7 @@ module "sonar_upgrader"{
   target_version = "4.12.0.10.0"
   # options
   run_preflight_validations = true
-  run_postflight_validations = true
   run_upgrade = true
+  run_postflight_validations = true
   custom_validations_scripts = ["validation1"]
 }
