@@ -55,12 +55,6 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
-variable "subnets_ip_range" {
-  type        = list(string)
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
-  description = "Subnet ip range"
-}
-
 variable "subnet_ids" {
   type = object({
     hub_subnet_id                    = string
