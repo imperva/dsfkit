@@ -412,7 +412,7 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
 3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Latest Supported Terraform Version: 1.4.x. Using a higher version may result in unexpected behavior or errors.
+5. Latest Supported Terraform Version: 1.5.x. Using a higher version may result in unexpected behavior or errors.
 6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
 
 ## Choosing the Example/Recipe that Fits Your Use Case
