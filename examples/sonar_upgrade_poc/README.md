@@ -24,6 +24,7 @@ Prerequisites 1-4 should be satisfied in your installer machine of choice.
 
 Enter the details of DSF Hubs and Agentless Gateways in the [main.tf](./main.tf) file, then run the example as follows:
 ```bash
+terraform init
 terraform apply
 ```
 To re-apply when there are no Terraform changes (the Terraform infrastructure matches the configuration), run the example as follows:
