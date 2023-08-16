@@ -2,8 +2,8 @@
 
 # Install, create and activate the virtual environment
 pip3 install virtualenv
-python3 -m virtualenv lenv
-source lenv/bin/activate
+python3 -m virtualenv venv
+source venv/bin/activate
 
 pip3 install -r ${path}/python_upgrader/requirements.txt
 
