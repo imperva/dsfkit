@@ -120,8 +120,8 @@ def parse_args():
     parser.add_argument("--target_version", required=True, help="Target version to upgrade")
     parser.add_argument("--run_preflight_validations", required=True, type=str_to_bool, help="Whether to run preflight validations")
     parser.add_argument("--run_postflight_validations", required=True, type=str_to_bool, help="Whether to run postflight validations")
-    parser.add_argument("--custom_validations_scripts", help="List of custom validation scripts")
     parser.add_argument("--run_upgrade", required=True, type=str_to_bool, help="Whether to run the upgrade")
+    parser.add_argument("--custom_validations_scripts", help="List of custom validation scripts")
     args = parser.parse_args()
     return args
 
@@ -134,8 +134,8 @@ def print_inputs(agentless_gws, hubs, args):
     print(f"target_version: {args.target_version}")
     print(f"run_preflight_validations: {args.run_preflight_validations}")
     print(f"run_postflight_validations: {args.run_postflight_validations}")
-    print(f"custom_validations_scripts: {args.custom_validations_scripts}")
     print(f"run_upgrade: {args.run_upgrade}")
+    print(f"custom_validations_scripts: {args.custom_validations_scripts}")
 
 
 def print_dsf_nodes(dsf_nodes):
