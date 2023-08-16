@@ -10,6 +10,10 @@
 #   agent_gw_subnet_id               = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
 # }
 
+locals {
+  subnet_prefixes = cidrsubnets(var.vnet_ip_range, 8, 8)
+}
+
 # network
 module "network" {
   count               = 1
@@ -17,8 +21,8 @@ module "network" {
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = azurerm_resource_group.rg.name
   address_spaces      = [var.vnet_ip_range]
-  subnet_prefixes     = var.subnets_ip_range
-  subnet_names        = formatlist("subnet-%d", range(length(var.subnets_ip_range)))
+  subnet_prefixes     = local.subnet_prefixes
+  subnet_names        = formatlist("subnet-%d", range(length(local.subnet_prefixes)))
 
   use_for_each = true
   tags         = local.tags
