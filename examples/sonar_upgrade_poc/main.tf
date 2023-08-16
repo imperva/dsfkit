@@ -44,6 +44,6 @@ module "sonar_upgrader"{
   # options
   run_preflight_validations = true
   run_postflight_validations = true
-  custom_validations_scripts = ["validation1"]
   run_upgrade = true
+  custom_validations_scripts = ["validation1"]
 }
