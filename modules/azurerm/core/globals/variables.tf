@@ -1,10 +1,7 @@
 variable "sonar_version" {
-  type    = string
-  default = "4.10"
-  validation {
-    condition     = contains(["4.9", "4.10"], var.sonar_version)
-    error_message = "The sonar_version value must be from the list [\"4.9\", \"4.10\"]"
-  }
+  type        = string
+  default     = "4.12"
+  description = "The Sonar version to install. Supported versions are: 4.9 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
 }
 
 variable "tarball_location" {
