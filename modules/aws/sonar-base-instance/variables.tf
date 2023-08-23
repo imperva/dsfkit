@@ -107,20 +107,68 @@ variable "ec2_instance_type" {
   description = "Ec2 instance type for the DSF base instance"
 }
 
-variable "password" {
+variable "admin_password" {
   type        = string
   sensitive   = true
-  description = "Password for all users"
+  description = "Password for admin user."
   validation {
-    condition     = var.password == null || try(length(var.password) > 8, false)
-    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
+    condition     = var.admin_password == null || try(length(var.admin_password) > 8, false)
+    error_message = "Must be at least 8 characters."
   }
 }
 
-variable "password_secret_name" {
+variable "admin_password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the user password. If not set, 'password' is used."
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'password' is used."
+}
+
+variable "secadmin_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for secadmin user."
+  validation {
+    condition     = var.secadmin_password == null || try(length(var.secadmin_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "secadmin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the secadmin user password. If not set, 'password' is used."
+}
+
+variable "sonarg_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for sonarg user."
+  validation {
+    condition     = var.sonarg_password == null || try(length(var.sonarg_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "sonarg_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the sonarg user password. If not set, 'password' is used."
+}
+
+variable "sonargd_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for sonargd user"
+  validation {
+    condition     = var.sonargd_password == null || try(length(var.sonargd_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "sonargd_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the sonargd user password. If not set, 'password' is used."
 }
 
 variable "ssh_key_path" {

@@ -18,7 +18,7 @@ locals {
 
 resource "aws_eip" "dsf_instance_eip" {
   count = var.attach_persistent_public_ip ? 1 : 0
-  vpc   = true
+  domain   = "vpc"
   tags  = var.tags
 }
 
@@ -43,7 +43,7 @@ resource "aws_instance" "dsf_base_instance" {
     device_index         = 0
   }
   disable_api_termination     = true
-  user_data_replace_on_change = false
+  user_data_replace_on_change = true
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"

@@ -29,7 +29,10 @@ locals {
         "Action" : "secretsmanager:GetSecretValue",
         "Resource" : concat([
           "${local.sonarw_secret_aws_arn}",
-          "${local.password_secret_aws_arn}"
+          "${local.admin_password_secret_aws_arn}",
+          "${local.secadmin_password_secret_aws_arn}",
+          "${local.sonarg_password_secret_aws_arn}",
+          "${local.sonargd_password_secret_aws_arn}"
           ],
           [
             for val in aws_secretsmanager_secret.access_token : val.arn
