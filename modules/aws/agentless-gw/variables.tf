@@ -53,6 +53,42 @@ variable "allowed_hub_cidrs" {
   default = []
 }
 
+variable "hub_info" {
+  type = object({
+    ssh_ip_address             = string
+    federation_ip_address      = string
+    ssh_user                   = string
+    proxy_ip_address           = string
+    proxy_private_ssh_key_path = string
+    proxy_ssh_user             = string
+  })
+
+  description = "Proxy address, private key file path and user used for ssh to a private DSF Hub. Keep empty if a proxy is not used."
+  default = {
+    ssh_ip_address             = null
+    federation_ip_address      = null
+    ssh_user                   = null
+    proxy_ip_address           = null
+    proxy_private_ssh_key_path = null
+    proxy_ssh_user             = null
+  }
+}
+
+variable "gw_proxy_info" {
+  type = object({
+    ip_address                 = string
+    private_ssh_key_path = string
+    ssh_user             = string
+  })
+
+  description = "Proxy address, private key file path and user used for ssh to a private Agentless Gateway. Keep empty if a proxy is not used."
+  default = {
+    ip_address           = null
+    private_ssh_key_path = null
+    ssh_user             = null
+  }
+}
+
 variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing ssh access"
@@ -91,7 +127,7 @@ variable "public_ip" {
 
 variable "instance_type" {
   type        = string
-  default     = "r6i.xlarge"
+  default     = "r6i.2xlarge"
   description = "Ec2 instance type for the Agentless Gateway"
 }
 
@@ -102,16 +138,6 @@ variable "ebs" {
     throughput       = number
   })
   description = "Compute instance volume attributes"
-}
-
-variable "ingress_communication_via_proxy" {
-  type = object({
-    proxy_address              = string
-    proxy_private_ssh_key_path = string
-    proxy_ssh_user             = string
-  })
-  description = "Proxy address used for ssh for private Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default     = null
 }
 
 variable "binaries_location" {

@@ -1,7 +1,8 @@
 locals {
-  bastion_host        = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : try(var.proxy_info.proxy_address, null)
-  bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
-  bastion_user        = try(var.proxy_info.proxy_ssh_user, null)
+  bastion_host        = try(var.proxy_info.ip_address, null)
+  # bastion_host        = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : try(var.proxy_info.ip_address, null)
+  bastion_private_key = try(file(var.proxy_info.private_ssh_key_path), "")
+  bastion_user        = try(var.proxy_info.ssh_user, null)
 
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = var.name

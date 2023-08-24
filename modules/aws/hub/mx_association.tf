@@ -1,7 +1,7 @@
 locals {
-  bastion_host        = try(var.ingress_communication_via_proxy.proxy_address, null)
-  bastion_private_key = try(file(var.ingress_communication_via_proxy.proxy_private_ssh_key_path), "")
-  bastion_user        = try(var.ingress_communication_via_proxy.proxy_ssh_user, null)
+  bastion_host        = try(var.hub_proxy_info.ip_address, null)
+  bastion_private_key = try(file(var.hub_proxy_info.private_ssh_key_path), "")
+  bastion_user        = try(var.hub_proxy_info.ssh_user, null)
   script_path         = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
 
   hub_address = var.use_public_ip ? module.hub_instance.public_ip : module.hub_instance.private_ip
