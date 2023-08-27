@@ -7,7 +7,7 @@ This Terraform module provisions a Agentless Gateway on AWS as an EC2 instance.
 4.9 and up
 
 ## Requirements
-* Terraform version between v1.3.1 and v1.4.x, inclusive
+* Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An AWS account
 * SSH access - key and network path to the instance
 * Access to the tarball containing Sonar binaries. To request access, click [here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform)
@@ -21,6 +21,7 @@ This Terraform module provisions several resources on AWS to create the Agentles
 * A security group to allow the required network access to and from the Agentless Gateway instance
 * An IAM role with relevant policies
 * An AWS Elastic Network Interface (ENI)
+* AWS secrets
 
 The EC2 instance and EBS volume provide the computing and storage resources needed to run the Agentless Gateway software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources.
 
@@ -31,7 +32,6 @@ The following input variables are **required**:
 * `subnet_id`: The ID of the subnet in which to launch the Agentless Gateway instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `password`: Admin password
-* `ingress_communication`: List of allowed ingress CIDR patterns for the Agentless Gateway instance for ssh and internal protocols
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
 * `hub_sonarw_public_key`: Public key of the sonarw user taken from the primary [DSF Hub](../hub)'s output

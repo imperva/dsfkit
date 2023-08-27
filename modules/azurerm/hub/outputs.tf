@@ -1,5 +1,5 @@
 output "public_ip" {
-  description = "Public elastic IP address of the DSF instance"
+  description = "Public IP address of the DSF instance"
   value       = module.hub_instance.public_ip
 }
 
@@ -9,7 +9,7 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  description = "Public dns of elastic IP address of the DSF instance"
+  description = "Public dns of IP address of the DSF instance"
   value       = module.hub_instance.public_dns
 }
 
