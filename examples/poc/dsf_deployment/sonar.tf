@@ -1,6 +1,6 @@
 locals {
   database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
-  tarball_location   = module.globals.tarball_location
+  tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   hub_public_ip           = var.enable_sonar ? (length(module.hub[0].public_ip) > 0 ? format("%s/32", module.hub[0].public_ip) : null) : null
