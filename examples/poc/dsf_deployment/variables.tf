@@ -139,7 +139,7 @@ variable "large_scale_mode" {
   }
   default = {
     mx       = false
-    agent_gw = true
+    agent_gw = false
   }
 }
 

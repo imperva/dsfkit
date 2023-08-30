@@ -482,7 +482,7 @@ variable "large_scale_mode" {
     error_message = "MX large scale mode requires setting large scale mode in the Agentless Gateway as well"
   }
   default = {
-    mx       = false
+    mx       = true
     agent_gw = true
   }
 }
