@@ -83,6 +83,6 @@ resource "aws_secretsmanager_secret" "access_tokens" {
 
 resource "aws_secretsmanager_secret_version" "token_ver" {
   count         = length(local.access_tokens)
-  secret_id     = aws_secretsmanager_secret.access_token[count.index].id
+  secret_id     = aws_secretsmanager_secret.access_tokens[count.index].id
   secret_string = random_uuid.access_tokens[count.index].result
 }
