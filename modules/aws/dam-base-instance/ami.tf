@@ -1,8 +1,29 @@
+locals {
+  ami_default = {
+    id               = null
+    owner_account_id = "aws-marketplace"
+    name             = "SecureSphere-${var.dam_version}*"
+  }
+
+  ami = var.ami != null ? var.ami : local.ami_default
+
+  ami_owner    = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
+  ami_name     = local.ami.name != null ? local.ami.name : "*"
+  ami_id       = local.ami.id != null ? local.ami.id : "*"
+}
+
 data "aws_ami" "selected-ami" {
-  owners = ["aws-marketplace"]
+  most_recent = true
+  owners      = [local.ami_owner]
+
+  filter {
+    name   = "image-id"
+    values = [local.ami_id]
+  }
+
   filter {
     name   = "name"
-    values = ["SecureSphere-${var.dam_version}*"]
+    values = [local.ami_name]
   }
 
   filter {
@@ -15,6 +36,24 @@ data "aws_ami" "selected-ami" {
     values = ["hvm"]
   }
 }
+
+# data "aws_ami" "selected-ami" {
+#   owners = ["aws-marketplace"]
+#   filter {
+#     name   = "name"
+#     values = ["SecureSphere-${var.dam_version}*"]
+#   }
+
+#   filter {
+#     name   = "architecture"
+#     values = ["x86_64"]
+#   }
+
+#   filter {
+#     name   = "virtualization-type"
+#     values = ["hvm"]
+#   }
+# }
 # Filter for ami using the local.dammxbyolRegion2Ami map
 #   filter {
 #     name   = "image-id"
