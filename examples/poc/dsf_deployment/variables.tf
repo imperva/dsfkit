@@ -139,7 +139,7 @@ variable "large_scale_mode" {
   }
   default = {
     mx       = false
-    agent_gw = true
+    agent_gw = false
   }
 }
 
@@ -170,7 +170,7 @@ variable "agent_gw_ebs_details" {
 variable "simulation_db_types_for_agent" {
   type        = list(string)
   default     = ["MySql"]
-  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'."
+  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'. Note: agents won't be created for clusterless dam deployments (Less than 2 Agent Gateways)"
   validation {
     condition = alltrue([
       for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql", "MariaDB"], db_type)
