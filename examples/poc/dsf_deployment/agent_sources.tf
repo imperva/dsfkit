@@ -1,6 +1,4 @@
 locals {
-  # TODO why is creating a db_with_agent conditioned by the creation of a cluster?
-  # change to local.agent_gw_count
   db_types_for_agent = local.create_agent_gw_cluster > 0 ? var.simulation_db_types_for_agent : []
 }
 
