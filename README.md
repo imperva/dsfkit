@@ -638,7 +638,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
     ```bash
     terraform output "web_console_dam"
     ```
-   To access the DRA Admin, extract the web console admin password and MX URL using:
+   To access the DRA Admin, extract the web console admin password and DRA URL using:
     ```bash
     terraform output "web_console_dra"
     ```
