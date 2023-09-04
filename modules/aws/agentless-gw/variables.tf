@@ -89,7 +89,7 @@ variable "public_ip" {
   description = "Create public IP for the instance"
 }
 
-variable "instance_type" {
+variable "instance_type" { # https://docs.imperva.com/bundle/z-kb-articles-km/page/a6defd0e.html
   type        = string
   default     = "r6i.xlarge"
   description = "Ec2 instance type for the Agentless Gateway"
