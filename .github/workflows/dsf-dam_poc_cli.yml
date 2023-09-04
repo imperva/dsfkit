@@ -31,7 +31,6 @@ on:
       - 'dev'
     paths:
       - 'modules/*'
-      - 'examples/alpha/dam_basic_deployment/*'
       - 'examples/poc/dsf_deployment/*'
 
   pull_request:
@@ -43,7 +42,6 @@ on:
       - 'dev'
     paths:
       - 'modules/*'
-      - 'examples/alpha/dam_basic_deployment/*'
       - 'examples/poc/dsf_deployment/*'
 
 env:
@@ -62,10 +60,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DAM POC CLI
-            workspace: dam_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
-            example_dir: ./examples/alpha/dam_basic_deployment
-            aws_region: ca-central-1
           - name: DSF POC CLI
             workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/poc/dsf_deployment

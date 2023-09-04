@@ -480,16 +480,6 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.3/examples/alpha/dam_basic_deployment/README.md">DAM Basic Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A DSF deployment with an MX, an Agent Gateway, networking and onboarding of an Agent with a randomly selected DB type: PostgreSql, MySql or MariaDB.   
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.3/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip">dam_basic_deployment.zip</a>
-      </td>
-   </tr>
-   <tr>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.5.3/examples/poc/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
@@ -709,11 +699,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     wget https://github.com/imperva/dsfkit/raw/1.5.3/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment.zip
     
     or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.5.3/examples/alpha/dam_basic_deployment/dam_basic_deployment.zip
-    
-    or
- 
+
     wget https://github.com/imperva/dsfkit/raw/1.5.3/examples/poc/dsf_deployment/dsf_deployment.zip
     
     or
