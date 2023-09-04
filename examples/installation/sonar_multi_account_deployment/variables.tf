@@ -203,7 +203,7 @@ variable "agentless_gw_ebs_details" {
 
 variable "hub_instance_type" {
   type        = string
-  default     = "r6i.xlarge"
+  default     = "r6i.2xlarge"
   description = "Ec2 instance type for the DSF hub"
 }
 
