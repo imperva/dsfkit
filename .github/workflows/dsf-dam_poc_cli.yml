@@ -1,4 +1,4 @@
-name: 'DSF & DAM POC CLI'
+name: 'DSF POC CLI - ALL'
 
 on:
   workflow_call:
@@ -60,7 +60,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DSF POC CLI
+          - name: DSF POC CLI - ALL
             workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             example_dir: ./examples/poc/dsf_deployment
             aws_region: eu-west-2
