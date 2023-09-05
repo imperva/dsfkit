@@ -83,7 +83,7 @@ jobs:
         run: |
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
-      - name: Cleaning envrionment
+      - name: Cleaning environment
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: 54.179.25.83
