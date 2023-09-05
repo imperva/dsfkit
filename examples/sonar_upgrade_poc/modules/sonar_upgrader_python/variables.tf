@@ -1,10 +1,10 @@
 variable "agentless_gws" {
   type = list(object({
-    address                   = string # IP or hostname, can be private or public
+    host                   = string # IP or hostname, can be private or public
     ssh_user                  = string
     ssh_private_key_file_path = string
     proxy = optional(object({
-      address                   = string # IP or hostname, can be private or public
+      host                   = string # IP or hostname, can be private or public
       ssh_user                  = string
       ssh_private_key_file_path = string
     }))
@@ -16,11 +16,11 @@ variable "agentless_gws" {
 
 variable "dsf_hubs" {
   type = list(object({
-    address                   = string # IP or hostname, can be private or public
+    host                   = string # IP or hostname, can be private or public
     ssh_user                  = string
     ssh_private_key_file_path = string
     proxy = optional(object({
-      address                   = string # IP or hostname, can be private or public
+      host                   = string # IP or hostname, can be private or public
       ssh_user                  = string
       ssh_private_key_file_path = string
     }))
