@@ -165,10 +165,14 @@ jobs:
         mv $EXAMPLE_DIR/dra.tf{,_}
         mv $EXAMPLE_DIR/sonar.tf{,_}
         mv $EXAMPLE_DIR/networking.tf{,_}
-        ll
+        ls -l
         terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
         mv $EXAMPLE_DIR/main.tf{_,}
         mv $EXAMPLE_DIR/outputs.tf{_,}
+        mv $EXAMPLE_DIR/dam.tf{_,}
+        mv $EXAMPLE_DIR/dra.tf{_,}
+        mv $EXAMPLE_DIR/sonar.tf{_,}
+        mv $EXAMPLE_DIR/networking.tf{_,}
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
