@@ -2,7 +2,17 @@ module "sonar_upgrader"{
   source = "./modules/sonar_upgrader_python"
   agentless_gws = [
       {
-        "ip" = "10.0.1.1"
+        "host" = "10.0.1.1"
+        "ssh_user" = "ec2-user"
+        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        "proxy" = {
+          "host" = "52.8.8.8"
+          "ssh_user" = "ec2-user"
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        }
+      },
+      {
+        "host" = "10.0.1.2"
         "ssh_user" = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         "proxy" = {
@@ -12,17 +22,7 @@ module "sonar_upgrader"{
         }
       },
       {
-        "ip" = "10.0.1.2"
-        "ssh_user" = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy" = {
-          "ip" = "52.8.8.8"
-          "ssh_user" = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        }
-      },
-      {
-        "ip" = "10.0.1.3"
+        "host" = "10.0.1.3"
         "ssh_user" = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         "proxy" = {
@@ -34,7 +34,7 @@ module "sonar_upgrader"{
   ]
   dsf_hubs = [
     {
-      "ip" = "52.8.8.8"
+      "host" = "52.8.8.8"
       "ssh_user" = "ec2-user"
       "ssh_private_key_file_path" = "/home/ssh_key2.pem"
     }

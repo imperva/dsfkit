@@ -51,16 +51,16 @@ def build_python_script_run_command(script_contents, args, python_location):
 
 def run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command):
     if agentless_gw.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(agentless_gw.get("ip"),
+        script_output = run_remote_script_via_proxy(agentless_gw.get('host'),
                                                     agentless_gw.get("ssh_user"),
                                                     agentless_gw.get("ssh_private_key_file_path"),
                                                     script_contents,
                                                     script_run_command,
-                                                    agentless_gw.get("proxy").get("ip"),
+                                                    agentless_gw.get("proxy").get('host'),
                                                     agentless_gw.get("proxy").get("ssh_user"),
                                                     agentless_gw.get("proxy").get("ssh_private_key_file_path"))
     else:
-        script_output = run_remote_script(agentless_gw.get("ip"),
+        script_output = run_remote_script(agentless_gw.get('host'),
                                           agentless_gw.get("ssh_user"),
                                           agentless_gw.get("ssh_private_key_file_path"),
                                           script_contents,
@@ -141,7 +141,7 @@ def print_inputs(agentless_gws, hubs, args):
 def print_dsf_nodes(dsf_nodes):
     print("---")
     for item in dsf_nodes:
-        print(f"IP: {item.get('ip')}")
+        print(f"Address: {item.get('host')}")
         print(f"SSH User: {item.get('ssh_user')}")
         print(f"SSH Key: {item.get('ssh_private_key_file_path')}")
         print(f"Proxy: {item.get('proxy')}")
@@ -153,8 +153,8 @@ def collect_python_locations(dsf_nodes_dict):
     for dsf_node_type in dsf_nodes_dict.keys():
         for dsf_node in dsf_nodes_dict[dsf_node_type]:
             python_location = run_get_python_location_script(dsf_node)
-            python_location_dict[dsf_node.get('ip')] = python_location
-            print(f"Python location in {dsf_node_type} {dsf_node.get('ip')} is {python_location}")
+            python_location_dict[dsf_node.get('host')] = python_location
+            print(f"Python location in {dsf_node_type} {dsf_node.get('host')} is {python_location}")
     return python_location_dict
 
 
@@ -176,24 +176,24 @@ def run_all_preflight_validations(agentless_gws, hubs, target_version, python_lo
 def run_preflight_validations_for_dsf_nodes(dsf_nodes, dsf_node_type, target_version, script_file_name,
                                             python_location_dict):
     for dsf_node in dsf_nodes:
-        python_location = python_location_dict[dsf_node.get('ip')]
+        python_location = python_location_dict[dsf_node.get('host')]
         preflight_validations_result = run_preflight_validations(dsf_node, dsf_node_type, target_version,
                                                                  script_file_name, python_location)
         if are_preflight_validations_passed(preflight_validations_result):
-            print(f"### Preflight validations passed for {dsf_node_type} {dsf_node.get('ip')}")
+            print(f"### Preflight validations passed for {dsf_node_type} {dsf_node.get('host')}")
         else:
-            print(f"### Preflight validations didn't pass for {dsf_node_type} {dsf_node.get('ip')}")
+            print(f"### Preflight validations didn't pass for {dsf_node_type} {dsf_node.get('host')}")
             return False
     return True
 
 
 def run_preflight_validations(dsf_node, dsf_node_type, target_version, script_file_name, python_location):
-    print(f"Running preflight validations for {dsf_node_type} {dsf_node.get('ip')}")
+    print(f"Running preflight validations for {dsf_node_type} {dsf_node.get('host')}")
 
     preflight_validations_result_json = run_preflight_validations_script(dsf_node, target_version, python_location,
                                                                          script_file_name)
     preflight_validations_result = json.loads(preflight_validations_result_json)
-    print(f"Preflight validations result in {dsf_node_type} {dsf_node.get('ip')} is {preflight_validations_result}")
+    print(f"Preflight validations result in {dsf_node_type} {dsf_node.get('host')} is {preflight_validations_result}")
     return preflight_validations_result
 
 
@@ -279,11 +279,11 @@ def maybe_upgrade_and_postflight_dsf_nodes(dsf_nodes, dsf_node_type, target_vers
             if do_run_postflight_validations:
                 postflight_validations_result = run_postflight_validations(dsf_node, dsf_node_type, target_version,
                                                                            postflight_validations_script_file_name,
-                                                                           python_location_dict[dsf_node.get('ip')])
+                                                                           python_location_dict[dsf_node.get('host')])
                 if are_postflight_validations_passed(postflight_validations_result):
-                    print(f"### Postflight validations passed for {dsf_node_type} {dsf_node.get('ip')}")
+                    print(f"### Postflight validations passed for {dsf_node_type} {dsf_node.get('host')}")
                 else:
-                    print(f"### Postflight validations didn't pass for {dsf_node_type} {dsf_node.get('ip')}")
+                    print(f"### Postflight validations didn't pass for {dsf_node_type} {dsf_node.get('host')}")
                     return False
             else:
                 return True
@@ -293,12 +293,12 @@ def maybe_upgrade_and_postflight_dsf_nodes(dsf_nodes, dsf_node_type, target_vers
 
 
 def upgrade_dsf_node(dsf_node, dsf_node_type, target_version, upgrade_script_file_name):
-    print(f"Running upgrade for {dsf_node_type} {dsf_node.get('ip')}")
+    print(f"Running upgrade for {dsf_node_type} {dsf_node.get('host')}")
     result = run_upgrade_script(dsf_node, target_version, upgrade_script_file_name)
     if result:
-        print(f"Upgrading {dsf_node_type} {dsf_node.get('ip')} was ### successful ###")
+        print(f"Upgrading {dsf_node_type} {dsf_node.get('host')} was ### successful ###")
     else:
-        print(f"Upgrading {dsf_node_type} {dsf_node.get('ip')} ### failed ### ")
+        print(f"Upgrading {dsf_node_type} {dsf_node.get('host')} ### failed ### ")
     return result
 
 
@@ -328,13 +328,13 @@ def get_tarball(target_version):
 
 
 def run_postflight_validations(dsf_node, dsf_node_type, target_version, script_file_name, python_location):
-    print(f"Running postflight validations for {dsf_node_type} {dsf_node.get('ip')}")
-    print(f"Python location (taken from dictionary) in {dsf_node_type} {dsf_node.get('ip')} is {python_location}")
+    print(f"Running postflight validations for {dsf_node_type} {dsf_node.get('host')}")
+    print(f"Python location (taken from dictionary) in {dsf_node_type} {dsf_node.get('host')} is {python_location}")
 
     postflight_validations_result_json = run_postflight_validations_script(dsf_node, target_version, python_location,
                                                                            script_file_name)
     postflight_validations_result = json.loads(postflight_validations_result_json)
-    print(f"Postflight validations result in {dsf_node_type} {dsf_node.get('ip')} is {postflight_validations_result}")
+    print(f"Postflight validations result in {dsf_node_type} {dsf_node.get('host')} is {postflight_validations_result}")
     return postflight_validations_result
 
 
