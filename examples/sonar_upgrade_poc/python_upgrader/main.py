@@ -3,8 +3,8 @@
 import argparse
 import time
 import json
-import os
 import re
+from utils import get_file_path, read_file_contents
 from remote_executor import run_remote_script, run_remote_script_via_proxy
 
 # Helper functions
@@ -17,28 +17,6 @@ def slp(duration):
 def str_to_bool(arg):
     # Convert string "true" or "false" to Python boolean value
     return arg.lower() == "true"
-
-
-# Get the absolute path to a script file in the same directory as this
-def get_script_file_path(script_file_name):
-    script_dir = get_current_directory()
-    return os.path.join(script_dir, script_file_name)
-
-
-# Get the absolute path of the currently executing script
-def get_current_directory():
-    return os.path.dirname(os.path.abspath(__file__))
-
-
-def read_file_contents(file_path):
-    try:
-        with open(file_path, "r") as file:
-            script_content = file.read()
-        return script_content
-    except FileNotFoundError:
-        raise Exception(f"File not found: {file_path}")
-    except Exception:
-        raise Exception(f"Failed to read contents of file: {file_path}")
 
 
 def build_bash_script_run_command(script_contents, args=""):
@@ -198,7 +176,7 @@ def run_preflight_validations(dsf_node, dsf_node_type, target_version, script_fi
 
 
 def run_get_python_location_script(dsf_node):
-    script_file_path = get_script_file_path("get_python_location.sh")
+    script_file_path = get_file_path("get_python_location.sh")
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
 
@@ -219,7 +197,7 @@ def extract_python_location(script_output):
 
 
 def run_preflight_validations_script(dsf_node, target_version, python_location, script_file_name):
-    script_file_path = get_script_file_path(script_file_name)
+    script_file_path = get_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
@@ -308,7 +286,7 @@ def run_upgrade_script(dsf_node, target_version, upgrade_script_file_name):
         script_file_name = 'dummy_upgrade_script.sh'
     else:
         script_file_name = upgrade_script_file_name
-    script_file_path = get_script_file_path(script_file_name)
+    script_file_path = get_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
 
     tarball = get_tarball(target_version)
@@ -339,7 +317,7 @@ def run_postflight_validations(dsf_node, dsf_node_type, target_version, script_f
 
 
 def run_postflight_validations_script(dsf_node, target_version, python_location, script_file_name):
-    script_file_path = get_script_file_path(script_file_name)
+    script_file_path = get_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
