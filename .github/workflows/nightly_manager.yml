@@ -40,7 +40,6 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_single_account:
-    needs: master_single_account
     uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
     with:
       branch: dev
@@ -98,28 +97,6 @@ jobs:
       AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-
-  master_dam_dsf:
-      uses: imperva/dsfkit/.github/workflows/dsf-dam_poc_cli.yml@master
-      with:
-        use_modules_from_terraform_registry: true
-        explicit_ref: master
-      secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-
-  dev_dam_dsf:
-    uses: imperva/dsfkit/.github/workflows/dsf-dam_poc_cli.yml@dev
-    with:
-      use_modules_from_terraform_registry: false
-      explicit_ref: dev
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 

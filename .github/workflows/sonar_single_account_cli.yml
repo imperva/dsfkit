@@ -83,7 +83,7 @@ jobs:
         run: |
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
-      - name: Cleaning envrionment
+      - name: Cleaning environment
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: 54.179.25.83
@@ -94,6 +94,20 @@ jobs:
           envs: TARGET_DIR
           script: |
             cd $TARGET_DIR
+            rm -rf dsfkit
+            rm -rf dsfkit.zip
+
+      - name: Delete Old Environment
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: TARGET_DIR
+          script: |
+            terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
             rm -rf dsfkit
             rm -rf dsfkit.zip
 

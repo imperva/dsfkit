@@ -65,6 +65,9 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
 
+    - name: Cleaning environment
+      run: terraform destroy -auto-approve
+
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check

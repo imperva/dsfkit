@@ -102,7 +102,7 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-    - name: Cleaning envrionment
+    - name: Cleaning environment
       run: |
         mv $EXAMPLE_DIR/main.tf{,_}
         mv $EXAMPLE_DIR/outputs.tf{,_}
