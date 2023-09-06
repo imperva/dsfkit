@@ -1,0 +1,87 @@
+name: 'DSF POC CLI - ALL'
+
+on:
+  workflow_call:
+    inputs:
+      use_modules_from_terraform_registry:
+        required: true
+        type: boolean
+      explicit_ref:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      DAM_LICENSE:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - 'modules/*'
+      - 'examples/poc/dsf_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - 'modules/*'
+      - 'examples/poc/dsf_deployment/*'
+
+env:
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+  TF_VAR_gw_count: 2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: DSF POC CLI
+            workspace: dsf_cli-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            example_dir: ./examples/poc/dsf_deployment
+            aws_region: eu-west-2
+
+    name: '${{ matrix.name }}'
+    runs-on: ubuntu-latest
+    env:
+      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
+      AWS_REGION: ${{ matrix.aws_region }}
+    environment: test
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Pick ref
+      run: |
+        if [ -z "${{ inputs.explicit_ref }}" ]; then
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+        else
+          echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+        fi
