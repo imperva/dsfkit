@@ -1,4 +1,4 @@
-name: 'DSF POC CLI - ALL'
+name: 'DSF POC CLI'
 
 on:
   workflow_call:
