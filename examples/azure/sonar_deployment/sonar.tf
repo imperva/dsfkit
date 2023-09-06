@@ -28,7 +28,6 @@ module "hub" {
   tags                              = local.tags
 
   depends_on = [
-    azurerm_resource_group.rg,
     module.network
   ]
 }
@@ -60,7 +59,6 @@ module "hub_secondary" {
   allowed_all_cidrs                 = local.workstation_cidr
   tags                              = local.tags
   depends_on = [
-    azurerm_resource_group.rg,
     module.network
   ]
 }
