@@ -41,6 +41,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: DSF POC - ALL
+            workspace: dsf_cli-all-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            enable_sonar: true
+            enable_dam: true
+            enable_dra: true
           - name: DSF POC - SONAR
             workspace: dsf_cli-sonar-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
             enable_sonar: true
