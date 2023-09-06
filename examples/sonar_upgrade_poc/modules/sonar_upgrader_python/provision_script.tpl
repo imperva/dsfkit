@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install, create and activate the virtual environment
-pip3 install virtualenv
+pip3 install --user virtualenv
 python3 -m virtualenv venv
 source venv/bin/activate
 
