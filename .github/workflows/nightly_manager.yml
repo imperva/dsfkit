@@ -9,110 +9,110 @@ permissions:
   contents: read
 
 jobs:
-  master_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@master
-    with:
-      branch: master
-      workspace: simple_cli_master_nightly
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  dev_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
-    with:
-      branch: dev
-      workspace: simple_cli_dev_nightly
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  master_single_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
-    with:
-      branch: master
-    secrets:
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  dev_single_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
-    with:
-      branch: dev
-    secrets:
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  master_multi_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@master
-    with:
-      branch: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  dev_multi_account:
-    needs: master_multi_account
-    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
-    with:
-      branch: dev
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  master_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
-    with:
-      branch: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-
-  dev_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
-    with:
-      branch: dev
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-
-  master_dsf_poc:
-      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
-      with:
-        use_modules_from_terraform_registry: true
-        explicit_ref: master
-      secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+#  master_basic_poc:
+#    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@master
+#    with:
+#      branch: master
+#      workspace: simple_cli_master_nightly
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  dev_basic_poc:
+#    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
+#    with:
+#      branch: dev
+#      workspace: simple_cli_dev_nightly
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  master_single_account:
+#    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
+#    with:
+#      branch: master
+#    secrets:
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  dev_single_account:
+#    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
+#    with:
+#      branch: dev
+#    secrets:
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  master_multi_account:
+#    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@master
+#    with:
+#      branch: master
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  dev_multi_account:
+#    needs: master_multi_account
+#    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
+#    with:
+#      branch: dev
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
+#  master_dsf_single_account:
+#    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
+#    with:
+#      branch: master
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+#
+#  dev_dsf_single_account:
+#    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
+#    with:
+#      branch: dev
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+#      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+#      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+#
+#  master_dsf_poc:
+#      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+#      with:
+#        use_modules_from_terraform_registry: true
+#        explicit_ref: master
+#      secrets:
+#        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dsf_poc:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@segev_dra_4.13
     with:
       use_modules_from_terraform_registry: false
       explicit_ref: dev
