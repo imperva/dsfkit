@@ -210,7 +210,7 @@ jobs:
       if: always()
       run: |
         if [ '${{ steps.destroy.conclusion }}' == 'success' ] && [ ${{ github.event_name }} != 'schedule' ]; then
-          terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+          terraform -chdir=$EXAMPLE_DIR workspace delete $TF_WORKSPACE
         fi
       env:
         TF_WORKSPACE: default
