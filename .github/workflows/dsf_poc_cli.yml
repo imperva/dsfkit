@@ -47,17 +47,17 @@ jobs:
             enable_dam: true
             enable_dra: true
           - name: DSF POC - SONAR
-            workspace: dsf_cli-sonar-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            workspace: dsf_cli-sonar-
             enable_sonar: true
             enable_dam: false
             enable_dra: false
           - name: DSF POC - DAM
-            workspace: dsf_cli-dam-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            workspace: dsf_cli-dam-
             enable_sonar: false
             enable_dam: true
             enable_dra: false
           - name: DSF POC - DRA
-            workspace: dsf_cli-dra-${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }}
+            workspace: dsf_cli-dra-
             enable_sonar: false
             enable_dam: false
             enable_dra: true
@@ -168,7 +168,7 @@ jobs:
     - name: Terraform Create Workspace
       run: |
         if [ ${{ github.event_name }} != 'schedule' ]; then
-          terraform -chdir=$EXAMPLE_DIR workspace new $TF_WORKSPACE
+          terraform -chdir=$EXAMPLE_DIR workspace new $TMP_WORKSPACE_NAME
         fi
 
     - name: Terraform Validate
