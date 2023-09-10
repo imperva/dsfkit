@@ -149,7 +149,6 @@ jobs:
 
     - name: Cleaning environment
       run: |
-#        if [ ${{ github.event_name }} == 'schedule' ]; then
         if [ 'schedule' == 'schedule' ]; then
           mv $EXAMPLE_DIR/main.tf{,_}
           mv $EXAMPLE_DIR/outputs.tf{,_}
