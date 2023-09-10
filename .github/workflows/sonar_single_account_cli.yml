@@ -91,11 +91,9 @@ jobs:
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: TARGET_DIR
+          envs: REMOTE_EXAMPLE_DIR
           script: |
-            cd $TARGET_DIR
-            rm -rf dsfkit
-            rm -rf dsfkit.zip
+            terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Delete Old Environment
         uses: appleboy/ssh-action@v0.1.8
@@ -107,7 +105,7 @@ jobs:
           command_timeout: "2h"
           envs: TARGET_DIR
           script: |
-            terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
+            cd $TARGET_DIR
             rm -rf dsfkit
             rm -rf dsfkit.zip
 
