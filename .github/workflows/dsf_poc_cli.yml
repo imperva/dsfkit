@@ -169,12 +169,6 @@ jobs:
           mv $EXAMPLE_DIR/agent_sources.tf{_,}
         fi
 
-    - name: Terraform Create Workspace
-      run: |
-        if [ ${{ github.event_name }} != 'schedule' ]; then
-          terraform -chdir=$EXAMPLE_DIR workspace new $TMP_WORKSPACE_NAME
-        fi
-
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate
 
