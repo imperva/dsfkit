@@ -147,6 +147,12 @@ jobs:
       env:
         TF_WORKSPACE: default
 
+    - name: Terraform Create Workspace
+      run: |
+        if [ ${{ github.event_name }} != 'schedule' ]; then
+          terraform -chdir=$EXAMPLE_DIR workspace new $TMP_WORKSPACE_NAME
+        fi
+
     - name: Cleaning environment
       run: |
         if [ 'schedule' == 'schedule' ]; then
@@ -156,6 +162,8 @@ jobs:
           mv $EXAMPLE_DIR/dra.tf{,_}
           mv $EXAMPLE_DIR/sonar.tf{,_}
           mv $EXAMPLE_DIR/networking.tf{,_}
+          mv $EXAMPLE_DIR/agentless_sources.tf{,_}
+          mv $EXAMPLE_DIR/agent_sources.tf{,_}
           terraform -chdir=$EXAMPLE_DIR destroy -var license=license.mprv -auto-approve
           mv $EXAMPLE_DIR/main.tf{_,}
           mv $EXAMPLE_DIR/outputs.tf{_,}
@@ -163,12 +171,8 @@ jobs:
           mv $EXAMPLE_DIR/dra.tf{_,}
           mv $EXAMPLE_DIR/sonar.tf{_,}
           mv $EXAMPLE_DIR/networking.tf{_,}
-        fi
-
-    - name: Terraform Create Workspace
-      run: |
-        if [ ${{ github.event_name }} != 'schedule' ]; then
-          terraform -chdir=$EXAMPLE_DIR workspace new $TMP_WORKSPACE_NAME
+          mv $EXAMPLE_DIR/agentless_sources.tf{_,}
+          mv $EXAMPLE_DIR/agent_sources.tf{_,}
         fi
 
     - name: Terraform Validate
@@ -210,9 +214,9 @@ jobs:
     - name: Terraform Delete Workspace
       if: always()
       run: |
-        if [ '${{ steps.destroy.conclusion }}' == 'success' ] && [ ${{ github.event_name }} != 'schedule' ]; then
-          terraform -chdir=$EXAMPLE_DIR workspace delete $TMP_WORKSPACE_NAME
-        fi
+#        if [ '${{ steps.destroy.conclusion }}' == 'success' ] && [ ${{ github.event_name }} != 'schedule' ]; then
+        terraform -chdir=$EXAMPLE_DIR workspace delete $TMP_WORKSPACE_NAME
+#        fi
       env:
         TF_WORKSPACE: default
 
