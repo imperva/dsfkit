@@ -133,13 +133,6 @@ Latest Supported Terraform Version: 1.5.x. Using a higher version may result in 
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform">Requst access to Terraform Cloud account - Request Form</a>
-   </td>
-   <td>Grants access for a specific e-mail address to eDSF Kit's Terraform Cloud account.
-       Required for <a href="https://github.com/imperva/dsfkit/tree/1.5.3#terraform-cloud-deployment-mode">Terraform Cloud Deployment Mode</a>.
-   </td>
-  </tr>
-  <tr>
    <td><a href="https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs">Request access to DSF installation software - Request Form</a>
    </td>
    <td> Grants access for a specific AWS account to the DSF installation software.
@@ -719,11 +712,9 @@ This deployment mode uses the Terraform Cloud service, which allows deploying an
 
 This deployment mode can be used to demonstrate DSF in a customer's Terraform Cloud account or the Imperva Terraform Cloud account, which is accessible for internal use (SEs, QA, Research, etc.), and can be used to deploy/undeploy POC environments on AWS accounts owned by Imperva.
 
- It is required that you have access to a Terraform Cloud account. Any account may be used, whether the account is owned by Imperva or the customer. [Click here to request access to Imperva's Terraform Cloud account](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform).
+It is required that you have access to a Terraform Cloud account. 
 
-If you want to use Imperva's Terraform Cloud account, the first thing to do is to request access here:
-[Open Terraform Cloud Account - Request Form](https://docs.google.com/forms/d/e/1FAIpQLSfgJh4kXYRD08xDsFyYgaYsS3ebhVrBTWvntcMCutSf0kNV2w/viewform).
-**Our internal Terraform Cloud account can only be used for demo purposes and not for customer deployments**.
+If you want to use Imperva's Terraform Cloud account, contact Imperva's Technical Support.
 
 **NOTE:** Currently this deployment mode doesn't support customizing the chosen example's code.
 
@@ -1022,7 +1013,7 @@ Review the following issues and troubleshooting remediations.
    <td>Replication failed! <br>
        Replication script exited with code 1
    </td>
-   <td>Contact Imperva Technical Support.
+   <td>Contact Imperva's Technical Support.
    </td>
   </tr>
   <tr>
@@ -1032,7 +1023,7 @@ Review the following issues and troubleshooting remediations.
        status: 500, data: None <br>
        See log "/data_vol/sonar-dsf/jsonar/logs/sonarg/federated.log" for details
    </td>
-   <td>Contact Imperva Technical Support. 
+   <td>Contact Imperva's Technical Support. 
    </td>
   </tr>
   <tr>
