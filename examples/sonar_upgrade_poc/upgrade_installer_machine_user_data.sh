@@ -8,8 +8,8 @@ yum -y install git
 
 yum install -y yum-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-yum -y install terraform-1.5.0
+yum -y install terraform-1.5.7
 
-yum install python3
+yum -y install python3
 
 pwd
