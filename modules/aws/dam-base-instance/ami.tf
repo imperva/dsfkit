@@ -7,9 +7,9 @@ locals {
 
   ami = var.ami != null ? var.ami : local.ami_default
 
-  ami_owner    = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
-  ami_name     = local.ami.name != null ? local.ami.name : "*"
-  ami_id       = local.ami.id != null ? local.ami.id : "*"
+  ami_owner = local.ami.owner_account_id != null ? local.ami.owner_account_id : "self"
+  ami_name  = local.ami.name != null ? local.ami.name : "*"
+  ami_id    = local.ami.id != null ? local.ami.id : "*"
 }
 
 data "aws_ami" "selected-ami" {

@@ -171,7 +171,7 @@ It is an object type variable that includes the following fields: id, name and o
 The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
 The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
 EOF
-  default = null
+  default     = null
 
   validation {
     condition     = var.ami == null || try(var.ami.id != null || var.ami.name != null, false)
