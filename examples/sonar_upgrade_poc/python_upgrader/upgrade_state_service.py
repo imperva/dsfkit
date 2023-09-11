@@ -58,8 +58,8 @@ class UpgradeStateService:
         create_file(file_name, contents)
         return file_name
 
-    def _get_upgrade_statuses(self, upgrade_state_file_name):
-        upgrade_state = self._read_upgrade_state_as_json(upgrade_state_file_name)
+    def _get_upgrade_statuses(self):
+        upgrade_state = self._read_upgrade_state_as_json()
         return upgrade_state.get("upgrade-statuses")
 
     def _read_upgrade_state_as_json(self):
