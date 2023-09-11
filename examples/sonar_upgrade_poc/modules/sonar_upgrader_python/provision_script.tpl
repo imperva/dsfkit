@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Install, create and activate the virtual environment
+python3 -m ensurepip --upgrade
 pip3 install --user virtualenv
 python3 -m virtualenv venv
 source venv/bin/activate
