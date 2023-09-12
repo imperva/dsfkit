@@ -58,15 +58,6 @@ jobs:
       run:
         shell: bash
     steps:
-#    - name: Pick ref
-#      run: |
-#        if [ -z "${{ inputs.explicit_ref }}" ]; then
-#          echo REF=${{ github.ref }} >> $GITHUB_ENV;
-#        else
-#          echo REF=${{ inputs.branch }} >> $GITHUB_ENV;
-#        fi
-    # Checkout the repository to the GitHub Actions runner
-
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -165,13 +156,21 @@ jobs:
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
 
-#    - name: Cleaning envrionment
-#      run: |
-#        mv $EXAMPLE_DIR/main.tf{,_}
-#        mv $EXAMPLE_DIR/outputs.tf{,_}
-#        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
-#        mv $EXAMPLE_DIR/main.tf{_,}
-#        mv $EXAMPLE_DIR/outputs.tf{_,}
+    - name: Cleaning environment
+      run: |
+        mv $EXAMPLE_DIR/main.tf{,_}
+        mv $EXAMPLE_DIR/outputs.tf{,_}
+        mv $EXAMPLE_DIR/dam.tf{,_}
+        mv $EXAMPLE_DIR/dra.tf{,_}
+        mv $EXAMPLE_DIR/sonar.tf{,_}
+        mv $EXAMPLE_DIR/networking.tf{,_}
+        terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+        mv $EXAMPLE_DIR/main.tf{_,}
+        mv $EXAMPLE_DIR/outputs.tf{_,}
+        mv $EXAMPLE_DIR/dam.tf{_,}
+        mv $EXAMPLE_DIR/dra.tf{_,}
+        mv $EXAMPLE_DIR/sonar.tf{_,}
+        mv $EXAMPLE_DIR/networking.tf{_,}
 
     - name: Terraform Validate
       run: terraform -chdir=$EXAMPLE_DIR validate

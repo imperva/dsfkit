@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "deployment_name" {
   type        = string
   default     = "imperva-dsf"
@@ -122,7 +128,7 @@ variable "license" {
   description = <<EOF
   License information. Must be one of the following:
   1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-  2. License file path
+  2. License file path (Make sure it allows AWS DAM models (AV2500/AV6500))
   EOF
   type        = string
 }
@@ -139,7 +145,7 @@ variable "large_scale_mode" {
   }
   default = {
     mx       = false
-    agent_gw = true
+    agent_gw = false
   }
 }
 
@@ -170,7 +176,7 @@ variable "agent_gw_ebs_details" {
 variable "simulation_db_types_for_agent" {
   type        = list(string)
   default     = ["MySql"]
-  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'."
+  description = "Types of databases to provision on EC2 with an Agent for simulation purposes. Available types are: 'PostgreSql', 'MySql' and 'MariaDB'. Note: agents won't be created for clusterless dam deployments (Less than 2 Agent Gateways)"
   validation {
     condition = alltrue([
       for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql", "MariaDB"], db_type)
@@ -198,6 +204,15 @@ variable "sonar_version" {
     error_message = "The sonar_version value must be 4.11 or higher"
   }
 }
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket location of the DSF installation software. s3_key is the full path to the tarball file within the bucket, for example, 'prefix/jsonar-x.y.z.w.u.tar.gz'"
+  default     = null
+}
 
 variable "hub_hadr" {
   type        = bool
@@ -209,6 +224,18 @@ variable "agentless_gw_hadr" {
   type        = bool
   default     = true
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
+}
+
+variable "hub_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the DSF Hub"
+}
+
+variable "agentless_gw_instance_type" {
+  type        = string
+  default     = "r6i.xlarge"
+  description = "Ec2 instance type for the Agentless Gateway"
 }
 
 variable "hub_ebs_details" {

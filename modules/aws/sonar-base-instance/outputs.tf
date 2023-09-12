@@ -14,7 +14,7 @@ output "public_dns" {
 }
 
 output "private_dns" {
-  description = "Private DNS of the elastic IP address of the DSF base instance"
+  description = "Private DNS of the IP address of the DSF base instance"
   value       = aws_network_interface.eni.private_dns_name
 }
 

@@ -1,5 +1,4 @@
 #!/bin/bash -x
-exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 set -e
 set -u
 set -x
@@ -142,13 +141,13 @@ function attach_disk() {
 function install_tarball() {
     echo Downloading tarball..
     # Download installation tarball
-    TARBALL_FILE=$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
+    TARBALL_FILE=$APPS_DIR/$(basename ${installation_s3_key})
+    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} $TARBALL_FILE --region ${installation_s3_region} >/dev/null
 
     echo Installing tarball..
     # Installing tarball
-    sudo tar -xf ./$TARBALL_FILE -gz -C $APPS_DIR
-    rm ./$TARBALL_FILE
+    sudo tar -xf $TARBALL_FILE -gz -C $APPS_DIR
+    rm $TARBALL_FILE
     sudo chown -R sonarw:sonar $APPS_DIR
 }
 
@@ -247,6 +246,10 @@ __EOF__
         reason='${token_value.name}'
         scopes='${token_value.scopes}'
         access_token=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${token_value.secret_name} --query SecretString --output text)
+        if [ -z "$access_token" ]; then
+            echo "access_token is empty"
+            exit 1
+        fi
         $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
 use admin
 db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })

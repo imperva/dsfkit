@@ -12,7 +12,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "4.0.1"
+  version = "5.1.1"
 
   count = var.subnet_ids == null ? 1 : 0
 

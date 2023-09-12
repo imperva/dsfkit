@@ -253,7 +253,7 @@ variable "tarball_location" {
 
 variable "hub_instance_type" {
   type        = string
-  default     = "r6i.xlarge"
+  default     = "r6i.2xlarge"
   description = "Ec2 instance type for the DSF Hub"
 }
 
@@ -482,7 +482,7 @@ variable "large_scale_mode" {
     error_message = "MX large scale mode requires setting large scale mode in the Agentless Gateway as well"
   }
   default = {
-    mx       = false
+    mx       = true
     agent_gw = true
   }
 }

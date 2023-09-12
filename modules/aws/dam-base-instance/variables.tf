@@ -158,6 +158,27 @@ variable "dam_version" {
   }
 }
 
+variable "ami" {
+  type = object({
+    id               = string
+    name             = string
+    owner_account_id = string
+  })
+  description = <<EOF
+This variable shouldn't be used unless you know you should use it. It allows you to pick a none official DAM release (not from market place).
+It is used for selecting an AWS machine image based on various filters.
+It is an object type variable that includes the following fields: id, name and owner_account_id.
+The "id" and "name" fields are used to filter the machine image by ID or name, respectively. To select all available images for a given filter, set the relevant field to "*".
+The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
+EOF
+  default     = null
+
+  validation {
+    condition     = var.ami == null || try(var.ami.id != null || var.ami.name != null, false)
+    error_message = "ami id or name mustn't be null"
+  }
+}
+
 variable "iam_actions" {
   description = "Required AWS IAM action list for the DSF DAM instance"
   type        = list(string)

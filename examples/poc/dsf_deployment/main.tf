@@ -8,16 +8,15 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
 
   sonar_version = var.sonar_version
   dra_version   = var.dra_version
-  tags          = local.tags
 }
 
 module "key_pair" {
   source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
 
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
@@ -29,5 +28,6 @@ locals {
   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
   password               = var.password != null ? var.password : module.globals.random_password
   workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tags                   = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  tags                   = merge(module.globals.tags, var.tags, { "deployment_name" = local.deployment_name_salted })
+  private_key_file_path  = module.key_pair.private_key_file_path
 }

@@ -1,6 +1,6 @@
 locals {
   database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
-  tarball_location   = module.globals.tarball_location
+  tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   hub_public_ip           = var.enable_sonar ? (length(module.hub[0].public_ip) > 0 ? format("%s/32", module.hub[0].public_ip) : null) : null
@@ -11,7 +11,7 @@ locals {
 
 module "hub" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
@@ -19,6 +19,7 @@ module "hub" {
   binaries_location           = local.tarball_location
   password                    = local.password
   ebs                         = var.hub_ebs_details
+  instance_type               = var.hub_instance_type
   attach_persistent_public_ip = true
   use_public_ip               = true
   generate_access_tokens      = true
@@ -45,7 +46,7 @@ module "hub" {
 
 module "hub_secondary" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
@@ -53,6 +54,7 @@ module "hub_secondary" {
   binaries_location               = local.tarball_location
   password                        = local.password
   ebs                             = var.hub_ebs_details
+  instance_type                   = var.hub_instance_type
   attach_persistent_public_ip     = true
   use_public_ip                   = true
   hadr_secondary_node             = true
@@ -76,7 +78,7 @@ module "hub_secondary" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = length(module.hub_secondary) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
@@ -94,12 +96,13 @@ module "hub_hadr" {
 
 module "agentless_gw" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
   subnet_id             = local.agentless_gw_subnet_id
   ebs                   = var.agentless_gw_ebs_details
+  instance_type         = var.agentless_gw_instance_type
   binaries_location     = local.tarball_location
   password              = local.password
   hub_sonarw_public_key = module.hub[0].sonarw_public_key
@@ -117,18 +120,19 @@ module "agentless_gw" {
   }
   tags = local.tags
   depends_on = [
-    module.vpc,
+    module.vpc
   ]
 }
 
 module "agentless_gw_secondary" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
   subnet_id                       = local.agentless_gw_secondary_subnet_id
   ebs                             = var.agentless_gw_ebs_details
+  instance_type                   = var.agentless_gw_instance_type
   binaries_location               = local.tarball_location
   password                        = local.password
   hub_sonarw_public_key           = module.hub[0].sonarw_public_key
@@ -155,7 +159,7 @@ module "agentless_gw_secondary" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = length(module.agentless_gw_secondary)
 
   sonar_version            = module.globals.tarball_location.version
@@ -199,7 +203,7 @@ locals {
 
 module "federation" {
   source   = "imperva/dsf-federation/null"
-  version  = "1.5.3" # latest release tag
+  version  = "1.5.4" # latest release tag
   for_each = local.hub_gw_combinations
 
   hub_info = {

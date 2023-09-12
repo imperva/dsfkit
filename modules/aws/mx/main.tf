@@ -74,6 +74,7 @@ module "mx" {
   source                      = "../../../modules/aws/dam-base-instance"
   name                        = var.friendly_name
   dam_version                 = var.dam_version
+  ami                         = var.ami
   resource_type               = local.resource_type
   dam_model                   = local.dam_model
   ebs                         = var.ebs

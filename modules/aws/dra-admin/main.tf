@@ -4,7 +4,7 @@ locals {
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   security_group_ids = concat(
-    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+    [for sg in aws_security_group.dsf_base_sg : sg.id],
     var.security_group_ids
   )
 
@@ -16,9 +16,9 @@ locals {
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_persistent_public_ip ? 1 : 0
-  vpc   = true
-  tags  = var.tags
+  count  = var.attach_persistent_public_ip ? 1 : 0
+  domain = "vpc"
+  tags   = var.tags
 }
 
 resource "aws_eip_association" "eip_assoc" {

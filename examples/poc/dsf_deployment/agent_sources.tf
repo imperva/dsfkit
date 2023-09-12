@@ -1,12 +1,10 @@
 locals {
-  # TODO why is creating a db_with_agent conditioned by the creation of a cluster?
-  # change to local.agent_gw_count
   db_types_for_agent = local.create_agent_gw_cluster > 0 ? var.simulation_db_types_for_agent : []
 }
 
 module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.5.3" # latest release tag
+  version = "1.5.4" # latest release tag
   count   = length(local.db_types_for_agent)
 
   friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])

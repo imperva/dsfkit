@@ -3,7 +3,10 @@ locals {
   public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.dsf_base_instance.public_dns
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
-  disk_size_app        = 100
+  # root volume details
+  root_volume_size  = 100
+
+  # state volume details
   ebs_state_disk_type  = "gp3"
   ebs_state_disk_size  = var.ebs_details.disk_size
   ebs_state_iops       = var.ebs_details.provisioned_iops
@@ -12,14 +15,14 @@ locals {
   volume_attachment_device_name = var.volume_attachment_device_name == null ? "/dev/sdb" : var.volume_attachment_device_name
 
   security_group_ids = concat(
-    [for sg in aws_security_group.dsf_base_sg_in : sg.id],
+    [for sg in aws_security_group.dsf_base_sg : sg.id],
   var.security_group_ids)
 }
 
 resource "aws_eip" "dsf_instance_eip" {
-  count = var.attach_persistent_public_ip ? 1 : 0
-  vpc   = true
-  tags  = var.tags
+  count  = var.attach_persistent_public_ip ? 1 : 0
+  domain = "vpc"
+  tags   = var.tags
 }
 
 resource "aws_eip_association" "eip_assoc" {
@@ -34,7 +37,7 @@ resource "aws_instance" "dsf_base_instance" {
   key_name      = var.key_pair
   user_data     = local.install_script
   root_block_device {
-    volume_size = local.disk_size_app
+    volume_size = local.root_volume_size
     tags        = merge(var.tags, { Name = var.name })
   }
   iam_instance_profile = local.instance_profile
