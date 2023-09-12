@@ -14,6 +14,7 @@ module "hub" {
   binaries_location           = local.tarball_location
   password                    = local.password
   storage_details             = var.hub_storage_details
+  instance_type               = var.hub_instance_type
   attach_persistent_public_ip = true
   use_public_ip               = true
   generate_access_tokens      = true
@@ -43,6 +44,7 @@ module "hub_secondary" {
   binaries_location               = local.tarball_location
   password                        = local.password
   storage_details                 = var.hub_storage_details
+  instance_type                   = var.hub_instance_type
   attach_persistent_public_ip     = true
   use_public_ip                   = true
   hadr_secondary_node             = true
@@ -91,6 +93,7 @@ module "agentless_gw" {
   subnet_id             = module.network[0].vnet_subnets[0]
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = local.tarball_location
+  instance_type         = var.agentless_gw_instance_type
   password              = local.password
   hub_sonarw_public_key = module.hub[0].sonarw_public_key
   ssh_key = {
@@ -121,6 +124,7 @@ module "agentless_gw_secondary" {
   subnet_id             = module.network[0].vnet_subnets[1]
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = local.tarball_location
+  instance_type         = var.agentless_gw_instance_type
   password              = local.password
   hub_sonarw_public_key = module.hub[0].sonarw_public_key
   hadr_secondary_node             = true

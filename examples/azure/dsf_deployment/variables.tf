@@ -107,6 +107,18 @@ variable "agentless_gw_hadr" {
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
+variable "hub_instance_type" {
+  type        = string
+  default     = "Standard_E4as_v5"
+  description = "Instance type for the DSF Hub"
+}
+
+variable "agentless_gw_instance_type" {
+  type        = string
+  default     = "Standard_E4as_v5"
+  description = "Instance type for the Agentless Gateway"
+}
+
 variable "hub_storage_details" {
   type = object({
     disk_size            = number

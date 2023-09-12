@@ -111,7 +111,7 @@ variable "allowed_all_cidrs" {
 
 variable "instance_type" {
   type        = string
-  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
+  default     = "Standard_E8_v5" # 8 cores & 64GB ram
   description = "instance type for the DSF hub"
 }
 
