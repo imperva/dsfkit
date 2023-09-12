@@ -12,7 +12,6 @@ module "globals" {
 
   sonar_version = var.sonar_version
   dra_version   = var.dra_version
-  tags          = local.tags
 }
 
 module "key_pair" {
@@ -29,5 +28,6 @@ locals {
   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
   password               = var.password != null ? var.password : module.globals.random_password
   workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tags                   = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
+  tags                   = merge(module.globals.tags, var.tags, { "deployment_name" = local.deployment_name_salted })
+  private_key_file_path  = module.key_pair.private_key_file_path
 }

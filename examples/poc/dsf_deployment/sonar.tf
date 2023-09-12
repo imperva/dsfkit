@@ -120,7 +120,7 @@ module "agentless_gw" {
   }
   tags = local.tags
   depends_on = [
-    module.vpc,
+    module.vpc
   ]
 }
 

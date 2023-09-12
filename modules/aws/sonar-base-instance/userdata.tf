@@ -23,8 +23,6 @@ locals {
   })
 }
 
-data "aws_region" "current" {}
-
 resource "random_uuid" "jsonar_uuid" {}
 
 resource "null_resource" "readiness" {
@@ -47,7 +45,7 @@ resource "null_resource" "readiness" {
   provisioner "remote-exec" {
     inline = [
       "if ! sudo timeout 900 cloud-init status --wait | grep done &>/dev/null; then",
-      "  cat /var/log/user-data.log;",
+      "  cat /var/log/cloud-init-output.log;",
       "  echo;",
       "  sudo cloud-init status;",
       "  exit 1;",

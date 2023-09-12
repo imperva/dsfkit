@@ -1,3 +1,9 @@
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "deployment_name" {
   type        = string
   default     = "imperva-dsf"
@@ -122,7 +128,7 @@ variable "license" {
   description = <<EOF
   License information. Must be one of the following:
   1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-  2. License file path
+  2. License file path (Make sure it allows AWS DAM models (AV2500/AV6500))
   EOF
   type        = string
 }

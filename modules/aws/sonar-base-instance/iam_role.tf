@@ -32,7 +32,7 @@ locals {
           "${local.password_secret_aws_arn}"
           ],
           [
-            for val in aws_secretsmanager_secret.access_token : val.arn
+            for val in aws_secretsmanager_secret.access_tokens : val.arn
           ]
         )
       }
