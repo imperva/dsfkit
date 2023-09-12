@@ -92,8 +92,8 @@ jobs:
         if [ 'schedule' == 'schedule' ]; then
           echo TF_WORKSPACE=${{ matrix.workspace }}${{ github.event_name }}-$REF >> $GITHUB_ENV
         else
-          echo TF_WORKSPACE=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-$REF >> $GITHUB_ENV
-          echo TMP_WORKSPACE_NAME=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-$REF >> $GITHUB_ENV
+          echo TF_WORKSPACE=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }} >> $GITHUB_ENV
+          echo TMP_WORKSPACE_NAME=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }} >> $GITHUB_ENV
         fi
 
     # Checkout the repository to the GitHub Actions runner
