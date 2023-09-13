@@ -15,9 +15,9 @@ locals {
     display_name                           = local.display_name
     password_secret                        = local.password_secret_name
     hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
-    primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
+    main_node_sonarw_public_key            = local.main_node_sonarw_public_key
     vault_name                             = azurerm_key_vault.vault.name
-    primary_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name
+    main_node_sonarw_private_key_secret    = azurerm_key_vault_secret.sonarw_private_key_secret.name
     jsonar_uuid                            = random_uuid.jsonar_uuid.result
     additional_install_parameters          = var.additional_install_parameters
     firewall_ports                         = join(" ", flatten([for i in var.security_groups_config : i.tcp]))

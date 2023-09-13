@@ -15,8 +15,8 @@ locals {
     display_name                           = local.display_name
     password_secret                        = local.password_secret_name
     hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
-    primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
-    primary_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
+    main_node_sonarw_public_key            = local.main_node_sonarw_public_key
+    main_node_sonarw_private_key_secret    = local.sonarw_secret_aws_name
     jsonar_uuid                            = random_uuid.jsonar_uuid.result
     additional_install_parameters          = var.additional_install_parameters
     access_tokens_array                    = local.access_tokens_array

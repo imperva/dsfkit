@@ -1,13 +1,13 @@
 ###################################################################################
 # Generating a key pair for remote Agentless Gateway federation, HADR, etc.
-# A key pair is generated only for the HADR primary nodes, and then "copied"
-# to the HADR secondary nodes.
+# A key pair is generated only for the HADR main nodes, and then "copied"
+# to the HADR DR nodes.
 # To do that, the public key is passed to the user data of the EC2 in clear text,
 # but The private key is put in AWS secret manager, and the script of the EC2 user
 # data fetches it from there.
 # Currently we don't delete the private key from the secret manager once the
 # deployment is completed, we may need it in the future.
-# In addition, both the primary and secondary nodes put the same private key
+# In addition, both the main and DR nodes put the same private key
 # in the key manager under a different unique name. Consider optimizing in the
 # future.
 #
@@ -33,8 +33,8 @@ resource "tls_private_key" "sonarw_private_key" {
 }
 
 locals {
-  primary_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_secondary_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.primary_node_sonarw_public_key)
-  primary_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_secondary_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.primary_node_sonarw_private_key)
+  main_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_dr_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.main_node_sonarw_public_key)
+  main_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_dr_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.main_node_sonarw_private_key)
   sonarw_secret_aws_arn           = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].arn
   sonarw_secret_aws_name          = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
 
@@ -47,7 +47,7 @@ locals {
   secret_names = [for v in aws_secretsmanager_secret.access_tokens: v.name]
 }
 
-# generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-primary-sonarw-private-key20230205153150069800000003
+# generates a unique secret name with given prefix, e.g., imperva-dsf-8f17-hub-main-sonarw-private-key20230205153150069800000003
 resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
   count       = local.should_create_sonarw_private_key_in_secrets_manager == true ? 1 : 0
   name_prefix = "${var.name}-sonarw-private-key"
@@ -58,7 +58,7 @@ resource "aws_secretsmanager_secret" "sonarw_private_key_secret" {
 resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
   count         = local.should_create_sonarw_private_key_in_secrets_manager == true ? 1 : 0
   secret_id     = aws_secretsmanager_secret.sonarw_private_key_secret[0].id
-  secret_string = chomp(local.primary_node_sonarw_private_key)
+  secret_string = chomp(local.main_node_sonarw_private_key)
 }
 
 resource "aws_secretsmanager_secret" "password_secret" {

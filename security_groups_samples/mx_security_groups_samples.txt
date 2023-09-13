@@ -17,6 +17,6 @@ Allow access for debugging purposes:
 
 Notes:
 
-* If DSF Hub HADR is configured, include primary and secondary nodes' information
+* If DSF Hub HADR is configured, include main and DR nodes' information
 
 

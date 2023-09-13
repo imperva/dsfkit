@@ -84,8 +84,8 @@ jobs:
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/poc/sonar_hadr_deployment
             aws_region: eu-west-1
-            hub_output: '.dsf_hubs.value.primary.public_dns'
-            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".primary.private_ip'
+            hub_output: '.dsf_hubs.value.main.public_dns'
+            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest

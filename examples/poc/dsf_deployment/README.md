@@ -9,9 +9,9 @@ The deployment is modular and allows users to deploy one or more of the followin
 1. New VPC
 2. Sonar
    - DSF Hub
-   - DSF Hub secondary HADR (High Availability Disaster Recovery) node
+   - DSF Hub DR HADR (High Availability Disaster Recovery) node
    - Agentless Gateways
-   - Agentless Gateways secondary HADR (High Availability Disaster Recovery) nodes
+   - Agentless Gateways DR HADR (High Availability Disaster Recovery) nodes
 3. DAM
    - MX
    - Agent Gateways

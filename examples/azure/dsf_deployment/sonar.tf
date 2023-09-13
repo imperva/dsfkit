@@ -33,7 +33,7 @@ module "hub" {
   ]
 }
 
-module "hub_secondary" {
+module "hub_dr" {
   source = "../../../modules/azurerm/hub"
   # version                             = "1.3.5" # latest release tag
   count = var.enable_sonar && var.hub_hadr ? 1 : 0
@@ -47,9 +47,9 @@ module "hub_secondary" {
   instance_type                   = var.hub_instance_type
   attach_persistent_public_ip     = true
   use_public_ip                   = true
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.hub[0].sonarw_public_key
-  primary_node_sonarw_private_key = module.hub[0].sonarw_private_key
+  hadr_dr_node                    = true
+  main_node_sonarw_public_key     = module.hub[0].sonarw_public_key
+  main_node_sonarw_private_key    = module.hub[0].sonarw_private_key
   generate_access_tokens          = true
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
@@ -68,18 +68,18 @@ module "hub_secondary" {
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
   version = "1.5.1" # latest release tag
-  count   = length(module.hub_secondary) > 0 ? 1 : 0
+  count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.hub[0].public_ip
-  dsf_primary_private_ip   = module.hub[0].private_ip
-  dsf_secondary_ip         = module.hub_secondary[0].public_ip
-  dsf_secondary_private_ip = module.hub_secondary[0].private_ip
+  dsf_main_ip              = module.hub[0].public_ip
+  dsf_main_private_ip      = module.hub[0].private_ip
+  dsf_dr_ip                = module.hub_dr[0].public_ip
+  dsf_dr_private_ip        = module.hub_dr[0].private_ip
   ssh_key_path             = local_sensitive_file.ssh_key.filename
   ssh_user                 = module.hub[0].ssh_user
   depends_on = [
     module.hub,
-    module.hub_secondary
+    module.hub_dr
   ]
 }
 
@@ -114,7 +114,7 @@ module "agentless_gw" {
   ]
 }
 
-module "agentless_gw_secondary" {
+module "agentless_gw_dr" {
   source = "../../../modules/azurerm/agentless-gw"
   # version                             = "1.3.5" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
@@ -127,9 +127,9 @@ module "agentless_gw_secondary" {
   instance_type         = var.agentless_gw_instance_type
   password              = local.password
   hub_sonarw_public_key = module.hub[0].sonarw_public_key
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.agentless_gw[count.index].sonarw_public_key
-  primary_node_sonarw_private_key = module.agentless_gw[count.index].sonarw_private_key
+  hadr_dr_node                 = true
+  main_node_sonarw_public_key  = module.agentless_gw[count.index].sonarw_public_key
+  main_node_sonarw_private_key = module.agentless_gw[count.index].sonarw_private_key
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
@@ -151,13 +151,13 @@ module "agentless_gw_secondary" {
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
   version = "1.5.1" # latest release tag
-  count   = length(module.agentless_gw_secondary)
+  count   = length(module.agentless_gw_dr)
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.agentless_gw[count.index].private_ip
-  dsf_primary_private_ip   = module.agentless_gw[count.index].private_ip
-  dsf_secondary_ip         = module.agentless_gw_secondary[count.index].private_ip
-  dsf_secondary_private_ip = module.agentless_gw_secondary[count.index].private_ip
+  dsf_main_ip           = module.agentless_gw[count.index].private_ip
+  dsf_main_private_ip   = module.agentless_gw[count.index].private_ip
+  dsf_dr_ip         = module.agentless_gw_dr[count.index].private_ip
+  dsf_dr_private_ip = module.agentless_gw_dr[count.index].private_ip
   ssh_key_path             = local_sensitive_file.ssh_key.filename
   ssh_user                 = module.agentless_gw[count.index].ssh_user
   proxy_info = {
@@ -167,23 +167,23 @@ module "agentless_gw_hadr" {
   }
   depends_on = [
     module.agentless_gw,
-    module.agentless_gw_secondary
+    module.agentless_gw_dr
   ]
 }
 
 locals {
   gws = merge(
     { for idx, val in module.agentless_gw : "agentless-gw-${idx}" => val },
-    { for idx, val in module.agentless_gw_secondary : "agentless-gw-secondary-${idx}" => val },
+    { for idx, val in module.agentless_gw_dr : "agentless-gw-dr-${idx}" => val },
   )
   gws_set = values(local.gws)
   hubs_set = concat(
     var.enable_sonar ? [module.hub[0]] : [],
-    var.enable_sonar && var.hub_hadr ? [module.hub_secondary[0]] : []
+    var.enable_sonar && var.hub_hadr ? [module.hub_dr[0]] : []
   )
   hubs_keys = compact([
-    var.enable_sonar ? "hub-primary" : null,
-    var.enable_sonar && var.hub_hadr ? "hub-secondary" : null,
+    var.enable_sonar ? "hub-main" : null,
+    var.enable_sonar && var.hub_hadr ? "hub-dr" : null,
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
