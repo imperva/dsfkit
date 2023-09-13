@@ -25,8 +25,8 @@ module "mx" {
   allowed_hub_cidrs                 = local.hub_cidr_list
 
   hub_details = var.enable_sonar ? {
-    address      = coalesce(module.hub[0].public_dns, module.hub[0].private_dns)
-    access_token = module.hub[0].access_tokens["dam-to-hub"].token
+    address      = coalesce(module.hub_main[0].public_dns, module.hub_main[0].private_dns)
+    access_token = module.hub_main[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null
   attach_persistent_public_ip = true

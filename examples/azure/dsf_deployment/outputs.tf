@@ -20,7 +20,7 @@ output "generated_network" {
 
 output "sonar" {
   value = var.enable_sonar ? {
-    hub = {
+    hub_main = {
       public_ip    = try(module.hub_main[0].public_ip, null)
       private_ip   = try(module.hub_main[0].private_ip, null)
       jsonar_uid   = try(module.hub_main[0].jsonar_uid, null)
@@ -37,7 +37,7 @@ output "sonar" {
       principal_id = try(module.hub_dr[0].principal_id, null)
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_dr[0].ssh_user}@${module.hub_dr[0].public_ip}", null)
     } : null
-    agentless_gw = [
+    agentless_gw_main = [
       for idx, val in module.agentless_gw_main :
       {
         private_ip   = try(val.private_ip, null)

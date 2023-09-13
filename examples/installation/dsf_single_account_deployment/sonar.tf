@@ -129,7 +129,7 @@ module "agentless_gw_main" {
   version = "1.5.4" # latest release tag
   count   = local.agentless_gw_count
 
-  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", "main", count.index])
+  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
   instance_type        = var.agentless_gw_instance_type
   subnet_id            = var.subnet_ids.agentless_gw_main_subnet_id
   security_group_ids   = var.security_group_ids_gw_main
@@ -167,7 +167,7 @@ module "agentless_gw_dr" {
   version = "1.5.4" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
-  friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", "DR", count.index])
+  friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
   instance_type                   = var.agentless_gw_instance_type
   subnet_id                       = var.subnet_ids.agentless_gw_dr_subnet_id
   security_group_ids              = var.security_group_ids_gw_dr

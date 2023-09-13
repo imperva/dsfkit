@@ -209,10 +209,10 @@ module "hub_hadr" {
   version = "1.5.4" # latest release tag
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_main_ip           = module.hub_main.public_ip
-  dsf_main_private_ip   = module.hub_main.private_ip
-  dsf_dr_ip         = module.hub_dr.public_ip
-  dsf_dr_private_ip = module.hub_dr.private_ip
+  dsf_main_ip              = module.hub_main.public_ip
+  dsf_main_private_ip      = module.hub_main.private_ip
+  dsf_dr_ip                = module.hub_dr.public_ip
+  dsf_dr_private_ip        = module.hub_dr.private_ip
   ssh_key_path             = module.key_pair.private_key_file_path
   ssh_user                 = module.hub_main.ssh_user
   depends_on = [
@@ -227,10 +227,10 @@ module "agentless_gw_hadr" {
   count   = var.gw_count
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_main_ip           = module.agentless_gw_main[count.index].private_ip
-  dsf_main_private_ip   = module.agentless_gw_main[count.index].private_ip
-  dsf_dr_ip         = module.agentless_gw_dr[count.index].private_ip
-  dsf_dr_private_ip = module.agentless_gw_dr[count.index].private_ip
+  dsf_main_ip              = module.agentless_gw_main[count.index].private_ip
+  dsf_main_private_ip      = module.agentless_gw_main[count.index].private_ip
+  dsf_dr_ip                = module.agentless_gw_dr[count.index].private_ip
+  dsf_dr_private_ip        = module.agentless_gw_dr[count.index].private_ip
   ssh_key_path             = module.key_pair.private_key_file_path
   ssh_user                 = module.agentless_gw_main[count.index].ssh_user
   proxy_info = {
