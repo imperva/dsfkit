@@ -8,7 +8,7 @@ module "hub_main" {
   # version                             = "1.3.5" # latest release tag
   count = var.enable_sonar ? 1 : 0
 
-  friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
+  friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   resource_group              = local.resource_group
   subnet_id                   = module.network[0].vnet_subnets[0]
   binaries_location           = local.tarball_location
@@ -88,7 +88,7 @@ module "agentless_gw_main" {
   # version                             = "1.3.5" # latest release tag
   count  = local.agentless_gw_count
 
-  friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
+  friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
   resource_group        = local.resource_group
   subnet_id             = module.network[0].vnet_subnets[0]
   storage_details       = var.agentless_gw_storage_details
