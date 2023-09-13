@@ -272,6 +272,8 @@ def maybe_upgrade_and_postflight_dsf_nodes(dsf_nodes, dsf_node_type, target_vers
 
 def upgrade_dsf_node(dsf_node, dsf_node_type, target_version, upgrade_script_file_name):
     print(f"Running upgrade for {dsf_node_type} {dsf_node.get('host')}")
+    print(f"You may follow the upgrade process in the DSF node by running SSH to it and looking at "
+          f"/var/log/upgrade.log. When the DSF node's upgrade will complete, this log will also appear here.")
     result = run_upgrade_script(dsf_node, target_version, upgrade_script_file_name)
     if result:
         print(f"Upgrading {dsf_node_type} {dsf_node.get('host')} was ### successful ###")
