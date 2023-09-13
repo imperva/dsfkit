@@ -345,9 +345,6 @@ def are_postflight_validations_passed(postflight_validations_result):
 
 
 if __name__ == "__main__":
-    short_sleep_seconds = 0  # 3
-    long_sleep_seconds = 0  # 5
-    very_long_sleep_seconds = 0  # 10
     run_dummy_upgrade = False
 
     main()
