@@ -4,8 +4,8 @@ locals {
 }
 
 module "hub_main" {
-  source = "../../../modules/azurerm/hub"
-  # version                             = "1.3.5" # latest release tag
+  source  = "imperva/dsf-hub/azurerm"
+  version = "1.5.4" # latest release tag
   count = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
@@ -34,8 +34,8 @@ module "hub_main" {
 }
 
 module "hub_dr" {
-  source = "../../../modules/azurerm/hub"
-  # version                             = "1.3.5" # latest release tag
+  source  = "imperva/dsf-hub/aws"
+  version = "1.5.4" # latest release tag
   count = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -84,8 +84,8 @@ module "hub_hadr" {
 }
 
 module "agentless_gw_main" {
-  source = "../../../modules/azurerm/agentless-gw"
-  # version                             = "1.3.5" # latest release tag
+  source  = "imperva/dsf-agentless-gw/azurerm"
+  version = "1.5.4" # latest release tag
   count  = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
@@ -115,8 +115,8 @@ module "agentless_gw_main" {
 }
 
 module "agentless_gw_dr" {
-  source = "../../../modules/azurerm/agentless-gw"
-  # version                             = "1.3.5" # latest release tag
+  source  = "imperva/dsf-agentless-gw/azurerm"
+  version = "1.5.4" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])

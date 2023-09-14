@@ -21,7 +21,6 @@ locals {
     "product" : var.product
     "resource_type" : var.resource_type
     "platform" : var.platform
-    "account_id" : sha256(var.account_id)
     "location" : var.location
     "initialization_status" : var.initialization_status
     "additional_info" : var.additional_info

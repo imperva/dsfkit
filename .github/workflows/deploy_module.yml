@@ -55,9 +55,6 @@ jobs:
             destination_repo: "terraform-null-dsf-hadr"
           - source_module: "null/federation"
             destination_repo: "terraform-null-dsf-federation"
-          - source_module: "aws/poc-db-onboarder"
-            destination_repo: "terraform-aws-dsf-poc-db-onboarder"
-            public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
 
           # DAM
           ## aws provider
@@ -82,11 +79,14 @@ jobs:
             destination_repo: "terraform-aws-dsf-dra-analytics"
             hidden_submodules: "aws/statistics null/statistics"
 
-
           # Globals
+          ## aws provider
           - source_module: "aws/core/globals"
             destination_repo: "terraform-aws-dsf-globals"
             public_submodule: "aws/core/key_pair"
+          ## azurerm provider
+          - source_module: "azurerm/core/globals"
+            destination_repo: "terraform-azurerm-dsf-globals"
     env:
       source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
@@ -149,6 +149,3 @@ jobs:
           # push latest tag (to trigger terraform registery latest release discovery)
           git tag ${latest_tag}
           git push -f origin HEAD:main --tags
-          
-
-
