@@ -84,17 +84,17 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 }
 
-data "azurerm_subscription" "primary" {
+data "azurerm_subscription" "subscription" {
 }
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
-  scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/eytan-resource-group"
+  scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/eytan-resource-group"
   role_definition_name = "Owner"
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
 # resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
-#   scope                = "${data.azurerm_subscription.primary.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
+#   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
 #   role_definition_name = "Reader"
 #   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 # }

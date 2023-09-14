@@ -47,9 +47,9 @@ module "gw_instance" {
   ssh_key_path                      = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
   hub_sonarw_public_key             = var.hub_sonarw_public_key
-  hadr_secondary_node               = var.hadr_secondary_node
-  primary_node_sonarw_public_key    = var.primary_node_sonarw_public_key
-  primary_node_sonarw_private_key   = var.primary_node_sonarw_private_key
+  hadr_dr_node               = var.hadr_dr_node
+  main_node_sonarw_public_key    = var.main_node_sonarw_public_key
+  main_node_sonarw_private_key   = var.main_node_sonarw_private_key
   proxy_info                        = var.ingress_communication_via_proxy
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder

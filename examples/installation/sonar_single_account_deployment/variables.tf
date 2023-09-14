@@ -46,19 +46,19 @@ variable "tarball_location" {
   default     = null
 }
 
-variable "subnet_hub_primary" {
+variable "subnet_hub_main" {
   type        = string
-  description = "AWS subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the main DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "subnet_hub_secondary" {
+variable "subnet_hub_dr" {
   type        = string
-  description = "AWS subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the DR DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_gw" {
   type        = string
-  description = "AWS subnet id for the primary Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the main Agentless Gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "security_group_ids_hub" {

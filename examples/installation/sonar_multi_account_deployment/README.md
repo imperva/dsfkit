@@ -5,13 +5,13 @@ A DSF Hub and Agentless Gateway (formerly Sonar) deployment with full HADR; depl
 
 This deployment consists of:
 
-1. One primary DSF Hub in AWS account A, region X
-2. One secondary DSF Hub in AWS account A, region Y
-3. One primary Agentless Gateway in AWS account B, region X
-4. One secondary Agentless Gateway in AWS account B, region Y
+1. One main DSF Hub in AWS account A, region X
+2. One DR DSF Hub in AWS account A, region Y
+3. One main Agentless Gateway in AWS account B, region X
+4. One DR Agentless Gateway in AWS account B, region Y
 5. DSF Hub HADR setup
 6. Agentless Gateway HADR setup
-7. Federation of both primary and secondary DSF Hub with all primary and secondary Agentless Gateways
+7. Federation of both main and DR DSF Hub with all main and DR Agentless Gateways
 
 This example is intended for Professional Services and customers who want to bring their own networking, security groups, etc.</br>
 It is mandatory to provide as input to this example the following variables:
@@ -32,18 +32,18 @@ For example:
   ```tf
   aws_profile_hub = "profileHub"
   aws_profile_gw  = "profileGw"
-  aws_region_hub_primary   = "us-east-1"
-  aws_region_hub_secondary = "us-east-2"
-  aws_region_gw_primary    = "us-east-1"
-  aws_region_gw_secondary  = "us-west-1"
-  subnet_hub_primary   = "subnet-xxxxxxxxxxxxxxxx1"
-  subnet_hub_secondary = "subnet-xxxxxxxxxxxxxxxx2"
-  subnet_gw_primary    = "subnet-xxxxxxxxxxxxxxxx3"
-  subnet_gw_secondary  = "subnet-xxxxxxxxxxxxxxxx4"
-  security_group_ids_hub_primary   = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
-  security_group_ids_hub_secondary = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
-  security_group_ids_gw_primary    = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
-  security_group_ids_gw_secondary  = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
+  aws_region_hub_main   = "us-east-1"
+  aws_region_hub_dr     = "us-east-2"
+  aws_region_gw_main    = "us-east-1"
+  aws_region_gw_dr      = "us-west-1"
+  subnet_hub_main   = "subnet-xxxxxxxxxxxxxxxx1"
+  subnet_hub_dr     = "subnet-xxxxxxxxxxxxxxxx2"
+  subnet_gw_main    = "subnet-xxxxxxxxxxxxxxxx3"
+  subnet_gw_dr      = "subnet-xxxxxxxxxxxxxxxx4"
+  security_group_ids_hub_main   = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
+  security_group_ids_hub_dr     = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
+  security_group_ids_gw_main    = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
+  security_group_ids_gw_dr      = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
   proxy_address         = "x.x.x.x"
   proxy_private_address = "x.x.x.x"
   proxy_ssh_key_path    = "/proxy-ssh-key-path.pem"

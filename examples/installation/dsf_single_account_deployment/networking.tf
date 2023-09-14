@@ -1,20 +1,20 @@
-data "aws_subnet" "hub_primary" {
-  id       = var.subnet_ids.hub_primary_subnet_id
+data "aws_subnet" "hub_main" {
+  id       = var.subnet_ids.hub_main_subnet_id
   provider = aws.provider-1
 }
 
-data "aws_subnet" "hub_secondary" {
-  id       = var.subnet_ids.hub_secondary_subnet_id
+data "aws_subnet" "hub_dr" {
+  id       = var.subnet_ids.hub_dr_subnet_id
   provider = aws.provider-1
 }
 
-data "aws_subnet" "agentless_gw_primary" {
-  id       = var.subnet_ids.agentless_gw_primary_subnet_id
+data "aws_subnet" "agentless_gw_main" {
+  id       = var.subnet_ids.agentless_gw_main_subnet_id
   provider = aws.provider-2
 }
 
-data "aws_subnet" "agentless_gw_secondary" {
-  id       = var.subnet_ids.agentless_gw_secondary_subnet_id
+data "aws_subnet" "agentless_gw_dr" {
+  id       = var.subnet_ids.agentless_gw_dr_subnet_id
   provider = aws.provider-2
 }
 

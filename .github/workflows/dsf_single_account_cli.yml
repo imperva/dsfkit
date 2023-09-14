@@ -96,7 +96,7 @@ jobs:
     - name: Create tfvars File
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
-        ${{ vars.TFVAR_PARAMETERS_DSF_SINGLE_ACCOUNT_AUTOMATION_PRIVATE_SUBNETS }}
+        ${{ vars.TFVAR_PARAMETERS_DSF_SINGLE_ACCOUNT_AUTOMATION_PRIVATE_SUBNETS_V1 }}
         EOF
 
     - name: Cat tfvars File
