@@ -19,4 +19,4 @@ Allow access for debugging purposes:
 Notes:
 
 * You may need to run a gradual deployment since the DSF Hub public IP is not known before running the deployment
-* If DSF Hub HADR is configured, include primary and secondary nodes' information
+* If DSF Hub HADR is configured, include main and DR nodes' information

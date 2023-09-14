@@ -6,15 +6,15 @@ deployed in a single account and two regions.
 
 This deployment consists of:
 
-1. Primary and secondary DSF Hub in region 1
-2. Primary and secondary Agentless Gateway Hub in region 2
+1. Main and DR DSF Hub in region 1
+2. Main and DR Agentless Gateway Hub in region 2
 3. DAM MX in region 1
 4. DAM Agent Gateway in region 2
 5. DRA Admin in region 1
 6. DRA Analytics in region 2
 7. DSF Hub HADR setup
 8. Agentless Gateway HADR setup
-9. Federation of both primary and secondary DSF Hub with all primary and secondary Agentless Gateways
+9. Federation of both main and DR DSF Hub with all main and DR Agentless Gateways
 10. Integration from MX to DSF Hub (Audit from Agent source and Security Issues)
 
 This example is intended for Professional Services and customers who want to bring their own networking, security groups, etc.</br>
@@ -34,9 +34,9 @@ The deployment is modular and allows users to deploy one or more of the followin
 
 1. Sonar
    - DSF Hub
-   - DSF Hub secondary HADR (High Availability Disaster Recovery) node
+   - DSF Hub DR HADR (High Availability Disaster Recovery) node
    - Agentless Gateways
-   - Agentless Gateways secondary HADR (High Availability Disaster Recovery) nodes
+   - Agentless Gateways DR HADR (High Availability Disaster Recovery) nodes
 2. DAM
    - MX
    - Agent Gateways
@@ -120,19 +120,19 @@ For example:
   aws_region_1 = "us-east-1"
   aws_region_2 = "us-east-2"
   subnet_ids = {
-    hub_primary_subnet_id            = "subnet-xxxxxxxxxxxxxxxx1"
-    hub_secondary_subnet_id          = "subnet-xxxxxxxxxxxxxxxx2"
-    agentless_gw_primary_subnet_id   = "subnet-xxxxxxxxxxxxxxxx3"
-    agentless_gw_secondary_subnet_id = "subnet-xxxxxxxxxxxxxxxx4"
+    hub_main_subnet_id               = "subnet-xxxxxxxxxxxxxxxx1"
+    hub_dr_subnet_id                 = "subnet-xxxxxxxxxxxxxxxx2"
+    agentless_gw_main_subnet_id      = "subnet-xxxxxxxxxxxxxxxx3"
+    agentless_gw_dr_subnet_id        = "subnet-xxxxxxxxxxxxxxxx4"
     mx_subnet_id                     = "subnet-xxxxxxxxxxxxxxxx5"
     agent_gw_subnet_id               = "subnet-xxxxxxxxxxxxxxxx6"
     dra_admin_subnet_id              = "subnet-xxxxxxxxxxxxxxxx7"
     dra_analytics_subnet_id          = "subnet-xxxxxxxxxxxxxxxx8"
   }
-  security_group_ids_hub_primary            = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
-  security_group_ids_hub_secondary          = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
-  security_group_ids_agentless_gw_primary   = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
-  security_group_ids_agentless_gw_secondary = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
+  security_group_ids_hub_main               = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
+  security_group_ids_hub_dr                 = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]
+  security_group_ids_agentless_gw_main      = ["sg-xxxxxxxxxxxxxxxx31", "sg-xxxxxxxxxxxxxxxx32"]
+  security_group_ids_agentless_gw_dr        = ["sg-xxxxxxxxxxxxxxxx41", "sg-xxxxxxxxxxxxxxxx42"]
   security_group_ids_mx                     = ["sg-xxxxxxxxxxxxxxxx51", "sg-xxxxxxxxxxxxxxxx52"]
   security_group_ids_agent_gw               = ["sg-xxxxxxxxxxxxxxxx61", "sg-xxxxxxxxxxxxxxxx62"]
   security_group_ids_dra_admin              = ["sg-xxxxxxxxxxxxxxxx71", "sg-xxxxxxxxxxxxxxxx72"]

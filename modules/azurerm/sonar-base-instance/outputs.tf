@@ -33,12 +33,12 @@ output "principal_id" {
   value       = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
-output "primary_node_sonarw_public_key" {
-  value = local.primary_node_sonarw_public_key
+output "main_node_sonarw_public_key" {
+  value = local.main_node_sonarw_public_key
 }
 
-output "primary_node_sonarw_private_key" {
-  value = local.primary_node_sonarw_private_key
+output "main_node_sonarw_private_key" {
+  value = local.main_node_sonarw_private_key
 }
 
 output "jsonar_uid" {

@@ -30,47 +30,67 @@ jobs:
       matrix:
         include:
           # Sonar
+          ## aws provider
           - source_module: "aws/hub"
             destination_repo: "terraform-aws-dsf-hub"
-            hidden_submodule: "aws/sonar-base-instance"
+            hidden_submodules: "aws/sonar-base-instance aws/statistics null/statistics"
           - source_module: "aws/agentless-gw"
             destination_repo: "terraform-aws-dsf-agentless-gw"
-            hidden_submodule: "aws/sonar-base-instance"
-          - source_module: "null/hadr"
-            destination_repo: "terraform-null-dsf-hadr"
-          - source_module: "null/federation"
-            destination_repo: "terraform-null-dsf-federation"
+            hidden_submodules: "aws/sonar-base-instance aws/statistics null/statistics"
+
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
             public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
 
+          ## azurerm provider
+          - source_module: "azurerm/hub"
+            destination_repo: "terraform-azurerm-dsf-hub"
+            hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
+          - source_module: "azurerm/agentless-gw"
+            destination_repo: "terraform-azurerm-dsf-agentless-gw"
+            hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
+
+          ## null provider
+          - source_module: "null/hadr"
+            destination_repo: "terraform-null-dsf-hadr"
+          - source_module: "null/federation"
+            destination_repo: "terraform-null-dsf-federation"
+
           # DAM
+          ## aws provider
           - source_module: "aws/mx"
             destination_repo: "terraform-aws-dsf-mx"
-            hidden_submodule: "aws/dam-base-instance"
+            hidden_submodules: "aws/dam-base-instance aws/statistics null/statistics"
           - source_module: "aws/agent-gw"
             destination_repo: "terraform-aws-dsf-agent-gw"
-            hidden_submodule: "aws/dam-base-instance"
+            hidden_submodules: "aws/dam-base-instance aws/statistics null/statistics"
           - source_module: "aws/db-with-agent"
             destination_repo: "terraform-aws-dsf-db-with-agent"
+          ## null provider
           - source_module: "null/agent-gw-cluster-setup"
             destination_repo: "terraform-null-dsf-agent-gw-cluster-setup"
 
           # DRA
+          ## aws provider
           - source_module: "aws/dra-admin"
             destination_repo: "terraform-aws-dsf-dra-admin"
+            hidden_submodules: "aws/statistics null/statistics"
           - source_module: "aws/dra-analytics"
             destination_repo: "terraform-aws-dsf-dra-analytics"
-
+            hidden_submodules: "aws/statistics null/statistics"
 
           # Globals
+          ## aws provider
           - source_module: "aws/core/globals"
             destination_repo: "terraform-aws-dsf-globals"
             public_submodule: "aws/core/key_pair"
+          ## azurerm provider
+          - source_module: "azurerm/core/globals"
+            destination_repo: "terraform-azurerm-dsf-globals"
     env:
       source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
-      hidden_submodule: ${{ matrix.hidden_submodule }}
+      hidden_submodules: ${{ matrix.hidden_submodules }}
       public_submodule: ${{ matrix.public_submodule }}
 
     outputs:
@@ -88,9 +108,18 @@ jobs:
         run: |
           set -x
           git branch
-          if [ -n "${hidden_submodule}" ]; then
-            git filter-branch -f --prune-empty --tree-filter 'sed -i "s/..\/..\/..\/modules\/"$(dirname ${hidden_submodule})"/.\/_modules/g" modules/${source_module}/main.tf; mkdir -p modules/${source_module}/_modules; mv modules/${hidden_submodule} modules/${source_module}/_modules/; true;' --tag-name-filter cat -- --all HEAD
+          if [ -n "${hidden_submodules}" ]; then
+            cmd=""
+            for i in ${hidden_submodules}; do
+            	target_dir=_modules/$i
+            	cmd="$cmd mkdir -p $(dirname modules/${source_module}/$target_dir); mv modules/$i modules/${source_module}/$target_dir;"
+            	cmd="$cmd sed -i \"s/\/modules\//\/_modules\//g\" modules/${source_module}/${target_dir}/*.tf;"
+            done
+            cmd="$cmd sed -i \"s/..\/..\/..\/modules/.\/_modules/g\" modules/${source_module}/*.tf;"
+            cmd="$cmd true;"
+            git filter-branch -f --prune-empty --tree-filter "$cmd" --tag-name-filter cat -- --all HEAD
           fi
+          
           if [ -n "${public_submodule}" ]; then
             for m in ${public_submodule}; do
               git filter-branch -f --prune-empty --tree-filter 'mkdir -p modules/'${source_module}'/modules; mv modules/'${m}' modules/'${source_module}'/modules/; true;' --tag-name-filter cat -- --all HEAD
@@ -120,6 +149,3 @@ jobs:
           # push latest tag (to trigger terraform registery latest release discovery)
           git tag ${latest_tag}
           git push -f origin HEAD:main --tags
-          
-
-

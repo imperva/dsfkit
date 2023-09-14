@@ -34,9 +34,9 @@ The following input variables are **required**:
 * `password`: Admin password
 * `storage_details`: Azure disk details
 * `binaries_location`: Tarball DSF installation location
-* `hub_sonarw_public_key`: Public key of the sonarw user taken from the primary [DSF Hub](../hub)'s output
-* `sonarw_public_key`: Public key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
-* `sonarw_private_key`: Private key of the sonarw user taken from the primary Gateway output. This variable must only be defined for the secondary Gateway.
+* `hub_sonarw_public_key`: Public key of the sonarw user taken from the main [DSF Hub](../hub)'s output
+* `sonarw_public_key`: Public key of the sonarw user taken from the main Gateway output. This variable must only be defined for the DR Gateway.
+* `sonarw_private_key`: Private key of the sonarw user taken from the main Gateway output. This variable must only be defined for the DR Gateway.
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
