@@ -150,7 +150,7 @@ output "mx_ssh_key_file_path" {
   value = local.mx_private_key_file_path
 }
 
-output "agent_gw_dr_ssh_key_file_path" {
+output "agent_gw_ssh_key_file_path" {
   value = local.agent_gw_private_key_file_path
 }
 
