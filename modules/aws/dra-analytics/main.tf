@@ -55,6 +55,14 @@ resource "aws_network_interface" "eni" {
   tags            = var.tags
 }
 
+module "statistics" {
+  source                            = "../../../modules/aws/statistics"
+  deployment_name = var.friendly_name
+  product = "DRA"
+  resource_type = "dra-analytics"
+  artifact = "ami://${data.aws_ami.selected-ami.image_id}"
+}
+
 resource "null_resource" "waiter_cmds" {
   provisioner "local-exec" {
     command     = local.waiter_cmds_script

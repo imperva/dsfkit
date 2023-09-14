@@ -25,6 +25,14 @@ locals {
 
 resource "random_uuid" "jsonar_uuid" {}
 
+module "statistics" {
+  source                            = "../../../modules/aws/statistics"
+  deployment_name = var.name
+  product = "SONAR"
+  resource_type = var.resource_type
+  artifact = "s3://${var.binaries_location.s3_bucket}/${var.binaries_location.s3_key}"
+}
+
 resource "null_resource" "readiness" {
   count = var.skip_instance_health_verification == true ? 0 : 1
   connection {
@@ -58,6 +66,15 @@ resource "null_resource" "readiness" {
   }
 
   depends_on = [
-    aws_eip_association.eip_assoc
+    aws_eip_association.eip_assoc,
+    module.statistics
   ]
+}
+
+module "statistics_success" {
+  source                            = "../../../modules/aws/statistics"
+
+  id = module.statistics.id
+  initialization_status = "success"
+  depends_on = [ null_resource.readiness ]
 }

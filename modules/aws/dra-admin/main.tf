@@ -57,3 +57,11 @@ resource "aws_network_interface" "eni" {
   security_groups = local.security_group_ids
   tags            = var.tags
 }
+
+module "statistics" {
+  source                            = "../../../modules/aws/statistics"
+  deployment_name = var.friendly_name
+  product = "DRA"
+  resource_type = "dra-admin"
+  artifact = "ami://${data.aws_ami.selected-ami.image_id}"
+}
