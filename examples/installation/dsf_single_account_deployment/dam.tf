@@ -55,7 +55,7 @@ module "agent_gw" {
   instance_profile_name     = var.agent_gw_instance_profile_name
 
   management_server_host_for_registration = module.mx[0].private_ip
-  management_server_host_for_api_access   = module.mx[0].public_ip
+  management_server_host_for_api_access   = module.mx[0].public_ip == null || module.mx[0].public_ip == "" ? module.mx[0].private_ip : module.mx[0].public_ip
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
@@ -72,7 +72,7 @@ module "agent_gw_cluster_setup" {
   cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name
   mx_details = {
-    address  = module.mx[0].public_ip
+    address  = module.mx[0].public_ip != null ? module.mx[0].public_ip : module.mx[0].private_ip
     port     = 8083
     user     = module.mx[0].web_console_user
     password = local.password
