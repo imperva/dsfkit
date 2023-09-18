@@ -41,16 +41,6 @@ jobs:
         shell: bash
 
     steps:
-    - name: Setup jq
-      uses: sergeysova/jq-action@v2
-
-    - name: Get The Public IP
-      run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
-
-    - name: Set IP in AWS Security Group
-      run: |
-        aws_sg=$(aws ec2 authorize-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --protocol tcp --port 22 --cidr $curr_ip/32)
-        echo sg_id=$(echo $aws_sg | jq '.SecurityGroupRules[0].SecurityGroupRuleId') >> $GITHUB_ENV
 
     # Checkout the repository to the GitHub Actions runner
     - name: Test connection
@@ -64,8 +54,4 @@ jobs:
         envs: TF_VAR_gw_count,TF_WORKSPACE
         script: |
           echo "ws: $TF_WORKSPACE, gwc: $TF_VAR_gw_count"
-
-    - name: Delete Security Group
-      if: always()
-      run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
 
