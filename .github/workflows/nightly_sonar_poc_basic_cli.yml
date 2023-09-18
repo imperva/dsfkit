@@ -143,7 +143,7 @@ jobs:
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity - Hub & GW
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@v1.0.0
       with:
         proxy_host: ${{ env.hub_ip }}
         proxy_username: ec2-user
@@ -156,7 +156,7 @@ jobs:
         script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
 
     - name: Check Aduit data
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@v1.0.0
       id: test_audit
       with:
         host: ${{ env.hub_ip }}
