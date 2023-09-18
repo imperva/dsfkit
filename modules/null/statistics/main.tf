@@ -20,6 +20,7 @@ locals {
     "artifact" : var.artifact
     "product" : var.product
     "resource_type" : var.resource_type
+    "account_id": sha256(var.account_id)
     "platform" : var.platform
     "location" : var.location
     "initialization_status" : var.initialization_status
@@ -38,11 +39,6 @@ resource "null_resource" "curl_request" {
                   --data '${local.payload}' \
                   '${local.url}' || true
               EOT
-  }
-
-  triggers = {
-    url          = local.url
-    data_payload = local.payload
   }
 }
 

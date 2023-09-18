@@ -65,3 +65,4 @@ module "statistics" {
   resource_type = "dra-admin"
   artifact = "ami://${data.aws_ami.selected-ami.image_id}"
 }
+  artifact = "ami://${data.aws_ami.selected-ami.image_id}@${var.dra_version}"
