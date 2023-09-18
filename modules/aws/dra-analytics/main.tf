@@ -19,7 +19,7 @@ locals {
     admin_server_private_ip                   = var.admin_server_private_ip
   })
 
-  waiter_cmds_script = templatefile("${path.module}/waiter.tpl", {
+  readiness_script = templatefile("${path.module}/waiter.tpl", {
     admin_server_public_ip = var.admin_server_public_ip
   })
 }
@@ -60,15 +60,24 @@ module "statistics" {
   deployment_name = var.friendly_name
   product = "DRA"
   resource_type = "dra-analytics"
-  artifact = "ami://${data.aws_ami.selected-ami.image_id}"
+  artifact = "ami://${data.aws_ami.selected-ami.image_id}@${var.dra_version}"
 }
 
-resource "null_resource" "waiter_cmds" {
+resource "null_resource" "readiness" {
   provisioner "local-exec" {
-    command     = local.waiter_cmds_script
+    command     = local.readiness_script
     interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
-    aws_instance.dsf_base_instance
+    aws_instance.dsf_base_instance,
+    module.statistics
   ]
+}
+
+module "statistics_success" {
+  source                            = "../../../modules/aws/statistics"
+
+  id = module.statistics.id
+  initialization_status = "success"
+  depends_on = [ null_resource.readiness ]
 }

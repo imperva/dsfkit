@@ -36,7 +36,7 @@ module "statistics" {
   deployment_name = var.name
   product = "DAM"
   resource_type = var.resource_type
-  artifact = "ami://${data.aws_ami.selected-ami.image_id}"
+  artifact = join("@", compact(["ami://${data.aws_ami.selected-ami.image_id}", var.ami != null ? null : var.dam_version]))
 }
 
 resource "null_resource" "readiness" {
@@ -72,6 +72,7 @@ resource "null_resource" "readiness" {
     instance_id = aws_instance.dsf_base_instance.id
     commands    = var.instance_readiness_params.commands
   }
+  depends_on = [ module.statistics ]
 }
 
 module "statistics_success" {
