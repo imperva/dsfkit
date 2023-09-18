@@ -19,14 +19,14 @@ variable "aws_profile_hub" {
   description = "AWS profile name for the DSF Hub account"
 }
 
-variable "aws_region_hub_primary" {
+variable "aws_region_hub_main" {
   type        = string
-  description = "AWS region for the primary DSF Hub (e.g us-east-2)"
+  description = "AWS region for the main DSF Hub (e.g us-east-2)"
 }
 
-variable "aws_region_hub_secondary" {
+variable "aws_region_hub_dr" {
   type        = string
-  description = "AWS region for the secondary DSF Hub (e.g us-east-2)"
+  description = "AWS region for the DR DSF Hub (e.g us-east-2)"
 }
 
 variable "aws_profile_gw" {
@@ -34,14 +34,14 @@ variable "aws_profile_gw" {
   description = "AWS profile name for the Agentless gateway account"
 }
 
-variable "aws_region_gw_primary" {
+variable "aws_region_gw_main" {
   type        = string
-  description = "AWS region for the primary Agentless gateway (e.g us-east-1)"
+  description = "AWS region for the main Agentless gateway (e.g us-east-1)"
 }
 
-variable "aws_region_gw_secondary" {
+variable "aws_region_gw_dr" {
   type        = string
-  description = "AWS region for the secondary Agentless gateway (e.g us-east-1)"
+  description = "AWS region for the DR Agentless gateway (e.g us-east-1)"
 }
 
 variable "additional_tags" {
@@ -56,48 +56,48 @@ variable "additional_tags" {
   }
 }
 
-variable "subnet_hub_primary" {
+variable "subnet_hub_main" {
   type        = string
-  description = "AWS subnet id for the primary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the main DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "subnet_hub_secondary" {
+variable "subnet_hub_dr" {
   type        = string
-  description = "AWS subnet id for the secondary DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the DR DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "subnet_gw_primary" {
+variable "subnet_gw_main" {
   type        = string
-  description = "AWS subnet id for the primary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the main Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "subnet_gw_secondary" {
+variable "subnet_gw_dr" {
   type        = string
-  description = "AWS subnet id for the secondary Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
+  description = "AWS subnet id for the DR Agentless gateway (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
-variable "security_group_ids_hub_primary" {
+variable "security_group_ids_hub_main" {
   type        = list(string)
   default     = []
-  description = "AWS security group Ids for the primary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "AWS security group Ids for the main DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
-variable "security_group_ids_hub_secondary" {
+variable "security_group_ids_hub_dr" {
   type        = list(string)
   default     = []
-  description = "AWS security group Ids for the secondary DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "AWS security group Ids for the DR DSF Hub (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
-variable "security_group_ids_gw_primary" {
+variable "security_group_ids_gw_main" {
   type        = list(string)
   default     = []
-  description = "AWS security group Ids for the primary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "AWS security group Ids for the main Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
-variable "security_group_ids_gw_secondary" {
+variable "security_group_ids_gw_dr" {
   type        = list(string)
   default     = []
-  description = "AWS security group Ids for the secondary Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
+  description = "AWS security group Ids for the DR Agentless Gateway (e.g sg-xxxxxxxxxxxxxxxxx). If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
 }
 
 variable "proxy_address" {
@@ -229,71 +229,71 @@ EOF
   default     = null
 }
 
-variable "hub_primary_key_pair" {
+variable "hub_main_key_pair" {
   type = object({
     private_key_file_path = string
     public_key_name       = string
   })
-  description = "Key pair used to SSH to the primary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  description = "Key pair used to SSH to the main DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.hub_primary_key_pair == null ||
-      try(var.hub_primary_key_pair.private_key_file_path != null && var.hub_primary_key_pair.public_key_name != null, false)
+      var.hub_main_key_pair == null ||
+      try(var.hub_main_key_pair.private_key_file_path != null && var.hub_main_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'hub_primary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'hub_main_key_pair' variable"
   }
 }
 
-variable "hub_secondary_key_pair" {
+variable "hub_dr_key_pair" {
   type = object({
     private_key_file_path = string
     public_key_name       = string
   })
-  description = "Key pair used to SSH to the secondary DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  description = "Key pair used to SSH to the DR DSF Hub. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.hub_secondary_key_pair == null ||
-      try(var.hub_secondary_key_pair.private_key_file_path != null && var.hub_secondary_key_pair.public_key_name != null, false)
+      var.hub_dr_key_pair == null ||
+      try(var.hub_dr_key_pair.private_key_file_path != null && var.hub_dr_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'hub_secondary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'hub_dr_key_pair' variable"
   }
 }
 
-variable "gw_primary_key_pair" {
+variable "gw_main_key_pair" {
   type = object({
     private_key_file_path = string
     public_key_name       = string
   })
-  description = "Key pair used to SSH to the primary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  description = "Key pair used to SSH to the main Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.gw_primary_key_pair == null ||
-      try(var.gw_primary_key_pair.private_key_file_path != null && var.gw_primary_key_pair.public_key_name != null, false)
+      var.gw_main_key_pair == null ||
+      try(var.gw_main_key_pair.private_key_file_path != null && var.gw_main_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'gw_primary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'gw_main_key_pair' variable"
   }
 }
 
-variable "gw_secondary_key_pair" {
+variable "gw_dr_key_pair" {
   type = object({
     private_key_file_path = string
     public_key_name       = string
   })
-  description = "Key pair used to SSH to the secondary Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
+  description = "Key pair used to SSH to the DR Agentless Gateway. It contains the file path of the private key and the name of the public key. Keep empty if you wish to create a new key pair."
   default     = null
 
   validation {
     condition = (
-      var.gw_secondary_key_pair == null ||
-      try(var.gw_secondary_key_pair.private_key_file_path != null && var.gw_secondary_key_pair.public_key_name != null, false)
+      var.gw_dr_key_pair == null ||
+      try(var.gw_dr_key_pair.private_key_file_path != null && var.gw_dr_key_pair.public_key_name != null, false)
     )
-    error_message = "All fields must be specified when specifying the 'gw_secondary_key_pair' variable"
+    error_message = "All fields must be specified when specifying the 'gw_dr_key_pair' variable"
   }
 }
 

@@ -2,31 +2,31 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_primary_public_ip   = var.enable_sonar ? (length(module.hub_primary[0].public_ip) > 0 ? format("%s/32", module.hub_primary[0].public_ip) : null) : null
-  hub_secondary_public_ip = var.enable_sonar ? (length(module.hub_secondary[0].public_ip) > 0 ? format("%s/32", module.hub_secondary[0].public_ip) : null) : null
-  hub_cidr_list           = compact([data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block, local.hub_primary_public_ip, local.hub_secondary_public_ip])
-  agentless_gw_cidr_list  = [data.aws_subnet.agentless_gw_primary.cidr_block, data.aws_subnet.agentless_gw_secondary.cidr_block]
-  hub_primary_ip          = var.enable_sonar ? (length(module.hub_primary[0].public_dns) > 0 ? module.hub_primary[0].public_dns : module.hub_primary[0].private_dns) : null
-  hub_secondary_ip        = var.enable_sonar ? (length(module.hub_secondary[0].public_dns) > 0 ? module.hub_secondary[0].public_dns : module.hub_secondary[0].private_dns) : null
+  hub_main_public_ip   = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
+  hub_dr_public_ip = var.enable_sonar ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
+  hub_cidr_list           = compact([data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_main_public_ip, local.hub_dr_public_ip])
+  agentless_gw_cidr_list  = [data.aws_subnet.agentless_gw_main.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
+  hub_main_ip          = var.enable_sonar ? (length(module.hub_main[0].public_dns) > 0 ? module.hub_main[0].public_dns : module.hub_main[0].private_dns) : null
+  hub_dr_ip        = var.enable_sonar ? (length(module.hub_dr[0].public_dns) > 0 ? module.hub_dr[0].public_dns : module.hub_dr[0].private_dns) : null
 }
 
-module "hub_primary" {
+module "hub_main" {
   source  = "imperva/dsf-hub/aws"
   version = "1.5.4" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
-  friendly_name        = join("-", [local.deployment_name_salted, "hub", "primary"])
+  friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
   instance_type        = var.hub_instance_type
-  subnet_id            = var.subnet_ids.hub_primary_subnet_id
-  security_group_ids   = var.security_group_ids_hub_primary
+  subnet_id            = var.subnet_ids.hub_main_subnet_id
+  security_group_ids   = var.security_group_ids_hub_main
   ebs                  = var.hub_ebs_details
   ami                  = var.sonar_ami
   binaries_location    = local.tarball_location
   password             = local.password
   password_secret_name = var.password_secret_name
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_primary_private_key_file_path
-    ssh_public_key_name       = local.hub_primary_public_key_name
+    ssh_private_key_file_path = local.hub_main_private_key_file_path
+    ssh_public_key_name       = local.hub_main_public_key_name
   }
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -34,7 +34,7 @@ module "hub_primary" {
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.hub_secondary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_dr.cidr_block]
   allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
@@ -56,26 +56,26 @@ module "hub_primary" {
   }
 }
 
-module "hub_secondary" {
+module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
   version = "1.5.4" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
-  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
+  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
   instance_type                   = var.hub_instance_type
-  subnet_id                       = var.subnet_ids.hub_secondary_subnet_id
-  security_group_ids              = var.security_group_ids_hub_secondary
+  subnet_id                       = var.subnet_ids.hub_dr_subnet_id
+  security_group_ids              = var.security_group_ids_hub_dr
   ebs                             = var.hub_ebs_details
   ami                             = var.sonar_ami
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.hub_primary[0].sonarw_public_key
-  primary_node_sonarw_private_key = module.hub_primary[0].sonarw_private_key
+  hadr_dr_node                    = true
+  main_node_sonarw_public_key     = module.hub_main[0].sonarw_public_key
+  main_node_sonarw_private_key    = module.hub_main[0].sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_secondary_private_key_file_path
-    ssh_public_key_name       = local.hub_secondary_public_key_name
+    ssh_private_key_file_path = local.hub_dr_private_key_file_path
+    ssh_public_key_name       = local.hub_dr_public_key_name
   }
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -83,7 +83,7 @@ module "hub_secondary" {
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block]
   allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
@@ -102,54 +102,54 @@ module "hub_secondary" {
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
   version = "1.5.4" # latest release tag
-  count   = length(module.hub_secondary) > 0 ? 1 : 0
+  count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.hub_primary[0].private_ip
-  dsf_primary_private_ip   = module.hub_primary[0].private_ip
-  dsf_secondary_ip         = module.hub_secondary[0].private_ip
-  dsf_secondary_private_ip = module.hub_secondary[0].private_ip
-  ssh_key_path             = local.hub_primary_private_key_file_path
-  ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
-  ssh_user                 = module.hub_primary[0].ssh_user
-  ssh_user_secondary       = module.hub_secondary[0].ssh_user
+  dsf_main_ip           = module.hub_main[0].private_ip
+  dsf_main_private_ip   = module.hub_main[0].private_ip
+  dsf_dr_ip         = module.hub_dr[0].private_ip
+  dsf_dr_private_ip = module.hub_dr[0].private_ip
+  ssh_key_path             = local.hub_main_private_key_file_path
+  ssh_key_path_dr   = local.hub_dr_private_key_file_path
+  ssh_user                 = module.hub_main[0].ssh_user
+  ssh_user_dr       = module.hub_dr[0].ssh_user
   proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary
+    module.hub_main,
+    module.hub_dr
   ]
 }
 
-module "agentless_gw_primary" {
+module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.5.4" # latest release tag
   count   = local.agentless_gw_count
 
-  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", "primary", count.index])
+  friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
   instance_type        = var.agentless_gw_instance_type
-  subnet_id            = var.subnet_ids.agentless_gw_primary_subnet_id
-  security_group_ids   = var.security_group_ids_gw_primary
+  subnet_id            = var.subnet_ids.agentless_gw_main_subnet_id
+  security_group_ids   = var.security_group_ids_gw_main
   ebs                  = var.agentless_gw_ebs_details
   ami                  = var.sonar_ami
   binaries_location    = local.tarball_location
   password             = local.password
   password_secret_name = var.password_secret_name
   ssh_key_pair = {
-    ssh_private_key_file_path = local.agentless_gw_primary_private_key_file_path
-    ssh_public_key_name       = local.agentless_gw_primary_public_key_name
+    ssh_private_key_file_path = local.agentless_gw_main_private_key_file_path
+    ssh_public_key_name       = local.agentless_gw_main_public_key_name
   }
-  hub_sonarw_public_key = module.hub_primary[0].sonarw_public_key
+  hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_secondary.cidr_block]
-  allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_dr.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.sonar_terraform_script_path_folder
@@ -162,35 +162,35 @@ module "agentless_gw_primary" {
   }
 }
 
-module "agentless_gw_secondary" {
+module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
   version = "1.5.4" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
-  friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", "secondary", count.index])
+  friendly_name                   = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
   instance_type                   = var.agentless_gw_instance_type
-  subnet_id                       = var.subnet_ids.agentless_gw_secondary_subnet_id
-  security_group_ids              = var.security_group_ids_gw_secondary
+  subnet_id                       = var.subnet_ids.agentless_gw_dr_subnet_id
+  security_group_ids              = var.security_group_ids_gw_dr
   ebs                             = var.agentless_gw_ebs_details
   ami                             = var.sonar_ami
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.agentless_gw_primary[count.index].sonarw_public_key
-  primary_node_sonarw_private_key = module.agentless_gw_primary[count.index].sonarw_private_key
+  hadr_dr_node                    = true
+  main_node_sonarw_public_key     = module.agentless_gw_main[count.index].sonarw_public_key
+  main_node_sonarw_private_key    = module.agentless_gw_main[count.index].sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = local.agentless_gw_secondary_private_key_file_path
-    ssh_public_key_name       = local.agentless_gw_secondary_public_key_name
+    ssh_private_key_file_path = local.agentless_gw_dr_private_key_file_path
+    ssh_public_key_name       = local.agentless_gw_dr_public_key_name
   }
-  hub_sonarw_public_key = module.hub_primary[0].sonarw_public_key
+  hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_primary.cidr_block]
-  allowed_hub_cidrs                 = [data.aws_subnet.hub_primary.cidr_block, data.aws_subnet.hub_secondary.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_main.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs                 = var.proxy_private_address != null ? concat(local.workstation_cidr, ["${var.proxy_private_address}/32"]) : local.workstation_cidr
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.sonar_terraform_script_path_folder
@@ -206,41 +206,41 @@ module "agentless_gw_secondary" {
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
   version = "1.5.4" # latest release tag
-  count   = length(module.agentless_gw_secondary)
+  count   = length(module.agentless_gw_dr)
 
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.agentless_gw_primary[count.index].private_ip
-  dsf_primary_private_ip   = module.agentless_gw_primary[count.index].private_ip
-  dsf_secondary_ip         = module.agentless_gw_secondary[count.index].private_ip
-  dsf_secondary_private_ip = module.agentless_gw_secondary[count.index].private_ip
-  ssh_key_path             = local.agentless_gw_primary_private_key_file_path
-  ssh_key_path_secondary   = local.agentless_gw_secondary_private_key_file_path
-  ssh_user                 = module.agentless_gw_primary[count.index].ssh_user
-  ssh_user_secondary       = module.agentless_gw_secondary[count.index].ssh_user
+  dsf_main_ip              = module.agentless_gw_main[count.index].private_ip
+  dsf_main_private_ip      = module.agentless_gw_main[count.index].private_ip
+  dsf_dr_ip                = module.agentless_gw_dr[count.index].private_ip
+  dsf_dr_private_ip        = module.agentless_gw_dr[count.index].private_ip
+  ssh_key_path             = local.agentless_gw_main_private_key_file_path
+  ssh_key_path_dr          = local.agentless_gw_dr_private_key_file_path
+  ssh_user                 = module.agentless_gw_main[count.index].ssh_user
+  ssh_user_dr              = module.agentless_gw_dr[count.index].ssh_user
   proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   depends_on = [
-    module.agentless_gw_primary,
-    module.agentless_gw_secondary
+    module.agentless_gw_main,
+    module.agentless_gw_dr
   ]
 }
 
 locals {
   gws = merge(
-    { for idx, val in module.agentless_gw_primary : "agentless-gw-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_primary_private_key_file_path } },
-    { for idx, val in module.agentless_gw_secondary : "agentless-gw-secondary-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_secondary_private_key_file_path } },
+    { for idx, val in module.agentless_gw_main : "agentless-gw-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_main_private_key_file_path } },
+    { for idx, val in module.agentless_gw_dr : "agentless-gw-dr-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_dr_private_key_file_path } },
   )
   gws_set = values(local.gws)
   hubs_set = concat(
-    var.enable_sonar ? [{ instance : module.hub_primary[0], ip : local.hub_primary_ip, private_key_file_path : local.hub_primary_private_key_file_path }] : [],
-    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_secondary[0], ip : local.hub_secondary_ip, private_key_file_path : local.hub_secondary_private_key_file_path }] : []
+    var.enable_sonar ? [{ instance : module.hub_main[0], ip : local.hub_main_ip, private_key_file_path : local.hub_main_private_key_file_path }] : [],
+    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_dr[0], ip : local.hub_dr_ip, private_key_file_path : local.hub_dr_private_key_file_path }] : []
   )
   hubs_keys = compact([
-    var.enable_sonar ? "hub-primary" : null,
-    var.enable_sonar && var.hub_hadr ? "hub-secondary" : null,
+    var.enable_sonar ? "hub-main" : null,
+    var.enable_sonar && var.hub_hadr ? "hub-dr" : null,
   ])
 
   hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)

@@ -12,104 +12,104 @@ locals {
   tarball_location                     = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   additional_tags                      = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                                 = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
-  should_create_hub_primary_key_pair   = var.hub_primary_key_pair == null ? true : false
-  should_create_hub_secondary_key_pair = var.hub_secondary_key_pair == null ? true : false
-  should_create_gw_primary_key_pair    = var.gw_primary_key_pair == null ? true : false
-  should_create_gw_secondary_key_pair  = var.gw_secondary_key_pair == null ? true : false
+  should_create_hub_main_key_pair   = var.hub_main_key_pair == null ? true : false
+  should_create_hub_dr_key_pair = var.hub_dr_key_pair == null ? true : false
+  should_create_gw_main_key_pair    = var.gw_main_key_pair == null ? true : false
+  should_create_gw_dr_key_pair  = var.gw_dr_key_pair == null ? true : false
 }
 
 ##############################
 # Generating ssh keys
 ##############################
 
-module "key_pair_hub_primary" {
-  count                = local.should_create_hub_primary_key_pair ? 1 : 0
+module "key_pair_hub_main" {
+  count                = local.should_create_hub_main_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-hub-primary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-hub-main"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-main-${terraform.workspace}"
   tags                 = local.tags
   providers = {
-    aws = aws.hub-primary
+    aws = aws.hub-main
   }
 }
 
-module "key_pair_hub_secondary" {
-  count                = local.should_create_hub_secondary_key_pair ? 1 : 0
+module "key_pair_hub_dr" {
+  count                = local.should_create_hub_dr_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-hub-secondary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-hub-dr"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-dr-${terraform.workspace}"
   tags                 = local.tags
   providers = {
-    aws = aws.hub-secondary
+    aws = aws.hub-dr
   }
 }
 
-module "key_pair_gw_primary" {
-  count                = local.should_create_gw_primary_key_pair ? 1 : 0
+module "key_pair_gw_main" {
+  count                = local.should_create_gw_main_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
   key_name_prefix      = "imperva-dsf-gw"
-  private_key_filename = "ssh_keys/dsf_ssh_key-gw-primary-${terraform.workspace}"
+  private_key_filename = "ssh_keys/dsf_ssh_key-gw-main-${terraform.workspace}"
   tags                 = local.tags
   providers = {
-    aws = aws.gw-primary
+    aws = aws.gw-main
   }
 }
 
-module "key_pair_gw_secondary" {
-  count                = local.should_create_gw_secondary_key_pair ? 1 : 0
+module "key_pair_gw_dr" {
+  count                = local.should_create_gw_dr_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-gw-secondary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-gw-secondary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-gw-dr"
+  private_key_filename = "ssh_keys/dsf_ssh_key-gw-dr-${terraform.workspace}"
   tags                 = local.tags
   providers = {
-    aws = aws.gw-secondary
+    aws = aws.gw-dr
   }
 }
 
-data "aws_subnet" "subnet_hub_primary" {
-  id       = var.subnet_hub_primary
-  provider = aws.hub-primary
+data "aws_subnet" "subnet_hub_main" {
+  id       = var.subnet_hub_main
+  provider = aws.hub-main
 }
 
-data "aws_subnet" "subnet_hub_secondary" {
-  id       = var.subnet_hub_secondary
-  provider = aws.hub-secondary
+data "aws_subnet" "subnet_hub_dr" {
+  id       = var.subnet_hub_dr
+  provider = aws.hub-dr
 }
 
-data "aws_subnet" "subnet_gw_primary" {
-  id       = var.subnet_gw_primary
-  provider = aws.gw-primary
+data "aws_subnet" "subnet_gw_main" {
+  id       = var.subnet_gw_main
+  provider = aws.gw-main
 }
 
-data "aws_subnet" "subnet_gw_secondary" {
-  id       = var.subnet_gw_secondary
-  provider = aws.gw-secondary
+data "aws_subnet" "subnet_gw_dr" {
+  id       = var.subnet_gw_dr
+  provider = aws.gw-dr
 }
 
 locals {
-  hub_primary_private_key_file_path   = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.private_key_file_path : module.key_pair_hub_primary[0].private_key_file_path
-  hub_primary_public_key_name         = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.public_key_name : module.key_pair_hub_primary[0].key_pair.key_pair_name
-  hub_secondary_private_key_file_path = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.private_key_file_path : module.key_pair_hub_secondary[0].private_key_file_path
-  hub_secondary_public_key_name       = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.public_key_name : module.key_pair_hub_secondary[0].key_pair.key_pair_name
-  gw_primary_private_key_file_path    = var.gw_primary_key_pair != null ? var.gw_primary_key_pair.private_key_file_path : module.key_pair_gw_primary[0].private_key_file_path
-  gw_primary_public_key_name          = var.gw_primary_key_pair != null ? var.gw_primary_key_pair.public_key_name : module.key_pair_gw_primary[0].key_pair.key_pair_name
-  gw_secondary_private_key_file_path  = var.gw_secondary_key_pair != null ? var.gw_secondary_key_pair.private_key_file_path : module.key_pair_gw_secondary[0].private_key_file_path
-  gw_secondary_public_key_name        = var.gw_secondary_key_pair != null ? var.gw_secondary_key_pair.public_key_name : module.key_pair_gw_secondary[0].key_pair.key_pair_name
+  hub_main_private_key_file_path   = var.hub_main_key_pair != null ? var.hub_main_key_pair.private_key_file_path : module.key_pair_hub_main[0].private_key_file_path
+  hub_main_public_key_name         = var.hub_main_key_pair != null ? var.hub_main_key_pair.public_key_name : module.key_pair_hub_main[0].key_pair.key_pair_name
+  hub_dr_private_key_file_path = var.hub_dr_key_pair != null ? var.hub_dr_key_pair.private_key_file_path : module.key_pair_hub_dr[0].private_key_file_path
+  hub_dr_public_key_name       = var.hub_dr_key_pair != null ? var.hub_dr_key_pair.public_key_name : module.key_pair_hub_dr[0].key_pair.key_pair_name
+  gw_main_private_key_file_path    = var.gw_main_key_pair != null ? var.gw_main_key_pair.private_key_file_path : module.key_pair_gw_main[0].private_key_file_path
+  gw_main_public_key_name          = var.gw_main_key_pair != null ? var.gw_main_key_pair.public_key_name : module.key_pair_gw_main[0].key_pair.key_pair_name
+  gw_dr_private_key_file_path  = var.gw_dr_key_pair != null ? var.gw_dr_key_pair.private_key_file_path : module.key_pair_gw_dr[0].private_key_file_path
+  gw_dr_public_key_name        = var.gw_dr_key_pair != null ? var.gw_dr_key_pair.public_key_name : module.key_pair_gw_dr[0].key_pair.key_pair_name
 }
 
 ##############################
 # Generating deployment
 ##############################
-module "hub_primary" {
+module "hub_main" {
   source               = "imperva/dsf-hub/aws"
   version              = "1.5.4" # latest release tag
-  friendly_name        = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id            = var.subnet_hub_primary
-  security_group_ids   = var.security_group_ids_hub_primary
+  friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
+  subnet_id            = var.subnet_hub_main
+  security_group_ids   = var.security_group_ids_hub_main
   binaries_location    = local.tarball_location
   password             = local.password
   password_secret_name = var.password_secret_name
@@ -117,12 +117,12 @@ module "hub_primary" {
   ebs                  = var.hub_ebs_details
   ami                  = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_primary_private_key_file_path
-    ssh_public_key_name       = local.hub_primary_public_key_name
+    ssh_private_key_file_path = local.hub_main_private_key_file_path
+    ssh_public_key_name       = local.hub_main_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_secondary.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_dr.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_main.cidr_block, data.aws_subnet.subnet_gw_dr.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -136,32 +136,32 @@ module "hub_primary" {
   instance_profile_name             = var.hub_instance_profile_name
   tags                              = local.tags
   providers = {
-    aws = aws.hub-primary
+    aws = aws.hub-main
   }
 }
 
-module "hub_secondary" {
+module "hub_dr" {
   source                          = "imperva/dsf-hub/aws"
   version                         = "1.5.4" # latest release tag
-  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                       = var.subnet_hub_secondary
-  security_group_ids              = var.security_group_ids_hub_secondary
+  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
+  subnet_id                       = var.subnet_hub_dr
+  security_group_ids              = var.security_group_ids_hub_dr
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
   instance_type                   = var.hub_instance_type
   ebs                             = var.hub_ebs_details
   ami                             = var.ami
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.hub_primary.sonarw_public_key
-  primary_node_sonarw_private_key = module.hub_primary.sonarw_private_key
+  hadr_dr_node             = true
+  main_node_sonarw_public_key  = module.hub_main.sonarw_public_key
+  main_node_sonarw_private_key = module.hub_main.sonarw_private_key
   ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_secondary_private_key_file_path
-    ssh_public_key_name       = local.hub_secondary_public_key_name
+    ssh_private_key_file_path = local.hub_dr_private_key_file_path
+    ssh_public_key_name       = local.hub_dr_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_primary.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_primary.cidr_block, data.aws_subnet.subnet_gw_secondary.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_main.cidr_block]
+  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_main.cidr_block, data.aws_subnet.subnet_gw_dr.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -175,30 +175,30 @@ module "hub_secondary" {
   instance_profile_name             = var.hub_instance_profile_name
   tags                              = local.tags
   providers = {
-    aws = aws.hub-secondary
+    aws = aws.hub-dr
   }
 }
 
-module "agentless_gw_primary" {
+module "agentless_gw_main" {
   count                 = var.gw_count
   source                = "imperva/dsf-agentless-gw/aws"
   version               = "1.5.4" # latest release tag
-  friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "primary"])
-  subnet_id             = var.subnet_gw_primary
-  security_group_ids    = var.security_group_ids_gw_primary
+  friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
+  subnet_id             = var.subnet_gw_main
+  security_group_ids    = var.security_group_ids_gw_main
   instance_type         = var.gw_instance_type
   ebs                   = var.agentless_gw_ebs_details
   binaries_location     = local.tarball_location
   password              = local.password
   password_secret_name  = var.password_secret_name
-  hub_sonarw_public_key = module.hub_primary.sonarw_public_key
+  hub_sonarw_public_key = module.hub_main.sonarw_public_key
   ami                   = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_primary_private_key_file_path
-    ssh_public_key_name       = local.gw_primary_public_key_name
+    ssh_private_key_file_path = local.gw_main_private_key_file_path
+    ssh_public_key_name       = local.gw_main_public_key_name
   }
-  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_secondary.cidr_block]
-  allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_dr.cidr_block]
+  allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_main.cidr_block, data.aws_subnet.subnet_hub_dr.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -212,33 +212,33 @@ module "agentless_gw_primary" {
   instance_profile_name             = var.gw_instance_profile_name
   tags                              = local.tags
   providers = {
-    aws = aws.gw-primary
+    aws = aws.gw-main
   }
 }
 
-module "agentless_gw_secondary" {
+module "agentless_gw_dr" {
   count                           = var.gw_count
   source                          = "imperva/dsf-agentless-gw/aws"
   version                         = "1.5.4" # latest release tag
-  friendly_name                   = join("-", [local.deployment_name_salted, "gw", count.index, "secondary"])
-  subnet_id                       = var.subnet_gw_secondary
-  security_group_ids              = var.security_group_ids_gw_secondary
+  friendly_name                   = join("-", [local.deployment_name_salted, "gw", count.index, "DR"])
+  subnet_id                       = var.subnet_gw_dr
+  security_group_ids              = var.security_group_ids_gw_dr
   instance_type                   = var.gw_instance_type
   ebs                             = var.agentless_gw_ebs_details
   binaries_location               = local.tarball_location
   password                        = local.password
   password_secret_name            = var.password_secret_name
-  hub_sonarw_public_key           = module.hub_primary.sonarw_public_key
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.agentless_gw_primary[count.index].sonarw_public_key
-  primary_node_sonarw_private_key = module.agentless_gw_primary[count.index].sonarw_private_key
+  hub_sonarw_public_key           = module.hub_main.sonarw_public_key
+  hadr_dr_node             = true
+  main_node_sonarw_public_key  = module.agentless_gw_main[count.index].sonarw_public_key
+  main_node_sonarw_private_key = module.agentless_gw_main[count.index].sonarw_private_key
   ami                             = var.ami
   ssh_key_pair = {
-    ssh_private_key_file_path = local.gw_secondary_private_key_file_path
-    ssh_public_key_name       = local.gw_secondary_public_key_name
+    ssh_private_key_file_path = local.gw_dr_private_key_file_path
+    ssh_public_key_name       = local.gw_dr_public_key_name
   }
-  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_primary.cidr_block]
-  allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_primary.cidr_block, data.aws_subnet.subnet_hub_secondary.cidr_block]
+  allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_main.cidr_block]
+  allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_main.cidr_block, data.aws_subnet.subnet_hub_dr.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
   ingress_communication_via_proxy = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -252,7 +252,7 @@ module "agentless_gw_secondary" {
   instance_profile_name             = var.gw_instance_profile_name
   tags                              = local.tags
   providers = {
-    aws = aws.gw-secondary
+    aws = aws.gw-dr
   }
 }
 
@@ -260,22 +260,22 @@ module "hub_hadr" {
   source                   = "imperva/dsf-hadr/null"
   version                  = "1.5.4" # latest release tag
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.hub_primary.private_ip
-  dsf_primary_private_ip   = module.hub_primary.private_ip
-  dsf_secondary_ip         = module.hub_secondary.private_ip
-  dsf_secondary_private_ip = module.hub_secondary.private_ip
-  ssh_key_path             = local.hub_primary_private_key_file_path
-  ssh_key_path_secondary   = local.hub_secondary_private_key_file_path
-  ssh_user                 = module.hub_primary.ssh_user
-  ssh_user_secondary       = module.hub_secondary.ssh_user
+  dsf_main_ip           = module.hub_main.private_ip
+  dsf_main_private_ip   = module.hub_main.private_ip
+  dsf_dr_ip         = module.hub_dr.private_ip
+  dsf_dr_private_ip = module.hub_dr.private_ip
+  ssh_key_path             = local.hub_main_private_key_file_path
+  ssh_key_path_dr   = local.hub_dr_private_key_file_path
+  ssh_user                 = module.hub_main.ssh_user
+  ssh_user_dr       = module.hub_dr.ssh_user
   proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary
+    module.hub_main,
+    module.hub_dr
   ]
 }
 
@@ -284,31 +284,31 @@ module "agentless_gw_hadr" {
   source                   = "imperva/dsf-hadr/null"
   version                  = "1.5.4" # latest release tag
   sonar_version            = module.globals.tarball_location.version
-  dsf_primary_ip           = module.agentless_gw_primary[count.index].private_ip
-  dsf_primary_private_ip   = module.agentless_gw_primary[count.index].private_ip
-  dsf_secondary_ip         = module.agentless_gw_secondary[count.index].private_ip
-  dsf_secondary_private_ip = module.agentless_gw_secondary[count.index].private_ip
-  ssh_key_path             = local.gw_primary_private_key_file_path
-  ssh_key_path_secondary   = local.gw_secondary_private_key_file_path
-  ssh_user                 = module.agentless_gw_primary[count.index].ssh_user
-  ssh_user_secondary       = module.agentless_gw_secondary[count.index].ssh_user
+  dsf_main_ip           = module.agentless_gw_main[count.index].private_ip
+  dsf_main_private_ip   = module.agentless_gw_main[count.index].private_ip
+  dsf_dr_ip         = module.agentless_gw_dr[count.index].private_ip
+  dsf_dr_private_ip = module.agentless_gw_dr[count.index].private_ip
+  ssh_key_path             = local.gw_main_private_key_file_path
+  ssh_key_path_dr   = local.gw_dr_private_key_file_path
+  ssh_user                 = module.agentless_gw_main[count.index].ssh_user
+  ssh_user_dr       = module.agentless_gw_dr[count.index].ssh_user
   proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
     proxy_private_ssh_key_path = var.proxy_ssh_key_path
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   depends_on = [
-    module.agentless_gw_primary,
-    module.agentless_gw_secondary
+    module.agentless_gw_main,
+    module.agentless_gw_dr
   ]
 }
 
 locals {
   hub_gws_combinations = setproduct(
-    [{ instance : module.hub_primary, private_key_file_path : local.hub_primary_private_key_file_path }, { instance : module.hub_secondary, private_key_file_path : local.hub_secondary_private_key_file_path }],
+    [{ instance : module.hub_main, private_key_file_path : local.hub_main_private_key_file_path }, { instance : module.hub_dr, private_key_file_path : local.hub_dr_private_key_file_path }],
     concat(
-      [for idx, val in module.agentless_gw_primary : { instance : val, private_key_file_path : local.gw_primary_private_key_file_path }],
-      [for idx, val in module.agentless_gw_secondary : { instance : val, private_key_file_path : local.gw_secondary_private_key_file_path }]
+      [for idx, val in module.agentless_gw_main : { instance : val, private_key_file_path : local.gw_main_private_key_file_path }],
+      [for idx, val in module.agentless_gw_dr : { instance : val, private_key_file_path : local.gw_dr_private_key_file_path }]
     )
   )
 }

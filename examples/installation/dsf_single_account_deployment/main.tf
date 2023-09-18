@@ -14,14 +14,14 @@ locals {
   additional_tags        = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
   tags                   = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
 
-  hub_primary_private_key_file_path            = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.private_key_file_path : module.key_pair_hub_primary[0].private_key_file_path
-  hub_primary_public_key_name                  = var.hub_primary_key_pair != null ? var.hub_primary_key_pair.public_key_name : module.key_pair_hub_primary[0].key_pair.key_pair_name
-  hub_secondary_private_key_file_path          = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.private_key_file_path : module.key_pair_hub_secondary[0].private_key_file_path
-  hub_secondary_public_key_name                = var.hub_secondary_key_pair != null ? var.hub_secondary_key_pair.public_key_name : module.key_pair_hub_secondary[0].key_pair.key_pair_name
-  agentless_gw_primary_private_key_file_path   = var.agentless_gw_primary_key_pair != null ? var.agentless_gw_primary_key_pair.private_key_file_path : module.key_pair_agentless_gw_primary[0].private_key_file_path
-  agentless_gw_primary_public_key_name         = var.agentless_gw_primary_key_pair != null ? var.agentless_gw_primary_key_pair.public_key_name : module.key_pair_agentless_gw_primary[0].key_pair.key_pair_name
-  agentless_gw_secondary_private_key_file_path = var.agentless_gw_secondary_key_pair != null ? var.agentless_gw_secondary_key_pair.private_key_file_path : module.key_pair_agentless_gw_secondary[0].private_key_file_path
-  agentless_gw_secondary_public_key_name       = var.agentless_gw_secondary_key_pair != null ? var.agentless_gw_secondary_key_pair.public_key_name : module.key_pair_agentless_gw_secondary[0].key_pair.key_pair_name
+  hub_main_private_key_file_path            = var.hub_main_key_pair != null ? var.hub_main_key_pair.private_key_file_path : module.key_pair_hub_main[0].private_key_file_path
+  hub_main_public_key_name                  = var.hub_main_key_pair != null ? var.hub_main_key_pair.public_key_name : module.key_pair_hub_main[0].key_pair.key_pair_name
+  hub_dr_private_key_file_path          = var.hub_dr_key_pair != null ? var.hub_dr_key_pair.private_key_file_path : module.key_pair_hub_dr[0].private_key_file_path
+  hub_dr_public_key_name                = var.hub_dr_key_pair != null ? var.hub_dr_key_pair.public_key_name : module.key_pair_hub_dr[0].key_pair.key_pair_name
+  agentless_gw_main_private_key_file_path   = var.agentless_gw_main_key_pair != null ? var.agentless_gw_main_key_pair.private_key_file_path : module.key_pair_agentless_gw_main[0].private_key_file_path
+  agentless_gw_main_public_key_name         = var.agentless_gw_main_key_pair != null ? var.agentless_gw_main_key_pair.public_key_name : module.key_pair_agentless_gw_main[0].key_pair.key_pair_name
+  agentless_gw_dr_private_key_file_path = var.agentless_gw_dr_key_pair != null ? var.agentless_gw_dr_key_pair.private_key_file_path : module.key_pair_agentless_gw_dr[0].private_key_file_path
+  agentless_gw_dr_public_key_name       = var.agentless_gw_dr_key_pair != null ? var.agentless_gw_dr_key_pair.public_key_name : module.key_pair_agentless_gw_dr[0].key_pair.key_pair_name
   mx_private_key_file_path                     = var.mx_key_pair != null ? var.mx_key_pair.private_key_file_path : module.key_pair_mx[0].private_key_file_path
   mx_public_key_name                           = var.mx_key_pair != null ? var.mx_key_pair.public_key_name : module.key_pair_mx[0].key_pair.key_pair_name
   agent_gw_private_key_file_path               = var.agent_gw_key_pair != null ? var.agent_gw_key_pair.private_key_file_path : module.key_pair_agent_gw[0].private_key_file_path
@@ -36,48 +36,48 @@ locals {
 # Generating ssh keys
 ##############################
 
-module "key_pair_hub_primary" {
-  count                = var.hub_primary_key_pair == null ? 1 : 0
+module "key_pair_hub_main" {
+  count                = var.hub_main_key_pair == null ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-hub-primary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-hub-primary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-hub-main"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-main-${terraform.workspace}"
   tags                 = local.tags
   providers = {
     aws = aws.provider-1
   }
 }
 
-module "key_pair_hub_secondary" {
-  count                = var.hub_secondary_key_pair == null ? 1 : 0
+module "key_pair_hub_dr" {
+  count                = var.hub_dr_key_pair == null ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-hub-secondary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-hub-secondary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-hub-dr"
+  private_key_filename = "ssh_keys/dsf_ssh_key-hub-dr-${terraform.workspace}"
   tags                 = local.tags
   providers = {
     aws = aws.provider-1
   }
 }
 
-module "key_pair_agentless_gw_primary" {
-  count                = var.agentless_gw_primary_key_pair == null ? 1 : 0
+module "key_pair_agentless_gw_main" {
+  count                = var.agentless_gw_main_key_pair == null ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-gw-primary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-agentless-gw-primary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-gw-main"
+  private_key_filename = "ssh_keys/dsf_ssh_key-agentless-gw-main-${terraform.workspace}"
   tags                 = local.tags
   providers = {
     aws = aws.provider-2
   }
 }
 
-module "key_pair_agentless_gw_secondary" {
-  count                = var.agentless_gw_secondary_key_pair == null ? 1 : 0
+module "key_pair_agentless_gw_dr" {
+  count                = var.agentless_gw_dr_key_pair == null ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
   version              = "1.5.4" # latest release tag
-  key_name_prefix      = "imperva-dsf-gw-secondary"
-  private_key_filename = "ssh_keys/dsf_ssh_key-agentless-gw-secondary-${terraform.workspace}"
+  key_name_prefix      = "imperva-dsf-gw-dr"
+  private_key_filename = "ssh_keys/dsf_ssh_key-agentless-gw-dr-${terraform.workspace}"
   tags                 = local.tags
   providers = {
     aws = aws.provider-2

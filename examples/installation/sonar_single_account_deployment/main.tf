@@ -57,12 +57,12 @@ locals {
   gw_public_key_name        = var.gw_key_pair != null ? var.gw_key_pair.public_key_name : module.key_pair_gw[0].key_pair.key_pair_name
 }
 
-data "aws_subnet" "primary_hub" {
-  id = var.subnet_hub_primary
+data "aws_subnet" "main_hub" {
+  id = var.subnet_hub_main
 }
 
-data "aws_subnet" "secondary_hub" {
-  id = var.subnet_hub_secondary
+data "aws_subnet" "dr_hub" {
+  id = var.subnet_hub_dr
 }
 
 data "aws_subnet" "subnet_gw" {
@@ -72,11 +72,11 @@ data "aws_subnet" "subnet_gw" {
 ##############################
 # Generating deployment
 ##############################
-module "hub_primary" {
+module "hub_main" {
   source               = "imperva/dsf-hub/aws"
   version              = "1.5.4" # latest release tag
-  friendly_name        = join("-", [local.deployment_name_salted, "hub", "primary"])
-  subnet_id            = var.subnet_hub_primary
+  friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
+  subnet_id            = var.subnet_hub_main
   security_group_ids   = var.security_group_ids_hub
   binaries_location    = local.tarball_location
   password             = local.password
@@ -89,7 +89,7 @@ module "hub_primary" {
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.secondary_hub.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.dr_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
 
@@ -101,11 +101,11 @@ module "hub_primary" {
   tags                              = local.tags
 }
 
-module "hub_secondary" {
+module "hub_dr" {
   source                          = "imperva/dsf-hub/aws"
   version                         = "1.5.4" # latest release tag
-  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "secondary"])
-  subnet_id                       = var.subnet_hub_secondary
+  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
+  subnet_id                       = var.subnet_hub_dr
   security_group_ids              = var.security_group_ids_hub
   binaries_location               = local.tarball_location
   password                        = local.password
@@ -113,15 +113,15 @@ module "hub_secondary" {
   instance_type                   = var.hub_instance_type
   ebs                             = var.hub_ebs_details
   ami                             = var.ami
-  hadr_secondary_node             = true
-  primary_node_sonarw_public_key  = module.hub_primary.sonarw_public_key
-  primary_node_sonarw_private_key = module.hub_primary.sonarw_private_key
+  hadr_dr_node             = true
+  main_node_sonarw_public_key  = module.hub_main.sonarw_public_key
+  main_node_sonarw_private_key = module.hub_main.sonarw_private_key
   ssh_key_pair = {
     ssh_private_key_file_path = local.hub_private_key_file_path
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.primary_hub.cidr_block]
+  allowed_hub_cidrs                 = [data.aws_subnet.main_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
 
@@ -145,18 +145,18 @@ module "agentless_gw" {
   binaries_location     = local.tarball_location
   password              = local.password
   password_secret_name  = var.password_secret_name
-  hub_sonarw_public_key = module.hub_primary.sonarw_public_key
+  hub_sonarw_public_key = module.hub_main.sonarw_public_key
   ami                   = var.ami
   ssh_key_pair = {
     ssh_private_key_file_path = local.gw_private_key_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  allowed_hub_cidrs = [data.aws_subnet.primary_hub.cidr_block, data.aws_subnet.secondary_hub.cidr_block]
+  allowed_hub_cidrs = [data.aws_subnet.main_hub.cidr_block, data.aws_subnet.dr_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = var.use_hub_as_proxy ? {
-    proxy_address              = module.hub_primary.private_ip
+    proxy_address              = module.hub_main.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
-    proxy_ssh_user             = module.hub_primary.ssh_user
+    proxy_ssh_user             = module.hub_main.ssh_user
   } : null
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
@@ -170,22 +170,22 @@ module "hub_hadr" {
   source                       = "imperva/dsf-hadr/null"
   version                      = "1.5.4" # latest release tag
   sonar_version                = module.globals.tarball_location.version
-  dsf_primary_ip               = module.hub_primary.private_ip
-  dsf_primary_private_ip       = module.hub_primary.private_ip
-  dsf_secondary_ip             = module.hub_secondary.private_ip
-  dsf_secondary_private_ip     = module.hub_secondary.private_ip
+  dsf_main_ip               = module.hub_main.private_ip
+  dsf_main_private_ip       = module.hub_main.private_ip
+  dsf_dr_ip             = module.hub_dr.private_ip
+  dsf_dr_private_ip     = module.hub_dr.private_ip
   ssh_key_path                 = local.hub_private_key_file_path
-  ssh_user                     = module.hub_primary.ssh_user
+  ssh_user                     = module.hub_main.ssh_user
   terraform_script_path_folder = var.terraform_script_path_folder
   depends_on = [
-    module.hub_primary,
-    module.hub_secondary
+    module.hub_main,
+    module.hub_dr
   ]
 }
 
 locals {
   hub_gw_combinations = setproduct(
-    [module.hub_primary, module.hub_secondary],
+    [module.hub_main, module.hub_dr],
     concat(
       [for idx, val in module.agentless_gw : val]
     )
@@ -208,9 +208,9 @@ module "federation" {
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   gw_proxy_info = var.use_hub_as_proxy ? {
-    proxy_address              = module.hub_primary.private_ip
+    proxy_address              = module.hub_main.private_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
-    proxy_ssh_user             = module.hub_primary.ssh_user
+    proxy_ssh_user             = module.hub_main.ssh_user
   } : null
   depends_on = [
     module.hub_hadr,

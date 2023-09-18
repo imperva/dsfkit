@@ -8,27 +8,27 @@ variable "sonar_version" {
   }
 }
 
-variable "dsf_primary_ip" {
+variable "dsf_main_ip" {
   type        = string
-  description = "IP of the primary DSF Hub or Agentless Gateway, can be public or private"
+  description = "IP of the main DSF Hub or Agentless Gateway, can be public or private"
   nullable    = false
 }
 
-variable "dsf_primary_private_ip" {
+variable "dsf_main_private_ip" {
   type        = string
-  description = "Private IP of the primary DSF Hub or Agentless Gateway"
+  description = "Private IP of the main DSF Hub or Agentless Gateway"
   nullable    = false
 }
 
-variable "dsf_secondary_ip" {
+variable "dsf_dr_ip" {
   type        = string
-  description = "IP of the secondary DSF Hub or Agentless Gateway, can be public or private"
+  description = "IP of the DR DSF Hub or Agentless Gateway, can be public or private"
   nullable    = false
 }
 
-variable "dsf_secondary_private_ip" {
+variable "dsf_dr_private_ip" {
   type        = string
-  description = "Private IP of the secondary DSF Hub or Agentless Gateway"
+  description = "Private IP of the DR DSF Hub or Agentless Gateway"
   nullable    = false
 }
 
@@ -38,9 +38,9 @@ variable "ssh_key_path" {
   nullable    = false
 }
 
-variable "ssh_key_path_secondary" {
+variable "ssh_key_path_dr" {
   type        = string
-  description = "SSH key path for secondary. Keep empty if the key is identical to primary one"
+  description = "SSH key path for DR. Keep empty if the key is identical to main one"
   default     = null
 }
 
@@ -50,9 +50,9 @@ variable "ssh_user" {
   nullable    = false
 }
 
-variable "ssh_user_secondary" {
+variable "ssh_user_dr" {
   type        = string
-  description = "SSH user for secondary. Keep empty if the user is identical to primary one"
+  description = "SSH user for DR. Keep empty if the user is identical to main one"
   default     = null
 }
 

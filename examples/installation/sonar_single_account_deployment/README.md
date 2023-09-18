@@ -5,8 +5,8 @@ A DSF Hub and Agentless Gateway (formerly Sonar) deployment with Hub HADR; deplo
 
 This deployment consists of:
 
-1. One primary DSF Hub
-2. One secondary DSF Hub
+1. One main DSF Hub
+2. One DR DSF Hub
 3. One Agentless Gateway
 4. DSF Hub HADR setup
 5. Federation
@@ -29,8 +29,8 @@ For example:
   ```tf
   aws_profile = "myProfile"
   aws_region = "us-east-1"
-  subnet_hub_primary   = "subnet-xxxxxxxxxxxxxxxx1"
-  subnet_hub_secondary = "subnet-xxxxxxxxxxxxxxxx2"
+  subnet_hub_main      = "subnet-xxxxxxxxxxxxxxxx1"
+  subnet_hub_dr        = "subnet-xxxxxxxxxxxxxxxx2"
   subnet_gw            = "subnet-xxxxxxxxxxxxxxxx3"
   security_group_ids_hub = ["sg-xxxxxxxxxxxxxxxx11", "sg-xxxxxxxxxxxxxxxx12"]
   security_group_ids_gw  = ["sg-xxxxxxxxxxxxxxxx21", "sg-xxxxxxxxxxxxxxxx22"]

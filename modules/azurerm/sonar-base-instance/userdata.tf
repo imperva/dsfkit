@@ -15,9 +15,9 @@ locals {
     display_name                           = local.display_name
     password_secret                        = local.password_secret_name
     hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
-    primary_node_sonarw_public_key         = local.primary_node_sonarw_public_key
+    main_node_sonarw_public_key            = local.main_node_sonarw_public_key
     vault_name                             = azurerm_key_vault.vault.name
-    primary_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name
+    main_node_sonarw_private_key_secret    = azurerm_key_vault_secret.sonarw_private_key_secret.name
     jsonar_uuid                            = random_uuid.jsonar_uuid.result
     additional_install_parameters          = var.additional_install_parameters
     firewall_ports                         = join(" ", flatten([for i in var.security_groups_config : i.tcp]))
@@ -26,6 +26,15 @@ locals {
 }
 
 resource "random_uuid" "jsonar_uuid" {}
+
+module "statistics" {
+  source                            = "../../../modules/azurerm/statistics"
+  deployment_name = var.name
+  product = "SONAR"
+  resource_type = var.resource_type
+  artifact = "blob://${var.binaries_location.az_storage_account}/${var.binaries_location.az_container}/${var.binaries_location.az_blob}"
+  location = var.resource_group.location
+}
 
 resource "null_resource" "readiness" {
   count = var.skip_instance_health_verification == true ? 0 : 1
@@ -60,6 +69,15 @@ resource "null_resource" "readiness" {
   }
 
   depends_on = [
-    azurerm_network_interface_security_group_association.nic_ip_association
+    azurerm_network_interface_security_group_association.nic_ip_association,
+    module.statistics
   ]
+}
+
+module "statistics_success" {
+  source                            = "../../../modules/azurerm/statistics"
+
+  id = module.statistics.id
+  initialization_status = "success"
+  depends_on = [ null_resource.readiness ]
 }
