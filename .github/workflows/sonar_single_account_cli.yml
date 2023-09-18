@@ -95,7 +95,6 @@ jobs:
           command_timeout: "2h"
           envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: |
-            echo "ws: $TF_WORKSPACE, dir: $REMOTE_EXAMPLE_DIR"
             terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Delete Old Environment

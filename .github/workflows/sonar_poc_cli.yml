@@ -193,7 +193,7 @@ jobs:
 
     # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
     - name: Check SSH Connectivity
-      uses: appleboy/ssh-action@v0.1.6
+      uses: appleboy/ssh-action@v1.0.0
       with:
         proxy_host: ${{ env.hub_ip }}
         proxy_username: ec2-user
