@@ -41,6 +41,9 @@ jobs:
         shell: bash
 
     steps:
+    - name: Setup jq
+      uses: sergeysova/jq-action@v2
+
     - name: Get The Public IP
       run: echo curr_ip=$(curl -s https://ipinfo.io/ip) >> $GITHUB_ENV
 
