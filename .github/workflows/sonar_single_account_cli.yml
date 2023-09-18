@@ -84,6 +84,7 @@ jobs:
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
       - name: Cleaning environment
+        continue-on-error: true
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: 54.179.25.83
