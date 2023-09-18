@@ -41,19 +41,17 @@ jobs:
 
     steps:
     # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Cleaning environment
+      continue-on-error: true
+      uses: appleboy/ssh-action@v1.0.0
       with:
-        ref: dev
-
-    - name: ls
-      run: ls -l
-
-    - name: Collect Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: collected-keys
-        path: |
-          README.md
-          ./permissions_samples
+        host: 54.179.25.83
+        username: ec2-user
+        key: ${{ env.JUMP_SERVER_KEY }}
+        port: 22
+        command_timeout: "2h"
+        envs: TF_VAR_gw_count,TF_WORKSPACE
+        script: |
+          echo "ws: $TF_WORKSPACE, gwc: $TF_VAR_gw_count"
+          terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
