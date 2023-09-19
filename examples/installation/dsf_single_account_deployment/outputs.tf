@@ -47,6 +47,10 @@ output "sonar" {
         ssh_command  = var.proxy_address == null ? try("ssh -i ${local.agentless_gw_dr_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.agentless_gw_dr_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []
+    dsf_hub_main_ssh_key_file_path = local.hub_main_private_key_file_path
+    dsf_hub_dr_ssh_key_file_path = local.hub_dr_private_key_file_path
+    agentless_gw_main_ssh_key_file_path = local.agentless_gw_main_private_key_file_path
+    agentless_gw_dr_ssh_key_file_path = local.agentless_gw_dr_private_key_file_path
   } : null
 }
 
@@ -79,6 +83,8 @@ output "dam" {
         large_scale_mode = val.large_scale_mode
       }
     ]
+    mx_ssh_key_file_path = local.mx_private_key_file_path
+    agent_gw_ssh_key_file_path = local.agent_gw_private_key_file_path
   } : null
 }
 
@@ -102,6 +108,8 @@ output "dra" {
         ssh_command   = var.proxy_address == null ? try("ssh -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null) : try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}' -i ${local.dra_analytics_private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
+    dra_admin_ssh_key_file_path = local.dra_admin_private_key_file_path
+    dra_analytics_ssh_key_file_path = local.dra_analytics_private_key_file_path
   } : null
 }
 
@@ -128,37 +136,5 @@ output "web_console_dam" {
     password    = nonsensitive(local.password)
     user        = module.mx[0].web_console_user
   }, null)
-}
-
-output "dsf_hub_main_ssh_key_file_path" {
-  value = local.hub_main_private_key_file_path
-}
-
-output "dsf_hub_dr_ssh_key_file_path" {
-  value = local.hub_dr_private_key_file_path
-}
-
-output "agentless_gw_main_ssh_key_file_path" {
-  value = local.agentless_gw_main_private_key_file_path
-}
-
-output "agentless_gw_dr_ssh_key_file_path" {
-  value = local.agentless_gw_dr_private_key_file_path
-}
-
-output "mx_ssh_key_file_path" {
-  value = local.mx_private_key_file_path
-}
-
-output "agent_gw_ssh_key_file_path" {
-  value = local.agent_gw_private_key_file_path
-}
-
-output "dra_admin_ssh_key_file_path" {
-  value = local.dra_admin_private_key_file_path
-}
-
-output "dra_analytics_ssh_key_file_path" {
-  value = local.dra_analytics_private_key_file_path
 }
 
