@@ -16,7 +16,7 @@ resource "random_uuid" "stats_id" {
 locals {
   payload = jsonencode({
     "id" : local.id
-    "deployment_name" : var.deployment_name,
+    "deployment_name" : var.deployment_name == null ? null : local.hashed_deployment_name,
     "artifact" : var.artifact
     "product" : var.product
     "resource_type" : var.resource_type

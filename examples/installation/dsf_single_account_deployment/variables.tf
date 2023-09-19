@@ -462,9 +462,9 @@ variable "dam_version" {
   }
 }
 
-variable "license" {
+variable "dam_license" {
   description = <<EOF
-  License information. Must be one of the following:
+  DAM license information. Must be one of the following:
   1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
   2. License file path
   EOF

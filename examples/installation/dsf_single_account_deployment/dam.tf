@@ -16,7 +16,7 @@ module "mx" {
   ebs                               = var.mx_ebs_details
   subnet_id                         = var.subnet_ids.mx_subnet_id
   security_group_ids                = var.security_group_ids_mx
-  license                           = var.license
+  license                           = var.dam_license
   key_pair                          = local.mx_public_key_name
   secure_password                   = local.password
   mx_password                       = local.password

@@ -15,7 +15,7 @@ module "mx" {
   dam_version                       = var.dam_version
   ebs                               = var.mx_ebs_details
   subnet_id                         = local.mx_subnet_id
-  license                           = var.license
+  license                           = var.dam_license
   key_pair                          = module.key_pair.key_pair.key_pair_name
   secure_password                   = local.password
   mx_password                       = local.password
