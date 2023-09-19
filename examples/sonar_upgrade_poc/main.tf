@@ -3,74 +3,50 @@ module "sonar_upgrader" {
   agentless_gws = [
       {
         "main" = {
-          "host"                      = "10.0.1.1"
+          "host"                      = "10.0.1.156"
           "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        },
-        "dr" = {
-          "host"                      = "10.2.1.1"
-          "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        },
-        "minor" = {
-          "host"                      = "10.3.1.1"
-          "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        }
-      },
-      {
-        "main" = {
-          "host"                      = "10.0.1.2"
-          "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
           "proxy"                     = {
-            "host"                      = "52.8.8.8"
+            "host"                      = "18.178.79.43"
             "ssh_user"                  = "ec2-user"
-            "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+            "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
           }
-        },
+        }
         "dr" = {
-          "host"                      = "10.2.1.2"
+          "host"                      = "10.0.2.194"
           "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
           "proxy"                     = {
-            "host"                      = "52.8.8.8"
+            "host"                      = "18.178.79.43"
             "ssh_user"                  = "ec2-user"
-            "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+            "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
           }
         }
       },
       {
-        "main" = {
-          "host"                      = "10.0.1.3"
-          "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        }
-      },
-      {
         "dr" = {
-          "host"                      = "10.0.1.4"
+          "host"                      = "10.0.2.240"
           "ssh_user"                  = "ec2-user"
-          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
+          "proxy"                     = {
+            "host"                      = "18.178.79.43"
+            "ssh_user"                  = "ec2-user"
+            "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
+          }
         }
       }
   ]
   dsf_hubs = [
     {
       "main" = {
-        "host"                      = "52.8.8.8"
+        "host"                      = "18.178.79.43"
         "ssh_user"                  = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
       },
       "dr" = {
-        "host"                      = "52.8.8.9"
+        "host"                      = "52.195.240.48"
         "ssh_user"                  = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-      },
-      "minor" = {
-        "host"                      = "52.8.8.10"
-        "ssh_user"                  = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        "ssh_private_key_file_path" = "/Users/linda.nasredin/cnc_workspace/dsfkit/examples/poc/sonar_hadr_deployment/ssh_keys/dsf_ssh_key-default"
       }
     }
   ]

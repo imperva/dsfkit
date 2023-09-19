@@ -126,6 +126,10 @@ def main():
 
     print("********** Start ************")
 
+    if not args.run_preflight_validations and not args.run_upgrade and not args.run_postflight_validations:
+        print("All flags are disabled. Nothing to do here.")
+        return
+
     agentless_gw_extended_nodes = get_flat_extended_node_list(agentless_gws, "Agentless Gateway")
     dsf_hub_extended_nodes = get_flat_extended_node_list(hubs, "DSF Hub")
     extended_nodes = agentless_gw_extended_nodes + dsf_hub_extended_nodes
@@ -142,7 +146,7 @@ def main():
             print(f"Aborting upgrade...")
             return
 
-    if preflight_validations_passed:
+    if preflight_validations_passed and (args.run_upgrade or args.run_postflight_validations):
         success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
                                                args.run_postflight_validations, python_location_dict)
         print_upgrade_result = args.run_upgrade
@@ -338,14 +342,14 @@ def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_vers
 def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version, upgrade_script_file_name,
                                           run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, python_location_dict):
-    print(f"Running upgrade for an {dsf_node_type} HADR replica set")
+    print(f"Running upgrade and/or postflight validations for an {dsf_node_type} HADR replica set")
     if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), dsf_node_type, 'Minor', target_version,
                                              upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                              postflight_validations_script_file_name, python_location_dict):
         if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('dr'), dsf_node_type, 'DR', target_version,
                                                  upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                                  postflight_validations_script_file_name, python_location_dict):
-            if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), dsf_node_type, 'main', target_version,
+            if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), dsf_node_type, 'Main', target_version,
                                                      upgrade_script_file_name, run_upgrade,
                                                      do_run_postflight_validations,
                                                      postflight_validations_script_file_name,
@@ -358,13 +362,14 @@ def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_versio
     return False
 
 
-def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_type, target_version,
+def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_type_name, target_version,
                                           upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, python_location_dict):
     if dsf_node is None:
         return True
     dsf_node_id = generate_dsf_node_id(dsf_node)
-    dsf_node_name = f"{dsf_node_type}, HADR {hadr_node_type}, {dsf_node_id}"
+    # TODO consider extracting method generate_dsf_node_name since called twice
+    dsf_node_name = f"{dsf_node_type}, HADR {hadr_node_type_name}, {dsf_node_id}"
     upgrade_succeeded = True
     if run_upgrade:
         upgrade_succeeded = upgrade_dsf_node(dsf_node, dsf_node_name, target_version, upgrade_script_file_name)
@@ -376,6 +381,7 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
                                                                        python_location_dict[dsf_node.get('host')])
             if are_postflight_validations_passed(postflight_validations_result):
                 print(f"### Postflight validations passed for {dsf_node_name}")
+                return True
             else:
                 print(f"### Postflight validations didn't pass for {dsf_node_name}")
                 return False
