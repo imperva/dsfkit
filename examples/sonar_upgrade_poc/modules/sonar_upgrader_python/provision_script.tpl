@@ -13,6 +13,6 @@ python3 -u ${path}/python_upgrader/main.py \
   --agentless_gws '${agentless_gws}' \
   --dsf_hubs '${dsf_hubs}' \
   --run_preflight_validations "${run_preflight_validations}" \
+  --run_upgrade "${run_upgrade}" \
   --run_postflight_validations "${run_postflight_validations}" \
-  --custom_validations_scripts "${custom_validations_scripts}" \
-  --run_upgrade "${run_upgrade}"
+  --custom_validations_scripts "${custom_validations_scripts}"

@@ -1,42 +1,77 @@
-module "sonar_upgrader"{
+module "sonar_upgrader" {
   source = "./modules/sonar_upgrader_python"
   agentless_gws = [
       {
-        "host" = "10.0.1.1"
-        "ssh_user" = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy" = {
-          "host" = "52.8.8.8"
-          "ssh_user" = "ec2-user"
+        "main" = {
+          "host"                      = "10.0.1.1"
+          "ssh_user"                  = "ec2-user"
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        },
+        "dr" = {
+          "host"                      = "10.2.1.1"
+          "ssh_user"                  = "ec2-user"
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+        },
+        "minor" = {
+          "host"                      = "10.3.1.1"
+          "ssh_user"                  = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         }
       },
       {
-        "host" = "10.0.1.2"
-        "ssh_user" = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy" = {
-          "ip" = "52.8.8.8"
-          "ssh_user" = "ec2-user"
+        "main" = {
+          "host"                      = "10.0.1.2"
+          "ssh_user"                  = "ec2-user"
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          "proxy"                     = {
+            "host"                      = "52.8.8.8"
+            "ssh_user"                  = "ec2-user"
+            "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          }
+        },
+        "dr" = {
+          "host"                      = "10.2.1.2"
+          "ssh_user"                  = "ec2-user"
+          "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          "proxy"                     = {
+            "host"                      = "52.8.8.8"
+            "ssh_user"                  = "ec2-user"
+            "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+          }
+        }
+      },
+      {
+        "main" = {
+          "host"                      = "10.0.1.3"
+          "ssh_user"                  = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         }
       },
       {
-        "host" = "10.0.1.3"
-        "ssh_user" = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy" = {
-          "ip" = "52.8.8.8"
-          "ssh_user" = "ec2-user"
+        "dr" = {
+          "host"                      = "10.0.1.4"
+          "ssh_user"                  = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
         }
       }
   ]
   dsf_hubs = [
     {
-      "host" = "52.8.8.8"
-      "ssh_user" = "ec2-user"
-      "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+      "main" = {
+        "host"                      = "52.8.8.8"
+        "ssh_user"                  = "ec2-user"
+        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+      },
+      "dr" = {
+        "host"                      = "52.8.8.9"
+        "ssh_user"                  = "ec2-user"
+        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+      },
+      "minor" = {
+        "host"                      = "52.8.8.10"
+        "ssh_user"                  = "ec2-user"
+        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
+      }
     }
   ]
 
