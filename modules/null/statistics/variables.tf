@@ -39,10 +39,10 @@ variable "location" {
   description = "Location"
 }
 
-variable "initialization_status" {
+variable "status" {
   type        = string
   default     = null
-  description = "Initialization status"
+  description = "Status"
 }
 
 variable "additional_info" {

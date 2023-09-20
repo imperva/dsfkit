@@ -32,7 +32,7 @@ module "statistics" {
   deployment_name = var.name
   product = "SONAR"
   resource_type = var.resource_type
-  artifact = "blob://${var.binaries_location.az_storage_account}/${var.binaries_location.az_container}/${var.binaries_location.az_blob}"
+  artifact = "blob://${sha256(var.binaries_location.az_storage_account)}/${sha256(var.binaries_location.az_container)}/${var.binaries_location.az_blob}"
   location = var.resource_group.location
 }
 
@@ -78,6 +78,6 @@ module "statistics_success" {
   source                            = "../../../modules/azurerm/statistics"
 
   id = module.statistics.id
-  initialization_status = "success"
+  status = "success"
   depends_on = [ null_resource.readiness ]
 }

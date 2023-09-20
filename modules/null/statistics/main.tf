@@ -23,7 +23,7 @@ locals {
     "account_id": sha256(var.account_id)
     "platform" : var.platform
     "location" : var.location
-    "initialization_status" : var.initialization_status
+    "status" : var.status
     "additional_info" : var.additional_info
   })
 }

@@ -60,7 +60,7 @@ module "statistics" {
   deployment_name = var.friendly_name
   product = "DRA"
   resource_type = "dra-analytics"
-  artifact = "ami://${data.aws_ami.selected-ami.image_id}@${var.dra_version}"
+  artifact = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
 }
 
 resource "null_resource" "readiness" {
@@ -78,6 +78,6 @@ module "statistics_success" {
   source                            = "../../../modules/aws/statistics"
 
   id = module.statistics.id
-  initialization_status = "success"
+  status = "success"
   depends_on = [ null_resource.readiness ]
 }

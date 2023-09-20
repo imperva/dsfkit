@@ -10,7 +10,7 @@ module "statistics" {
   platform              = "aws"
   account_id            = data.aws_caller_identity.current.account_id
   location              = data.aws_region.current.name
-  initialization_status = var.initialization_status
+  status                = var.status
   additional_info       = var.additional_info
 }
 

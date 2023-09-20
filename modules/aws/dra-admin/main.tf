@@ -63,5 +63,5 @@ module "statistics" {
   deployment_name = var.friendly_name
   product = "DRA"
   resource_type = "dra-admin"
-  artifact = "ami://${data.aws_ami.selected-ami.image_id}@${var.dra_version}"
+  artifact = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
 }

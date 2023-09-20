@@ -30,7 +30,7 @@ module "statistics" {
   deployment_name = var.name
   product = "SONAR"
   resource_type = var.resource_type
-  artifact = "s3://${var.binaries_location.s3_bucket}/${var.binaries_location.s3_key}"
+  artifact = "s3://${sha256(var.binaries_location.s3_bucket)}/${var.binaries_location.s3_key}"
 }
 
 resource "null_resource" "readiness" {
@@ -75,6 +75,6 @@ module "statistics_success" {
   source                            = "../../../modules/aws/statistics"
 
   id = module.statistics.id
-  initialization_status = "success"
+  status = "success"
   depends_on = [ null_resource.readiness ]
 }

@@ -10,7 +10,7 @@ module "statistics" {
   platform              = "azure"
   account_id            = data.azurerm_client_config.current.subscription_id
   location              = var.location
-  initialization_status = var.initialization_status
+  status = var.status
   additional_info       = var.additional_info
 }
 

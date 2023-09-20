@@ -28,10 +28,10 @@ variable "resource_type" {
   default = null
 }
 
-variable "initialization_status" {
+variable "status" {
   type        = string
   default     = null
-  description = "Initialization status"
+  description = "Status"
 }
 
 variable "additional_info" {

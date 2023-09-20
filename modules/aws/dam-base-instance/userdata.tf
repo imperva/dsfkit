@@ -36,7 +36,7 @@ module "statistics" {
   deployment_name = var.name
   product = "DAM"
   resource_type = var.resource_type
-  artifact = join("@", compact(["ami://${data.aws_ami.selected-ami.image_id}", var.ami != null ? null : var.dam_version]))
+  artifact = join("@", compact(["ami://${sha256(data.aws_ami.selected-ami.image_id)}", var.ami != null ? null : var.dam_version]))
 }
 
 resource "null_resource" "readiness" {
@@ -79,6 +79,6 @@ module "statistics_success" {
   source                            = "../../../modules/aws/statistics"
 
   id = module.statistics.id
-  initialization_status = "success"
+  status = "success"
   depends_on = [ null_resource.readiness ]
 }
