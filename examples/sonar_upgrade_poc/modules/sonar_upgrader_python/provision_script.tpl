@@ -12,6 +12,8 @@ python3 -u ${path}/python_upgrader/main.py \
   --target_version "${target_version}" \
   --agentless_gws '${agentless_gws}' \
   --dsf_hubs '${dsf_hubs}' \
+  --connection_timeout "${connection_timeout}" \
+  --test_connection "${test_connection}" \
   --run_preflight_validations "${run_preflight_validations}" \
   --run_upgrade "${run_upgrade}" \
   --run_postflight_validations "${run_postflight_validations}" \

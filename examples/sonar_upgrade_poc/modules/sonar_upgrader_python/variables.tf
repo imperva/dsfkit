@@ -80,16 +80,28 @@ variable "target_version" {
   description = "The Sonar target version to upgrade to. The lowest supported version is 4.10 from the second patch onward."
 }
 
-variable "run_upgrade" {
+variable "connection_timeout" {
+  type = number
+  default = 90
+  description = "Client connection timeout in seconds used for the SSH connections between the installer machine and the DSF nodes being upgraded. Its purpose is to ensure a uniform behavior across different platforms. Note that the SSH server in the DSF nodes may have its own timeout configurations which may override this setting."
+}
+
+variable "test_connection" {
   type        = bool
   default     = true
-  description = "Whether to run upgrade or skip it"
+  description = "Whether to test the SSH connection to all DSF nodes being upgraded before starting the upgrade"
 }
 
 variable "run_preflight_validations" {
   type        = bool
   default     = true
   description = "Whether to run the preflight validations or skip them"
+}
+
+variable "run_upgrade" {
+  type        = bool
+  default     = true
+  description = "Whether to run upgrade or skip it"
 }
 
 variable "run_postflight_validations" {

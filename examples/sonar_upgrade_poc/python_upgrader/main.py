@@ -3,9 +3,9 @@
 import argparse
 import json
 import re
+import socket
 from utils import get_file_path, read_file_contents
-from remote_executor import run_remote_script, run_remote_script_via_proxy
-
+from remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
 
 # Helper functions
 
@@ -13,6 +13,13 @@ from remote_executor import run_remote_script, run_remote_script_via_proxy
 def str_to_bool(arg):
     # Convert string "true" or "false" to Python boolean value
     return arg.lower() == "true"
+
+
+def set_socket_timeout():
+    print(f"Default socket timeout: {socket.getdefaulttimeout()}")
+    socket.setdefaulttimeout(CONNECTION_TIMEOUT)
+    print(f"Default socket timeout was set to {CONNECTION_TIMEOUT} seconds to ensure uniform behavior across "
+          f"different platforms")
 
 
 def print_hadr_sets(hadr_sets):
@@ -93,30 +100,49 @@ def build_python_script_run_command(script_contents, args, python_location):
     return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
-def run_remote_script_maybe_with_proxy(agentless_gw, script_contents, script_run_command):
-    if agentless_gw.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(agentless_gw.get('host'),
-                                                    agentless_gw.get("ssh_user"),
-                                                    agentless_gw.get("ssh_private_key_file_path"),
+def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command):
+    if dsf_node.get("proxy") is not None:
+        script_output = run_remote_script_via_proxy(dsf_node.get('host'),
+                                                    dsf_node.get("ssh_user"),
+                                                    dsf_node.get("ssh_private_key_file_path"),
                                                     script_contents,
                                                     script_run_command,
-                                                    agentless_gw.get("proxy").get('host'),
-                                                    agentless_gw.get("proxy").get("ssh_user"),
-                                                    agentless_gw.get("proxy").get("ssh_private_key_file_path"))
+                                                    dsf_node.get("proxy").get('host'),
+                                                    dsf_node.get("proxy").get("ssh_user"),
+                                                    dsf_node.get("proxy").get("ssh_private_key_file_path"),
+                                                    CONNECTION_TIMEOUT)
     else:
-        script_output = run_remote_script(agentless_gw.get('host'),
-                                          agentless_gw.get("ssh_user"),
-                                          agentless_gw.get("ssh_private_key_file_path"),
+        script_output = run_remote_script(dsf_node.get('host'),
+                                          dsf_node.get("ssh_user"),
+                                          dsf_node.get("ssh_private_key_file_path"),
                                           script_contents,
-                                          script_run_command)
+                                          script_run_command,
+                                          CONNECTION_TIMEOUT)
     return script_output
+
+
+def test_connection_maybe_with_proxy(dsf_node):
+    if dsf_node.get("proxy") is not None:
+        test_connection_via_proxy(dsf_node.get('host'),
+                                  dsf_node.get("ssh_user"),
+                                  dsf_node.get("ssh_private_key_file_path"),
+                                  dsf_node.get("proxy").get('host'),
+                                  dsf_node.get("proxy").get("ssh_user"),
+                                  dsf_node.get("proxy").get("ssh_private_key_file_path"),
+                                  CONNECTION_TIMEOUT)
+    else:
+        test_connection(dsf_node.get('host'),
+                        dsf_node.get("ssh_user"),
+                        dsf_node.get("ssh_private_key_file_path"),
+                        CONNECTION_TIMEOUT)
 
 
 # Main functions
 
 
-def main():
-    args = parse_args()
+def main(args):
+    set_socket_timeout()
+
     agentless_gws = json.loads(args.agentless_gws)
     hubs = json.loads(args.dsf_hubs)
 
@@ -126,15 +152,26 @@ def main():
 
     print("********** Start ************")
 
-    if not args.run_preflight_validations and not args.run_upgrade and not args.run_postflight_validations and \
-            not args.run_clean_old_deployments:
+    if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
+            not args.run_postflight_validations and not args.run_clean_old_deployments:
         print("All flags are disabled. Nothing to do here.")
         return
 
     agentless_gw_extended_nodes = get_flat_extended_node_list(agentless_gws, "Agentless Gateway")
     dsf_hub_extended_nodes = get_flat_extended_node_list(hubs, "DSF Hub")
     extended_nodes = agentless_gw_extended_nodes + dsf_hub_extended_nodes
-    python_location_dict = collect_python_locations(extended_nodes)
+
+    if args.test_connection:
+        succeeded = test_connection_to_extended_nodes(extended_nodes)
+        if succeeded:
+            print(f"### Test connection to all DSF nodes succeeded")
+        else:
+            print(f"### Test connection didn't succeed to all DSF nodes")
+            return
+
+    python_location_dict = {}
+    if should_run_python(args):
+        python_location_dict = collect_python_locations(extended_nodes)
 
     # Preflight validation
     if args.run_preflight_validations:
@@ -173,6 +210,14 @@ def parse_args():
     parser.add_argument("--agentless_gws", help="JSON-encoded Agentless Gateway list")
     parser.add_argument("--dsf_hubs", help="JSON-encoded DSF Hub list")
     parser.add_argument("--target_version", required=True, help="Target version to upgrade")
+    parser.add_argument("--connection_timeout",
+                        help="Client connection timeout in seconds used for the SSH connections between the "
+                             "installer machine and the DSF nodes being upgraded. Its purpose is to ensure a "
+                             "uniform behavior across different platforms. Note that the SSH server in the DSF nodes "
+                             "may have its own timeout configurations which may override this setting.")
+    parser.add_argument("--test_connection", type=str_to_bool,
+                        help="Whether to test the SSH connection to all DSF nodes being upgraded "
+                             "before starting the upgrade")
     parser.add_argument("--run_preflight_validations", required=True, type=str_to_bool,
                         help="Whether to run preflight validations")
     parser.add_argument("--run_upgrade", required=True, type=str_to_bool, help="Whether to run the upgrade")
@@ -191,6 +236,8 @@ def print_inputs(agentless_gws, hubs, args):
     print("List of DSF Hubs:")
     print_hadr_sets(hubs)
     print(f"target_version: {args.target_version}")
+    print(f"connection_timeout: {args.connection_timeout}")
+    print(f"test_connection: {args.test_connection}")
     print(f"run_preflight_validations: {args.run_preflight_validations}")
     print(f"run_upgrade: {args.run_upgrade}")
     print(f"run_postflight_validations: {args.run_postflight_validations}")
@@ -198,7 +245,45 @@ def print_inputs(agentless_gws, hubs, args):
     print(f"custom_validations_scripts: {args.custom_validations_scripts}")
 
 
+def test_connection_to_extended_nodes(extended_nodes):
+    '''
+    :param extended_nodes:
+    :return: True if test connection to all extended DSF nodes was successful, false if it failed for at least one node
+    '''
+    print("----- Test connection")
+
+    # TODO remove this comment when upgrade state will be added
+    # This method already prepares for the day when there will be an upgrade state so it doesn't return False
+    # when the first node fails
+    all_succeeded = True
+    for extended_node in extended_nodes:
+        succeeded = test_connection_to_extended_node(extended_node)
+        all_succeeded = all_succeeded and succeeded
+    return all_succeeded
+
+
+def test_connection_to_extended_node(extended_node):
+    '''
+    Tests the SSH connection to an extended DSF node from the installer machine (where this code is run)
+    :param extended_node: The node to test connection to
+    :return: True if successful, false otherwise
+    '''
+    try:
+        print(f"Running test connection to {extended_node.get('dsf_node_name')}")
+        test_connection_maybe_with_proxy(extended_node.get('dsf_node'))
+        print(f"Test connection to {extended_node.get('dsf_node_name')} succeeded")
+    except Exception as ex:
+        print(f"Test connection to {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        return False
+    return True
+
+
+def should_run_python(args):
+    return args.run_preflight_validations or args.run_postflight_validations
+
+
 def collect_python_locations(extended_nodes):
+    print("----- Collect Python location")
     python_location_dict = {}
     for extended_node in extended_nodes:
         python_location = run_get_python_location_script(extended_node.get('dsf_node'))
@@ -514,5 +599,8 @@ def are_postflight_validations_passed(postflight_validations_result):
 
 if __name__ == "__main__":
     run_dummy_upgrade = False
+    args = parse_args()
 
-    main()
+    CONNECTION_TIMEOUT = int(args.connection_timeout)
+
+    main(args)

@@ -10,6 +10,10 @@ output "target_version" {
   value = var.target_version
 }
 
+output "test_connection" {
+  value = var.test_connection
+}
+
 output "run_preflight_validations" {
   value = var.run_preflight_validations
 }

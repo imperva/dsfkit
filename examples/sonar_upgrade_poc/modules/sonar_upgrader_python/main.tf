@@ -4,10 +4,12 @@ locals {
     target_version             = var.target_version
     agentless_gws              = jsonencode(var.agentless_gws)
     dsf_hubs                   = jsonencode(var.dsf_hubs)
-    run_preflight_validations  = tostring(var.run_preflight_validations)
-    run_upgrade                = tostring(var.run_upgrade)
-    run_postflight_validations = tostring(var.run_postflight_validations)
-    run_clean_old_deployments  = tostring(var.run_clean_old_deployments)
+    connection_timeout         = var.connection_timeout
+    test_connection            = var.test_connection
+    run_preflight_validations  = var.run_preflight_validations
+    run_upgrade                = var.run_upgrade
+    run_postflight_validations = var.run_postflight_validations
+    run_clean_old_deployments  = var.run_clean_old_deployments
     custom_validations_scripts = var.custom_validations_scripts[0]
   })
 }
