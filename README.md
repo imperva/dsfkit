@@ -936,9 +936,13 @@ These topics include:
 - Working with DSF Hub and Agentless Gateway without outbound internet access
 
 # Troubleshooting 
+If you encounter a problem that is not covered below, please open a [Github issue](https://github.com/imperva/dsfkit/issues/new) and attach the relevant terraform logs.
+You can automatically persist the logs with the following apply command:
+```
+terraform apply -auto-approve | tee tf.log
+```
 
-Review the following issues and troubleshooting remediations. 
-
+Below is a list of possible issues and troubleshooting remediations. 
 
 <table>
   <tr>

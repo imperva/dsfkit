@@ -94,14 +94,14 @@ variable "subnet_ids" {
     agentless_gw_dr_subnet_id = string
     mx_subnet_id                     = string
     agent_gw_subnet_id               = string
-    admin_subnet_id                  = string
-    analytics_subnet_id              = string
+    dra_admin_subnet_id                  = string
+    dra_analytics_subnet_id              = string
     db_subnet_ids                    = list(string)
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.admin_subnet_id != null && var.subnet_ids.analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
   validation {
