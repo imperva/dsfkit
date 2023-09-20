@@ -91,11 +91,17 @@ variable "run_preflight_validations" {
   default     = true
   description = "Whether to run the preflight validations or skip them"
 }
-    
+
 variable "run_postflight_validations" {
   type        = bool
   default     = true
   description = "Whether to run the postflight validations or skip them"
+}
+
+variable "run_clean_old_deployments" {
+  type        = bool
+  default     = true
+  description = "Whether to run cleaning on old deployment directories after successful upgrade, supported on version 4.12 or higher. In case postflight validations run and failed, old deployment directories cleaning will be skipped."
 }
 
 variable "custom_validations_scripts" {

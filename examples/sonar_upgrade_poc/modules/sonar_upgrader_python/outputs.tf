@@ -22,6 +22,10 @@ output "run_postflight_validations" {
   value = var.run_postflight_validations
 }
 
+output "run_clean_old_deployments" {
+  value = var.run_clean_old_deployments
+}
+
 output "custom_validations_scripts" {
   value = var.custom_validations_scripts
 }
