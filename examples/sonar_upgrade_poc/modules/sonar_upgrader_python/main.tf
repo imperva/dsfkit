@@ -9,7 +9,7 @@ locals {
     run_preflight_validations  = var.run_preflight_validations
     run_upgrade                = var.run_upgrade
     run_postflight_validations = var.run_postflight_validations
-    run_clean_old_deployments  = var.run_clean_old_deployments
+    clean_old_deployments      = var.clean_old_deployments
     custom_validations_scripts = var.custom_validations_scripts[0]
   })
 }

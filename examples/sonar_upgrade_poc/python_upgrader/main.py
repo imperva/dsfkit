@@ -164,7 +164,7 @@ def main(args):
     print("********** Start ************")
 
     if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
-            not args.run_postflight_validations and not args.run_clean_old_deployments:
+            not args.run_postflight_validations and not args.clean_old_deployments:
         print("All flags are disabled. Nothing to do here.")
         return
 
@@ -196,9 +196,9 @@ def main(args):
             return
 
     # Upgrade, postflight validations, clean old deployments
-    if args.run_upgrade or args.run_postflight_validations or args.run_clean_old_deployments:
+    if args.run_upgrade or args.run_postflight_validations or args.clean_old_deployments:
         success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
-                                               args.run_postflight_validations, args.run_clean_old_deployments,
+                                               args.run_postflight_validations, args.clean_old_deployments,
                                                python_location_dict)
         print_upgrade_result = args.run_upgrade
         print_postflight_result = not args.run_upgrade and args.run_postflight_validations
@@ -234,8 +234,8 @@ def parse_args():
     parser.add_argument("--run_upgrade", required=True, type=str_to_bool, help="Whether to run the upgrade")
     parser.add_argument("--run_postflight_validations", required=True, type=str_to_bool,
                         help="Whether to run postflight validations")
-    parser.add_argument("--run_clean_old_deployments", required=True, type=str_to_bool,
-                        help="Whether to run cleaning on old deployment directories")
+    parser.add_argument("--clean_old_deployments", required=True, type=str_to_bool,
+                        help="Whether to clean old deployments")
     parser.add_argument("--custom_validations_scripts", help="List of custom validation scripts")
     args = parser.parse_args()
     return args
@@ -252,7 +252,7 @@ def print_inputs(agentless_gws, hubs, args):
     print(f"run_preflight_validations: {args.run_preflight_validations}")
     print(f"run_upgrade: {args.run_upgrade}")
     print(f"run_postflight_validations: {args.run_postflight_validations}")
-    print(f"run_clean_old_deployments: {args.run_clean_old_deployments}")
+    print(f"clean_old_deployments: {args.clean_old_deployments}")
     print(f"custom_validations_scripts: {args.custom_validations_scripts}")
 
 
@@ -406,7 +406,7 @@ def are_preflight_validations_passed(preflight_validations_result):
 
 
 def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrade, run_postflight_validations,
-                                 run_clean_old_deployments, python_location_dict):
+                                 clean_old_deployments, python_location_dict):
     if run_upgrade:
         print("----- Upgrade")
 
@@ -415,7 +415,7 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
                                                                               run_upgrade,
                                                                               run_postflight_validations,
                                                                               "run_postflight_validations.py",
-                                                                              run_clean_old_deployments,
+                                                                              clean_old_deployments,
                                                                               "clean_old_deployments.sh",
                                                                               python_location_dict)
     if not upgrade_and_postflight_succeeded:
@@ -425,7 +425,7 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
                                                                               run_upgrade,
                                                                               run_postflight_validations,
                                                                               "run_postflight_validations.py",
-                                                                              run_clean_old_deployments,
+                                                                              clean_old_deployments,
                                                                               "clean_old_deployments.sh",
                                                                               python_location_dict)
     return upgrade_and_postflight_succeeded
@@ -433,14 +433,14 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
 
 def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_version, upgrade_script_file_name,
                                            run_upgrade, do_run_postflight_validations,
-                                           postflight_validations_script_file_name, run_clean_old_deployments,
+                                           postflight_validations_script_file_name, clean_old_deployments,
                                            clean_old_deployments_script_file_name, python_location_dict):
     for hadr_set in hadr_sets:
         succeeded = maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version,
                                                           upgrade_script_file_name, run_upgrade,
                                                           do_run_postflight_validations,
                                                           postflight_validations_script_file_name,
-                                                          run_clean_old_deployments,
+                                                          clean_old_deployments,
                                                           clean_old_deployments_script_file_name, python_location_dict)
         if not succeeded:
             return False
@@ -449,21 +449,21 @@ def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_vers
 
 def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version, upgrade_script_file_name,
                                           run_upgrade, do_run_postflight_validations,
-                                          postflight_validations_script_file_name, run_clean_old_deployments,
+                                          postflight_validations_script_file_name, clean_old_deployments,
                                           clean_old_deployments_script_file_name, python_location_dict):
     print(f"Running upgrade and/or postflight validations for an {dsf_node_type} HADR replica set")
     if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), dsf_node_type, 'Minor', target_version,
                                              upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
-                                             postflight_validations_script_file_name, run_clean_old_deployments,
+                                             postflight_validations_script_file_name, clean_old_deployments,
                                              clean_old_deployments_script_file_name, python_location_dict):
         if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('dr'), dsf_node_type, 'DR', target_version,
                                                  upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
-                                                 postflight_validations_script_file_name, run_clean_old_deployments,
+                                                 postflight_validations_script_file_name, clean_old_deployments,
                                                  clean_old_deployments_script_file_name, python_location_dict):
             if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), dsf_node_type, 'Main', target_version,
                                                      upgrade_script_file_name, run_upgrade,
                                                      do_run_postflight_validations,
-                                                     postflight_validations_script_file_name, run_clean_old_deployments,
+                                                     postflight_validations_script_file_name, clean_old_deployments,
                                                      clean_old_deployments_script_file_name, python_location_dict):
                 return True
         else:
@@ -475,7 +475,7 @@ def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_versio
 
 def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_type_name, target_version,
                                           upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
-                                          postflight_validations_script_file_name, run_clean_old_deployments,
+                                          postflight_validations_script_file_name, clean_old_deployments,
                                           clean_old_deployments_script_file_name, python_location_dict):
     if dsf_node is None:
         return True
@@ -497,8 +497,8 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
             print(f"### Postflight validations didn't pass for {dsf_node_name}")
             return False
 
-    if run_clean_old_deployments:
-        clean_old_deployments_succeeded = run_clean_old_deployment_directories(dsf_node, dsf_node_name,
+    if clean_old_deployments:
+        clean_old_deployments_succeeded = run_clean_old_deployments(dsf_node, dsf_node_name,
                                                                                clean_old_deployments_script_file_name)
         if not clean_old_deployments_succeeded:
             # In case clean old deployments failed, print a warning without returning false
@@ -566,11 +566,11 @@ def run_postflight_validations_script(dsf_node, target_version, python_location,
     return extract_postflight_validations_result(script_output)
 
 
-def run_clean_old_deployment_directories(dsf_node, dsf_node_name, script_file_name):
+def run_clean_old_deployments(dsf_node, dsf_node_name, script_file_name):
     print(f"Running cleaning old deployments for {dsf_node_name}")
     # print(f"You may follow the upgrade process in the DSF node by running SSH to it and looking at "
     #       f"/var/log/upgrade.log. When the DSF node's upgrade will complete, this log will also appear here.")
-    success = run_clean_old_deployment_directories_script(dsf_node, script_file_name)
+    success = run_clean_old_deployments_script(dsf_node, script_file_name)
     if success:
         print(f"Cleaning old deployments {dsf_node_name} was ### successful ###")
     else:
@@ -578,7 +578,7 @@ def run_clean_old_deployment_directories(dsf_node, dsf_node_name, script_file_na
     return success
 
 
-def run_clean_old_deployment_directories_script(dsf_node, script_file_name):
+def run_clean_old_deployments_script(dsf_node, script_file_name):
     script_file_path = get_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
 
