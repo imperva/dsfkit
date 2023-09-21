@@ -298,8 +298,7 @@ def collect_python_locations(extended_nodes):
     python_location_dict = {}
     for extended_node in extended_nodes:
         python_location = run_get_python_location_script(extended_node.get('dsf_node'))
-        # TODO host is not unique, need id
-        python_location_dict[extended_node.get('dsf_node').get('host')] = python_location
+        python_location_dict[extended_node.get('dsf_node_id')] = python_location
         print(f"Python location in {extended_node.get('dsf_node_name')} is {python_location}")
     return python_location_dict
 
@@ -331,8 +330,7 @@ def run_preflight_validations_for_extended_nodes(extended_nodes, target_version,
 
 
 def run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name, python_location_dict):
-    # TODO host is not unique, need id
-    python_location = python_location_dict[extended_node.get('dsf_node').get('host')]
+    python_location = python_location_dict[extended_node.get('dsf_node_id')]
 
     preflight_validations_result = run_preflight_validations(extended_node.get('dsf_node'),
                                                              extended_node.get('dsf_node_name'), target_version,
