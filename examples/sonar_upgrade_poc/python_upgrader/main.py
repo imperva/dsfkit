@@ -55,12 +55,23 @@ def generate_dsf_node_id(dsf_node):
     '''
     Generates a unique identifier of the DSF node within this upgrader
     :param dsf_node: An Agentless Gateway or DSF Hub
-    :return: A unique identifier of the dsf_node within this upgrader
+    :return: A unique identifier of a DSF Node within this upgrader
     '''
     if dsf_node.get('proxy') is not None:
         return dsf_node.get('host') + "-via-proxy-" + dsf_node.get('proxy').get('host')
     else:
         return dsf_node.get('host')
+
+
+def generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id):
+    '''
+    Generates a unique DSF node name within this upgrader
+    :param dsf_node_type: An Agentless Gateway or DSF Hub
+    :param hadr_node_type_name Main, DR or Minor
+    :param dsf_node_id Unique Id of the DSF node
+    :return: A unique name of a DSF Node within this upgrader
+    '''
+    return f"{dsf_node_type}, {hadr_node_type_name}, {dsf_node_id}"
 
 
 def get_flat_extended_node_list(hadr_sets, dsf_node_type):
@@ -82,7 +93,7 @@ def get_extended_node(hadr_set, hadr_node_type, hadr_node_type_name, dsf_node_ty
     dsf_node = hadr_set.get(hadr_node_type)
     if dsf_node is not None:
         dsf_node_id = generate_dsf_node_id(dsf_node)
-        dsf_node_name = f"{dsf_node_type}, HADR {hadr_node_type_name}, {dsf_node_id}"
+        dsf_node_name = generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id)
         return {
             "dsf_node": dsf_node,
             "dsf_node_id": dsf_node_id,
@@ -469,8 +480,7 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
     if dsf_node is None:
         return True
     dsf_node_id = generate_dsf_node_id(dsf_node)
-    # TODO consider extracting method generate_dsf_node_name since called twice
-    dsf_node_name = f"{dsf_node_type}, HADR {hadr_node_type_name}, {dsf_node_id}"
+    dsf_node_name = generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id)
     if run_upgrade:
         upgrade_succeeded = upgrade_dsf_node(dsf_node, dsf_node_name, target_version, upgrade_script_file_name)
         if not upgrade_succeeded:
