@@ -1,5 +1,5 @@
 #!/bin/bash
-# clean_old_deployments.sh: Cleans old deployment directories on DSF Hub or Agentless Gateway nodes
+# clean_old_deployments.sh: Cleans old deployments on DSF Hub or Agentless Gateway nodes
 # Note: This script must not contain an apostrophe, since its contents are wrapped by apostrophes when run
 set -e
 #set -x
