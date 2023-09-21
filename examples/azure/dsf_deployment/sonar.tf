@@ -34,7 +34,7 @@ module "hub_main" {
 }
 
 module "hub_dr" {
-  source  = "imperva/dsf-hub/aws"
+  source  = "imperva/dsf-hub/azure"
   version = "1.5.4" # latest release tag
   count = var.enable_sonar && var.hub_hadr ? 1 : 0
 
