@@ -38,6 +38,12 @@ module "hub_main" {
     username = mx.web_console_user
     password = local.password
   }] : []
+  dra_details = var.enable_dra? [for dra_admin in module.dra_admin : {
+    name = dra_admin.display_name
+    address = dra_admin.public_ip
+    username = dra_admin.ssh_user
+    password = local.password
+  }] : []
   tags = local.tags
   depends_on = [
     module.vpc

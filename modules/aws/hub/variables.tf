@@ -281,6 +281,29 @@ variable "mx_details" {
   default = []
 }
 
+variable "dra_details" {
+  description = "List of the DSF MX to onboard to USC"
+  type = list(object({
+    name     = string
+    address  = string
+    username = string
+    password = string
+  }))
+  validation {
+    condition = alltrue([
+      for dra_admin in var.dra_details : try(dra_admin.address != null && dra_admin.address != null, false)
+    ])
+    error_message = "Each DRA Admin must specify name and address"
+  }
+  validation {
+    condition = alltrue([
+      for dra_admin in var.dra_details : try(dra_admin.username != null && dra_admin.password != null, false)
+    ])
+    error_message = "Each DRA Admin must specify username and password"
+  }
+  default = []
+}
+
 variable "volume_attachment_device_name" {
   type        = string
   default     = null
