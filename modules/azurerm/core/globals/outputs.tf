@@ -32,19 +32,3 @@ output "tags" {
   }
 }
 
-output "tarball_location" {
-  value = {
-    az_storage_account = var.tarball_location.storage_account
-    az_container       = var.tarball_location.container
-    az_blob            = local.blob_object
-    version            = local.blob_object_version
-  }
-}
-
-output "sonar_supported_versions" {
-  value = local.sonar_supported_versions
-}
-
-output "sonar_fully_supported_versions" {
-  value = local.sonar_fully_supported_versions
-}
