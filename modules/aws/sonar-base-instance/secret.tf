@@ -21,9 +21,24 @@ data "aws_secretsmanager_secret" "sonarw_private_key_secret_data" {
   name  = var.sonarw_private_key_secret_name
 }
 
-data "aws_secretsmanager_secret" "password_secret_data" {
-  count = var.password_secret_name != null ? 1 : 0
-  name  = var.password_secret_name
+data "aws_secretsmanager_secret" "admin_password_secret_data" {
+  count = var.admin_password_secret_name != null ? 1 : 0
+  name  = var.admin_password_secret_name
+}
+
+data "aws_secretsmanager_secret" "secadmin_password_secret_data" {
+  count = var.secadmin_password_secret_name != null ? 1 : 0
+  name  = var.secadmin_password_secret_name
+}
+
+data "aws_secretsmanager_secret" "sonarg_password_secret_data" {
+  count = var.sonarg_password_secret_name != null ? 1 : 0
+  name  = var.sonarg_password_secret_name
+}
+
+data "aws_secretsmanager_secret" "sonargd_password_secret_data" {
+  count = var.sonargd_password_secret_name != null ? 1 : 0
+  name  = var.sonargd_password_secret_name
 }
 
 resource "tls_private_key" "sonarw_private_key" {
@@ -38,11 +53,20 @@ locals {
   sonarw_secret_aws_arn        = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].arn : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].arn
   sonarw_secret_aws_name       = var.sonarw_private_key_secret_name == null ? aws_secretsmanager_secret.sonarw_private_key_secret[0].name : data.aws_secretsmanager_secret.sonarw_private_key_secret_data[0].name
 
-  password_secret_aws_arn = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].arn : data.aws_secretsmanager_secret.password_secret_data[0].arn
-  password_secret_name    = var.password_secret_name == null ? aws_secretsmanager_secret.password_secret[0].name : var.password_secret_name
+  admin_password_secret_aws_arn    = var.admin_password_secret_name == null ? aws_secretsmanager_secret.admin_password_secret[0].arn : data.aws_secretsmanager_secret.admin_password_secret_data[0].arn
+  admin_password_secret_name       = var.admin_password_secret_name == null ? aws_secretsmanager_secret.admin_password_secret[0].name : var.admin_password_secret_name
+  secadmin_password_secret_aws_arn = var.secadmin_password_secret_name == null ? aws_secretsmanager_secret.secadmin_password_secret[0].arn : data.aws_secretsmanager_secret.secadmin_password_secret_data[0].arn
+  secadmin_password_secret_name    = var.secadmin_password_secret_name == null ? aws_secretsmanager_secret.secadmin_password_secret[0].name : var.secadmin_password_secret_name
+  sonarg_password_secret_aws_arn   = var.sonarg_password_secret_name == null ? aws_secretsmanager_secret.sonarg_password_secret[0].arn : data.aws_secretsmanager_secret.sonarg_password_secret_data[0].arn
+  sonarg_password_secret_name      = var.sonarg_password_secret_name == null ? aws_secretsmanager_secret.sonarg_password_secret[0].name : var.sonarg_password_secret_name
+  sonargd_password_secret_aws_arn  = var.sonargd_password_secret_name == null ? aws_secretsmanager_secret.sonargd_password_secret[0].arn : data.aws_secretsmanager_secret.sonargd_password_secret_data[0].arn
+  sonargd_password_secret_name     = var.sonargd_password_secret_name == null ? aws_secretsmanager_secret.sonargd_password_secret[0].name : var.sonargd_password_secret_name
 
   should_create_sonarw_private_key_in_secrets_manager = var.sonarw_private_key_secret_name == null
-  should_create_password_in_secrets_manager           = var.password_secret_name == null
+  should_create_admin_password_in_secrets_manager     = var.admin_password_secret_name == null
+  should_create_secadmin_password_in_secrets_manager  = var.secadmin_password_secret_name == null
+  should_create_sonarg_password_in_secrets_manager    = var.sonarg_password_secret_name == null
+  should_create_sonargd_password_in_secrets_manager   = var.sonargd_password_secret_name == null
 
   secret_names = [for v in aws_secretsmanager_secret.access_tokens : v.name]
 }
@@ -61,17 +85,56 @@ resource "aws_secretsmanager_secret_version" "sonarw_private_key_secret_ver" {
   secret_string = chomp(local.main_node_sonarw_private_key)
 }
 
-resource "aws_secretsmanager_secret" "password_secret" {
-  count       = local.should_create_password_in_secrets_manager == true ? 1 : 0
-  name_prefix = "${var.name}-password"
-  description = "Imperva DSF node password"
+resource "aws_secretsmanager_secret" "admin_password_secret" {
+  count       = local.should_create_admin_password_in_secrets_manager == true ? 1 : 0
+  name_prefix = "${var.name}-admin-password"
+  description = "Imperva DSF node admin password"
   tags        = var.tags
 }
 
-resource "aws_secretsmanager_secret_version" "password_ver" {
-  count         = local.should_create_password_in_secrets_manager == true ? 1 : 0
-  secret_id     = aws_secretsmanager_secret.password_secret[0].id
-  secret_string = var.password
+resource "aws_secretsmanager_secret_version" "admin_password_ver" {
+  count         = local.should_create_admin_password_in_secrets_manager == true ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.admin_password_secret[0].id
+  secret_string = var.admin_password
+}
+
+resource "aws_secretsmanager_secret" "secadmin_password_secret" {
+  count       = local.should_create_secadmin_password_in_secrets_manager == true ? 1 : 0
+  name_prefix = "${var.name}-secadmin-password"
+  description = "Imperva DSF node secadmin password"
+  tags        = var.tags
+}
+
+resource "aws_secretsmanager_secret_version" "secadmin_password_ver" {
+  count         = local.should_create_secadmin_password_in_secrets_manager == true ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.secadmin_password_secret[0].id
+  secret_string = var.secadmin_password
+}
+
+resource "aws_secretsmanager_secret" "sonarg_password_secret" {
+  count       = local.should_create_sonarg_password_in_secrets_manager == true ? 1 : 0
+  name_prefix = "${var.name}-sonarg-password"
+  description = "Imperva DSF node sonarg password"
+  tags        = var.tags
+}
+
+resource "aws_secretsmanager_secret_version" "sonarg_password_ver" {
+  count         = local.should_create_sonarg_password_in_secrets_manager == true ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.sonarg_password_secret[0].id
+  secret_string = var.sonarg_password
+}
+
+resource "aws_secretsmanager_secret" "sonargd_password_secret" {
+  count       = local.should_create_sonargd_password_in_secrets_manager == true ? 1 : 0
+  name_prefix = "${var.name}-sonargd-password"
+  description = "Imperva DSF node sonargd password"
+  tags        = var.tags
+}
+
+resource "aws_secretsmanager_secret_version" "sonargd_password_ver" {
+  count         = local.should_create_sonargd_password_in_secrets_manager == true ? 1 : 0
+  secret_id     = aws_secretsmanager_secret.sonargd_password_secret[0].id
+  secret_string = var.sonargd_password
 }
 
 resource "aws_secretsmanager_secret" "access_tokens" {

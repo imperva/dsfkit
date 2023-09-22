@@ -172,7 +172,10 @@ function setup() {
     VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
     echo Setup sonar $VERSION
 
-    password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
+    admin_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${admin_password_secret} --query SecretString --output text)
+    secadmin_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${secadmin_password_secret} --query SecretString --output text)
+    sonarg_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonarg_password_secret} --query SecretString --output text)
+    sonargd_password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${sonargd_password_secret} --query SecretString --output text)
 
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
@@ -184,10 +187,10 @@ function setup() {
         --accept-eula \
         --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \
-        --newadmin-pass="$password" \
-        --secadmin-pass="$password" \
-        --sonarg-pass="$password" \
-        --sonargd-pass="$password" \
+        --newadmin-pass="$admin_password" \
+        --secadmin-pass="$secadmin_password" \
+        --sonarg-pass="$sonarg_password" \
+        --sonargd-pass="$sonargd_password" \
         --jsonar-datadir=$DATA_DIR \
         --jsonar-localdir=$LOCAL_DIR \
         --jsonar-logdir=$LOGS_DIR \

@@ -104,14 +104,19 @@ variable "ebs" {
   description = "Compute instance volume attributes"
 }
 
-variable "ingress_communication_via_proxy" {
+variable "gw_proxy_info" {
   type = object({
-    proxy_address              = string
-    proxy_private_ssh_key_path = string
-    proxy_ssh_user             = string
+    ip_address           = string
+    private_ssh_key_path = string
+    ssh_user             = string
   })
-  description = "Proxy address used for ssh for private Agentless Gateway (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
-  default     = null
+
+  description = "Proxy address, private key file path and user used for ssh to a private Agentless Gateway. Keep empty if a proxy is not used."
+  default = {
+    ip_address           = null
+    private_ssh_key_path = null
+    ssh_user             = null
+  }
 }
 
 variable "binaries_location" {
@@ -148,20 +153,68 @@ variable "main_node_sonarw_private_key" {
   default     = null
 }
 
-variable "password" {
+variable "admin_password" {
   type        = string
   sensitive   = true
-  description = "Initial password for all users"
+  description = "Password for admin user."
   validation {
-    condition     = var.password == null || try(length(var.password) > 8, false)
-    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
+    condition     = var.admin_password == null || try(length(var.admin_password) > 8, false)
+    error_message = "Must be at least 8 characters."
   }
 }
 
-variable "password_secret_name" {
+variable "admin_password_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the password. If not set, 'password' is used."
+  description = "Secret name in AWS secrets manager which holds the admin user password. If not set, 'password' is used."
+}
+
+variable "secadmin_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for secadmin user."
+  validation {
+    condition     = var.secadmin_password == null || try(length(var.secadmin_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "secadmin_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the secadmin user password. If not set, 'password' is used."
+}
+
+variable "sonarg_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for sonarg user."
+  validation {
+    condition     = var.sonarg_password == null || try(length(var.sonarg_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "sonarg_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the sonarg user password. If not set, 'password' is used."
+}
+
+variable "sonargd_password" {
+  type        = string
+  sensitive   = true
+  description = "Password for sonargd user"
+  validation {
+    condition     = var.sonargd_password == null || try(length(var.sonargd_password) > 8, false)
+    error_message = "Must be at least 8 characters."
+  }
+}
+
+variable "sonargd_password_secret_name" {
+  type        = string
+  default     = null
+  description = "Secret name in AWS secrets manager which holds the sonargd user password. If not set, 'password' is used."
 }
 
 variable "ssh_key_pair" {

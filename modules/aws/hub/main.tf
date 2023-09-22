@@ -38,6 +38,12 @@ locals {
   ]
 }
 
+resource "tls_private_key" "sonarw_private_key" {
+  count     = var.sonarw_private_key_secret_name == null ? 1 : 0
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 module "hub_instance" {
   source                            = "../../../modules/aws/sonar-base-instance"
   resource_type                     = "hub"
@@ -53,15 +59,21 @@ module "hub_instance" {
   attach_persistent_public_ip       = var.attach_persistent_public_ip
   use_public_ip                     = var.use_public_ip
   additional_install_parameters     = var.additional_install_parameters
-  password                          = var.password
-  password_secret_name              = var.password_secret_name
+  admin_password                    = var.admin_password
+  secadmin_password                 = var.secadmin_password
+  sonarg_password                   = var.sonarg_password
+  sonargd_password                  = var.sonargd_password
+  admin_password_secret_name        = var.admin_password_secret_name
+  secadmin_password_secret_name     = var.secadmin_password_secret_name
+  sonarg_password_secret_name       = var.sonarg_password_secret_name
+  sonargd_password_secret_name      = var.sonargd_password_secret_name
   generate_access_tokens            = var.generate_access_tokens
   ssh_key_path                      = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
   hadr_dr_node                      = var.hadr_dr_node
   main_node_sonarw_public_key       = var.main_node_sonarw_public_key
   main_node_sonarw_private_key      = var.main_node_sonarw_private_key
-  proxy_info                        = var.ingress_communication_via_proxy
+  proxy_info                        = var.hub_proxy_info
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name

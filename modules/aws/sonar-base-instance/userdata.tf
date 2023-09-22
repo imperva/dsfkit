@@ -1,7 +1,8 @@
 locals {
-  bastion_host        = try(var.proxy_info.proxy_address, null)
-  bastion_private_key = try(file(var.proxy_info.proxy_private_ssh_key_path), "")
-  bastion_user        = try(var.proxy_info.proxy_ssh_user, null)
+  bastion_host = try(var.proxy_info.ip_address, null)
+  # bastion_host        = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : try(var.proxy_info.ip_address, null)
+  bastion_private_key = try(file(var.proxy_info.private_ssh_key_path), "")
+  bastion_user        = try(var.proxy_info.ssh_user, null)
 
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = var.name
@@ -13,7 +14,10 @@ locals {
     installation_s3_region              = var.binaries_location.s3_region
     installation_s3_key                 = var.binaries_location.s3_key
     display_name                        = local.display_name
-    password_secret                     = local.password_secret_name
+    admin_password_secret               = local.admin_password_secret_name
+    secadmin_password_secret            = local.secadmin_password_secret_name
+    sonarg_password_secret              = local.sonarg_password_secret_name
+    sonargd_password_secret             = local.sonargd_password_secret_name
     hub_sonarw_public_key               = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
     main_node_sonarw_public_key         = local.main_node_sonarw_public_key
     main_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
