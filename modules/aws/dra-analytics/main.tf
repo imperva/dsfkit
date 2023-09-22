@@ -56,11 +56,11 @@ resource "aws_network_interface" "eni" {
 }
 
 module "statistics" {
-  source                            = "../../../modules/aws/statistics"
+  source          = "../../../modules/aws/statistics"
   deployment_name = var.friendly_name
-  product = "DRA"
-  resource_type = "dra-analytics"
-  artifact = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
+  product         = "DRA"
+  resource_type   = "dra-analytics"
+  artifact        = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
 }
 
 resource "null_resource" "readiness" {
@@ -75,9 +75,9 @@ resource "null_resource" "readiness" {
 }
 
 module "statistics_success" {
-  source                            = "../../../modules/aws/statistics"
+  source = "../../../modules/aws/statistics"
 
-  id = module.statistics.id
-  status = "success"
-  depends_on = [ null_resource.readiness ]
+  id         = module.statistics.id
+  status     = "success"
+  depends_on = [null_resource.readiness]
 }

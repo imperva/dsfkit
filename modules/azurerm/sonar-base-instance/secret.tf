@@ -26,7 +26,7 @@ resource "tls_private_key" "sonarw_private_key" {
 locals {
   main_node_sonarw_public_key  = var.sonarw_public_key_content != null ? var.sonarw_public_key_content : (!var.hadr_dr_node ? "${chomp(tls_private_key.sonarw_private_key[0].public_key_openssh)} produced-by-terraform" : var.main_node_sonarw_public_key)
   main_node_sonarw_private_key = var.sonarw_private_key_secret_name != null ? var.sonarw_private_key_secret_name : (!var.hadr_dr_node ? chomp(tls_private_key.sonarw_private_key[0].private_key_pem) : var.main_node_sonarw_private_key)
-  password_secret_name            = azurerm_key_vault_secret.password_key_secret.name
+  password_secret_name         = azurerm_key_vault_secret.password_key_secret.name
 
   secret_names = [for v in azurerm_key_vault_secret.access_tokens : v.name]
 }

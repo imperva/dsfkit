@@ -1,9 +1,9 @@
 locals {
-  main_ssh_key_path   = var.ssh_key_path
-  ssh_key_path_dr = var.ssh_key_path_dr != null ? var.ssh_key_path_dr : var.ssh_key_path
-  main_ssh_user       = var.ssh_user
-  dr_ssh_user     = var.ssh_user_dr != null ? var.ssh_user_dr : var.ssh_user
-  script_path            = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+  main_ssh_key_path = var.ssh_key_path
+  ssh_key_path_dr   = var.ssh_key_path_dr != null ? var.ssh_key_path_dr : var.ssh_key_path
+  main_ssh_user     = var.ssh_user
+  dr_ssh_user       = var.ssh_user_dr != null ? var.ssh_user_dr : var.ssh_user
+  script_path       = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
 }
 
 #################################
