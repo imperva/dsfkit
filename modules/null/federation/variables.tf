@@ -11,9 +11,10 @@ variable "gw_info" {
 
 variable "hub_info" {
   type = object({
-    hub_ip_address           = string
-    hub_private_ssh_key_path = string
-    hub_ssh_user             = string
+    ssh_ip_address        = string
+    federation_ip_address = string
+    private_ssh_key_path  = string
+    ssh_user              = string
   })
 
   nullable    = false
@@ -48,4 +49,10 @@ variable "hub_proxy_info" {
     proxy_private_ssh_key_path = null
     proxy_ssh_user             = null
   }
+}
+
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Whether to use the DSF instance's public or private IP to connect to the instance"
 }
