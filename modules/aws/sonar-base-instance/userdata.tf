@@ -13,6 +13,7 @@ locals {
     installation_s3_bucket              = var.binaries_location.s3_bucket
     installation_s3_region              = var.binaries_location.s3_region
     installation_s3_key                 = var.binaries_location.s3_key
+    tarball_url                         = var.tarball_url
     display_name                        = local.display_name
     admin_password_secret               = local.admin_password_secret_name
     secadmin_password_secret            = local.secadmin_password_secret_name

@@ -33,10 +33,16 @@ function install_yum_deps_from_internet() {
         echo "Error: No outbound internet access. Either enable outbound internet access, or make sure $@ is installed in the base ami"
         exit 1
     fi
-    packages=$@
-    for p in $packages; do
-        yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y || yum install $p -y # trying x times since sometimes there is a glitch with the entitlement server
-    done
+    local package="$1"
+    local package_name="$${2:-$1}"
+
+    if ! yum list installed "$${package_name}"; then
+        yum install "$${package}" -y \
+          || yum install "$${package}" -y \
+          || yum install "$${package}" -y \
+          || yum install "$${package}" -y \
+          || yum install "$${package}" -y # trying x times since sometimes there is a glitch with the entitlement server
+    fi
 }
 
 function install_awscli_from_internet() {
@@ -51,9 +57,11 @@ function install_awscli_from_internet() {
 }
 
 function install_deps() {
-    command -v unzip || install_yum_deps_from_internet unzip
-    command -v lvm2 || install_yum_deps_from_internet lvm2
-    command -v jq || install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm jq
+    install_yum_deps_from_internet unzip
+    install_yum_deps_from_internet lvm2
+    install_yum_deps_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm epel-release
+    install_yum_deps_from_internet jq
+    install_yum_deps_from_internet wget
     test -f /usr/local/bin/aws || install_awscli_from_internet
 }
 
@@ -141,8 +149,13 @@ function attach_disk() {
 function install_tarball() {
     echo Downloading tarball..
     # Download installation tarball
-    TARBALL_FILE=$APPS_DIR/$(basename ${installation_s3_key})
-    /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} $TARBALL_FILE --region ${installation_s3_region} >/dev/null
+    if [[ -n "${tarball_url}" ]]; then
+        TARBALL_FILE=$(basename "${tarball_url}")
+        wget "${tarball_url}" -O ./$TARBALL_FILE
+    else
+        TARBALL_FILE=$(basename ${installation_s3_key})
+        /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
+    fi
 
     echo Installing tarball..
     # Installing tarball

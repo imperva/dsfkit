@@ -58,6 +58,7 @@ module "hub_instance" {
   instance_profile_name             = var.instance_profile_name
   attach_persistent_public_ip       = var.attach_persistent_public_ip
   use_public_ip                     = var.use_public_ip
+  termination_protection            = var.termination_protection
   additional_install_parameters     = var.additional_install_parameters
   admin_password                    = var.admin_password
   secadmin_password                 = var.secadmin_password
@@ -70,6 +71,7 @@ module "hub_instance" {
   generate_access_tokens            = var.generate_access_tokens
   ssh_key_path                      = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
+  tarball_url                       = var.tarball_url
   hadr_dr_node                      = var.hadr_dr_node
   main_node_sonarw_public_key       = var.main_node_sonarw_public_key
   main_node_sonarw_private_key      = var.main_node_sonarw_private_key

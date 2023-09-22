@@ -53,6 +53,12 @@ variable "allowed_hub_cidrs" {
   default = []
 }
 
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Whether to use the DSF instance's public or private IP to connect to the instance"
+}
+
 variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing ssh access"
@@ -87,6 +93,11 @@ variable "public_ip" {
   type        = bool
   default     = false
   description = "Create public IP for the instance"
+}
+
+variable "termination_protection" {
+  type    = bool
+  default = true
 }
 
 variable "instance_type" { # https://docs.imperva.com/bundle/z-kb-articles-km/page/a6defd0e.html
@@ -129,6 +140,12 @@ variable "binaries_location" {
   nullable    = false
 }
 
+variable "tarball_url" {
+  type        = string
+  default     = ""
+  description = "https DSF installation location, defaults to using binaries_location"
+}
+
 variable "hadr_dr_node" {
   type        = bool
   default     = false
@@ -157,10 +174,6 @@ variable "admin_password" {
   type        = string
   sensitive   = true
   description = "Password for admin user."
-  validation {
-    condition     = var.admin_password == null || try(length(var.admin_password) > 8, false)
-    error_message = "Must be at least 8 characters."
-  }
 }
 
 variable "admin_password_secret_name" {
@@ -173,10 +186,6 @@ variable "secadmin_password" {
   type        = string
   sensitive   = true
   description = "Password for secadmin user."
-  validation {
-    condition     = var.secadmin_password == null || try(length(var.secadmin_password) > 8, false)
-    error_message = "Must be at least 8 characters."
-  }
 }
 
 variable "secadmin_password_secret_name" {
@@ -189,10 +198,6 @@ variable "sonarg_password" {
   type        = string
   sensitive   = true
   description = "Password for sonarg user."
-  validation {
-    condition     = var.sonarg_password == null || try(length(var.sonarg_password) > 8, false)
-    error_message = "Must be at least 8 characters."
-  }
 }
 
 variable "sonarg_password_secret_name" {
@@ -205,10 +210,6 @@ variable "sonargd_password" {
   type        = string
   sensitive   = true
   description = "Password for sonargd user"
-  validation {
-    condition     = var.sonargd_password == null || try(length(var.sonargd_password) > 8, false)
-    error_message = "Must be at least 8 characters."
-  }
 }
 
 variable "sonargd_password_secret_name" {
