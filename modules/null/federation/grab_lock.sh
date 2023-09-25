@@ -1,4 +1,5 @@
-#!/bin/bash -x -e
+#!/bin/bash
+set -x -e
 
 lock_file_prefix=lock-file
 lock_file=$lock_file_prefix-$RANDOM-$RANDOM-$RANDOM
@@ -10,14 +11,15 @@ while [ $lock_acquired -eq 0 ]; do
     while ls $lock_file_prefix* &>/dev/null; do
         rm -f $lock_file
         echo "waiting for previous federation to complete.."
-        sleep $(($RANDOM * 100 / 100000))
+        sleep "$(( ( RANDOM * 100 ) / 100000 ))"
     done
     touch $lock_file
     # TODO write to the file which federation touched it, i.e., hub ip -> gw ip
     echo "touched $lock_file"
-    sleep 0.2
-    lock_files=$(ls $lock_file_prefix* 2>/dev/null | wc -l)
-    if [ "$lock_files" -eq 1 ]; then
+    # sleep between 0.2 and 0.5 seconds
+    sleep "0.$(( ( ( RANDOM * 10 ) / 100000 ) + 2 ))"
+    lock_files=("$lock_file_prefix"*)
+    if [[ "${#lock_files[@]}" == "1" ]]; then
         lock_acquired=1
     fi
 done

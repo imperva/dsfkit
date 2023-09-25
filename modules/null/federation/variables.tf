@@ -1,8 +1,9 @@
 variable "gw_info" {
   type = object({
-    gw_ip_address           = string
-    gw_private_ssh_key_path = string
-    gw_ssh_user             = string
+    ssh_ip_address        = string
+    federation_ip_address = string
+    private_ssh_key_path  = string
+    ssh_user              = string
   })
 
   nullable    = false
