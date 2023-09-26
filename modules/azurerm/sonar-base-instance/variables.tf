@@ -127,6 +127,7 @@ variable "additional_install_parameters" {
 
 variable "binaries_location" {
   type = object({
+    az_resource_group  = string
     az_storage_account = string
     az_container       = string
     az_blob            = string
