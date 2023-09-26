@@ -95,6 +95,15 @@ variable "sonar_version" {
   }
 }
 
+variable "tarball_location" {
+  type = object({
+    az_storage_account = string
+    az_container       = string
+    az_blob            = string
+  })
+  description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
+}
+
 variable "hub_hadr" {
   type        = bool
   default     = true

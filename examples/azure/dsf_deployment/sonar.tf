@@ -1,5 +1,4 @@
 locals {
-  tarball_location   = module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 }
 
@@ -11,7 +10,7 @@ module "hub_main" {
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   resource_group              = local.resource_group
   subnet_id                   = module.network[0].vnet_subnets[0]
-  binaries_location           = local.tarball_location
+  binaries_location           = var.tarball_location
   password                    = local.password
   storage_details             = var.hub_storage_details
   instance_type               = var.hub_instance_type
@@ -41,7 +40,7 @@ module "hub_dr" {
   friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
   resource_group                  = local.resource_group
   subnet_id                       = module.network[0].vnet_subnets[1]
-  binaries_location               = local.tarball_location
+  binaries_location               = var.tarball_location
   password                        = local.password
   storage_details                 = var.hub_storage_details
   instance_type                   = var.hub_instance_type
@@ -70,7 +69,7 @@ module "hub_hadr" {
   version = "1.5.1" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
-  sonar_version            = module.globals.tarball_location.version
+  sonar_version            = var.sonar_version
   dsf_main_ip              = module.hub_main[0].public_ip
   dsf_main_private_ip      = module.hub_main[0].private_ip
   dsf_dr_ip                = module.hub_dr[0].public_ip
@@ -92,7 +91,7 @@ module "agentless_gw_main" {
   resource_group        = local.resource_group
   subnet_id             = module.network[0].vnet_subnets[0]
   storage_details       = var.agentless_gw_storage_details
-  binaries_location     = local.tarball_location
+  binaries_location     = var.tarball_location
   instance_type         = var.agentless_gw_instance_type
   password              = local.password
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
@@ -123,7 +122,7 @@ module "agentless_gw_dr" {
   resource_group        = local.resource_group
   subnet_id             = module.network[0].vnet_subnets[1]
   storage_details       = var.agentless_gw_storage_details
-  binaries_location     = local.tarball_location
+  binaries_location     = var.tarball_location
   instance_type         = var.agentless_gw_instance_type
   password              = local.password
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
@@ -153,7 +152,7 @@ module "agentless_gw_hadr" {
   version = "1.5.1" # latest release tag
   count   = length(module.agentless_gw_dr)
 
-  sonar_version            = module.globals.tarball_location.version
+  sonar_version            = var.sonar_version
   dsf_main_ip           = module.agentless_gw_main[count.index].private_ip
   dsf_main_private_ip   = module.agentless_gw_main[count.index].private_ip
   dsf_dr_ip         = module.agentless_gw_dr[count.index].private_ip

@@ -10,7 +10,6 @@ module "globals" {
   source  = "imperva/dsf-globals/azurerm"
   version = "1.5.4" # latest release tag
 
-  sonar_version = var.sonar_version
 }
 
 resource "azurerm_resource_group" "rg" {
