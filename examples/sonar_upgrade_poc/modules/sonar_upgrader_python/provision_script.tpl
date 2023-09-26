@@ -17,5 +17,4 @@ python3 -u ${path}/python_upgrader/main.py \
   --run_preflight_validations "${run_preflight_validations}" \
   --run_upgrade "${run_upgrade}" \
   --run_postflight_validations "${run_postflight_validations}" \
-  --clean_old_deployments "${clean_old_deployments}" \
-  --custom_validations_scripts "${custom_validations_scripts}"
+  --clean_old_deployments "${clean_old_deployments}"

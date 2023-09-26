@@ -30,7 +30,3 @@ output "clean_old_deployments" {
   value = var.clean_old_deployments
 }
 
-output "custom_validations_scripts" {
-  value = var.custom_validations_scripts
-}
-

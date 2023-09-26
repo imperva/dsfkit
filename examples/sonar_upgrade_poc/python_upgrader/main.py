@@ -234,9 +234,7 @@ def parse_args():
     parser.add_argument("--run_upgrade", required=True, type=str_to_bool, help="Whether to run the upgrade")
     parser.add_argument("--run_postflight_validations", required=True, type=str_to_bool,
                         help="Whether to run postflight validations")
-    parser.add_argument("--clean_old_deployments", required=True, type=str_to_bool,
-                        help="Whether to clean old deployments")
-    parser.add_argument("--custom_validations_scripts", help="List of custom validation scripts")
+    parser.add_argument("--clean_old_deployments", type=str_to_bool, help="Whether to clean old deployments")
     args = parser.parse_args()
     return args
 
@@ -253,7 +251,6 @@ def print_inputs(agentless_gws, hubs, args):
     print(f"run_upgrade: {args.run_upgrade}")
     print(f"run_postflight_validations: {args.run_postflight_validations}")
     print(f"clean_old_deployments: {args.clean_old_deployments}")
-    print(f"custom_validations_scripts: {args.custom_validations_scripts}")
 
 
 def test_connection_to_extended_nodes(extended_nodes):
@@ -586,8 +583,8 @@ def run_clean_old_deployments_script(dsf_node, script_file_name):
     script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
 
     print(f"Cleaning old deployments bash script output: {script_output}")
-    # This relies on the fact that Sonar outputs the string "Upgrade completed"
-    return "Cleaning old deployments completed" in script_output
+    # TODO need to determine how to recognize that the clean command succeeded after implementing it
+    return "Clean old deployments bash script completed" in script_output
 
 
 def extract_postflight_validations_result(script_output):

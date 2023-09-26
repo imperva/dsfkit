@@ -112,12 +112,6 @@ variable "run_postflight_validations" {
 
 variable "clean_old_deployments" {
   type        = bool
-  default     = true
-  description = "Whether to clean old deployments after successful upgrade, supported on version 4.12 or higher. In case postflight validations run and failed, old deployment directories cleaning will be skipped."
-}
-
-variable "custom_validations_scripts" {
-  type        = list(string)
-  default     = []
-  description = "A list of scripts with custom validations. This variable is not operational in this POC."
+  default     = false
+  description = "Whether to clean old deployments after successful upgrade. In case postflight validations run and failed, old deployment directories cleaning will be skipped. This variable is not operational in this POC."
 }
