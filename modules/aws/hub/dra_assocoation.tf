@@ -1,10 +1,10 @@
 locals {
   host                      = var.use_public_ip ? module.hub_instance.public_ip : module.hub_instance.private_ip
+  password                  = urlencode(var.dra_details[0].password) # we are using one password for all services
   dra_association_commands  = [for dra_admin in var.dra_details : <<-EOT
-    curl --silent --insecure --max-time 10000 -X POST -G 'https://${local.host}:8443/register-to-dra' -d adminIpOrHostname=${dra_admin.address} -d adminRegistrationPassword=${dra_admin.password} -d adminReportingServer=true -d analyticsArchiveUsername=${dra_admin.username} -d analyticsArchivePassword=${dra_admin.password} -d resumeDraJobs=true --header "Authorization: Bearer ${module.hub_instance.access_tokens["dam-to-hub"].token}"
+    curl --silent --insecure --max-time 10000 -X POST -G 'https://${local.host}:8443/register-to-dra' -d adminIpOrHostname=${dra_admin.address} -d adminRegistrationPassword=${local.password} -d adminReportingServer=true -d analyticsArchiveUsername=${dra_admin.username} -d analyticsArchivePassword=${local.password} -d resumeDraJobs=true --header "Authorization: Bearer ${module.hub_instance.access_tokens["dam-to-hub"].token}"
     EOT
   ]
-  test = "test1"
 }
 
 resource "null_resource" "dra_association" {
@@ -17,6 +17,6 @@ resource "null_resource" "dra_association" {
     module.hub_instance.ready
   ]
   triggers = {
-    "key" = local.test
+    key = join("", local.dra_association_commands)
   }
 }
