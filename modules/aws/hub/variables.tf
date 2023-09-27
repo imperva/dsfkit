@@ -282,7 +282,7 @@ variable "mx_details" {
 }
 
 variable "dra_details" {
-  description = "List of the DSF MX to onboard to USC"
+  description = "List of the DSF DRA to onboard to Sonar Hub"
   type = list(object({
     name     = string
     address  = string
