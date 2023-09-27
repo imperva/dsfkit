@@ -8,20 +8,19 @@ provider "azurerm" {
 
 module "globals" {
   source  = "imperva/dsf-globals/azurerm"
-  version = "1.5.4" # latest release tag
+  version = "1.5.5" # latest release tag
 
-  sonar_version = var.sonar_version
 }
 
 resource "azurerm_resource_group" "rg" {
-  count = var.resource_group == null ? 1 : 0
+  count    = var.resource_group == null ? 1 : 0
   name     = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   location = var.resource_group_location
 }
 
 data "azurerm_resource_group" "rg" {
   count = var.resource_group != null ? 1 : 0
-  name = var.resource_group
+  name  = var.resource_group
 }
 
 # create key
@@ -45,7 +44,7 @@ locals {
   resource_group = var.resource_group == null ? {
     location = azurerm_resource_group.rg[0].location
     name     = azurerm_resource_group.rg[0].name
-  } : {
+    } : {
     location = data.azurerm_resource_group.rg[0].location
     name     = data.azurerm_resource_group.rg[0].name
   }

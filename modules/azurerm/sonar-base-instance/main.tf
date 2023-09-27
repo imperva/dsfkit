@@ -88,8 +88,8 @@ data "azurerm_subscription" "subscription" {
 }
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
-  scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/eytan-resource-group"
-  role_definition_name = "Owner"
+  scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
+  role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 

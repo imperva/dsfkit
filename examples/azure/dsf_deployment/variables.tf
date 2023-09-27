@@ -5,15 +5,15 @@ variable "tags" {
 }
 
 variable "resource_group" {
-  type    = string
+  type        = string
   description = "Azure exisiting resource group. Keep empty if you wish to create a new resource group"
-  default = null
+  default     = null
 }
 
 variable "resource_group_location" {
-  type    = string
-  description = "In case var.resource_group is not provided and a new resource group is craeted. It will be created in this location"
-  default = null
+  type        = string
+  description = "In case var.resource_group is not provided and a new resource group is created. It will be created in this location (e.g 'East US')"
+  default     = null
 }
 
 variable "deployment_name" {
@@ -64,10 +64,10 @@ variable "vnet_ip_range" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id                    = string
-    hub_dr_subnet_id                 = string
-    agentless_gw_subnet_id           = string
-    agentless_gw_dr_subnet_id        = string
+    hub_subnet_id             = string
+    hub_dr_subnet_id          = string
+    agentless_gw_subnet_id    = string
+    agentless_gw_dr_subnet_id = string
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
@@ -93,6 +93,16 @@ variable "sonar_version" {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
+}
+
+variable "tarball_location" {
+  type = object({
+    az_resource_group  = string
+    az_storage_account = string
+    az_container       = string
+    az_blob            = string
+  })
+  description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
 }
 
 variable "hub_hadr" {

@@ -143,7 +143,7 @@ function install_tarball() {
     echo Downloading tarball..
     # Download installation tarball
     TARBALL_FILE=$APPS_DIR/$(basename ${az_blob})
-    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --name ${az_blob} --file $TARBALL_FILE >/dev/null
+    az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --name ${az_blob} --file $TARBALL_FILE --auth-mode login >/dev/null
 
     echo Installing tarball..
     # Installing tarball

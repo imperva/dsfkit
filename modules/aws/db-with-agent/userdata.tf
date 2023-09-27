@@ -1,3 +1,7 @@
+resource "random_id" "salt" {
+  byte_length = 2
+}
+
 locals {
   agent_installation_dir = local.os_params[local.os_type].agent_installation_dir
   user_data              = <<-EOF
@@ -18,7 +22,7 @@ locals {
       ./${local.binaries_location.s3_key} -n -d ${local.agent_installation_dir}
       rm ${local.binaries_location.s3_key}
       echo "Registering agent:"
-      ${local.agent_installation_dir}/ragent/bin/cli --dcfg ${local.agent_installation_dir}/ragent/etc --dtarget ${local.agent_installation_dir}/ragent/etc --dlog ${local.agent_installation_dir}/ragent/etc/logs/cli registration advanced-register registration-type=Primary is-db-agent=true tunnel-protocol=TCP gw-ip=${var.registration_params.agent_gateway_host} gw-port=443 manual-settings-activation=Automatic monitor-network-channels=Both password="${var.registration_params.secure_password}" ragent-name="${join("-", [var.friendly_name, "db", "with", "agent"])}" site='${var.registration_params.site}' server-group="${var.registration_params.server_group}";
+      ${local.agent_installation_dir}/ragent/bin/cli --dcfg ${local.agent_installation_dir}/ragent/etc --dtarget ${local.agent_installation_dir}/ragent/etc --dlog ${local.agent_installation_dir}/ragent/etc/logs/cli registration advanced-register registration-type=Primary is-db-agent=true tunnel-protocol=TCP gw-ip=${var.registration_params.agent_gateway_host} gw-port=443 manual-settings-activation=Automatic monitor-network-channels=Both password="${var.registration_params.secure_password}" ragent-name="${join("-", [var.friendly_name, random_id.salt.hex])}" site='${var.registration_params.site}' server-group="${var.registration_params.server_group}";
       echo "Starting agent:"
       ${local.agent_installation_dir}/ragent/bin/rainit start;
       EOF

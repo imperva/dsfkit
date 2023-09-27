@@ -8,7 +8,7 @@ locals {
 
 module "mx" {
   source  = "imperva/dsf-mx/aws"
-  version = "1.5.4" # latest release tag
+  version = "1.5.5" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name                     = join("-", [local.deployment_name_salted, "mx"])
@@ -16,7 +16,7 @@ module "mx" {
   ebs                               = var.mx_ebs_details
   subnet_id                         = var.subnet_ids.mx_subnet_id
   security_group_ids                = var.security_group_ids_mx
-  license                           = var.license
+  license                           = var.dam_license
   key_pair                          = local.mx_public_key_name
   secure_password                   = local.password
   mx_password                       = local.password
@@ -37,7 +37,7 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/aws"
-  version = "1.5.4" # latest release tag
+  version = "1.5.5" # latest release tag
   count   = local.agent_gw_count
 
   friendly_name             = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
@@ -55,7 +55,7 @@ module "agent_gw" {
   instance_profile_name     = var.agent_gw_instance_profile_name
 
   management_server_host_for_registration = module.mx[0].private_ip
-  management_server_host_for_api_access   = module.mx[0].public_ip
+  management_server_host_for_api_access   = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
@@ -66,13 +66,13 @@ module "agent_gw" {
 
 module "agent_gw_cluster_setup" {
   source  = "imperva/dsf-agent-gw-cluster-setup/null"
-  version = "1.5.4" # latest release tag
+  version = "1.5.5" # latest release tag
   count   = local.create_agent_gw_cluster
 
   cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name
   mx_details = {
-    address  = module.mx[0].public_ip
+    address  = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
     port     = 8083
     user     = module.mx[0].web_console_user
     password = local.password

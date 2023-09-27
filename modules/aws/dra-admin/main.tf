@@ -18,7 +18,7 @@ locals {
 resource "aws_eip" "dsf_instance_eip" {
   count  = var.attach_persistent_public_ip ? 1 : 0
   domain = "vpc"
-  tags   = var.tags
+  tags   = merge(var.tags, { Name = var.friendly_name })
 }
 
 resource "aws_eip_association" "eip_assoc" {
@@ -59,9 +59,9 @@ resource "aws_network_interface" "eni" {
 }
 
 module "statistics" {
-  source                            = "../../../modules/aws/statistics"
+  source          = "../../../modules/aws/statistics"
   deployment_name = var.friendly_name
-  product = "DRA"
-  resource_type = "dra-admin"
-  artifact = "ami://${data.aws_ami.selected-ami.image_id}@${var.dra_version}"
+  product         = "DRA"
+  resource_type   = "dra-admin"
+  artifact        = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
 }

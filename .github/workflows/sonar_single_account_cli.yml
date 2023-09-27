@@ -33,6 +33,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
+  TF_WORKSPACE: single_account
 
 permissions:
   contents: read
@@ -84,19 +85,20 @@ jobs:
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
       - name: Cleaning environment
-        uses: appleboy/ssh-action@v0.1.8
+        continue-on-error: true
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: |
             terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Delete Old Environment
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
@@ -153,7 +155,7 @@ jobs:
           overwrite: true
 
       - name: Unzip
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
@@ -167,67 +169,67 @@ jobs:
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR init
 
       - name: Terraform Validate
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: |
             printenv
             terraform -chdir=$REMOTE_EXAMPLE_DIR plan
 
       - name: Terraform Apply
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
 
       - name: Terraform Output
         if: always()
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.179.25.83
           username: ec2-user
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 
       - name: Terraform Destroy
         #   if: always()
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         id: test_audit
         with:
           host: 54.179.25.83
@@ -235,7 +237,7 @@ jobs:
           key: ${{ env.JUMP_SERVER_KEY }}
           port: 22
           command_timeout: "2h"
-          envs: REMOTE_EXAMPLE_DIR
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Delete Security Group

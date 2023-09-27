@@ -53,7 +53,7 @@ output "sonar" {
         private_ip   = try(val.private_ip, null)
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
-        principal_id     = try(val.principal_id, null)
+        principal_id = try(val.principal_id, null)
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []

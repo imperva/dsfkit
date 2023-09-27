@@ -121,14 +121,14 @@ variable "workstation_cidr" {
 
 variable "subnet_ids" {
   type = object({
-    hub_main_subnet_id               = string
-    hub_dr_subnet_id                 = string
-    agentless_gw_main_subnet_id      = string
-    agentless_gw_dr_subnet_id        = string
-    mx_subnet_id                     = string
-    agent_gw_subnet_id               = string
-    dra_admin_subnet_id              = string
-    dra_analytics_subnet_id          = string
+    hub_main_subnet_id          = string
+    hub_dr_subnet_id            = string
+    agentless_gw_main_subnet_id = string
+    agentless_gw_dr_subnet_id   = string
+    mx_subnet_id                = string
+    agent_gw_subnet_id          = string
+    dra_admin_subnet_id         = string
+    dra_analytics_subnet_id     = string
   })
   description = "The IDs of existing subnets to deploy resources in"
   validation {
@@ -462,9 +462,9 @@ variable "dam_version" {
   }
 }
 
-variable "license" {
+variable "dam_license" {
   description = <<EOF
-  License information. Must be one of the following:
+  DAM license information. Must be one of the following:
   1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
   2. License file path
   EOF

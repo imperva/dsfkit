@@ -8,29 +8,29 @@ locals {
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tftpl", {
-    resource_type                          = var.resource_type
-    installation_s3_bucket                 = var.binaries_location.s3_bucket
-    installation_s3_region                 = var.binaries_location.s3_region
-    installation_s3_key                    = var.binaries_location.s3_key
-    display_name                           = local.display_name
-    password_secret                        = local.password_secret_name
-    hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
-    main_node_sonarw_public_key            = local.main_node_sonarw_public_key
-    main_node_sonarw_private_key_secret    = local.sonarw_secret_aws_name
-    jsonar_uuid                            = random_uuid.jsonar_uuid.result
-    additional_install_parameters          = var.additional_install_parameters
-    access_tokens_array                    = local.access_tokens_array
+    resource_type                       = var.resource_type
+    installation_s3_bucket              = var.binaries_location.s3_bucket
+    installation_s3_region              = var.binaries_location.s3_region
+    installation_s3_key                 = var.binaries_location.s3_key
+    display_name                        = local.display_name
+    password_secret                     = local.password_secret_name
+    hub_sonarw_public_key               = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
+    main_node_sonarw_public_key         = local.main_node_sonarw_public_key
+    main_node_sonarw_private_key_secret = local.sonarw_secret_aws_name
+    jsonar_uuid                         = random_uuid.jsonar_uuid.result
+    additional_install_parameters       = var.additional_install_parameters
+    access_tokens_array                 = local.access_tokens_array
   })
 }
 
 resource "random_uuid" "jsonar_uuid" {}
 
 module "statistics" {
-  source                            = "../../../modules/aws/statistics"
+  source          = "../../../modules/aws/statistics"
   deployment_name = var.name
-  product = "SONAR"
-  resource_type = var.resource_type
-  artifact = "s3://${var.binaries_location.s3_bucket}/${var.binaries_location.s3_key}"
+  product         = "SONAR"
+  resource_type   = var.resource_type
+  artifact        = "s3://${sha256(var.binaries_location.s3_bucket)}/${var.binaries_location.s3_key}"
 }
 
 resource "null_resource" "readiness" {
@@ -72,9 +72,9 @@ resource "null_resource" "readiness" {
 }
 
 module "statistics_success" {
-  source                            = "../../../modules/aws/statistics"
+  source = "../../../modules/aws/statistics"
 
-  id = module.statistics.id
-  initialization_status = "success"
-  depends_on = [ null_resource.readiness ]
+  id         = module.statistics.id
+  status     = "success"
+  depends_on = [null_resource.readiness]
 }

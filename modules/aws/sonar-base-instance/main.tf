@@ -4,7 +4,7 @@ locals {
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   # root volume details
-  root_volume_size  = 100
+  root_volume_size = 100
 
   # state volume details
   ebs_state_disk_type  = "gp3"
@@ -22,7 +22,7 @@ locals {
 resource "aws_eip" "dsf_instance_eip" {
   count  = var.attach_persistent_public_ip ? 1 : 0
   domain = "vpc"
-  tags   = var.tags
+  tags   = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_eip_association" "eip_assoc" {

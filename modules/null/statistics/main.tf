@@ -1,13 +1,13 @@
 locals {
-  host      = "https://hh5n8k57bh.execute-api.us-east-1.amazonaws.com"
-  resource  = "dsfkit_usage_stats"
-  stage     = "dev"
-  url       = join("/", [local.host, local.stage, local.resource])
+  host         = "https://hh5n8k57bh.execute-api.us-east-1.amazonaws.com"
+  resource     = "dsfkit_usage_stats"
+  stage        = "dev"
+  url          = join("/", [local.host, local.stage, local.resource])
   header_value = base64decode("amxEU0NhRWwyTTc2NkZVWUtVTFhlNUxyRVpBYVR4akhHd0dGYkExYg==")
-  
+
   id = var.id == null ? random_uuid.stats_id.result : var.id
 
-  enable_statistics = true
+  enable_statistics = false
 }
 
 resource "random_uuid" "stats_id" {
@@ -16,14 +16,14 @@ resource "random_uuid" "stats_id" {
 locals {
   payload = jsonencode({
     "id" : local.id
-    "deployment_name" : var.deployment_name,
+    "deployment_name" : var.deployment_name == null ? null : local.hashed_deployment_name,
     "artifact" : var.artifact
     "product" : var.product
     "resource_type" : var.resource_type
-    "account_id": sha256(var.account_id)
+    "account_id" : sha256(var.account_id)
     "platform" : var.platform
     "location" : var.location
-    "initialization_status" : var.initialization_status
+    "status" : var.status
     "additional_info" : var.additional_info
   })
 }
