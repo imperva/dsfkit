@@ -18,7 +18,7 @@ locals {
 resource "aws_eip" "dsf_instance_eip" {
   count  = var.attach_persistent_public_ip ? 1 : 0
   domain = "vpc"
-  tags   = var.tags
+  tags   = merge(var.tags, { Name = var.friendly_name })
 }
 
 resource "aws_eip_association" "eip_assoc" {

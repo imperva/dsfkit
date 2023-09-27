@@ -12,7 +12,7 @@ variable "resource_group" {
 
 variable "resource_group_location" {
   type    = string
-  description = "In case var.resource_group is not provided and a new resource group is craeted. It will be created in this location"
+  description = "In case var.resource_group is not provided and a new resource group is created. It will be created in this location (e.g 'East US')"
   default = null
 }
 
@@ -93,6 +93,16 @@ variable "sonar_version" {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
   }
+}
+
+variable "tarball_location" {
+  type = object({
+    az_resource_group  = string
+    az_storage_account = string
+    az_container       = string
+    az_blob            = string
+  })
+  description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
 }
 
 variable "hub_hadr" {
