@@ -7,25 +7,25 @@ variable "id" {
 variable "deployment_name" {
   type        = string
   description = "Deployment name"
-  default = null
+  default     = null
 }
 
 variable "artifact" {
   type        = string
   description = "Artifact"
-  default = null
+  default     = null
 }
 
 variable "product" {
   type        = string
   description = "Product"
-  default = null
+  default     = null
 }
 
 variable "resource_type" {
   type        = string
   description = "Resource type"
-  default = null
+  default     = null
 }
 
 variable "status" {

@@ -8,32 +8,32 @@ locals {
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tftpl", {
-    resource_type                          = var.resource_type
-    az_storage_account                     = var.binaries_location.az_storage_account
-    az_container                           = var.binaries_location.az_container
-    az_blob                                = var.binaries_location.az_blob
-    display_name                           = local.display_name
-    password_secret                        = local.password_secret_name
-    hub_sonarw_public_key                  = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
-    main_node_sonarw_public_key            = local.main_node_sonarw_public_key
-    vault_name                             = azurerm_key_vault.vault.name
-    main_node_sonarw_private_key_secret    = azurerm_key_vault_secret.sonarw_private_key_secret.name
-    jsonar_uuid                            = random_uuid.jsonar_uuid.result
-    additional_install_parameters          = var.additional_install_parameters
-    firewall_ports                         = join(" ", flatten([for i in var.security_groups_config : i.tcp]))
-    access_tokens_array                    = local.access_tokens_array
+    resource_type                       = var.resource_type
+    az_storage_account                  = var.binaries_location.az_storage_account
+    az_container                        = var.binaries_location.az_container
+    az_blob                             = var.binaries_location.az_blob
+    display_name                        = local.display_name
+    password_secret                     = local.password_secret_name
+    hub_sonarw_public_key               = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
+    main_node_sonarw_public_key         = local.main_node_sonarw_public_key
+    vault_name                          = azurerm_key_vault.vault.name
+    main_node_sonarw_private_key_secret = azurerm_key_vault_secret.sonarw_private_key_secret.name
+    jsonar_uuid                         = random_uuid.jsonar_uuid.result
+    additional_install_parameters       = var.additional_install_parameters
+    firewall_ports                      = join(" ", flatten([for i in var.security_groups_config : i.tcp]))
+    access_tokens_array                 = local.access_tokens_array
   })
 }
 
 resource "random_uuid" "jsonar_uuid" {}
 
 module "statistics" {
-  source                            = "../../../modules/azurerm/statistics"
+  source          = "../../../modules/azurerm/statistics"
   deployment_name = var.name
-  product = "SONAR"
-  resource_type = var.resource_type
-  artifact = "blob://${sha256(var.binaries_location.az_storage_account)}/${sha256(var.binaries_location.az_container)}/${var.binaries_location.az_blob}"
-  location = var.resource_group.location
+  product         = "SONAR"
+  resource_type   = var.resource_type
+  artifact        = "blob://${sha256(var.binaries_location.az_storage_account)}/${sha256(var.binaries_location.az_container)}/${var.binaries_location.az_blob}"
+  location        = var.resource_group.location
 }
 
 resource "null_resource" "readiness" {
@@ -75,9 +75,9 @@ resource "null_resource" "readiness" {
 }
 
 module "statistics_success" {
-  source                            = "../../../modules/azurerm/statistics"
+  source = "../../../modules/azurerm/statistics"
 
-  id = module.statistics.id
-  status = "success"
-  depends_on = [ null_resource.readiness ]
+  id         = module.statistics.id
+  status     = "success"
+  depends_on = [null_resource.readiness]
 }

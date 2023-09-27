@@ -88,15 +88,15 @@ variable "public_subnets" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id                    = string
+    hub_subnet_id             = string
     hub_dr_subnet_id          = string
-    agentless_gw_subnet_id           = string
+    agentless_gw_subnet_id    = string
     agentless_gw_dr_subnet_id = string
-    mx_subnet_id                     = string
-    agent_gw_subnet_id               = string
-    dra_admin_subnet_id                  = string
-    dra_analytics_subnet_id              = string
-    db_subnet_ids                    = list(string)
+    mx_subnet_id              = string
+    agent_gw_subnet_id        = string
+    dra_admin_subnet_id       = string
+    dra_analytics_subnet_id   = string
+    db_subnet_ids             = list(string)
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
