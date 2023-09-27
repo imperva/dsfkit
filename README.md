@@ -390,7 +390,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
    <td>
       1. Azure alpha release (It can be used with caution).
-      <br/>2. Rename DSF Hub and Agentless Gateway terminology from "primary and secondary" to "main and DR".
+      <br/>2. Renamed DSF Hub and Agentless Gateway terminology from "primary" and "secondary" to "main" and "DR".
       <br/>3. Improvements and bug fixes.
    </td>
   </tr>
