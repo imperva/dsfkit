@@ -383,6 +383,17 @@ The following table lists the released eDSF Kit versions, their release date and
       Improvements and bug fixes.
    </td>
   </tr>
+  <tr>
+   <td>27 Sep 2023
+   </td>
+   <td>1.5.5
+   </td>
+   <td>
+      1. Azure alpha release (It can be used with caution).
+      <br/>2. Rename DSF Hub and Agentless Gateway terminology from "primary and secondary" to "main and DR".
+      <br/>3. Improvements and bug fixes.
+   </td>
+  </tr>
 
 </table>
 
