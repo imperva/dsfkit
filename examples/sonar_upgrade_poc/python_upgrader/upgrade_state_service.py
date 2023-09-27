@@ -15,13 +15,32 @@ class UpgradeStateService:
         '''
         self.upgrade_state_file_name = self._create_state_file()
 
+    def init_upgrade_state(self, dsf_node_ids):
+        '''
+        Initializes the upgrade state for a list of DSF nodes being upgraded.
+        If this is a rerun or gradual upgrade, updates the existing upgrade state, this may mean removing nodes which
+        don't exist in the current list of DSF nodes.
+        :param dsf_node_ids: The list of DSF nodes being upgraded
+        '''
+        pass
+
+    def is_upgrade_state_empty(self):
+        '''
+        Verifies whether the upgrade state is empty which indicates that the upgrade hasn't started.
+        The upgrade state is not empty when an upgrade is stopped and restarted for some reason, or this is a
+        gradual upgrade, etc.
+        :return: True if the upgrade state is empty, false otherwise
+        '''
+        # TODO implement
+        return False
+
     def get_upgrade_status(self, dsf_node_id):
         '''
         :param dsf_node_id: Id of the DSF node which upgrade status to get
         :return: not-started, running, succeeded, succeeded-with-warnings or failed
         '''
         # TODO
-        pass
+        return UpgradeState.NOT_STARTED
 
     def get_overall_upgrade_status(self):
         '''
@@ -32,8 +51,8 @@ class UpgradeStateService:
                  succeeded-with-warnings if all nodes are in succeeded-with-warnings status
                  failed if at least one node is in failed status, and there are no nodes in running status
         '''
-        # TODO
-        pass
+        # TODO implement
+        return {}
 
     def update_upgrade_status(self, dsf_node_id, upgrade_status, flush=True):
         '''
@@ -42,8 +61,67 @@ class UpgradeStateService:
         :param upgrade_status: The upgrade status to update with
         :param flush: Whether to write to the upgrade state file on disk or not
         '''
-        # TODO
-        pass
+        old_status = self.get_upgrade_status(dsf_node_id)
+        print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status}")
+        # TODO implement
+
+    def is_upgrade_completed(self, dsf_node_id):
+        '''
+        Verifies whether upgrade of a DSF node completed successfully or equivalent.
+        :param dsf_node_id: Id of the DSF node which status to check
+        :return: True if completed, false otherwise
+        '''
+        # TODO implement
+        return False
+
+    def should_test_connection(self, dsf_node_id):
+        status = self.get_upgrade_status(dsf_node_id)
+        return status not in (
+            UpgradeState.SUCCEEDED,
+            UpgradeState.SUCCEEDED_WITH_WARNINGS
+        )
+
+    def should_collect_python_location(self, dsf_node_id):
+        status = self.get_upgrade_status(dsf_node_id)
+        return status not in (
+            UpgradeState.SUCCEEDED,
+            UpgradeState.SUCCEEDED_WITH_WARNINGS,
+            UpgradeState.TEST_CONNECTION_FAILED
+        )
+
+    def should_run_preflight_validations(self, dsf_node_id):
+        status = self.get_upgrade_status(dsf_node_id)
+        return status not in (
+            UpgradeState.SUCCEEDED,
+            UpgradeState.SUCCEEDED_WITH_WARNINGS,
+            UpgradeState.UPGRADE_SUCCEEDED,
+            UpgradeState.TEST_CONNECTION_FAILED,
+            UpgradeState.COLLECT_PYTHON_LOCATION_FAILED
+        )
+
+    def should_run_upgrade(self, dsf_node_id):
+        status = self.get_upgrade_status(dsf_node_id)
+        # We are not supposed to attempt upgrade if PREFLIGHT_VALIDATIONS_FAILED
+        return status not in (
+            UpgradeState.SUCCEEDED,
+            UpgradeState.SUCCEEDED_WITH_WARNINGS,
+            UpgradeState.UPGRADE_SUCCEEDED,
+            UpgradeState.TEST_CONNECTION_FAILED,
+            UpgradeState.COLLECT_PYTHON_LOCATION_FAILED,
+            UpgradeState.PREFLIGHT_VALIDATIONS_FAILED
+        )
+
+    def should_run_postflight_validations(self, dsf_node_id):
+        status = self.get_upgrade_status(dsf_node_id)
+        # TODO consider allowing running postflight on SUCCEEDED and SUCCEEDED_WITH_WARNINGS
+        return status not in (
+            UpgradeState.SUCCEEDED,
+            UpgradeState.SUCCEEDED_WITH_WARNINGS,
+            UpgradeState.TEST_CONNECTION_FAILED,
+            UpgradeState.COLLECT_PYTHON_LOCATION_FAILED,
+            UpgradeState.PREFLIGHT_VALIDATIONS_FAILED,
+            UpgradeState.UPGRADE_FAILED
+        )
 
     def flush(self):
         '''
@@ -58,6 +136,7 @@ class UpgradeStateService:
 
     def _create_state_file(self):
         timestamp = int(time.time())  # current timestamp with seconds resolution
+        # TODO should the file have a fixed name?
         file_name = f'upgrade_state_{timestamp}.json'
         contents = format_json_string('{"upgrade-statuses": []}')
         create_file(file_name, contents)
@@ -79,12 +158,16 @@ class UpgradeState(Enum):
     TEST_CONNECTION_FAILED = "Test connection failed"
     TEST_CONNECTION_SUCCEEDED = "Test connection succeeded"
     RUNNING_COLLECT_PYTHON_LOCATION = "Running collect Python location"
+    COLLECT_PYTHON_LOCATION_SUCCEEDED = "Collect Python location succeeded"
     COLLECT_PYTHON_LOCATION_FAILED = "Collect Python location failed"
     RUNNING_PREFLIGHT_VALIDATIONS = "Running preflight validations"
+    PREFLIGHT_VALIDATIONS_SUCCEEDED = "Preflight validations succeeded"
     PREFLIGHT_VALIDATIONS_FAILED = "Preflight validations failed"
     RUNNING_UPGRADE = "Running upgrade"
     UPGRADE_FAILED = "Upgrade failed"
+    UPGRADE_SUCCEEDED = "Upgrade succeeded"
     RUNNING_POSTFLIGHT_VALIDATIONS = "Running postflight validations"
+    POSTFLIGHT_VALIDATIONS_SUCCEEDED = "Postflight validations succeeded"
     POSTFLIGHT_VALIDATIONS_FAILED = "Postflight validations failed"
     SUCCEEDED = "Succeeded"
     SUCCEEDED_WITH_WARNINGS = "Succeeded with warnings"
