@@ -268,7 +268,7 @@ variable "mx_details" {
   }))
   validation {
     condition = alltrue([
-      for mx in var.mx_details : try(mx.address != null && mx.address != null, false)
+      for mx in var.mx_details : try(mx.name != null && mx.address != null, false)
     ])
     error_message = "Each MX must specify name and address"
   }
@@ -291,7 +291,7 @@ variable "dra_details" {
   }))
   validation {
     condition = alltrue([
-      for dra_admin in var.dra_details : try(dra_admin.address != null && dra_admin.address != null, false)
+      for dra_admin in var.dra_details : try(dra_admin.name != null && dra_admin.address != null, false)
     ])
     error_message = "Each DRA Admin must specify name and address"
   }
