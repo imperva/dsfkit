@@ -11,11 +11,6 @@ module "sonar_upgrader" {
         "host"                      = "10.2.1.1"
         "ssh_user"                  = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-      },
-      "minor" = {
-        "host"                      = "10.3.1.1"
-        "ssh_user"                  = "ec2-user"
-        "ssh_private_key_file_path" = "/home/ssh_key2.pem"
       }
     },
     {
