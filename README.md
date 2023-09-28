@@ -536,18 +536,18 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.12.0.10</td><td>4.9 and up 
+    <td>Sonar</td><td>4.13.0.10</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.12.1.10</td><td>14.11.1.10 and up
+    <td>DAM</td><td>14.13.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.12.0.10</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.13.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
