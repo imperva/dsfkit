@@ -427,6 +427,7 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 5. Latest Supported Terraform Version: 1.5.x. Using a higher version may result in unexpected behavior or errors.
 6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
+7. [curl](https://curl.se/) - Command-line tool for transferring data.
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -535,18 +536,18 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.12.0.10</td><td>4.9 and up 
+    <td>Sonar</td><td>4.13.0.10</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.12.1.10</td><td>14.11.1.10 and up
+    <td>DAM</td><td>14.13.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.12.0.10</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.13.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 

@@ -27,7 +27,7 @@ variable "key_pair" {
 
 variable "dra_version" {
   type        = string
-  default     = "4.12.0.10.0.6"
+  default     = "4.13"
   description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Both long and short version formats are supported, for example, 4.11.0.10.0.7 or 4.11. The short format maps to the latest patch."
   nullable    = false
   validation {
