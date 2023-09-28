@@ -150,7 +150,7 @@ variable "user_data_commands" {
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
-  default     = "14.12.1.10"
+  default     = "14.13.1.10"
   nullable    = false
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
