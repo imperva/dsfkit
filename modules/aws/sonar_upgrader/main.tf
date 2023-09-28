@@ -1,6 +1,6 @@
 locals {
   upgrade_cmd = templatefile("${path.module}/provision_script.tpl", {
-    path                       = path.root
+    path                       = path.module
     target_version             = var.target_version
     agentless_gws              = jsonencode(var.agentless_gws)
     dsf_hubs                   = jsonencode(var.dsf_hubs)
