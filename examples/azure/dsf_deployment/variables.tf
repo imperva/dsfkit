@@ -5,15 +5,15 @@ variable "tags" {
 }
 
 variable "resource_group" {
-  type    = string
+  type        = string
   description = "Azure exisiting resource group. Keep empty if you wish to create a new resource group"
-  default = null
+  default     = null
 }
 
 variable "resource_group_location" {
-  type    = string
+  type        = string
   description = "In case var.resource_group is not provided and a new resource group is created. It will be created in this location (e.g 'East US')"
-  default = null
+  default     = null
 }
 
 variable "deployment_name" {
@@ -64,10 +64,10 @@ variable "vnet_ip_range" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id                    = string
-    hub_dr_subnet_id                 = string
-    agentless_gw_subnet_id           = string
-    agentless_gw_dr_subnet_id        = string
+    hub_subnet_id             = string
+    hub_dr_subnet_id          = string
+    agentless_gw_subnet_id    = string
+    agentless_gw_dr_subnet_id = string
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"

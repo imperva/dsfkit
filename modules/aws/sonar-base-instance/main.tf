@@ -4,7 +4,7 @@ locals {
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   # root volume details
-  root_volume_size  = 100
+  root_volume_size = 100
 
   # state volume details
   ebs_state_disk_type  = "gp3"
