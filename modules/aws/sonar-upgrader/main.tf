@@ -13,7 +13,7 @@ locals {
   })
 }
 
-resource "null_resource" "sonar_upgrader" {
+resource "null_resource" "upgrade_cmd" {
   provisioner "local-exec" {
     command = local.upgrade_cmd
     interpreter = ["bash", "-c"]

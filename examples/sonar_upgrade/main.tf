@@ -1,5 +1,5 @@
 module "sonar_upgrader" {
-  source = "../../modules/aws/sonar_upgrader"
+  source = "../../modules/aws/sonar-upgrader"
   agentless_gws = [
     {
       "main" = {
