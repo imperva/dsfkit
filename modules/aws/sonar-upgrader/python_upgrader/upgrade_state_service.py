@@ -15,24 +15,19 @@ class UpgradeStateService:
         '''
         self.upgrade_state_file_name = self._create_state_file()
 
-    def init_upgrade_state(self, dsf_node_ids):
+    def init_upgrade_state(self, dsf_node_ids, target_version):
         '''
         Initializes the upgrade state for a list of DSF nodes being upgraded.
         If this is a rerun or gradual upgrade, updates the existing upgrade state, this may mean removing nodes which
         don't exist in the current list of DSF nodes.
+        This is considered a rerun or gradual upgrade if a state file exists in which the target version equals
+        a certain target version.
+        If a state file exists in which the target version is different, the state file is copied aside and a new
+        state file is created.
         :param dsf_node_ids: The list of DSF nodes being upgraded
+        @:param target_version The target version to upgrade to
         '''
         pass
-
-    def is_upgrade_state_empty(self):
-        '''
-        Verifies whether the upgrade state is empty which indicates that the upgrade hasn't started.
-        The upgrade state is not empty when an upgrade is stopped and restarted for some reason, or this is a
-        gradual upgrade, etc.
-        :return: True if the upgrade state is empty, false otherwise
-        '''
-        # TODO implement
-        return False
 
     def get_upgrade_status(self, dsf_node_id):
         '''
@@ -45,11 +40,12 @@ class UpgradeStateService:
     def get_overall_upgrade_status(self):
         '''
         Calculates the overall upgrade status.
-        :return: not-started if all nodes are in not-started status
-                 running if at least one node is in running status
-                 succeeded if all nodes are in succeeded status
-                 succeeded-with-warnings if all nodes are in succeeded-with-warnings status
-                 failed if at least one node is in failed status, and there are no nodes in running status
+        :return: "Not started" if all nodes are in "Not started" status
+                 "Running" if at least one node is running one of the upgrade stages
+                 "Succeeded" if all nodes are in "Succeeded" status
+                 "Succeeded with warnings" if all nodes are in "Succeeded with warnings" status
+                 "Failed" if at least one node failed one of the upgrade stages, and there are no nodes that are
+                 still running one of the upgrade stages
         '''
         # TODO implement
         return {}
@@ -64,15 +60,6 @@ class UpgradeStateService:
         old_status = self.get_upgrade_status(dsf_node_id)
         print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status}")
         # TODO implement
-
-    def is_upgrade_completed(self, dsf_node_id):
-        '''
-        Verifies whether upgrade of a DSF node completed successfully or equivalent.
-        :param dsf_node_id: Id of the DSF node which status to check
-        :return: True if completed, false otherwise
-        '''
-        # TODO implement
-        return False
 
     def should_test_connection(self, dsf_node_id):
         status = self.get_upgrade_status(dsf_node_id)
