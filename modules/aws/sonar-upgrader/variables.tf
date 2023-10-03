@@ -1,9 +1,9 @@
 variable "agentless_gws" {
   type = list(object({
     main = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -11,9 +11,9 @@ variable "agentless_gws" {
       }))
     })),
     dr = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -21,9 +21,9 @@ variable "agentless_gws" {
       }))
     })),
     minor = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -39,9 +39,9 @@ variable "agentless_gws" {
 variable "dsf_hubs" {
   type = list(object({
     main = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -49,9 +49,9 @@ variable "dsf_hubs" {
       }))
     })),
     dr = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -59,9 +59,9 @@ variable "dsf_hubs" {
       }))
     })),
     minor = optional(object({
-      host                        = string # IP or hostname, can be private or public
-      ssh_user                    = string
-      ssh_private_key_file_path   = string
+      host                      = string # IP or hostname, can be private or public
+      ssh_user                  = string
+      ssh_private_key_file_path = string
       proxy = optional(object({
         host                      = string # IP or hostname, can be private or public
         ssh_user                  = string
@@ -81,8 +81,8 @@ variable "target_version" {
 }
 
 variable "connection_timeout" {
-  type = number
-  default = 90
+  type        = number
+  default     = 90
   description = "Client connection timeout in seconds used for the SSH connections between the installer machine and the DSF nodes being upgraded. Its purpose is to ensure a uniform behavior across different platforms. Note that the SSH server in the DSF nodes may have its own timeout configurations which may override this setting."
 }
 
