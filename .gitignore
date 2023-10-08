@@ -20,3 +20,4 @@ hub_token
 myip-default
 .idea
 *.mprv
+__pycache__/
