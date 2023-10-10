@@ -34,64 +34,80 @@ jobs:
           - source_module: "aws/hub"
             destination_repo: "terraform-aws-dsf-hub"
             hidden_submodules: "aws/sonar-base-instance aws/statistics null/statistics"
+            begin_tag: 1.0.0
           - source_module: "aws/agentless-gw"
             destination_repo: "terraform-aws-dsf-agentless-gw"
             hidden_submodules: "aws/sonar-base-instance aws/statistics null/statistics"
+            begin_tag: 1.0.0
 
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
             public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
+            begin_tag: 1.0.0
 
           ## azurerm provider
           - source_module: "azurerm/hub"
             destination_repo: "terraform-azurerm-dsf-hub"
             hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
+            begin_tag: 1.0.0
           - source_module: "azurerm/agentless-gw"
             destination_repo: "terraform-azurerm-dsf-agentless-gw"
             hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
+            begin_tag: 1.0.0
 
           ## null provider
           - source_module: "null/hadr"
             destination_repo: "terraform-null-dsf-hadr"
+            begin_tag: 1.0.0
           - source_module: "null/federation"
             destination_repo: "terraform-null-dsf-federation"
+            begin_tag: 1.0.0
 
           # DAM
           ## aws provider
           - source_module: "aws/mx"
             destination_repo: "terraform-aws-dsf-mx"
             hidden_submodules: "aws/dam-base-instance aws/statistics null/statistics"
+            begin_tag: 1.0.0
           - source_module: "aws/agent-gw"
             destination_repo: "terraform-aws-dsf-agent-gw"
             hidden_submodules: "aws/dam-base-instance aws/statistics null/statistics"
+            begin_tag: 1.0.0
           - source_module: "aws/db-with-agent"
             destination_repo: "terraform-aws-dsf-db-with-agent"
+            begin_tag: 1.0.0
           ## null provider
           - source_module: "null/agent-gw-cluster-setup"
             destination_repo: "terraform-null-dsf-agent-gw-cluster-setup"
+            begin_tag: 1.0.0
 
           # DRA
           ## aws provider
           - source_module: "aws/dra-admin"
             destination_repo: "terraform-aws-dsf-dra-admin"
             hidden_submodules: "aws/statistics null/statistics"
+            begin_tag: 1.0.0
           - source_module: "aws/dra-analytics"
             destination_repo: "terraform-aws-dsf-dra-analytics"
             hidden_submodules: "aws/statistics null/statistics"
+            begin_tag: 1.0.0
 
           # Globals
           ## aws provider
           - source_module: "aws/core/globals"
             destination_repo: "terraform-aws-dsf-globals"
             public_submodule: "aws/core/key_pair"
+            begin_tag: 1.0.0
           ## azurerm provider
           - source_module: "azurerm/core/globals"
             destination_repo: "terraform-azurerm-dsf-globals"
+            begin_tag: 1.0.0
     env:
       source_module: ${{ matrix.source_module }}
       destination_repo: ${{ matrix.destination_repo }}
       hidden_submodules: ${{ matrix.hidden_submodules }}
       public_submodule: ${{ matrix.public_submodule }}
+      begin_tag: ${{ matrix.begin_tag }}
 
     outputs:
       module_github_repo: ${{ format('https://github.com/imperva/{0}', matrix.destination_repo) }}
@@ -141,9 +157,23 @@ jobs:
             git push origin --delete $(git ls-remote --tags 2>/dev/null | awk '{print $NF}')
           fi
           latest_tag=$(git tag -l | sort -V | tail -n 1)
-          
-          # push all repo but latest tag
+
+          all_tags=$(git tag)
+          removed_tags=()
+          # Loop through each tag and filter if less than begin_tag
+          for tag in ${all_tags}; do
+              if [[ "$tag" < "${begin_tag}" ]]; then
+                  removed_tags+=("$tag")
+              fi
+          done
+
+          echo "Begin tag: ${begin_tag}, latest tag: ${latest_tag}, removed tags: ${removed_tags[@]}"
+
+          # push all repo but latest tag and removed tags
           git tag -d ${latest_tag}
+          for tag in "${removed_tags[@]}"; do
+              git tag -d ${tag}
+          done
           git push -f origin HEAD:main --tags
 
           # push latest tag (to trigger terraform registery latest release discovery)
