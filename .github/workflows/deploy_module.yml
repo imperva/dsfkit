@@ -125,7 +125,7 @@ jobs:
               git filter-branch -f --prune-empty --tree-filter 'mkdir -p modules/'${source_module}'/modules; mv modules/'${m}' modules/'${source_module}'/modules/; true;' --tag-name-filter cat -- --all HEAD
             done
           fi
-          git filter-branch -f --prune-empty --tree-filter 'mv LICENSE.md modules/'${source_module}'/ || true' --tag-name-filter cat -- --all HEAD
+          git filter-branch -f --prune-empty --tree-filter 'mv LICENSE.md modules/'${source_module}'/ 2>/dev/null || true' --tag-name-filter cat -- --all HEAD
           git filter-branch -f --prune-empty --subdirectory-filter modules/${source_module}/ --tag-name-filter cat -- --all HEAD
 
       - name: Push to module repo
