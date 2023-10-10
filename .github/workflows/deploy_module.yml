@@ -3,7 +3,7 @@ name: 'Deploy Module'
 on:
   workflow_call:
     secrets:
-      PUSH_TO_OTHER_REPOS_TOKEN:
+      PUSH_TO_OTHER_REPOS_TOKEN_ADMIN:
         required: true
 
   workflow_dispatch:
@@ -130,7 +130,7 @@ jobs:
 
       - name: Push to module repo
         env:
-          github_token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+          github_token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN_ADMIN }}
         run: |
           find . | grep -v ".git/"
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
