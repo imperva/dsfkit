@@ -13,6 +13,7 @@ permissions:
 env:
   src_branch: "dev"
   dst_branch: "master"
+  formatted_future_release:
 
 jobs:
   validate_arguments:
@@ -90,9 +91,25 @@ jobs:
         run: |
           terraform fmt -recursive
 
+      - name: Format version for zip file name
+        run: |
+          version="${{ github.event.inputs.future_release }}"
+          formatted_version=${version//./_}
+          echo "FORMATTED_VERSION=$formatted_version" >> $GITHUB_OUTPUT
+        id: format-version
+
       - name: Zip per examples
         run: |
-          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}.zip ${_b} -x "*.zip"; popd; done
+          echo "Formatted version: ${{ steps.format-version.outputs.FORMATTED_VERSION }}"
+          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b} -x "*.zip"; popd; done
+
+      - name: Zip Sonar python upgrader
+        run: |
+          pushd modules/aws/sonar-upgrader
+          mv python_upgrader sonar_python_upgrader
+          zip -FSr ../../sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip sonar_python_upgrader -x "*.zip"
+          mv sonar_python_upgrader python_upgrader
+          popd
 
       - name: Commit changes to git repo
         uses: stefanzweifel/git-auto-commit-action@v4
