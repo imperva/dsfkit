@@ -38,12 +38,6 @@ locals {
   ]
 }
 
-resource "tls_private_key" "sonarw_private_key" {
-  count     = var.sonarw_private_key_secret_name == null ? 1 : 0
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
 module "hub_instance" {
   source                            = "../../../modules/aws/sonar-base-instance"
   resource_type                     = "hub"
