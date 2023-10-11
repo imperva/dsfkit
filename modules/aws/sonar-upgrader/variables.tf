@@ -115,3 +115,10 @@ variable "clean_old_deployments" {
   default     = false
   description = "Whether to clean old deployments after successful upgrade. In case postflight validations run and failed, old deployment directories cleaning will be skipped. This variable is not operational in this POC."
 }
+
+
+variable "stop_on_failure" {
+  type        = bool
+  default     = true
+  description = "Whether to stop or continue to upgrade the next DSF nodes in case of failure on a DSF node"
+}
