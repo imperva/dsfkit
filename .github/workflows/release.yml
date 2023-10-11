@@ -13,7 +13,6 @@ permissions:
 env:
   src_branch: "dev"
   dst_branch: "master"
-  formatted_future_release:
 
 jobs:
   validate_arguments:
