@@ -51,9 +51,3 @@ variable "hub_proxy_info" {
     proxy_ssh_user             = null
   }
 }
-
-variable "use_public_ip" {
-  type        = bool
-  default     = false
-  description = "Whether to use the DSF instance's public or private IP to connect to the instance"
-}
