@@ -151,10 +151,10 @@ function install_tarball() {
     # Download installation tarball
     if [[ -n "${tarball_url}" ]]; then
         TARBALL_FILE=$(basename "${tarball_url}")
-        wget "${tarball_url}" -O ./$TARBALL_FILE
+        wget "${tarball_url}" -O "${TARBALL_FILE}"
     else
-        TARBALL_FILE=$(basename ${installation_s3_key})
-        /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} ./$TARBALL_FILE --region ${installation_s3_region} >/dev/null
+        TARBALL_FILE=$(basename "${installation_s3_key}")
+        /usr/local/bin/aws s3 cp "s3://${installation_s3_bucket}/${installation_s3_key}" "${TARBALL_FILE}" --region "${installation_s3_region}" >/dev/null
     fi
 
     echo Installing tarball..
