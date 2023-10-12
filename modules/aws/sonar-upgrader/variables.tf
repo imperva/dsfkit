@@ -122,3 +122,17 @@ variable "stop_on_failure" {
   default     = true
   description = "Whether to stop or continue to upgrade the next DSF nodes in case of failure on a DSF node"
 }
+
+variable "tarball_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_key    = string
+  })
+  description = "S3 bucket location of the DSF installation software. s3_key is the full path to the tarball file within the bucket, for example, 'prefix/jsonar-x.y.z.w.u.tar.gz'"
+  default     = {
+    s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
+    s3_region = "us-east-1"
+    s3_key = null
+  }
+}

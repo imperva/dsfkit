@@ -162,10 +162,11 @@ def main(args):
 
     agentless_gws = json.loads(args.agentless_gws)
     hubs = json.loads(args.dsf_hubs)
+    tarball_location = json.loads(args.tarball_location)
 
     print("********** Inputs ************")
 
-    print_inputs(agentless_gws, hubs, args)
+    print_inputs(agentless_gws, hubs, tarball_location, args)
 
     print("********** Start ************")
 
@@ -204,7 +205,8 @@ def main(args):
         if args.run_upgrade or args.run_postflight_validations or args.clean_old_deployments:
             success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
                                                    args.run_postflight_validations, args.clean_old_deployments,
-                                                   python_location_dict, args.stop_on_failure, upgrade_state_service)
+                                                   python_location_dict, args.stop_on_failure, tarball_location,
+                                                   upgrade_state_service)
             print_upgrade_result = args.run_upgrade
             print_postflight_result = not args.run_upgrade and args.run_postflight_validations
             if print_upgrade_result:
@@ -222,7 +224,9 @@ def main(args):
         print(f"### An error occurred, aborting upgrade...")
 
     print("********** Summary ************")
-    print(upgrade_state_service.get_summary())
+    # TODO uncomment when upgrade status API will be implemented
+    # print(upgrade_state_service.get_summary())
+    print("Coming soon")
 
     print("********** End ************")
 
@@ -256,11 +260,13 @@ def parse_args():
     parser.add_argument("--stop_on_failure", type=str_to_bool,
                         help="Whether to stop or continue to upgrade the next DSF nodes in case of failure "
                              "on a DSF node")
+    parser.add_argument("--tarball_location",
+                        help="JSON-encoded S3 bucket location of the DSF installation software")
     args = parser.parse_args()
     return args
 
 
-def print_inputs(agentless_gws, hubs, args):
+def print_inputs(agentless_gws, hubs, tarball_location, args):
     print("List of Agentless Gateways:")
     print_hadr_sets(agentless_gws)
     print("List of DSF Hubs:")
@@ -273,6 +279,7 @@ def print_inputs(agentless_gws, hubs, args):
     print(f"run_postflight_validations: {args.run_postflight_validations}")
     print(f"clean_old_deployments: {args.clean_old_deployments}")
     print(f"stop_on_failure: {args.stop_on_failure}")
+    print(f"tarball_location: {tarball_location}")
 
 
 def test_connection_to_extended_nodes(extended_nodes, stop_on_failure, upgrade_state_service):
@@ -492,7 +499,8 @@ def are_preflight_validations_passed(preflight_validations_result):
 
 
 def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrade, run_postflight_validations,
-                                 clean_old_deployments, python_location_dict, stop_on_failure, upgrade_state_service):
+                                 clean_old_deployments, python_location_dict, stop_on_failure, tarball_location,
+                                 upgrade_state_service):
     if run_upgrade:
         print("----- Upgrade")
 
@@ -505,6 +513,7 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
                                                                                   "clean_old_deployments.sh",
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
+                                                                                  tarball_location,
                                                                                   upgrade_state_service)
 
     hub_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(hubs, "DSF Hub", target_version,
@@ -516,6 +525,7 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
                                                                                   "clean_old_deployments.sh",
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
+                                                                                  tarball_location,
                                                                                   upgrade_state_service)
     return gws_upgrade_and_postflight_succeeded and hub_upgrade_and_postflight_succeeded
 
@@ -525,7 +535,7 @@ def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_vers
                                            run_upgrade, do_run_postflight_validations,
                                            postflight_validations_script_file_name, clean_old_deployments,
                                            clean_old_deployments_script_file_name, python_location_dict,
-                                           stop_on_failure, upgrade_state_service):
+                                           stop_on_failure, tarball_location, upgrade_state_service):
     all_success_or_skip = True
     for hadr_set in hadr_sets:
         succeed_or_skipped = maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version,
@@ -536,6 +546,7 @@ def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_vers
                                                                    clean_old_deployments_script_file_name,
                                                                    python_location_dict,
                                                                    stop_on_failure,
+                                                                   tarball_location,
                                                                    upgrade_state_service)
         all_success_or_skip = all_success_or_skip and succeed_or_skipped
     return all_success_or_skip
@@ -545,24 +556,24 @@ def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_versio
                                           run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, clean_old_deployments,
                                           clean_old_deployments_script_file_name, python_location_dict,
-                                          stop_on_failure, upgrade_state_service):
+                                          stop_on_failure, tarball_location, upgrade_state_service):
     print(f"Running upgrade and/or postflight validations for an {dsf_node_type} HADR replica set")
     if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), dsf_node_type, 'Minor', target_version,
                                              upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                              postflight_validations_script_file_name, clean_old_deployments,
                                              clean_old_deployments_script_file_name, python_location_dict,
-                                             stop_on_failure, upgrade_state_service):
+                                             stop_on_failure, tarball_location, upgrade_state_service):
         if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('dr'), dsf_node_type, 'DR', target_version,
                                                  upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                                  postflight_validations_script_file_name, clean_old_deployments,
                                                  clean_old_deployments_script_file_name, python_location_dict,
-                                                 stop_on_failure, upgrade_state_service):
+                                                 stop_on_failure, tarball_location, upgrade_state_service):
             if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), dsf_node_type, 'Main', target_version,
                                                      upgrade_script_file_name, run_upgrade,
                                                      do_run_postflight_validations,
                                                      postflight_validations_script_file_name, clean_old_deployments,
                                                      clean_old_deployments_script_file_name, python_location_dict,
-                                                     stop_on_failure, upgrade_state_service):
+                                                     stop_on_failure, tarball_location, upgrade_state_service):
                 return True
         else:
             print(f"Upgrade of HADR DR node failed, will not continue to Main if exists.")
@@ -575,7 +586,7 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
                                           upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, clean_old_deployments,
                                           clean_old_deployments_script_file_name, python_location_dict,
-                                          stop_on_failure, upgrade_state_service):
+                                          stop_on_failure, tarball_location, upgrade_state_service):
     if dsf_node is None:
         return True
     # TODO refactor to use the extended node already created in previous steps
@@ -584,7 +595,7 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
     extended_node = create_extended_node(dsf_node, dsf_node_id, dsf_node_name)
     if run_upgrade:
         upgrade_success_or_skip = maybe_upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name,
-                                                         stop_on_failure, upgrade_state_service)
+                                                         stop_on_failure, tarball_location, upgrade_state_service)
         if not upgrade_success_or_skip:
             return False
 
@@ -608,20 +619,22 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
 
 
 def maybe_upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name,
-                           stop_on_failure, upgrade_state_service):
+                           stop_on_failure, tarball_location, upgrade_state_service):
     if upgrade_state_service.should_run_upgrade(extended_node.get('dsf_node_id')):
         return upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, stop_on_failure,
-                                upgrade_state_service)
+                                tarball_location, upgrade_state_service)
     return True
 
 
-def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, stop_on_failure, upgrade_state_service):
+def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, stop_on_failure, tarball_location,
+                     upgrade_state_service):
     print(f"Running upgrade for {extended_node.get('dsf_node_name')}")
     print(f"You may follow the upgrade process in the DSF node by running SSH to it and looking at "
           f"/var/log/upgrade.log. When the DSF node's upgrade will complete, this log will also appear here.")
     upgrade_state_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                 UpgradeState.RUNNING_UPGRADE)
-    success, script_output = run_upgrade_script(extended_node.get('dsf_node'), target_version, upgrade_script_file_name)
+    success, script_output = run_upgrade_script(extended_node.get('dsf_node'), target_version, tarball_location,
+                                                upgrade_script_file_name)
     if success:
         print(f"Upgrading {extended_node.get('dsf_node_name')} was ### successful ###")
         upgrade_state_service.update_upgrade_status(extended_node.get('dsf_node_id'),
@@ -635,7 +648,7 @@ def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, st
     return success
 
 
-def run_upgrade_script(dsf_node, target_version, upgrade_script_file_name):
+def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_script_file_name):
     if run_dummy_upgrade:
         print(f"Running dummy upgrade script")
         script_file_name = 'dummy_upgrade_script.sh'
@@ -644,8 +657,7 @@ def run_upgrade_script(dsf_node, target_version, upgrade_script_file_name):
     script_file_path = get_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
 
-    tarball = get_tarball_name(target_version)
-    args = f"1ef8de27-ed95-40ff-8c08-7969fc1b7901 {tarball} us-east-1"
+    args = get_upgrade_script_args(target_version, tarball_location)
     script_run_command = build_bash_script_run_command(script_contents, args)
     # print(f"script_run_command: {script_run_command}")
 
@@ -656,8 +668,16 @@ def run_upgrade_script(dsf_node, target_version, upgrade_script_file_name):
     return "Upgrade completed" in script_output, script_output
 
 
-# TODO move up to the Helper functions
-def get_tarball_name(target_version):
+def get_upgrade_script_args(target_version, tarball_location):
+    if tarball_location.get('s3_key') is None:
+        s3_key = get_tarball_s3_key(target_version)
+    else:
+        s3_key = tarball_location.get('s3_key')
+    args = f"{tarball_location.get('s3_bucket')} {tarball_location.get('s3_region')} {s3_key}"
+    return args
+
+
+def get_tarball_s3_key(target_version):
     return f"jsonar-{target_version}.tar.gz"
 
 
