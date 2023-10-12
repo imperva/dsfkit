@@ -134,7 +134,7 @@ function attach_disk() {
         echo "/dev/$DEVICE is not lvm memeber (\"$FS\"). Formatting it..."
         create_lvm /dev/$DEVICE
     fi
-    
+
     mount -a
 }
 
@@ -258,11 +258,18 @@ __EOF__
     fi
 }
 
-STATE_DIR=/imperva
-DATA_DIR=$STATE_DIR/data
-LOGS_DIR=$STATE_DIR/logs
-LOCAL_DIR=$STATE_DIR/local
-APPS_DIR=$STATE_DIR/apps
+base_directory="${base_directory:-}"
+if [ -z "$base_directory" ]; then
+  DATA_DIR=/data
+  LOGS_DIR=/logs
+  LOCAL_DIR=/local
+  APPS_DIR=/apps
+else
+  DATA_DIR="$base_directory/data"
+  LOGS_DIR="$base_directory/logs"
+  LOCAL_DIR="$base_directory/local"
+  APPS_DIR="$base_directory/apps"
+fi
 
 install_deps
 create_users_and_groups

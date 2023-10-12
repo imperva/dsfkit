@@ -153,3 +153,9 @@ variable "db_types_to_onboard" {
     error_message = "Valid values should contain at least one of the following: 'RDS MySQL', 'RDS MsSQL'."
   }
 }
+
+variable "sonar_machine_base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}

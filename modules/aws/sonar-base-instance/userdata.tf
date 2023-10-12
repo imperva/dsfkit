@@ -20,6 +20,7 @@ locals {
     jsonar_uuid                         = random_uuid.jsonar_uuid.result
     additional_install_parameters       = var.additional_install_parameters
     access_tokens_array                 = local.access_tokens_array
+    base_directory                      = var.base_directory
   })
 }
 
