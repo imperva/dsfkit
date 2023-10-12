@@ -1,5 +1,7 @@
 module "sonar_upgrader" {
   source = "../../modules/aws/sonar-upgrader"
+
+  # Fill the details of the Agentless Gateways and DSF Hubs that you want to upgrade
   agentless_gws = [
     {
       "main" = {
@@ -70,11 +72,20 @@ module "sonar_upgrader" {
     }
   ]
 
+  # Fill full Sonar version (short format, e.g., 4.12, is not supported)
   target_version = "4.12.0.10.0"
-  # options
+
+  # Configuration options for controlling the upgrade flow
   test_connection = true
   run_preflight_validations = true
   run_upgrade = true
   run_postflight_validations = true
   stop_on_failure = true
+
+  # Fill if using your S3 bucket, remove if using Imperva's S3 bucket
+  tarball_location = {
+    "s3_bucket" = "myBucket"
+    "s3_region" = "us-east-1"
+    "s3_key" = "prefix/jsonar-x.y.z.w.u.tar.gz"
+  }
 }
