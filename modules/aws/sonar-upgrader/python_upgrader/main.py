@@ -719,6 +719,8 @@ def run_postflight_validations(extended_node, target_version, script_file_name, 
         print(f"### Postflight validations passed for {extended_node.get('dsf_node_name')}")
         upgrade_state_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                     UpgradeState.POSTFLIGHT_VALIDATIONS_SUCCEEDED)
+        upgrade_state_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                    UpgradeState.SUCCEEDED)
     else:
         print(f"### Postflight validations didn't pass for {extended_node.get('dsf_node_name')}")
         upgrade_state_service.update_upgrade_status(extended_node.get('dsf_node_id'),
