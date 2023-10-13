@@ -6,7 +6,7 @@ locals {
   lock_shell_cmds = file("${path.module}/grab_lock.sh")
   federate_hub_cmds = templatefile("${path.module}/federate_hub.tftpl", {
     ssh_key_path                   = var.hub_info.private_ssh_key_path
-    dsf_gw_ip                      = var.gw_info.federation_ip_address
+    dsf_gw_federation_ip           = var.gw_info.federation_ip_address
     dsf_hub_ssh_ip                 = var.hub_info.ssh_ip_address
     dsf_hub_federation_ip          = var.hub_info.federation_ip_address
     hub_ssh_user                   = var.hub_info.ssh_user
