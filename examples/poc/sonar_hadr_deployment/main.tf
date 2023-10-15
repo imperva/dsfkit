@@ -106,7 +106,6 @@ module "hub_main" {
   allowed_hub_cidrs                 = [data.aws_subnet.dr_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.main_gw.cidr_block, data.aws_subnet.dr_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
-  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
   depends_on = [
     module.vpc
@@ -136,7 +135,6 @@ module "hub_dr" {
   allowed_hub_cidrs          = [data.aws_subnet.main_hub.cidr_block]
   allowed_agentless_gw_cidrs = [data.aws_subnet.main_gw.cidr_block, data.aws_subnet.dr_gw.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
-  base_directory             = var.sonar_machine_base_directory
   tags                       = local.tags
   depends_on = [
     module.vpc
@@ -167,7 +165,6 @@ module "agentless_gw_main" {
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_main.ssh_user
   }
-  base_directory               = var.sonar_machine_base_directory
   tags = local.tags
   depends_on = [
     module.vpc
@@ -201,7 +198,6 @@ module "agentless_gw_dr" {
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
     proxy_ssh_user             = module.hub_main.ssh_user
   }
-  base_directory               = var.sonar_machine_base_directory
   tags = local.tags
   depends_on = [
     module.vpc

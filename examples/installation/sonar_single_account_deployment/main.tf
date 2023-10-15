@@ -98,6 +98,7 @@ module "hub_main" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
@@ -130,6 +131,7 @@ module "hub_dr" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
@@ -163,6 +165,7 @@ module "agentless_gw" {
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.gw_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
