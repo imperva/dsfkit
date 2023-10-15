@@ -470,7 +470,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_5.zip">sonar_basic_deployment_1_5_5.zip</a>
       </td>
    </tr>
    <tr>
@@ -480,7 +480,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment.zip">sonar_hadr_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_5.zip">sonar_hadr_deployment_1_5_5.zip</a>
       </td>
    </tr>
    <tr>
@@ -490,7 +490,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment.zip">sonar_single_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_5.zip">sonar_single_account_deployment_1_5_5.zip</a>
       </td>
    </tr>
    <tr>
@@ -500,7 +500,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment.zip">sonar_multi_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_5.zip">sonar_multi_account_deployment_1_5_5.zip</a>
       </td>
    </tr>
    <tr>
@@ -510,7 +510,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/dsf_deployment/dsf_deployment.zip">dsf_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/dsf_deployment/dsf_deployment_1_5_5.zip">dsf_deployment_1_5_5.zip</a>
       </td>
    </tr>
    <tr>
@@ -520,7 +520,17 @@ For more details about each example, click on the example name.
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment.zip">dsf_single_account_deployment.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_5.zip">dsf_single_account_deployment_1_5_5.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/sonar_upgrade/README.md">Sonar Upgrade (Alpha)</a>
+      </td>
+      <td>All
+      </td>
+      <td>Upgrade of DSF Hub and Agentless Gateway (formerly Sonar).
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/sonar_upgrade/sonar_upgrade_1_5_5.zip">sonar_upgrade_1_5_5.zip</a>
       </td>
    </tr>
 </table>
@@ -708,27 +718,27 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.5.6">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
     Run:
     ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_5.zip
     
     or
     
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_5.zip
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_5.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_5.zip
     
     or
 
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/dsf_deployment/dsf_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/dsf_deployment/dsf_deployment_1_5_5.zip
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_5.zip
     ```
 
 12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.

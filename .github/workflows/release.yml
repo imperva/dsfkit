@@ -73,14 +73,23 @@ jobs:
           terraform_wrapper: false
           terraform_version: ~1.6.0
 
+      - name: Format version for zip file name
+        run: |
+          version="${{ github.event.inputs.future_release }}"
+          formatted_version=${version//./_}
+          echo "FORMATTED_VERSION=$formatted_version" >> $GITHUB_OUTPUT
+        id: format-version
+
       - name: Update modules' versions in examples
         run: |
           find ./examples/ -type f -exec sed -i 's;.*latest release tag.*;version="'${{ github.event.inputs.future_release }}'" # latest release tag;' {} \; 
 
       - name: Update READMEs
         run: |
+          echo "Formatted version: ${{ steps.format-version.outputs.FORMATTED_VERSION }}"
           find . -type f -name 'README.md' -exec sed -E -i 's;github.com/imperva/dsfkit/tree/([0-9]*\.){2}[0-9]*;github.com/imperva/dsfkit/tree/'${{ github.event.inputs.future_release }}';g' {} \;
           find . -type f -name 'README.md' -exec sed -E -i 's;github.com/imperva/dsfkit/raw/([0-9]*\.){2}[0-9]*;github.com/imperva/dsfkit/raw/'${{ github.event.inputs.future_release }}';g' {} \;
+          find . -type f -name 'README.md' -exec sed -E -i '/\/examples\// s;([0-9]+_){2}[0-9]+\.zip;${{ steps.format-version.outputs.FORMATTED_VERSION }}\.zip;g' {} \;
 
       - name: Update installer machine link
         run: |
@@ -90,16 +99,8 @@ jobs:
         run: |
           terraform fmt -recursive
 
-      - name: Format version for zip file name
-        run: |
-          version="${{ github.event.inputs.future_release }}"
-          formatted_version=${version//./_}
-          echo "FORMATTED_VERSION=$formatted_version" >> $GITHUB_OUTPUT
-        id: format-version
-
       - name: Zip per examples
         run: |
-          echo "Formatted version: ${{ steps.format-version.outputs.FORMATTED_VERSION }}"
           for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b} -x "*.zip"; popd; done
 
       - name: Zip Sonar python upgrader
