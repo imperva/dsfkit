@@ -4,16 +4,6 @@ variable "deployment_name" {
   description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
-variable "aws_profile" {
-  type        = string
-  description = "AWS profile name for the deployed resources"
-}
-
-variable "aws_region" {
-  type        = string
-  description = "AWS region for the deployed resources (e.g us-east-2)"
-}
-
 variable "sonar_version" {
   type        = string
   default     = "4.12"
@@ -49,11 +39,6 @@ variable "tarball_location" {
 variable "subnet_hub_main" {
   type        = string
   description = "AWS subnet id for the main DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
-}
-
-variable "subnet_hub_dr" {
-  type        = string
-  description = "AWS subnet id for the DR DSF Hub (e.g subnet-xxxxxxxxxxxxxxxxx)"
 }
 
 variable "subnet_gw" {

@@ -20,12 +20,6 @@ output "dsf_hubs" {
       display_name = try(module.hub_main.display_name, null)
       ssh_command  = try("ssh -i ${local.hub_private_key_file_path} ${module.hub_main.ssh_user}@${module.hub_main.private_ip}", null)
     }
-    dr = {
-      private_ip   = try(module.hub_dr.private_ip, null)
-      jsonar_uid   = try(module.hub_dr.jsonar_uid, null)
-      display_name = try(module.hub_dr.display_name, null)
-      ssh_command  = try("ssh -i ${local.hub_private_key_file_path} ${module.hub_dr.ssh_user}@${module.hub_dr.private_ip}", null)
-    }
   }
 }
 

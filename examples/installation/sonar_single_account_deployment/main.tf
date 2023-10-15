@@ -1,6 +1,4 @@
 provider "aws" {
-  profile = var.aws_profile
-  region  = var.aws_region
 }
 
 module "globals" {
@@ -61,10 +59,6 @@ data "aws_subnet" "main_hub" {
   id = var.subnet_hub_main
 }
 
-data "aws_subnet" "dr_hub" {
-  id = var.subnet_hub_dr
-}
-
 data "aws_subnet" "subnet_gw" {
   id = var.subnet_gw
 }
@@ -89,39 +83,6 @@ module "hub_main" {
     ssh_public_key_name       = local.hub_public_key_name
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.dr_hub.cidr_block]
-  allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
-  allowed_all_cidrs                 = local.workstation_cidr
-
-  skip_instance_health_verification = var.hub_skip_instance_health_verification
-  terraform_script_path_folder      = var.terraform_script_path_folder
-  sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
-  sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
-  instance_profile_name             = var.hub_instance_profile_name
-  tags                              = local.tags
-}
-
-module "hub_dr" {
-  source                       = "imperva/dsf-hub/aws"
-  version                      = "1.5.6" # latest release tag
-  friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
-  subnet_id                    = var.subnet_hub_dr
-  security_group_ids           = var.security_group_ids_hub
-  binaries_location            = local.tarball_location
-  password                     = local.password
-  password_secret_name         = var.password_secret_name
-  instance_type                = var.hub_instance_type
-  ebs                          = var.hub_ebs_details
-  ami                          = var.ami
-  hadr_dr_node                 = true
-  main_node_sonarw_public_key  = module.hub_main.sonarw_public_key
-  main_node_sonarw_private_key = module.hub_main.sonarw_private_key
-  ssh_key_pair = {
-    ssh_private_key_file_path = local.hub_private_key_file_path
-    ssh_public_key_name       = local.hub_public_key_name
-  }
-  allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = [data.aws_subnet.main_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
 
@@ -151,7 +112,7 @@ module "agentless_gw" {
     ssh_private_key_file_path = local.gw_private_key_file_path
     ssh_public_key_name       = local.gw_public_key_name
   }
-  allowed_hub_cidrs = [data.aws_subnet.main_hub.cidr_block, data.aws_subnet.dr_hub.cidr_block]
+  allowed_hub_cidrs = [data.aws_subnet.main_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = var.use_hub_as_proxy ? {
     proxy_address              = module.hub_main.private_ip
@@ -166,26 +127,9 @@ module "agentless_gw" {
   tags                              = local.tags
 }
 
-module "hub_hadr" {
-  source                       = "imperva/dsf-hadr/null"
-  version                      = "1.5.6" # latest release tag
-  sonar_version                = module.globals.tarball_location.version
-  dsf_main_ip                  = module.hub_main.private_ip
-  dsf_main_private_ip          = module.hub_main.private_ip
-  dsf_dr_ip                    = module.hub_dr.private_ip
-  dsf_dr_private_ip            = module.hub_dr.private_ip
-  ssh_key_path                 = local.hub_private_key_file_path
-  ssh_user                     = module.hub_main.ssh_user
-  terraform_script_path_folder = var.terraform_script_path_folder
-  depends_on = [
-    module.hub_main,
-    module.hub_dr
-  ]
-}
-
 locals {
   hub_gw_combinations = setproduct(
-    [module.hub_main, module.hub_dr],
+    [module.hub_main],
     concat(
       [for idx, val in module.agentless_gw : val]
     )
@@ -213,7 +157,7 @@ module "federation" {
     proxy_ssh_user             = module.hub_main.ssh_user
   } : null
   depends_on = [
-    module.hub_hadr,
+    module.hub_main,
     module.agentless_gw
   ]
 }
