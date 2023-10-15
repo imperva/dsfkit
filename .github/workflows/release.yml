@@ -130,7 +130,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.dst_branch }}
-          token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+          token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN_ADMIN }}
 
       - name: Merge
         run: |
@@ -162,7 +162,7 @@ jobs:
     needs: tag_branch
     uses: ./.github/workflows/deploy_module.yml
     secrets:
-      PUSH_TO_OTHER_REPOS_TOKEN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN }}
+      PUSH_TO_OTHER_REPOS_TOKEN_ADMIN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN_ADMIN }}
 
   test_plan:
     needs: deploy_modules
