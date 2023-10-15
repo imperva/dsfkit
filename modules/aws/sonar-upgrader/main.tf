@@ -17,7 +17,7 @@ locals {
 
 resource "null_resource" "upgrade_cmd" {
   provisioner "local-exec" {
-    command = local.upgrade_cmd
+    command     = local.upgrade_cmd
     interpreter = ["bash", "-c"]
   }
 
