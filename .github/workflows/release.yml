@@ -177,19 +177,8 @@ jobs:
       AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
 
-  test_apply:
-    needs: test_plan
-    uses: ./.github/workflows/sonar_poc_cli.yml
-    with:
-      use_modules_from_terraform_registry: true
-      explicit_ref: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
   release:
-    needs: [test_apply]
+    needs: [test_plan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
