@@ -1,5 +1,6 @@
 module "sonar_upgrader" {
-  source = "../../modules/aws/sonar-upgrader"
+  source  = "imperva/dsf-sonar-upgrader/aws"
+  version = "1.5.6" # latest release tag
 
   # Fill the details of the Agentless Gateways and DSF Hubs that you want to upgrade
   agentless_gws = [
