@@ -105,6 +105,7 @@ jobs:
 
       - name: Zip Sonar python upgrader
         run: |
+          rm modules/sonar_python_upgrader_*.zip
           pushd modules/aws/sonar-upgrader
           mv python_upgrader sonar_python_upgrader
           zip -FSr ../../sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip sonar_python_upgrader -x "*.zip"
