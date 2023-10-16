@@ -61,7 +61,7 @@ module "hub_instance" {
   hadr_dr_node                      = var.hadr_dr_node
   main_node_sonarw_public_key       = var.main_node_sonarw_public_key
   main_node_sonarw_private_key      = var.main_node_sonarw_private_key
-  proxy_info                        = var.ingress_communication_via_proxy
+  proxy_info                        = var.wh_proxy_info
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name

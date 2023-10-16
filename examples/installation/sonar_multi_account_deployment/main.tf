@@ -124,10 +124,10 @@ module "hub_main" {
   allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_dr.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_main.cidr_block, data.aws_subnet.subnet_gw_dr.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  hub_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
@@ -164,10 +164,10 @@ module "hub_dr" {
   allowed_hub_cidrs                 = [data.aws_subnet.subnet_hub_main.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.subnet_gw_main.cidr_block, data.aws_subnet.subnet_gw_dr.cidr_block]
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  hub_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   skip_instance_health_verification = var.hub_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
@@ -202,10 +202,10 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_dr.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_main.cidr_block, data.aws_subnet.subnet_hub_dr.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  gw_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
@@ -243,10 +243,10 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.subnet_gw_main.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.subnet_hub_main.cidr_block, data.aws_subnet.subnet_hub_dr.cidr_block]
   allowed_ssh_cidrs          = concat(local.workstation_cidr, ["${var.proxy_private_address}/32"])
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  gw_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   skip_instance_health_verification = var.gw_skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder

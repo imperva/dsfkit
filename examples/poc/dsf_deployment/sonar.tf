@@ -113,10 +113,10 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_dr.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_main[0].public_ip
-    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub_main[0].ssh_user
+  gw_proxy_info = {
+    ip_address           = module.hub_main[0].public_ip
+    private_ssh_key_path = module.key_pair.private_key_file_path
+    ssh_user             = module.hub_main[0].ssh_user
   }
   tags = local.tags
   depends_on = [
@@ -146,10 +146,10 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_main[0].public_ip
-    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub_main[0].ssh_user
+  gw_proxy_info = {
+    ip_address           = module.hub_main[0].public_ip
+    private_ssh_key_path = module.key_pair.private_key_file_path
+    ssh_user             = module.hub_main[0].ssh_user
   }
   tags = local.tags
   depends_on = [

@@ -124,11 +124,11 @@ variable "storage_details" {
   description = "Compute instance volume attributes"
 }
 
-variable "ingress_communication_via_proxy" {
+variable "wh_proxy_info" {
   type = object({
-    proxy_address              = string
-    proxy_private_ssh_key_path = string
-    proxy_ssh_user             = string
+    ip_address           = string
+    private_ssh_key_path = string
+    ssh_user             = string
   })
   description = "Proxy address used for ssh for private hub, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default     = null

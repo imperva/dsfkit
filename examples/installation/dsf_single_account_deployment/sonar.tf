@@ -28,10 +28,10 @@ module "hub_main" {
     ssh_private_key_file_path = local.hub_main_private_key_file_path
     ssh_public_key_name       = local.hub_main_public_key_name
   }
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  hub_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub_dr.cidr_block]
@@ -78,10 +78,10 @@ module "hub_dr" {
     ssh_private_key_file_path = local.hub_dr_private_key_file_path
     ssh_public_key_name       = local.hub_dr_public_key_name
   }
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  hub_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block]
@@ -145,10 +145,10 @@ module "agentless_gw_main" {
     ssh_public_key_name       = local.agentless_gw_main_public_key_name
   }
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  gw_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_dr.cidr_block]
   allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block]
@@ -187,10 +187,10 @@ module "agentless_gw_dr" {
     ssh_public_key_name       = local.agentless_gw_dr_public_key_name
   }
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
-  ingress_communication_via_proxy = var.proxy_address != null ? {
-    proxy_address              = var.proxy_address
-    proxy_private_ssh_key_path = var.proxy_ssh_key_path
-    proxy_ssh_user             = var.proxy_ssh_user
+  gw_proxy_info = var.proxy_address != null ? {
+    ip_address           = var.proxy_address
+    private_ssh_key_path = var.proxy_ssh_key_path
+    ssh_user             = var.proxy_ssh_user
   } : null
   allowed_agentless_gw_cidrs        = [data.aws_subnet.agentless_gw_main.cidr_block]
   allowed_hub_cidrs                 = [data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block]

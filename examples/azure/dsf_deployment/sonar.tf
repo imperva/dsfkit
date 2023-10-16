@@ -102,10 +102,10 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
   allowed_hub_cidrs          = module.network[0].vnet_address_space
   allowed_all_cidrs          = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_main[0].public_ip
-    proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
-    proxy_ssh_user             = module.hub_main[0].ssh_user
+  gw_proxy_info = {
+    ip_address           = module.hub_main[0].public_ip
+    private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    ssh_user             = module.hub_main[0].ssh_user
   }
   tags = local.tags
   depends_on = [
@@ -136,10 +136,10 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
   allowed_hub_cidrs          = module.network[0].vnet_address_space
   allowed_all_cidrs          = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub_main[0].public_ip
-    proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
-    proxy_ssh_user             = module.hub_main[0].ssh_user
+  gw_proxy_info = {
+    ip_address           = module.hub_main[0].public_ip
+    private_ssh_key_path = local_sensitive_file.ssh_key.filename
+    ssh_user             = module.hub_main[0].ssh_user
   }
   tags = local.tags
   depends_on = [

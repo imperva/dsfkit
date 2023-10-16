@@ -122,10 +122,10 @@ module "agentless_gw" {
   }
   allowed_hub_cidrs = [data.aws_subnet.hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
-  ingress_communication_via_proxy = {
-    proxy_address              = module.hub.public_ip
-    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub.ssh_user
+  gw_proxy_info = {
+    ip_address           = module.hub.public_ip
+    private_ssh_key_path = module.key_pair.private_key_file_path
+    ssh_user             = module.hub.ssh_user
   }
   tags = local.tags
   depends_on = [
