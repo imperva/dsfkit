@@ -101,15 +101,24 @@ jobs:
 
       - name: Zip per examples, remove old version zip
         run: |
-          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; rm ${_b}/*.zip; zip -FSr ${_b}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b}; popd; done
+          for d in $(find ./examples -type d -links 2); do
+            _d=$(dirname ${d})
+            _b=$(basename ${d})
+            pushd $_d
+            rm ${_b}/*.zip
+            mv ${_b} ${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}
+            zip -FSr ${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}
+            mv ${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }} ${_b}
+            popd
+          done
 
-      - name: Zip Sonar python upgrader
+      - name: Zip Sonar python upgrader, remove old version zip
         run: |
           rm modules/sonar_python_upgrader_*.zip
           pushd modules/aws/sonar-upgrader
-          mv python_upgrader sonar_python_upgrader
-          zip -FSr ../../sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip sonar_python_upgrader
-          mv sonar_python_upgrader python_upgrader
+          mv python_upgrader sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}
+          zip -FSr ../../sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }}
+          mv sonar_python_upgrader_${{ steps.format-version.outputs.FORMATTED_VERSION }} python_upgrader
           popd
 
       - name: Commit changes to git repo
