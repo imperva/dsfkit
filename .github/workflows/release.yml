@@ -99,9 +99,9 @@ jobs:
         run: |
           terraform fmt -recursive
 
-      - name: Zip per examples
+      - name: Zip per examples, remove old version zip
         run: |
-          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; zip -FSr ${_b}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b} -x "*.zip"; popd; done
+          for d in $(find ./examples -type d -links 2); do _d=$(dirname ${d}); _b=$(basename ${d}); pushd $_d; rm ${_b}/*.zip; zip -FSr ${_b}/${_b}_${{ steps.format-version.outputs.FORMATTED_VERSION }}.zip ${_b} -x "*.zip"; popd; done
 
       - name: Zip Sonar python upgrader
         run: |
