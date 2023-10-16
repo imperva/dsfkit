@@ -21,3 +21,4 @@ myip-default
 .idea
 *.mprv
 __pycache__/
+upgrade_status.json
