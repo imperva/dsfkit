@@ -10,18 +10,24 @@ def main(target_version):
     print("---------------------------------------------------------------------")
     time = datetime.now().strftime("%a %b %d %H:%M:%S UTC %Y")
     print(f"Running upgrade preflight validations at {time}")
+    result = validate()
+    result_json_string = json.dumps(result)
+    # The string "Preflight validations result:" is part of the protocol, if you change it, change its usage
+    print(f"Preflight validations result: {result_json_string}")
+    print("---------------------------------------------------------------------")
+
+
+def validate():
     source_version = get_sonar_version()
     different_version, min_version_validation_passed, max_version_hop_validation_passed = \
         validate_sonar_version(source_version, target_version)
+
     result = {
         "different_version": different_version,
         "min_version": min_version_validation_passed,
         "max_version_hop": max_version_hop_validation_passed
     }
-    result_json_string = json.dumps(result)
-    # The string "Preflight validations result:" is part of the protocol, if you change it, change its usage
-    print(f"Preflight validations result: {result_json_string}")
-    print("---------------------------------------------------------------------")
+    return result
 
 
 def get_sonar_version():
