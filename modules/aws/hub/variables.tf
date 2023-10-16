@@ -286,3 +286,9 @@ variable "volume_attachment_device_name" {
   default     = null
   description = "The device name to expose to the instance for the ebs volume. Keep null if you have no preference"
 }
+
+variable "base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}

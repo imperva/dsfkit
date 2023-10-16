@@ -259,3 +259,9 @@ variable "use_hub_as_proxy" {
   default     = true
   description = "Whether to use the DSF Hub as a proxy for ssh into the Agentless Gateways"
 }
+
+variable "sonar_machine_base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}

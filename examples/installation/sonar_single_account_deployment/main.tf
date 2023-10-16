@@ -5,7 +5,7 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.5.5" # latest release tag
+  version       = "1.5.6" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -35,7 +35,7 @@ locals {
 module "key_pair_hub" {
   count                = local.should_create_hub_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.5.5" # latest release tag
+  version              = "1.5.6" # latest release tag
   key_name_prefix      = "imperva-dsf-hub"
   private_key_filename = "ssh_keys/dsf_ssh_key-hub-${terraform.workspace}"
   tags                 = local.tags
@@ -44,7 +44,7 @@ module "key_pair_hub" {
 module "key_pair_gw" {
   count                = local.should_create_gw_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.5.5" # latest release tag
+  version              = "1.5.6" # latest release tag
   key_name_prefix      = "imperva-dsf-gw"
   private_key_filename = "ssh_keys/dsf_ssh_key-gw-${terraform.workspace}"
   tags                 = local.tags
@@ -74,7 +74,7 @@ data "aws_subnet" "subnet_gw" {
 ##############################
 module "hub_main" {
   source               = "imperva/dsf-hub/aws"
-  version              = "1.5.5" # latest release tag
+  version              = "1.5.6" # latest release tag
   friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
   subnet_id            = var.subnet_hub_main
   security_group_ids   = var.security_group_ids_hub
@@ -98,12 +98,13 @@ module "hub_main" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
 module "hub_dr" {
   source                       = "imperva/dsf-hub/aws"
-  version                      = "1.5.5" # latest release tag
+  version                      = "1.5.6" # latest release tag
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   subnet_id                    = var.subnet_hub_dr
   security_group_ids           = var.security_group_ids_hub
@@ -130,13 +131,14 @@ module "hub_dr" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
 module "agentless_gw" {
   count                 = var.gw_count
   source                = "imperva/dsf-agentless-gw/aws"
-  version               = "1.5.5" # latest release tag
+  version               = "1.5.6" # latest release tag
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id             = var.subnet_gw
   security_group_ids    = var.security_group_ids_gw
@@ -163,12 +165,13 @@ module "agentless_gw" {
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.gw_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
 }
 
 module "hub_hadr" {
   source                       = "imperva/dsf-hadr/null"
-  version                      = "1.5.5" # latest release tag
+  version                      = "1.5.6" # latest release tag
   sonar_version                = module.globals.tarball_location.version
   dsf_main_ip                  = module.hub_main.private_ip
   dsf_main_private_ip          = module.hub_main.private_ip
@@ -195,7 +198,7 @@ locals {
 module "federation" {
   count   = length(local.hub_gw_combinations)
   source  = "imperva/dsf-federation/null"
-  version = "1.5.5" # latest release tag
+  version = "1.5.6" # latest release tag
 
   hub_info = {
     hub_ip_address           = local.hub_gw_combinations[count.index][0].private_ip
