@@ -10,11 +10,19 @@ def main(target_version):
     print("---------------------------------------------------------------------")
     time = datetime.now().strftime("%a %b %d %H:%M:%S UTC %Y")
     print(f"Running upgrade preflight validations at {time}")
-    result = validate()
+    result = try_validate()
     result_json_string = json.dumps(result)
     # The string "Preflight validations result:" is part of the protocol, if you change it, change its usage
     print(f"Preflight validations result: {result_json_string}")
     print("---------------------------------------------------------------------")
+
+
+def try_validate():
+    try:
+        return validate()
+    except Exception as ex:
+        print(f"Preflight validations failed with exception: {str(ex)}")
+        return {}
 
 
 def validate():
