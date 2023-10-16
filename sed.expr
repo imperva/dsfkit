@@ -16,4 +16,5 @@ s;imperva/dsf-db-with-agent/aws;../../../modules/aws/db-with-agent;
 s;imperva/dsf-dra-admin/aws;../../../modules/aws/dra-admin;
 s;imperva/dsf-dra-analytics/aws;../../../modules/aws/dra-analytics;
 s;imperva/dsf-agent-gw-cluster-setup/null;../../../modules/null/agent-gw-cluster-setup;
+s;imperva/dsf-sonar-upgrader/aws;../../modules/aws/sonar-upgrader;
 /latest release tag/c\

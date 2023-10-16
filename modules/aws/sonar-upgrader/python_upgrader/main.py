@@ -223,10 +223,11 @@ def main(args):
         print(f"### Error message: {e}")
         print(f"### An error occurred, aborting upgrade...")
 
+    # Flush upgrade state to state file (in case of an error on the first file write, this line is the manual retry)
+    upgrade_state_service.flush()
+
     print("********** Summary ************")
-    # TODO uncomment when upgrade status API will be implemented
-    # print(upgrade_state_service.get_summary())
-    print("Coming soon")
+    print(upgrade_state_service.get_summary())
 
     print("********** End ************")
 
