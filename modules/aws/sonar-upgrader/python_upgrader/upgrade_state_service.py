@@ -2,19 +2,18 @@
 
 import time
 
-
-from utils import create_file, format_json_string, get_file_path, read_file_as_json
+from utils import update_file_safely, copy_file, format_dictionary_to_json, is_file_exist, read_file_as_json, \
+    value_to_enum
 from enum import Enum
 
 
 class UpgradeStateService:
 
     def __init__(self):
-        '''
-        Initializes the upgrade state service. For example, creates the state file if doesn't exist.
-        '''
-        # TODO implement
-        # self.upgrade_state_file_name = self._create_state_file()
+        self.status_dictionary = {}
+        self.target_version = None
+        # in case of write file failure, there won't be automatic state updates and manual flush() will be required
+        self.write_initial_state_file_error = False
 
     def init_upgrade_state(self, dsf_node_ids, target_version):
         '''
@@ -28,23 +27,55 @@ class UpgradeStateService:
         :param dsf_node_ids: The list of DSF nodes being upgraded
         @:param target_version The target version to upgrade to
         '''
-        pass
+        # Read state file if exists
+        exist_upgrade_status_json = None
+        try:
+            if self._is_state_file_exist():
+                print(f"State file was found")
+                exist_upgrade_status_json = self._read_upgrade_state_as_json()
+                print(f"The state file was read successfully")
+            else:
+                print(f"State file was not found")
+        except Exception as ex:
+            print(f"Assuming the status file doesn't exist due to a read file failure with an exception: {str(ex)}")
+
+        exist_dsf_node_status = {}
+        if exist_upgrade_status_json:
+            exist_target_version = exist_upgrade_status_json.get("target-version")
+            if exist_target_version is None or exist_target_version != target_version:
+                # new target version
+                print(f"New target version was detected: {target_version} (old target version: {exist_target_version})")
+                self._backup_state_file()
+            else:
+                # rerun or gradual upgrade (same version)
+                print(f"Same target version was detected: {target_version}")
+                exist_dsf_node_status = exist_upgrade_status_json.get("upgrade-statuses", {})
+
+        initial_new_upgrade_status = self._calc_initial_upgrade_status(exist_dsf_node_status, dsf_node_ids)
+        self.status_dictionary = initial_new_upgrade_status
+        self.target_version = target_version
+
+        # Write to the state file the initial state
+        success = self.flush()
+        if not success:
+            self.write_initial_state_file_error = True
 
     def get_upgrade_status(self, dsf_node_id):
         '''
         :param dsf_node_id: Id of the DSF node which upgrade status to get
         :return: not-started, running, succeeded, succeeded-with-warnings or failed
         '''
-        # TODO
-        return UpgradeState.NOT_STARTED
+        # assume dsf_node_id in the map, since all nodes were supposed to be added on init_upgrade_state method call
+        return self.status_dictionary.get(dsf_node_id).get('status')
 
     def get_overall_upgrade_status(self):
         '''
         Calculates the overall upgrade status.
         :return: "Not started" if all nodes are in "Not started" status
-                 "Running" if at least one node is running one of the upgrade stages
+                 "Running" if at least one node is running or succeeded in one of the upgrade stages, but not the final stage
                  "Succeeded" if all nodes are in "Succeeded" status
-                 "Succeeded with warnings" if all nodes are in "Succeeded with warnings" status
+                 "Succeeded with warnings" if all nodes are in "Succeeded with warnings" or "Succeeded" statuses and
+                 there is at least one node with "Succeeded with warnings"
                  "Failed" if at least one node failed one of the upgrade stages, and there are no nodes that are
                  still running one of the upgrade stages
         '''
@@ -60,8 +91,17 @@ class UpgradeStateService:
         :param flush: Whether to write to the upgrade state file on disk or not
         '''
         old_status = self.get_upgrade_status(dsf_node_id)
-        print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status} with message: {message}")
-        # TODO implement
+        self.status_dictionary.get(dsf_node_id)['status'] = upgrade_status
+        if message is None or message == "":
+            self.status_dictionary.get(dsf_node_id).pop('message', None)
+            print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status}")
+        else:
+            self.status_dictionary.get(dsf_node_id)['message'] = message
+            print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status} with message: {message}")
+
+        if flush and not self.write_initial_state_file_error:
+            # no automatic log on flush for not overloading the output logs
+            self.flush(print_logs=False)
 
     def should_test_connection(self, dsf_node_id):
         status = self.get_upgrade_status(dsf_node_id)
@@ -112,18 +152,25 @@ class UpgradeStateService:
             UpgradeState.UPGRADE_FAILED
         )
 
-    def flush(self):
+    def flush(self, print_logs=True):
         '''
         Writes the upgrade state to the file on disk.
         :return: True if successful, false otherwise
         '''
-        # TODO
-        pass
+        try:
+            self._update_state_file(self.status_dictionary, self.target_version)
+            if print_logs:
+                print(f"The state file was updated successfully")
+            return True
+        except Exception as ex:
+            if print_logs:
+                print(f"Failed to update to the state file with an exception: {str(ex)}")
+            return False
 
     def get_summary(self):
         upgrade_statuses = self._get_upgrade_statuses()
-        summary = f"Overall upgrade status: {self.get_overall_upgrade_status()}"
-        summary += f"\nDSF nodes upgrade statuses:"
+        # summary = f"Overall upgrade status: {self.get_overall_upgrade_status()}"
+        summary = f"\nDSF nodes upgrade statuses:"
         for host in upgrade_statuses.keys():
             padded_host = "{:<45}".format(host)
             optional_message = upgrade_statuses.get(host).get('message')
@@ -132,22 +179,50 @@ class UpgradeStateService:
                 summary += f". Message: {optional_message}"
         return summary
 
-    def _create_state_file(self):
+    def _calc_initial_upgrade_status(self, exist_dsf_node_status, dsf_node_ids):
+        new_statuses = {node_id: exist_dsf_node_status.get(node_id, {"status": UpgradeState.NOT_STARTED})
+                        for node_id in dsf_node_ids}
+        return new_statuses
+
+    def _backup_state_file(self):
+        file_name = f'upgrade_status.json'
+        backup_file_name = file_name + '.bkp'
+        copy_file(file_name, backup_file_name)
+
+    def _update_state_file(self, initial_new_upgrade_status, target_version):
         timestamp = int(time.time())  # current timestamp with seconds resolution
         file_name = f'upgrade_status.json'
-        contents = format_json_string('{"upgrade-statuses": []}')
-        create_file(file_name, contents)
+        content_dict = {
+            "upgrade-statuses": initial_new_upgrade_status,
+            "target-version": target_version,
+            "timestamp": timestamp
+        }
+        content_json = format_dictionary_to_json(content_dict, object_serialize_hook=self._enum_to_json)
+        update_file_safely(file_name, content_json)
         return file_name
 
     def _get_upgrade_statuses(self):
         upgrade_state = self._read_upgrade_state_as_json()
         return upgrade_state.get("upgrade-statuses")
 
+    def _is_state_file_exist(self):
+        return is_file_exist("upgrade_status.json")
+
     def _read_upgrade_state_as_json(self):
-        # TODO implement
-        # TODO not sure the state file will be created in this location
-        # file_path = get_file_path(self.upgrade_state_file_name)
-        return read_file_as_json("upgrade_status.json")
+        return read_file_as_json("upgrade_status.json", self._json_to_enum)
+
+    def _enum_to_json(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return obj
+
+    def _json_to_enum(self, dct):
+        if 'status' in dct:
+            matched_enum_key = value_to_enum(UpgradeState, dct['status'])
+            if matched_enum_key is None:
+                raise Exception(f"failed to convert json status \"{dct['status']}\" to UpgradeState enum")
+            dct['status'] = matched_enum_key
+        return dct
 
 
 class UpgradeState(Enum):
@@ -173,7 +248,13 @@ class UpgradeState(Enum):
 
 def test1():
     service = UpgradeStateService()
+    service.init_upgrade_state(["1.2.3.7", "host2"], "4.13")
+    service.update_upgrade_status("host2", UpgradeState.RUNNING_COLLECT_PYTHON_LOCATION, "abcd")
+    service.update_upgrade_status("host2", UpgradeState.UPGRADE_SUCCEEDED)
+    service.flush()
+    print(service.get_summary())
 
 
 if __name__ == "__main__":
+    print("UpgradeStateService test")
     test1()
