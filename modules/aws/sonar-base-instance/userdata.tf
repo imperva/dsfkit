@@ -4,8 +4,9 @@ locals {
   bastion_private_key = try(file(var.proxy_info.private_ssh_key_path), "")
   bastion_user        = try(var.proxy_info.ssh_user, null)
 
-  instance_address = var.use_public_ip ? local.public_ip : local.private_ip
-  display_name     = var.name
+  instance_address     = var.use_public_ip ? local.public_ip : local.private_ip
+  display_name         = var.name
+  sonar_base_directory = var.base_directory != null ? var.base_directory : ""
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tftpl", {
@@ -25,6 +26,7 @@ locals {
     jsonar_uuid                         = random_uuid.jsonar_uuid.result
     additional_install_parameters       = var.additional_install_parameters
     access_tokens_array                 = local.access_tokens_array
+    base_directory                      = local.sonar_base_directory
   })
 }
 

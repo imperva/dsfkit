@@ -448,6 +448,12 @@ variable "sonarw_gw_public_key_file_path" {
   description = "The Agentless Gateway sonarw user public key file path - used for remote Agentless Gateway federation, HADR, etc."
 }
 
+variable "sonar_machine_base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}
+
 ##############################
 ####    DAM variables     ####
 ##############################
