@@ -1,7 +1,7 @@
 # DSF Hub and Agentless Gateway Upgrade POC example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-A DSF Hub and Agentless Gateway (formerly Sonar) upgrade POC procedure.
+A DSF Hub and Agentless Gateway (formerly Sonar) upgrade procedure.
 
 This procedure consists of:
 
@@ -29,7 +29,7 @@ terraform apply
 ```
 To re-apply when there are no Terraform changes (the Terraform infrastructure matches the configuration), run:
 ```bash
-terraform apply -replace="module.sonar_upgrader.null_resource.sonar_upgrader"
+terraform apply -replace="module.sonar_upgrader.null_resource.upgrade_cmd"
 ```
 
 ## Upgrade Order

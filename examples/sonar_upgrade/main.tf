@@ -1,5 +1,8 @@
 module "sonar_upgrader" {
-  source = "../../modules/aws/sonar_upgrader"
+  source  = "imperva/dsf-sonar-upgrader/aws"
+  version = "1.5.6" # latest release tag
+
+  # Fill the details of the Agentless Gateways and DSF Hubs that you want to upgrade
   agentless_gws = [
     {
       "main" = {
@@ -18,7 +21,7 @@ module "sonar_upgrader" {
         "host"                      = "10.0.1.2"
         "ssh_user"                  = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy"                     = {
+        "proxy" = {
           "host"                      = "52.8.8.8"
           "ssh_user"                  = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
@@ -28,7 +31,7 @@ module "sonar_upgrader" {
         "host"                      = "10.2.1.2"
         "ssh_user"                  = "ec2-user"
         "ssh_private_key_file_path" = "/home/ssh_key2.pem"
-        "proxy"                     = {
+        "proxy" = {
           "host"                      = "52.8.8.8"
           "ssh_user"                  = "ec2-user"
           "ssh_private_key_file_path" = "/home/ssh_key2.pem"
@@ -70,10 +73,20 @@ module "sonar_upgrader" {
     }
   ]
 
+  # Fill full Sonar version (short format, e.g., 4.12, is not supported)
   target_version = "4.12.0.10.0"
-  # options
-  test_connection = true
-  run_preflight_validations = true
-  run_upgrade = true
+
+  # Configuration options for controlling the upgrade flow
+  test_connection            = true
+  run_preflight_validations  = true
+  run_upgrade                = true
   run_postflight_validations = true
+  stop_on_failure            = true
+
+  # Fill if using your S3 bucket, remove if using Imperva's S3 bucket
+  tarball_location = {
+    "s3_bucket" = "myBucket"
+    "s3_region" = "us-east-1"
+    "s3_key"    = "prefix/jsonar-x.y.z.w.u.tar.gz"
+  }
 }

@@ -11,28 +11,24 @@ class UpgradeStateService:
 
     def __init__(self):
         '''
-        Initializes the upgrade state service. For example, creates the state file.
+        Initializes the upgrade state service. For example, creates the state file if doesn't exist.
         '''
-        self.upgrade_state_file_name = self._create_state_file()
+        # TODO implement
+        # self.upgrade_state_file_name = self._create_state_file()
 
-    def init_upgrade_state(self, dsf_node_ids):
+    def init_upgrade_state(self, dsf_node_ids, target_version):
         '''
         Initializes the upgrade state for a list of DSF nodes being upgraded.
         If this is a rerun or gradual upgrade, updates the existing upgrade state, this may mean removing nodes which
         don't exist in the current list of DSF nodes.
+        This is considered a rerun or gradual upgrade if a state file exists in which the target version equals
+        a certain target version.
+        If a state file exists in which the target version is different, the state file is copied aside and a new
+        state file is created.
         :param dsf_node_ids: The list of DSF nodes being upgraded
+        @:param target_version The target version to upgrade to
         '''
         pass
-
-    def is_upgrade_state_empty(self):
-        '''
-        Verifies whether the upgrade state is empty which indicates that the upgrade hasn't started.
-        The upgrade state is not empty when an upgrade is stopped and restarted for some reason, or this is a
-        gradual upgrade, etc.
-        :return: True if the upgrade state is empty, false otherwise
-        '''
-        # TODO implement
-        return False
 
     def get_upgrade_status(self, dsf_node_id):
         '''
@@ -45,34 +41,27 @@ class UpgradeStateService:
     def get_overall_upgrade_status(self):
         '''
         Calculates the overall upgrade status.
-        :return: not-started if all nodes are in not-started status
-                 running if at least one node is in running status
-                 succeeded if all nodes are in succeeded status
-                 succeeded-with-warnings if all nodes are in succeeded-with-warnings status
-                 failed if at least one node is in failed status, and there are no nodes in running status
+        :return: "Not started" if all nodes are in "Not started" status
+                 "Running" if at least one node is running one of the upgrade stages
+                 "Succeeded" if all nodes are in "Succeeded" status
+                 "Succeeded with warnings" if all nodes are in "Succeeded with warnings" status
+                 "Failed" if at least one node failed one of the upgrade stages, and there are no nodes that are
+                 still running one of the upgrade stages
         '''
         # TODO implement
-        return {}
+        return "Running"
 
-    def update_upgrade_status(self, dsf_node_id, upgrade_status, flush=True):
+    def update_upgrade_status(self, dsf_node_id, upgrade_status, message="", flush=True):
         '''
         Updates the upgrade status of a DSF node in the state file
         :param dsf_node_id: Id of the DSF node which status to update
         :param upgrade_status: The upgrade status to update with
+        :param message: An optional error/warning/info message
         :param flush: Whether to write to the upgrade state file on disk or not
         '''
         old_status = self.get_upgrade_status(dsf_node_id)
-        print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status}")
+        print(f"Updated upgrade status of {dsf_node_id} from {old_status} to {upgrade_status} with message: {message}")
         # TODO implement
-
-    def is_upgrade_completed(self, dsf_node_id):
-        '''
-        Verifies whether upgrade of a DSF node completed successfully or equivalent.
-        :param dsf_node_id: Id of the DSF node which status to check
-        :return: True if completed, false otherwise
-        '''
-        # TODO implement
-        return False
 
     def should_test_connection(self, dsf_node_id):
         status = self.get_upgrade_status(dsf_node_id)
@@ -131,13 +120,21 @@ class UpgradeStateService:
         # TODO
         pass
 
-    def pretty_print(self):
-        return ""
+    def get_summary(self):
+        upgrade_statuses = self._get_upgrade_statuses()
+        summary = f"Overall upgrade status: {self.get_overall_upgrade_status()}"
+        summary += f"\nDSF nodes upgrade statuses:"
+        for host in upgrade_statuses.keys():
+            padded_host = "{:<45}".format(host)
+            optional_message = upgrade_statuses.get(host).get('message')
+            summary += f"\n    {padded_host}: {upgrade_statuses.get(host).get('status')}"
+            if optional_message is not None:
+                summary += f". Message: {optional_message}"
+        return summary
 
     def _create_state_file(self):
         timestamp = int(time.time())  # current timestamp with seconds resolution
-        # TODO should the file have a fixed name?
-        file_name = f'upgrade_state_{timestamp}.json'
+        file_name = f'upgrade_status.json'
         contents = format_json_string('{"upgrade-statuses": []}')
         create_file(file_name, contents)
         return file_name
@@ -147,9 +144,10 @@ class UpgradeStateService:
         return upgrade_state.get("upgrade-statuses")
 
     def _read_upgrade_state_as_json(self):
+        # TODO implement
         # TODO not sure the state file will be created in this location
-        file_path = get_file_path(self.upgrade_state_file_name)
-        return read_file_as_json(file_path)
+        # file_path = get_file_path(self.upgrade_state_file_name)
+        return read_file_as_json("upgrade_status.json")
 
 
 class UpgradeState(Enum):

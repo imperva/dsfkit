@@ -10,12 +10,14 @@ locals {
     run_upgrade                = var.run_upgrade
     run_postflight_validations = var.run_postflight_validations
     clean_old_deployments      = var.clean_old_deployments
+    stop_on_failure            = var.stop_on_failure
+    tarball_location           = jsonencode(var.tarball_location)
   })
 }
 
-resource "null_resource" "sonar_upgrader" {
+resource "null_resource" "upgrade_cmd" {
   provisioner "local-exec" {
-    command = local.upgrade_cmd
+    command     = local.upgrade_cmd
     interpreter = ["bash", "-c"]
   }
 

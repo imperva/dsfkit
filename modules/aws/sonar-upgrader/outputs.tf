@@ -30,3 +30,10 @@ output "clean_old_deployments" {
   value = var.clean_old_deployments
 }
 
+output "stop_on_failure" {
+  value = var.stop_on_failure
+}
+
+output "tarball_location" {
+  value = var.tarball_location
+}
