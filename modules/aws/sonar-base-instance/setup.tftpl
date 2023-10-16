@@ -258,17 +258,10 @@ __EOF__
     fi
 }
 
-if [ -z "${base_directory}" ]; then
-  DATA_DIR=/data
-  LOGS_DIR=/logs
-  LOCAL_DIR=/local
-  APPS_DIR=/apps
-else
-  DATA_DIR="${base_directory}/data"
-  LOGS_DIR="${base_directory}/logs"
-  LOCAL_DIR="${base_directory}/local"
-  APPS_DIR="${base_directory}/apps"
-fi
+DATA_DIR="${base_directory}/data"
+LOGS_DIR="${base_directory}/logs"
+LOCAL_DIR="${base_directory}/local"
+APPS_DIR="${base_directory}/apps"
 
 install_deps
 create_users_and_groups
