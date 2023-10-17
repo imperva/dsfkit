@@ -124,7 +124,7 @@ variable "storage_details" {
   description = "Compute instance volume attributes"
 }
 
-variable "wh_proxy_info" {
+variable "hub_proxy_info" {
   type = object({
     ip_address           = string
     private_ssh_key_path = string
