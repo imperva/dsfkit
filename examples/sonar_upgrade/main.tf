@@ -83,6 +83,4 @@ module "sonar_upgrader" {
   run_postflight_validations = true
   stop_on_failure            = true
 
-  tarball_location = var.tarball_location
-
 }
