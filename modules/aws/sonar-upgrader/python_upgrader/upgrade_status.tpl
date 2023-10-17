@@ -1,4 +1,4 @@
-# This file is not in use, it servers as a documentation of the schema of the upgrade state file
+# This file is not in use, it servers as a documentation of the schema of the upgrade status file
 {
     "upgrade-statuses": {
         "host1": {
