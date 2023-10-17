@@ -102,9 +102,9 @@ This guide references the following information and links, some of which are ava
    <td>
    <a href="https://docs.imperva.com/howto/ee19c683">Sonar v4.12</a>
 
-   <a href="https://docs.imperva.com/howto/3f513830">DAM v14.12</a>
+   <a href="https://docs.imperva.com/howto/3f513830">DAM v14.13</a>
 
-   <a href="https://docs.imperva.com/howto/4e487f3c">DRA v4.12</a>
+   <a href="https://docs.imperva.com/howto/71799f9d">DRA v4.13</a>
    </td>
    <td>DSF Components Overview
    </td>
