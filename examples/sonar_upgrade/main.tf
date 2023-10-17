@@ -83,10 +83,4 @@ module "sonar_upgrader" {
   run_postflight_validations = true
   stop_on_failure            = true
 
-  # Fill if using your S3 bucket, remove if using Imperva's S3 bucket
-  tarball_location = {
-    "s3_bucket" = "myBucket"
-    "s3_region" = "us-east-1"
-    "s3_key"    = "prefix/jsonar-x.y.z.w.u.tar.gz"
-  }
 }
