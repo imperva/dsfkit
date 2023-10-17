@@ -35,7 +35,7 @@ def validate():
 
 def get_sonar_version():
     jsonar_file_path = "/etc/sysconfig/jsonar"
-    target_key = "VERSION="
+    target_key = "JSONAR_VERSION="
 
     version = None
     
