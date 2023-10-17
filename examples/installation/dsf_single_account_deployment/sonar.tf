@@ -43,6 +43,7 @@ module "hub_main" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
     address  = coalesce(mx.public_dns, mx.private_dns)
@@ -98,6 +99,7 @@ module "hub_dr" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   generate_access_tokens            = true
   tags                              = local.tags
   providers = {
@@ -162,6 +164,7 @@ module "agentless_gw_main" {
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.agentless_gw_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
   providers = {
     aws = aws.provider-2
@@ -203,6 +206,7 @@ module "agentless_gw_dr" {
   sonarw_private_key_secret_name    = var.sonarw_gw_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_gw_public_key_file_path)), null)
   instance_profile_name             = var.agentless_gw_instance_profile_name
+  base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
   providers = {
     aws = aws.provider-2

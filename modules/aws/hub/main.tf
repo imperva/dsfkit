@@ -68,4 +68,5 @@ module "hub_instance" {
   sonarw_public_key_content         = var.sonarw_public_key_content
   volume_attachment_device_name     = var.volume_attachment_device_name
   tags                              = var.tags
+  base_directory                    = var.base_directory
 }
