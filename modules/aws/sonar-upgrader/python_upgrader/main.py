@@ -498,7 +498,8 @@ def extract_preflight_validations_result(script_output):
 def are_preflight_validations_passed(preflight_validations_result):
     return preflight_validations_result.get('different_version') \
            and preflight_validations_result.get('min_version') \
-           and preflight_validations_result.get('max_version_hop')
+           and preflight_validations_result.get('max_version_hop') \
+           and preflight_validations_result.get('enough_free_disk_space')
 
 
 def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrade, run_postflight_validations,
