@@ -195,9 +195,9 @@ jobs:
 
       - name: Set Environment Variables to pass info from deployment to upgrade
         run: |
-          echo hub_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_hub.value.public_dns') >> $GITHUB_ENV
-          echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw.value."agentless-gw-0".private_dns') >> $GITHUB_ENV
-          echo agentless_gw_1_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_agentless_gw.value."agentless-gw-1".private_dns') >> $GITHUB_ENV
+          echo hub_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.hub_main.public_ip') >> $GITHUB_ENV
+          echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[0].private_ip') >> $GITHUB_ENV
+          echo agentless_gw_1_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[1].private_ip') >> $GITHUB_ENV
           echo dsf_ssh_key_file_name=$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
       - name: Collect Artifacts for deployment
