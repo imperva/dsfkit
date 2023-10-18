@@ -298,7 +298,7 @@ jobs:
         #### Cleanup
 
       - name: Terraform Destroy for deployment
-        id: destroy
+        id: destroy_deployment
         if: always()
         run: |
           if [ '${{ steps.apply_deployment.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
@@ -306,7 +306,7 @@ jobs:
           fi
 
       - name: Terraform Destroy for upgrade
-        id: destroy
+        id: destroy_upgrade
         if: always()
         run: |
           if [ '${{ steps.apply_upgrade.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
@@ -316,7 +316,7 @@ jobs:
       - name: Terraform Delete Workspace
         if: always()
         run: |
-          if [ '${{ steps.destroy.conclusion }}' == 'success' ] && [ ${{ github.event_name }} != 'schedule' ]; then
+          if [ '${{ steps.destroy_deployment.conclusion }}' == 'success' ] && [ ${{ github.event_name }} != 'schedule' ]; then
             terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR workspace delete $TMP_WORKSPACE_NAME
           fi
         env:
