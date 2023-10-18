@@ -57,7 +57,7 @@ jobs:
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
-      TF_VAR_sonar_version: 4.10.0.0.0
+      TF_VAR_sonar_version: 4.11.0.0
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
