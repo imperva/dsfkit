@@ -146,7 +146,7 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
-          dsfkit_version_line = $(grep "# latest release tag" $UPGRADE_EXAMPLE_DIR/main.tf)
+          dsfkit_version_line=$(grep "# latest release tag" $UPGRADE_EXAMPLE_DIR/main.tf)
           cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
