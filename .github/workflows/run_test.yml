@@ -104,32 +104,6 @@ jobs:
           echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
         if: github.ref != 'refs/heads/"master"'
 
-      - name: Create terraform backend file for the deployment
-        run: |
-          cat << EOF > $DEPLOYMENT_EXAMPLE_DIR/backend.tf
-          terraform {
-            backend "s3" {
-              bucket         = "terraform-state-bucket-dsfkit-github-tests"
-              key            = "states/terraform_deployment.tfstate"
-              dynamodb_table = "terraform-state-lock"
-              region         = "us-east-1"
-            }
-          }
-          EOF
-
-      - name: Create terraform backend file for the upgrade
-        run: |
-          cat << EOF > $UPGRADE_EXAMPLE_DIR/backend.tf
-          terraform {
-            backend "s3" {
-              bucket         = "terraform-state-bucket-dsfkit-github-tests"
-              key            = "states/terraform_upgrade.tfstate"
-              dynamodb_table = "terraform-state-lock"
-              region         = "us-east-1"
-            }
-          }
-          EOF
-
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -147,7 +121,7 @@ jobs:
       - name: Prepare upgrade input
         run: |
           dsfkit_version_line=$(grep "# latest release tag" $UPGRADE_EXAMPLE_DIR/main.tf)
-          cat "The grepped line: ${dsfkit_version_line}"
+          cat "The grepped line: $dsfkit_version_line"
           cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
