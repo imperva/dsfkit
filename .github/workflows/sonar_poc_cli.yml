@@ -91,7 +91,7 @@ jobs:
 #            aws_region: eu-west-1
 #            hub_output: '.dsf_hubs.value.main.public_dns'
 #            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'
-          - workspace: azure_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - workspace: azure_cli
             example_dir: ./examples/azure/dsf_deployment
             hub_output: '.dsf_hubs.value.main.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'
