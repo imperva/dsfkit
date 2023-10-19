@@ -1,4 +1,4 @@
-name: 'Sonar POC CLI'
+name: 'Azure - Sonar POC CLI'
 
 on:
   workflow_call:
