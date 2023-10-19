@@ -169,8 +169,8 @@ jobs:
 
           }
           EOF
-          echo "main.tf file:"
-          `cat ${UPGRADE_EXAMPLE_DIR/main.tf}`
+          file_contents=$(cat "${UPGRADE_EXAMPLE_DIR/main.tf}")
+          echo "main.tf file contents: ${file_contents}"
 
         #### Cleanup
 
