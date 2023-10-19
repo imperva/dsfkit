@@ -121,12 +121,10 @@ jobs:
       - name: Prepare upgrade input
         run: |
           set -x
-          cat << EOF > ./examples/sonar_upgrade/main.tf
+          cat << EOF > $UPGRADE_EXAMPLE_DIR/main2.tf
           module "sonar_upgrader" {
           }
           EOF
-          file_contents=$(cat "${UPGRADE_EXAMPLE_DIR/main.tf}")
-          echo "main.tf file contents: ${file_contents}"
 
         #### Cleanup
 
