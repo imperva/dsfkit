@@ -28,7 +28,7 @@ on:
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  TF_VAR_gw_count: 2
+  TF_VAR_agentless_gw_count: 1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -216,11 +216,9 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
-          dsfkit_version_line = $(grep "# latest release tag" $UPGRADE_EXAMPLE_DIR/main.tf)
-          cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
-            "${dsfkit_version_line}"
+            source  = "../../modules/aws/sonar-upgrader"
 
             agentless_gws = [
               {
