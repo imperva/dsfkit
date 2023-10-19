@@ -1,4 +1,4 @@
-name: 'Run Test'
+name: 'Sonar Upgrade'
 
 on:
   workflow_call:
@@ -216,7 +216,8 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
-          cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
+          set -x
+          cat > $UPGRADE_EXAMPLE_DIR/main.tf << EOF
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
             source  = "../../modules/aws/sonar-upgrader"
@@ -267,8 +268,7 @@ jobs:
 
           }
           EOF
-          echo "main.tf file:"
-          cat $UPGRADE_EXAMPLE_DIR/main.tf
+          cat ${UPGRADE_EXAMPLE_DIR}/main.tf
 
         # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init for upgrade

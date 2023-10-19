@@ -28,7 +28,7 @@ on:
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
-  TF_VAR_gw_count: 2
+  TF_VAR_agentless_gw_count: 1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -104,6 +104,32 @@ jobs:
           echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
         if: github.ref != 'refs/heads/"master"'
 
+      - name: Create terraform backend file for the deployment
+        run: |
+          cat << EOF > $DEPLOYMENT_EXAMPLE_DIR/backend.tf
+          terraform {
+            backend "s3" {
+              bucket         = "terraform-state-bucket-dsfkit-github-tests"
+              key            = "states/terraform_deployment.tfstate"
+              dynamodb_table = "terraform-state-lock"
+              region         = "us-east-1"
+            }
+          }
+          EOF
+
+      - name: Create terraform backend file for the upgrade
+        run: |
+          cat << EOF > $UPGRADE_EXAMPLE_DIR/backend.tf
+          terraform {
+            backend "s3" {
+              bucket         = "terraform-state-bucket-dsfkit-github-tests"
+              key            = "states/terraform_upgrade.tfstate"
+              dynamodb_table = "terraform-state-lock"
+              region         = "us-east-1"
+            }
+          }
+          EOF
+
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -116,15 +142,81 @@ jobs:
 
       #### Deployment
 
+      - name: Create License File
+        env:
+          MY_SECRET: ${{ secrets.DAM_LICENSE }}
+        run: |
+          echo "${{ secrets.DAM_LICENSE }}" | base64 -d > $DEPLOYMENT_EXAMPLE_DIR/license.mprv
+          cat $DEPLOYMENT_EXAMPLE_DIR/license.mprv
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init for deployment
+        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR init
+        env:
+          TF_WORKSPACE: default
+
+      - name: Cleaning environment for deployment
+        run: |
+          if [ ${{ github.event_name }} == 'schedule' ]; then
+            mv $DEPLOYMENT_EXAMPLE_DIR/main.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/outputs.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/dam.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/dra.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/sonar.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/networking.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/agentless_sources.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/agent_sources.tf{,_}
+            terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+            mv $DEPLOYMENT_EXAMPLE_DIR/main.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/outputs.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/dam.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/dra.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/sonar.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/networking.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/agentless_sources.tf{_,}
+            mv $DEPLOYMENT_EXAMPLE_DIR/agent_sources.tf{_,}
+          fi
+
+      - name: Terraform Validate for deployment
+        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR validate
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan for deployment
+        run: |
+          terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR workspace list
+          terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR plan -var dam_license=license.mprv
+
+        # On push to "main", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      - name: Terraform Apply for deployment
+        id: apply_deployment
+        # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve
+
+      - name: Terraform Output for deployment
+        if: always()
+        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json
+
+      - name: Set Environment Variables to pass info from deployment to upgrade
+        run: |
+          echo hub_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.hub_main.public_ip') >> $GITHUB_ENV
+          echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[0].private_ip') >> $GITHUB_ENV
+          echo agentless_gw_1_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[1].private_ip') >> $GITHUB_ENV
+          echo dsf_ssh_key_file_name=$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+
+      - name: Collect Artifacts for deployment
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: collected-keys
+          path: |
+            ${{ env.DEPLOYMENT_EXAMPLE_DIR }}/ssh_keys
+
       #### Upgrade
 
       - name: Prepare upgrade input
         run: |
           set -x
-          hub_ip="5.5.5.5"
-          agentless_gw_0_ip="1.1.1.1"
-          agentless_gw_1_ip="1.1.1.2"
-          dsf_ssh_key_file_name="my_file"
           cat > $UPGRADE_EXAMPLE_DIR/main.tf << EOF
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
@@ -178,7 +270,51 @@ jobs:
           EOF
           cat ${UPGRADE_EXAMPLE_DIR}/main.tf
 
+        # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init for upgrade
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR init
+
+      - name: Cleaning environment for upgrade
+        run: |
+          if [ ${{ github.event_name }} == 'schedule' ]; then
+            mv $UPGRADE_EXAMPLE_DIR/main.tf{,_}
+            terraform -chdir=$UPGRADE_EXAMPLE_DIR destroy -auto-approve
+            mv $UPGRADE_EXAMPLE_DIR/main.tf{_,}
+          fi
+
+      - name: Terraform Validate for upgrade
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR validate
+
+      - name: Terraform Plan for upgrade
+        run: |
+          terraform -chdir=$UPGRADE_EXAMPLE_DIR workspace list
+          terraform -chdir=$UPGRADE_EXAMPLE_DIR plan
+
+      - name: Terraform Apply for upgrade
+        id: apply_upgrade
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR apply -auto-approve
+
+      - name: Terraform Output for upgrade
+        if: always()
+        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json
+
         #### Cleanup
+
+      - name: Terraform Destroy for deployment
+        id: destroy_deployment
+        if: always()
+        run: |
+          if [ '${{ steps.apply_deployment.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
+            terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+          fi
+
+      - name: Terraform Destroy for upgrade
+        id: destroy_upgrade
+        if: always()
+        run: |
+          if [ '${{ steps.apply_upgrade.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
+            terraform -chdir=$UPGRADE_EXAMPLE_DIR destroy -auto-approve
+          fi
 
       - name: Terraform Delete Workspace
         if: always()
@@ -189,3 +325,24 @@ jobs:
         env:
           TF_WORKSPACE: default
 
+      - name: Check how was the workflow run
+        id: check-trigger
+        if: ${{ failure() }}
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "run-by=Automation" >> $GITHUB_OUTPUT
+          else
+            echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+          fi
+
+        # Send job failure to Slack
+      - name: Send Slack When Failure
+        run: |
+          if [ ${{ env.REF }} == 'master' ]; then
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          elif [ ${{ env.REF }} == 'dev' ]; then
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          else
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+        if: ${{ failure() }}
