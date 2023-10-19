@@ -125,6 +125,7 @@ jobs:
           module "sonar_upgrader" {
           }
           EOF
+          cat ${UPGRADE_EXAMPLE_DIR}/main2.tf
 
         #### Cleanup
 
