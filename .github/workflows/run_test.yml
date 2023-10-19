@@ -121,8 +121,59 @@ jobs:
       - name: Prepare upgrade input
         run: |
           set -x
+          hub_ip="5.5.5.5"
+          agentless_gw_0_ip="1.1.1.1"
+          agentless_gw_1_ip="1.1.1.2"
+          dsf_ssh_key_file_name="my_file"
           cat > $UPGRADE_EXAMPLE_DIR/main.tf << EOF
           module "sonar_upgrader" {
+            source  = "imperva/dsf-sonar-upgrader/aws"
+            source  = "../../modules/aws/sonar-upgrader"
+
+            agentless_gws = [
+              {
+                "main" = {
+                  "host"                      = "${agentless_gw_0_ip}"
+                  "ssh_user"                  = "ec2-user"
+                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
+                  "proxy"                     = {
+                    "host"                      = "${hub_ip}"
+                    "ssh_user"                  = "ec2-user"
+                    "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
+                  }
+                }
+              },
+              {
+                "main" = {
+                  "host"                      = "${agentless_gw_1_ip}"
+                  "ssh_user"                  = "ec2-user"
+                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
+                  "proxy"                     = {
+                    "host"                      = "${hub_ip}"
+                    "ssh_user"                  = "ec2-user"
+                    "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
+                  }
+                }
+              }
+            ]
+            dsf_hubs = [
+              {
+                "main" = {
+                  "host"                      = "${hub_ip}"
+                  "ssh_user"                  = "ec2-user"
+                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
+                }
+              }
+            ]
+
+            target_version = "${SONAR_TARGET_VERSION}"
+
+            test_connection            = true
+            run_preflight_validations  = true
+            run_upgrade                = true
+            run_postflight_validations = true
+            stop_on_failure            = true
+
           }
           EOF
           cat ${UPGRADE_EXAMPLE_DIR}/main.tf
