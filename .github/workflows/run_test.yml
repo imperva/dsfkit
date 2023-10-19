@@ -147,6 +147,7 @@ jobs:
       - name: Prepare upgrade input
         run: |
           dsfkit_version_line=$(grep "# latest release tag" $UPGRADE_EXAMPLE_DIR/main.tf)
+          cat "The grepped line: ${dsfkit_version_line}"
           cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
@@ -202,14 +203,6 @@ jobs:
           cat $UPGRADE_EXAMPLE_DIR/main.tf
 
         #### Cleanup
-
-      - name: Terraform Destroy for deployment
-        id: destroy_deployment
-        if: always()
-        run: |
-          if [ '${{ steps.apply_deployment.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
-            terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
-          fi
 
       - name: Terraform Delete Workspace
         if: always()
