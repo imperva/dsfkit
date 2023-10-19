@@ -120,6 +120,7 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
+          cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "../../modules/aws/sonar-upgrader"
 

@@ -216,6 +216,7 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
+          cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
             source  = "imperva/dsf-sonar-upgrader/aws"
             source  = "../../modules/aws/sonar-upgrader"
