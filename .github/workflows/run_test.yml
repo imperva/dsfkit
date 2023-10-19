@@ -123,48 +123,6 @@ jobs:
           set -x
           cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
           module "sonar_upgrader" {
-            source  = "../../modules/aws/sonar-upgrader"
-            agentless_gws = [
-              {
-                "main" = {
-                  "host"                      = "${agentless_gw_0_ip}"
-                  "ssh_user"                  = "ec2-user"
-                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  "proxy"                     = {
-                    "host"                      = "${hub_ip}"
-                    "ssh_user"                  = "ec2-user"
-                    "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  }
-                }
-              },
-              {
-                "main" = {
-                  "host"                      = "${agentless_gw_1_ip}"
-                  "ssh_user"                  = "ec2-user"
-                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  "proxy"                     = {
-                    "host"                      = "${hub_ip}"
-                    "ssh_user"                  = "ec2-user"
-                    "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  }
-                }
-              }
-            ]
-            dsf_hubs = [
-              {
-                "main" = {
-                  "host"                      = "${hub_ip}"
-                  "ssh_user"                  = "ec2-user"
-                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                }
-              }
-            ]
-            target_version = "${SONAR_TARGET_VERSION}"
-            test_connection            = true
-            run_preflight_validations  = true
-            run_upgrade                = true
-            run_postflight_validations = true
-            stop_on_failure            = true
           }
           EOF
           file_contents=$(cat "${UPGRADE_EXAMPLE_DIR/main.tf}")
