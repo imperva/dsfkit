@@ -120,6 +120,8 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
+          echo "Main file:"
+          cat ${UPGRADE_EXAMPLE_DIR}/main.tf
           dsfkit_version_line=$(grep -m 1 "# latest release tag" ${UPGRADE_EXAMPLE_DIR}/main.tf)
           echo "The grepped line: $dsfkit_version_line"
 
