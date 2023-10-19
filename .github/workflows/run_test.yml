@@ -170,7 +170,7 @@ jobs:
           }
           EOF
           echo "main.tf file:"
-          echo "${UPGRADE_EXAMPLE_DIR/main.tf}"
+          `cat ${UPGRADE_EXAMPLE_DIR/main.tf}`
 
         #### Cleanup
 
