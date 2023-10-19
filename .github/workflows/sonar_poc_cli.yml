@@ -95,7 +95,6 @@ jobs:
             example_dir: ./examples/azure/dsf_deployment
             hub_output: '.dsf_hubs.value.main.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'
-	    
 
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
