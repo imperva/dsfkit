@@ -150,6 +150,7 @@ jobs:
     - name: Create terraform.tfvars file
       run: |
         cat << EOF > $EXAMPLE_DIR/terraform.tfvars
+        resource_group_location = "East US"
         tarball_location = {
           az_resource_group = "eytan-resource-group"
           az_storage_account = "eytanstorageaccount"
