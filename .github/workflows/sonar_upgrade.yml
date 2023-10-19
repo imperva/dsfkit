@@ -48,7 +48,7 @@ jobs:
             enable_dra: false
             hub_hadr: false
             agentless_gw_hadr: false
-            simulation_db_types_for_agentless: []
+            simulation_db_types_for_agentless: "[]"
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
