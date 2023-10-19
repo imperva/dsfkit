@@ -121,7 +121,7 @@ jobs:
       - name: Prepare upgrade input
         run: |
           set -x
-          cat << EOF > $UPGRADE_EXAMPLE_DIR/main.tf
+          cat << EOF > ./examples/sonar_upgrade/main.tf
           module "sonar_upgrader" {
           }
           EOF
