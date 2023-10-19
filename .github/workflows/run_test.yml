@@ -48,6 +48,7 @@ jobs:
             enable_dra: false
             hub_hadr: false
             agentless_gw_hadr: false
+            simulation_db_types_for_agentless: []
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -62,6 +63,7 @@ jobs:
       TF_VAR_sonar_version: 4.11.0.0
       TF_VAR_hub_hadr: ${{ matrix.hub_hadr }}
       TF_VAR_agentless_gw_hadr: ${{ matrix.agentless_gw_hadr }}
+      TF_VAR_simulation_db_types_for_agentless: ${{ matrix.simulation_db_types_for_agentless }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -219,7 +221,6 @@ jobs:
           set -x
           cat > $UPGRADE_EXAMPLE_DIR/main.tf << EOF
           module "sonar_upgrader" {
-            source  = "imperva/dsf-sonar-upgrader/aws"
             source  = "../../modules/aws/sonar-upgrader"
 
             agentless_gws = [
