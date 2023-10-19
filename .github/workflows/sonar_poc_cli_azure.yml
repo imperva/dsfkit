@@ -1,0 +1,236 @@
+name: 'Sonar POC CLI'
+
+on:
+  workflow_call:
+    inputs:
+      use_modules_from_terraform_registry:
+        required: true
+        type: boolean
+      explicit_ref:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
+
+  push:
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - 'modules/aws/core/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/poc-db-onboarder/*'
+      - 'modules/aws/rds-mssql-db/*'
+      - 'modules/aws/rds-mysql-db/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/poc/sonar_basic_deployment/*'
+      - 'examples/poc/sonar_hadr_deployment/*'
+      - 'examples/azure/dsf_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - 'modules/aws/core/*'
+      - 'modules/aws/sonar-base-instance/*'
+      - 'modules/aws/hub/*'
+      - 'modules/aws/agentless-gw/*'
+      - 'modules/aws/poc-db-onboarder/*'
+      - 'modules/aws/rds-mssql-db/*'
+      - 'modules/aws/rds-mysql-db/*'
+      - 'modules/null/federation/*'
+      - 'modules/null/hadr/*'
+      - 'examples/poc/sonar_basic_deployment/*'
+      - 'examples/poc/sonar_hadr_deployment/*'
+      - 'examples/azure/dsf_deployment/*'
+
+env:
+  TF_CLI_ARGS: "-no-color"
+  TF_INPUT: 0
+  TF_VAR_gw_count: 1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  permissions:
+  contents: read
+
+jobs:
+  terraform:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          #   example_dir: ./examples/poc/sonar_basic_deployment
+          #   aws_region: eu-west-2
+          #   hub_output: '.dsf_hub.value.public_dns'
+          #   gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
+          - workspace: azure_cli-${{ github.run_number }}-${{ github.run_attempt }}
+            example_dir: ./examples/azure/dsf_deployment
+            # aws_region: eu-west-1
+            hub_output: '.dsf_hubs.value.main.public_dns'
+            gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'
+
+    name: 'Terraform ${{ matrix.workspace }}'
+    runs-on: ubuntu-latest
+    env:
+      EXAMPLE_DIR: ${{ matrix.example_dir }}
+      TF_WORKSPACE: ${{ matrix.workspace }}
+      # AWS_REGION: ${{ matrix.aws_region }}
+      HUB_OUTPUT: ${{ matrix.hub_output }}
+      GW_OUTPUT: ${{ matrix.gw_output }}
+    environment: test
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Pick ref
+      run: |
+        if [ -z "${{ inputs.explicit_ref }}" ]; then
+          echo REF=${{ github.ref }} >> $GITHUB_ENV;
+        else
+          echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+        fi
+
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ env.REF }}
+
+    - name: Change the modules source to local
+      if: ${{ inputs.use_modules_from_terraform_registry == false }}
+      run: | 
+        find $EXAMPLE_DIR -type f -exec sed -i -f sed.expr {} \;
+
+    - name: Sets env vars for environment
+      run: |
+        echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
+      if: github.ref != 'refs/heads/"master"'
+
+    - name: Create terraform backend file
+      run: |
+        cat << EOF > $EXAMPLE_DIR/backend.tf
+        terraform {
+          backend "s3" {
+            bucket         = "terraform-state-bucket-dsfkit-github-tests"
+            key            = "states/terraform.tfstate"
+            dynamodb_table = "terraform-state-lock"
+            region         = "us-east-1"
+          }
+        }
+        EOF
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_wrapper: false
+        terraform_version: ~1.6.0
+
+    - name: Setup jq
+      uses: sergeysova/jq-action@v2
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir=$EXAMPLE_DIR init
+      env:
+        TF_WORKSPACE: default
+
+    - name: Terraform Create Workspace
+      run: terraform -chdir=$EXAMPLE_DIR workspace new ${{ matrix.workspace }}
+        
+    - name: Terraform Validate
+      run: terraform -chdir=$EXAMPLE_DIR validate
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: |
+        terraform -chdir=$EXAMPLE_DIR workspace list
+        terraform -chdir=$EXAMPLE_DIR plan
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+
+    - name: Terraform Output
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR output -json
+
+    - name: Collect Artifacts
+      if: always()
+      uses: actions/upload-artifact@v2
+      with:
+        name: collected-keys
+        path: |
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
+
+    - name: Set Environment Variables
+      run: |
+        echo hub_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $HUB_OUTPUT) >> $GITHUB_ENV
+        echo agentless_gw_ip=$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r $GW_OUTPUT) >> $GITHUB_ENV
+        echo dsf_ssh_key_file_name=$EXAMPLE_DIR/$(terraform -chdir=$EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+
+    # Test the ssh connectivity to the Hub and GW, it checks both of them because the connection to the GW is allowed from the Hub only via proxy
+    - name: Check SSH Connectivity
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        proxy_host: ${{ env.hub_ip }}
+        proxy_username: ec2-user
+        proxy_key_path: ${{ env.dsf_ssh_key_file_name }}
+        proxy_port: 22
+        host: ${{ env.agentless_gw_ip }}
+        username: ec2-user
+        key_path: ${{ env.dsf_ssh_key_file_name }}
+        port: 22
+        script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    - name: Terraform Destroy
+      id: destroy
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
+
+    - name: Terraform Delete Workspace
+      if: always()
+      run: |
+        if [ '${{ steps.destroy.conclusion }}' == 'success' ]
+        then 
+        terraform -chdir=$EXAMPLE_DIR workspace delete ${{ matrix.workspace }}
+        fi
+      env:
+        TF_WORKSPACE: default
+
+    # Send job failure to Slack
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: author,action,eventName,ref,workflow,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }} 
