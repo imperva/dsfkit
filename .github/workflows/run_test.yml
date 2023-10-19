@@ -46,6 +46,8 @@ jobs:
             enable_sonar: true
             enable_dam: false
             enable_dra: false
+            hub_hadr: false
+            agentless_gw_hadr: false
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -58,6 +60,8 @@ jobs:
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
       TF_VAR_sonar_version: 4.11.0.0
+      TF_VAR_hub_hadr: ${{ matrix.hub_hadr }}
+      TF_VAR_agentless_gw_hadr: ${{ matrix.agentless_gw_hadr }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
