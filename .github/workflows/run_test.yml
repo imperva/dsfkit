@@ -120,8 +120,8 @@ jobs:
 
       - name: Prepare upgrade input
         run: |
-          dsfkit_version_line=$(grep "# latest release tag" ${UPGRADE_EXAMPLE_DIR}/main.tf)
-          cat "The grepped line: $dsfkit_version_line"
+          dsfkit_version_line=$(grep -m 1 "# latest release tag" ${UPGRADE_EXAMPLE_DIR}/main.tf)
+          echo "The grepped line: $dsfkit_version_line"
 
         #### Cleanup
 
