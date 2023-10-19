@@ -123,7 +123,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   master_dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
     with:
       use_modules_from_terraform_registry: false
       explicit_ref: master
@@ -134,7 +134,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
     with:
       use_modules_from_terraform_registry: false
       explicit_ref: dev
