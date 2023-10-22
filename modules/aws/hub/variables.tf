@@ -283,25 +283,22 @@ variable "mx_details" {
 
 variable "dra_details" {
   description = "List of the DSF DRA to onboard to Sonar Hub"
-  type = list(object({
+  type = object({
     name     = string
     address  = string
     username = string
     password = string
-  }))
-  validation {
-    condition = alltrue([
-      for dra_admin in var.dra_details : try(dra_admin.name != null && dra_admin.address != null, false)
-    ])
-    error_message = "Each DRA Admin must specify name and address"
-  }
-  validation {
-    condition = alltrue([
-      for dra_admin in var.dra_details : try(dra_admin.username != null && dra_admin.password != null, false)
-    ])
-    error_message = "Each DRA Admin must specify username and password"
-  }
-  default = []
+    archiver_password = string
+  })
+#  validation {
+#    condition = length(var.dra_details.name) > 0 && length(var.dra_details.address) > 0
+#    error_message = "Each DRA Admin must specify name and address"
+#  }
+#  validation {
+#    condition = length(var.dra_details.username) > 0 && length(var.dra_details.password) > 0
+#    error_message = "Each DRA Admin must specify username and password"
+#  }
+  default = null
 }
 
 variable "volume_attachment_device_name" {
