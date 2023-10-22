@@ -420,20 +420,28 @@ def run_preflight_validations_for_extended_node(extended_node, target_version, s
         else:
             return False
 
-    upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                 UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS)
-    preflight_validations_result = run_preflight_validations(extended_node.get('dsf_node'),
-                                                             extended_node.get('dsf_node_name'), target_version,
-                                                             script_file_name, python_location)
-    if are_preflight_validations_passed(preflight_validations_result):
-        print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
+    error_message = None
+    try:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED)
-    else:
-        print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+                                                     UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS)
+        preflight_validations_result = run_preflight_validations(extended_node.get('dsf_node'),
+                                                                 extended_node.get('dsf_node_name'), target_version,
+                                                                 script_file_name, python_location)
+        if are_preflight_validations_passed(preflight_validations_result):
+            print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
+            upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                         UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED)
+        else:
+            print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+            error_message = preflight_validations_result
+    except Exception as ex:
+        print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        error_message = str(ex)
+
+    if error_message is not None:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED,
-                                                     preflight_validations_result)
+                                                     error_message)
         if stop_on_failure:
             raise UpgradeException(f"Preflight validations didn't pass for {extended_node.get('dsf_node_id')}")
         else:
@@ -634,21 +642,33 @@ def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, st
     print(f"Running upgrade for {extended_node.get('dsf_node_name')}")
     print(f"You may follow the upgrade process in the DSF node by running SSH to it and looking at "
           f"/var/log/upgrade.log. When the DSF node's upgrade will complete, this log will also appear here.")
-    upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                 UpgradeStatus.RUNNING_UPGRADE)
-    success, script_output = run_upgrade_script(extended_node.get('dsf_node'), target_version, tarball_location,
-                                                upgrade_script_file_name)
-    if success:
-        print(f"Upgrading {extended_node.get('dsf_node_name')} was ### successful ###")
+
+    error_message = None
+    try:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.UPGRADE_SUCCEEDED)
-    else:
-        print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### ")
+                                                     UpgradeStatus.RUNNING_UPGRADE)
+        success, script_output = run_upgrade_script(extended_node.get('dsf_node'), target_version, tarball_location,
+                                                    upgrade_script_file_name)
+        if success:
+            print(f"Upgrading {extended_node.get('dsf_node_name')} was ### successful ###")
+            upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                         UpgradeStatus.UPGRADE_SUCCEEDED)
+        else:
+            print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### ")
+            error_message = script_output
+    except Exception as ex:
+        print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### with exception: {str(ex)}")
+        error_message = str(ex)
+
+    if error_message is not None:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.UPGRADE_FAILED, script_output)
+                                                     UpgradeStatus.UPGRADE_FAILED, error_message)
         if stop_on_failure:
-            raise UpgradeException(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### ")
-    return success
+            raise UpgradeException(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ###")
+        else:
+            return False
+
+    return True
 
 
 def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_script_file_name):
@@ -709,29 +729,40 @@ def run_postflight_validations(extended_node, target_version, script_file_name, 
     print(f"Running postflight validations for {extended_node.get('dsf_node_name')}")
     print(f"Python location (taken from dictionary) in {extended_node.get('dsf_node_name')} is {python_location}")
 
-    upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                 UpgradeStatus.RUNNING_POSTFLIGHT_VALIDATIONS)
-    postflight_validations_result_json = run_postflight_validations_script(extended_node.get('dsf_node'),
-                                                                           target_version, python_location,
-                                                                           script_file_name)
-    postflight_validations_result = json.loads(postflight_validations_result_json)
-    print(f"Postflight validations result in {extended_node.get('dsf_node_name')} is {postflight_validations_result}")
+    error_message = None
+    try:
+        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                     UpgradeStatus.RUNNING_POSTFLIGHT_VALIDATIONS)
+        postflight_validations_result_json = run_postflight_validations_script(extended_node.get('dsf_node'),
+                                                                               target_version, python_location,
+                                                                               script_file_name)
+        postflight_validations_result = json.loads(postflight_validations_result_json)
+        print(f"Postflight validations result in {extended_node.get('dsf_node_name')} is {postflight_validations_result}")
 
-    passed = are_postflight_validations_passed(postflight_validations_result)
-    if passed:
-        print(f"### Postflight validations passed for {extended_node.get('dsf_node_name')}")
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.POSTFLIGHT_VALIDATIONS_SUCCEEDED)
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.SUCCEEDED)
-    else:
-        print(f"### Postflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+        passed = are_postflight_validations_passed(postflight_validations_result)
+        if passed:
+            print(f"### Postflight validations passed for {extended_node.get('dsf_node_name')}")
+            upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                         UpgradeStatus.POSTFLIGHT_VALIDATIONS_SUCCEEDED)
+            upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                         UpgradeStatus.SUCCEEDED)
+        else:
+            print(f"### Postflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+            error_message = postflight_validations_result
+    except Exception as ex:
+        print(f"### Postflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        error_message = str(ex)
+
+    if error_message is not None:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.POSTFLIGHT_VALIDATIONS_FAILED,
-                                                     postflight_validations_result)
+                                                     error_message)
         if stop_on_failure:
             raise UpgradeException(f"Postflight validations didn't pass for {extended_node.get('dsf_node_id')}")
-    return passed
+        else:
+            return False
+
+    return True
 
 
 def run_postflight_validations_script(dsf_node, target_version, python_location, script_file_name):
