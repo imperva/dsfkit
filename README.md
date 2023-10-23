@@ -100,7 +100,7 @@ This guide references the following information and links, some of which are ava
    </tr>
   <tr>
    <td>
-   <a href="https://docs.imperva.com/howto/ee19c683">Sonar v4.12</a>
+   <a href="https://docs.imperva.com/howto/115c754e">Sonar v4.13</a>
 
    <a href="https://docs.imperva.com/howto/3f513830">DAM v14.13</a>
 
