@@ -49,16 +49,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: POC - DSF
-            example: ./examples/poc/dsf_deployment
-          - name: POC - Sonar Basic
-            example: ./examples/poc/sonar_basic_deployment
-          - name: POC - Sonar HADR
-            example: ./examples/poc/sonar_hadr_deployment
-          - name: Installation - Sonar Single Account
-            example: ./examples/installation/sonar_single_account_deployment
-          - name: Installation - Sonar Multi Account
-            example: ./examples/installation/sonar_multi_account_deployment
+          - name: Azure - POC - DSF
+            example: ./examples/azure/dsf_deployment
+            terraformvars: |
+              resource_group_location = "East US"
+              tarball_location = {
+                az_resource_group = "dummy-resource-group"
+                az_storage_account = "dummy-torage-account"
+                az_container = "dummy-container"
+                az_blob = "dummy-blob"
+              }
+          # - name: AWS - POC - DSF
+          #   example: ./examples/poc/dsf_deployment
+          #   terraformvars:
+          # - name: AWS - POC - Sonar Basic
+          #   example: ./examples/poc/sonar_basic_deployment
+          #   terraformvars:
+          # - name: AWS - POC - Sonar HADR
+          #   example: ./examples/poc/sonar_hadr_deployment
+          #   terraformvars:
+          # - name: AWS - Installation - Sonar Single Account
+          #   example: ./examples/installation/sonar_single_account_deployment
+          #   terraformvars:
+          # - name: AWS - Installation - Sonar Multi Account
+          #   example: ./examples/installation/sonar_multi_account_deployment
+          #   terraformvars:
 
     name: '${{ matrix.name }}'
     env:
@@ -93,11 +108,11 @@ jobs:
         with:
           terraform_version: ~1.6.0
 
-      - name: Create License File
-        env:
-          MY_SECRET: ${{ secrets.DAM_LICENSE }}
-        run: |
-          echo "${{ secrets.DAM_LICENSE }}" | base64 -d > ${{ matrix.example }}/license.mprv
+      # - name: Create License File
+      #   env:
+      #     MY_SECRET: ${{ secrets.DAM_LICENSE }}
+      #   run: |
+      #     echo "${{ secrets.DAM_LICENSE }}" | base64 -d > ${{ matrix.example }}/license.mprv
               
       - name: Configure AWS credentials - innodev
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
@@ -119,11 +134,11 @@ jobs:
       - name: Create tfvars File
         if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: |
-          if [ "${{ matrix.name }}" == "Installation - Sonar Single Account" ]; then 
+          if [ "${{ matrix.name }}" == "AWS - Installation - Sonar Single Account" ]; then 
             cat << EOF > "${{ matrix.example }}/terraform.tfvars"
             ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
           EOF
-          elif [ "${{ matrix.name }}" == "Installation - Sonar Multi Account" ]; then
+          elif [ "${{ matrix.name }}" == "AWS - Installation - Sonar Multi Account" ]; then
             cat << EOF > "${{ matrix.example }}/terraform.tfvars"
             ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
           EOF
@@ -131,7 +146,7 @@ jobs:
       
       - name: Create tfvars file
         run: |
-          echo 'dam_license="license.mprv"' >> "${{ matrix.example }}/terraform.tfvars"
+          echo '${{ matrix.terraformvars }}' >> "${{ matrix.example }}/terraform.tfvars"
 
       - name: View The Vars
         run: cat ${{ matrix.example }}/terraform.tfvars
