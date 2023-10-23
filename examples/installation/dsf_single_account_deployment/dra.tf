@@ -23,6 +23,7 @@ module "dra_admin" {
   key_pair                    = local.dra_admin_public_key_name
   instance_profile_name       = var.dra_admin_instance_profile_name
   tags                        = local.tags
+  send_usage_statistics = var.send_usage_statistics
 }
 
 module "dra_analytics" {
@@ -46,6 +47,7 @@ module "dra_analytics" {
   admin_server_private_ip      = module.dra_admin[0].private_ip
   admin_server_public_ip       = module.dra_admin[0].public_ip
   tags                         = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }

@@ -620,3 +620,9 @@ variable "dra_analytics_instance_profile_name" {
   description = "Instance profile to assign to the DRA Analytics EC2. Keep empty if you wish to create a new instance profile."
   default     = null
 }
+
+variable "send_usage_statistics" {
+  type    = bool
+  default = true
+  description = "Set to true to enable sending usage statistics, or false to disable."
+}

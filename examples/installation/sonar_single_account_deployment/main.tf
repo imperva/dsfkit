@@ -100,6 +100,7 @@ module "hub_main" {
   instance_profile_name             = var.hub_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
 }
 
 module "hub_dr" {
@@ -133,6 +134,7 @@ module "hub_dr" {
   instance_profile_name             = var.hub_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
 }
 
 module "agentless_gw" {
@@ -167,6 +169,7 @@ module "agentless_gw" {
   instance_profile_name             = var.gw_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
 }
 
 module "hub_hadr" {
