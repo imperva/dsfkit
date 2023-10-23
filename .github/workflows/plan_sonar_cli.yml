@@ -137,9 +137,18 @@ jobs:
         run: |
           echo '${{ matrix.terraformvars }}' >> "${{ matrix.example }}/terraform.tfvars"
 
-          
-
-          
+      - name: Create tfvars File (2)
+        if: contains(matrix.name, 'AWS - Installation')
+        run: |
+          if [ "${{ matrix.name }}" == "AWS - Installation - Sonar Single Account" ]; then 
+            cat << EOF > "${{ matrix.example }}/terraform.tfvars"
+            ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
+          EOF
+          elif [ "${{ matrix.name }}" == "AWS - Installation - Sonar Multi Account" ]; then
+            cat << EOF > "${{ matrix.example }}/terraform.tfvars"
+            ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
+          EOF
+          fi
 
       - name: View The Vars
         run: cat ${{ matrix.example }}/terraform.tfvars
