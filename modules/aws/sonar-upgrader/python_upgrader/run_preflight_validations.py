@@ -23,7 +23,9 @@ def try_validate():
         return validate()
     except Exception as ex:
         print(f"Preflight validations failed with exception: {str(ex)}")
-        return {}
+        return {
+            "error": str(ex)
+        }
 
 
 def validate():
