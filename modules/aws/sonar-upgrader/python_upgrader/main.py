@@ -569,6 +569,7 @@ def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_versio
                                           postflight_validations_script_file_name, clean_old_deployments,
                                           clean_old_deployments_script_file_name, python_location_dict,
                                           stop_on_failure, tarball_location, upgrade_status_service):
+    print(f"Checking if running upgrade and/or postflight validations is required for {dsf_node_type} set")
     if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), dsf_node_type, 'Minor', target_version,
                                              upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                              postflight_validations_script_file_name, clean_old_deployments,
