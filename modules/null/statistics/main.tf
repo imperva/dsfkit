@@ -7,7 +7,7 @@ locals {
 
   id = var.id == null ? random_uuid.stats_id.result : var.id
 
-  enable_statistics = false
+  enable_statistics = true
 }
 
 resource "random_uuid" "stats_id" {
