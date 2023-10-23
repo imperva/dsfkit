@@ -93,6 +93,12 @@ jobs:
         with:
           terraform_version: ~1.6.0
 
+      - name: Create License File
+        env:
+          MY_SECRET: ${{ secrets.DAM_LICENSE }}
+        run: |
+          echo "${{ secrets.DAM_LICENSE }}" | base64 -d > ${{ matrix.example }}/license.mprv
+              
       - name: Configure AWS credentials - innodev
         if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
         run: |
@@ -141,6 +147,6 @@ jobs:
         continue-on-error: true
 
       # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        run: terraform -chdir=${{ matrix.example }} plan
+      - name: Terraform Plan 
+        run: terraform -chdir=${{ matrix.example }} plan -var dam_license=license.mprv
 
