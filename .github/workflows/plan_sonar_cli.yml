@@ -71,12 +71,10 @@ jobs:
             terraformvars:
           - name: AWS - Installation - Sonar Single Account
             example: ./examples/installation/sonar_single_account_deployment
-            terraformvars: |
-              ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
+            terraformvars: ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
           - name: AWS - Installation - Sonar Multi Account
             example: ./examples/installation/sonar_multi_account_deployment
-            terraformvars: |
-              ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
+            terraformvars: ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
 
     name: '${{ matrix.name }}'
     env:
