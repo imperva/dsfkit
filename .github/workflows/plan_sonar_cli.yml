@@ -49,13 +49,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Sonar Basic
+          - name: POC - DSF
+            example: ./examples/poc/dsf_deployment
+          - name: POC - Sonar Basic
             example: ./examples/poc/sonar_basic_deployment
-          - name: Sonar HADR
+          - name: POC - Sonar HADR
             example: ./examples/poc/sonar_hadr_deployment
-          - name: Sonar Single Account
+          - name: Installation - Sonar Single Account
             example: ./examples/installation/sonar_single_account_deployment
-          - name: Sonar Multi Account
+          - name: Installation - Sonar Multi Account
             example: ./examples/installation/sonar_multi_account_deployment
 
     name: '${{ matrix.name }}'
