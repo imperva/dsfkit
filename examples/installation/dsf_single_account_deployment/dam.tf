@@ -33,6 +33,7 @@ module "mx" {
   } : null
   large_scale_mode = var.large_scale_mode.mx
   tags             = local.tags
+  send_usage_statistics = var.send_usage_statistics
 }
 
 module "agent_gw" {
@@ -59,6 +60,7 @@ module "agent_gw" {
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }

@@ -57,6 +57,8 @@ resource "aws_network_interface" "eni" {
 
 module "statistics" {
   source          = "../../../modules/aws/statistics"
+  count = var.send_usage_statistics ? 1 : 0
+
   deployment_name = var.friendly_name
   product         = "DRA"
   resource_type   = "dra-analytics"
@@ -76,8 +78,9 @@ resource "null_resource" "readiness" {
 
 module "statistics_success" {
   source = "../../../modules/aws/statistics"
+  count = var.send_usage_statistics ? 1 : 0
 
-  id         = module.statistics.id
+  id         = module.statistics[0].id
   status     = "success"
   depends_on = [null_resource.readiness]
 }

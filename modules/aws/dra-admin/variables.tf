@@ -188,3 +188,9 @@ variable "instance_profile_name" {
   default     = null
   description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
 }
+
+variable "send_usage_statistics" {
+  type    = bool
+  default = true
+  description = "Set to true to send usage statistics."
+}
