@@ -119,19 +119,22 @@ jobs:
       - name: Create tfvars File
         if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: |
-          if [ "${{ matrix.name }}" == "Sonar Single Account" ]; then 
+          if [ "${{ matrix.name }}" == "Installation - Sonar Single Account" ]; then 
             cat << EOF > "${{ matrix.example }}/terraform.tfvars"
             ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
           EOF
-          elif [ "${{ matrix.name }}" == "Sonar Multi Account" ]; then
+          elif [ "${{ matrix.name }}" == "Installation - Sonar Multi Account" ]; then
             cat << EOF > "${{ matrix.example }}/terraform.tfvars"
             ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
           EOF
           fi
-
+      
+      - name: Create tfvars File
+        run: |
+          echo 'dam_license=license.mprv' >> "${{ matrix.example }}/terraform.tfvars"
 
       - name: View The Vars
-        if: contains(matrix.name, 'single account') || contains(matrix.name, 'multi account')
+        if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: cat ${{ matrix.example }}/terraform.tfvars
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
@@ -148,5 +151,5 @@ jobs:
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan 
-        run: terraform -chdir=${{ matrix.example }} plan -var dam_license=license.mprv
+        run: terraform -chdir=${{ matrix.example }} plan
 
