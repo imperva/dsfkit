@@ -176,6 +176,6 @@ jobs:
         continue-on-error: true
 
       # Generates an execution plan for Terraform
-      - name: Terraform Plan 
+      - name: Terraform Plan
         run: terraform -chdir=${{ matrix.example }} plan
 
