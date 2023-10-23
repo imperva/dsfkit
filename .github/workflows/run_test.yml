@@ -286,7 +286,7 @@ jobs:
 
       - name: Terraform Output for upgrade
         if: always()
-        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR output -json
 
         #### Cleanup
 

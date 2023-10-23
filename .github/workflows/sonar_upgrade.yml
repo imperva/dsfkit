@@ -56,7 +56,7 @@ jobs:
       DEPLOYMENT_EXAMPLE_DIR: ./examples/poc/dsf_deployment
       UPGRADE_EXAMPLE_DIR: ./examples/sonar_upgrade
       AWS_REGION: eu-west-2
-      SONAR_TARGET_VERSION: 4.13.0.10
+      SONAR_TARGET_VERSION: 4.13.0.10.0
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
@@ -203,8 +203,7 @@ jobs:
         run: |
           echo hub_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.hub_main.public_ip') >> $GITHUB_ENV
           echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[0].private_ip') >> $GITHUB_ENV
-          echo agentless_gw_1_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[1].private_ip') >> $GITHUB_ENV
-          echo dsf_ssh_key_file_name=../$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+          echo dsf_ssh_key_file_name=../../$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
       - name: Collect Artifacts for deployment
         if: always()
@@ -227,18 +226,6 @@ jobs:
               {
                 "main" = {
                   "host"                      = "${agentless_gw_0_ip}"
-                  "ssh_user"                  = "ec2-user"
-                  "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  "proxy"                     = {
-                    "host"                      = "${hub_ip}"
-                    "ssh_user"                  = "ec2-user"
-                    "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
-                  }
-                }
-              },
-              {
-                "main" = {
-                  "host"                      = "${agentless_gw_1_ip}"
                   "ssh_user"                  = "ec2-user"
                   "ssh_private_key_file_path" = "${dsf_ssh_key_file_name}"
                   "proxy"                     = {
@@ -299,7 +286,7 @@ jobs:
 
       - name: Terraform Output for upgrade
         if: always()
-        run: terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR output -json
 
         #### Cleanup
 
