@@ -202,3 +202,7 @@ variable "generate_access_tokens" {
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
 }
 
+variable "send_usage_statistics" {
+  type    = bool
+  description = "Set to true to send usage statistics."
+}

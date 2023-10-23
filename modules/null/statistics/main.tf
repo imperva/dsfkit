@@ -1,6 +1,6 @@
 locals {
-  host         = "https://hh5n8k57bh.execute-api.us-east-1.amazonaws.com"
-  resource     = "dsfkit_usage_stats"
+  host         = "https://etnoe723me.execute-api.us-east-1.amazonaws.com"
+  resource     = "dsfkit_stats_dev"
   stage        = "dev"
   url          = join("/", [local.host, local.stage, local.resource])
   header_value = base64decode("amxEU0NhRWwyTTc2NkZVWUtVTFhlNUxyRVpBYVR4akhHd0dGYkExYg==")
