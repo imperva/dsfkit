@@ -121,3 +121,25 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+
+  master_dsf_poc_azure:
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
+    with:
+      use_modules_from_terraform_registry: false
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  dev_dsf_poc_azure:
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
+    with:
+      use_modules_from_terraform_registry: false
+      explicit_ref: dev
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

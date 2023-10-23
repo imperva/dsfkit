@@ -58,6 +58,7 @@ module "hub_main" {
   }] : []
   generate_access_tokens = true
   tags                   = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-1
   }
@@ -102,6 +103,7 @@ module "hub_dr" {
   base_directory                    = var.sonar_machine_base_directory
   generate_access_tokens            = true
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-1
   }
@@ -166,6 +168,7 @@ module "agentless_gw_main" {
   instance_profile_name             = var.agentless_gw_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }
@@ -208,6 +211,7 @@ module "agentless_gw_dr" {
   instance_profile_name             = var.agentless_gw_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }

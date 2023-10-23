@@ -94,4 +94,5 @@ module "mx" {
     timeout  = local.timeout
   }
   tags = var.tags
+  send_usage_statistics = var.send_usage_statistics
 }

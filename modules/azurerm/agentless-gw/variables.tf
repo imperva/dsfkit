@@ -223,3 +223,9 @@ variable "sonarw_public_key_content" {
   default     = null
   description = "The Agentless Gateway sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
 }
+
+variable "send_usage_statistics" {
+  type    = bool
+  default = true
+  description = "Set to true to send usage statistics."
+}

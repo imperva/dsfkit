@@ -29,6 +29,8 @@ resource "random_uuid" "jsonar_uuid" {}
 
 module "statistics" {
   source          = "../../../modules/aws/statistics"
+  count = var.send_usage_statistics ? 1 : 0
+
   deployment_name = var.name
   product         = "SONAR"
   resource_type   = var.resource_type
@@ -75,8 +77,9 @@ resource "null_resource" "readiness" {
 
 module "statistics_success" {
   source = "../../../modules/aws/statistics"
+  count = var.send_usage_statistics ? 1 : 0
 
-  id         = module.statistics.id
+  id         = module.statistics[0].id
   status     = "success"
   depends_on = [null_resource.readiness]
 }

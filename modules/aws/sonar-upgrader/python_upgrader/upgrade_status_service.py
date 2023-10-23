@@ -174,7 +174,7 @@ class UpgradeStatusService:
         for host in upgrade_statuses.keys():
             padded_host = "{:<45}".format(host)
             optional_message = upgrade_statuses.get(host).get('message')
-            summary += f"\n    {padded_host}: {upgrade_statuses.get(host).get('status')}"
+            summary += f"\n    {padded_host}: {upgrade_statuses.get(host).get('status').value}"
             if optional_message is not None:
                 summary += f". Message: {optional_message}"
         return summary
