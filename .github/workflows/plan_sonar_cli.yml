@@ -151,7 +151,7 @@ jobs:
           fi
 
       - name: View The Vars
-        run: cat ${{ matrix.example }}/terraform.tfvars
+        run: cat ${{ matrix.example }}/terraform.tfvars || true
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
