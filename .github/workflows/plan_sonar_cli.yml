@@ -71,6 +71,8 @@ jobs:
             example: ./examples/installation/sonar_single_account_deployment
           - name: AWS - Installation - Sonar Multi Account
             example: ./examples/installation/sonar_multi_account_deployment
+          - name: AWS - Installation - DSF Single Account
+            example: ./examples/installation/dsf_single_account_deployment
 
     name: '${{ matrix.name }}'
     env:
@@ -138,18 +140,26 @@ jobs:
           echo '${{ matrix.terraformvars }}' >> "${{ matrix.example }}/terraform.tfvars"
 
       - name: Create tfvars File (2)
-        if: contains(matrix.name, 'AWS - Installation')
+        if: matrix.name == 'AWS - Installation - Sonar Single Account'
         run: |
-          if [ "${{ matrix.name }}" == "AWS - Installation - Sonar Single Account" ]; then 
-            cat << EOF > "${{ matrix.example }}/terraform.tfvars"
-            ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
+          cat << EOF > "${{ matrix.example }}/terraform.tfvars"
+          ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
           EOF
-          elif [ "${{ matrix.name }}" == "AWS - Installation - Sonar Multi Account" ]; then
-            cat << EOF > "${{ matrix.example }}/terraform.tfvars"
-            ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
+        
+      - name: Create tfvars File (3)
+        if: matrix.name == 'AWS - Installation - Sonar Multi Account'
+        run: |
+          cat << EOF > "${{ matrix.example }}/terraform.tfvars"
+          ${{ vars.TFVAR_PARAMETERS_MULTI_ACCOUNT_AUTOMATION_V1 }}
           EOF
-          fi
 
+      - name: Create tfvars File (4)
+        if: matrix.name == 'AWS - Installation - DSF Single Account'
+        run: |
+          cat << EOF > "${{ matrix.example }}/terraform.tfvars"
+          ${{ vars.TFVAR_PARAMETERS_DSF_SINGLE_ACCOUNT_AUTOMATION_PRIVATE_SUBNETS_V1 }}
+          EOF
+        
       - name: View The Vars
         run: cat ${{ matrix.example }}/terraform.tfvars || true
 
