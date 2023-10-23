@@ -274,6 +274,8 @@ jobs:
         # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init for upgrade
         run: terraform -chdir=$UPGRADE_EXAMPLE_DIR init
+        env:
+          TF_WORKSPACE: default
 
       - name: Cleaning environment for upgrade
         run: |
