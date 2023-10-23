@@ -129,12 +129,11 @@ jobs:
           EOF
           fi
       
-      - name: Create tfvars File
+      - name: Create tfvars file
         run: |
-          echo 'dam_license=license.mprv' >> "${{ matrix.example }}/terraform.tfvars"
+          echo 'dam_license="license.mprv"' >> "${{ matrix.example }}/terraform.tfvars"
 
       - name: View The Vars
-        if: contains(matrix.name, 'Single Account') || contains(matrix.name, 'Multi Account')
         run: cat ${{ matrix.example }}/terraform.tfvars
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
