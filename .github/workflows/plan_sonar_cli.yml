@@ -107,7 +107,7 @@ jobs:
       - name: Change the modules source to local
         if: ${{ inputs.use_modules_from_terraform_registry == false }}
         run: |
-          find ${{ matrix.name }} -type f -exec sed -i -f sed.expr {} \;
+          find ${{ matrix.example }} -type f -exec sed -i -f sed.expr {} \;
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
