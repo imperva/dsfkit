@@ -50,12 +50,13 @@ module "hub_main" {
     username = mx.web_console_user
     password = local.password
   }] : []
-  dra_details = var.enable_dra? [for dra_admin in module.dra_admin : {
-    name = dra_admin.display_name
-    address = dra_admin.public_ip
-    username = dra_admin.ssh_user
-    password = local.password
-  }] : []
+  dra_details = var.enable_dra? {
+    name              = module.dra_admin[0].display_name
+    address           = module.dra_admin[0].public_ip
+    username          = module.dra_admin[0].ssh_user
+    password          = local.password
+    archiver_password = module.dra_analytics[0].archiver_password
+  } : null
   generate_access_tokens = true
   tags                   = local.tags
   send_usage_statistics = var.send_usage_statistics
