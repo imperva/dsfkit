@@ -29,7 +29,7 @@ output "sonar" {
       jsonar_uid   = try(module.hub_main[0].jsonar_uid, null)
       display_name = try(module.hub_main[0].display_name, null)
       role_arn     = try(module.hub_main[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_main[0].ssh_user}@${local.hub_main_address}", null)
       tokens       = nonsensitive(module.hub_main[0].access_tokens)
     }
     hub_dr = var.hub_hadr ? {
@@ -40,7 +40,7 @@ output "sonar" {
       jsonar_uid   = try(module.hub_dr[0].jsonar_uid, null)
       display_name = try(module.hub_dr[0].display_name, null)
       role_arn     = try(module.hub_dr[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_dr[0].ssh_user}@${module.hub_dr[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_dr[0].ssh_user}@${local.hub_dr_address}", null)
     } : null
     agentless_gw_main = [
       for idx, val in module.agentless_gw_main :
@@ -50,7 +50,7 @@ output "sonar" {
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${local.hub_main_address}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
     agentless_gw_dr = var.agentless_gw_hadr ? [
@@ -61,7 +61,7 @@ output "sonar" {
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${local.hub_main_address}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []
   } : null
@@ -76,9 +76,9 @@ output "dam" {
       private_dns      = try(module.mx[0].private_dns, null)
       display_name     = try(module.mx[0].display_name, null)
       role_arn         = try(module.mx[0].iam_role, null)
-      ssh_command      = try("ssh -i ${local.private_key_file_path} ${module.mx[0].ssh_user}@${module.mx[0].public_dns}", null)
+      ssh_command      = try("ssh -i ${local.private_key_file_path} ${module.mx[0].ssh_user}@${local.mx_address}", null)
       public_url       = try(join("", ["https://", module.mx[0].public_dns, ":8083/"]), null)
-      private_url      = try(join("", ["https://", module.mx[0].private_dns, ":8083/"]), null)
+      private_url      = join("", ["https://", module.mx[0].private_dns, ":8083/"])
       password         = nonsensitive(local.password)
       user             = module.mx[0].web_console_user
       large_scale_mode = module.mx[0].large_scale_mode
@@ -92,7 +92,7 @@ output "dam" {
         display_name     = try(val.display_name, null)
         role_arn         = try(val.iam_role, null)
         group_id         = try(val.group_id, null)
-        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${local.mx_address}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
         large_scale_mode = val.large_scale_mode
       }
     ]
@@ -108,14 +108,14 @@ output "dra" {
       private_dns  = try(module.dra_admin[0].private_dns, null)
       display_name = try(module.dra_admin[0].display_name, null)
       role_arn     = try(module.dra_admin[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${local.dra_admin_address}", null)
     }
     analytics = [
       for idx, val in module.dra_analytics : {
         private_ip    = val.private_ip
         private_dns   = val.private_dns
         archiver_user = val.archiver_user
-        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${local.dra_admin_address}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
   } : null
@@ -144,21 +144,22 @@ output "web_console_dsf_hub" {
   value = try({
     user        = module.hub_main[0].web_console_user
     password    = nonsensitive(local.password)
-    public_url  = join("", ["https://", module.hub_main[0].public_dns, ":8443/"])
+    public_url  = try(join("", ["https://", module.hub_main[0].public_dns, ":8443/"]), null)
     private_url = join("", ["https://", module.hub_main[0].private_dns, ":8443/"])
   }, null)
 }
 
 output "web_console_dra" {
   value = try({
-    public_url  = join("", ["https://", module.dra_admin[0].public_dns, ":8443/"])
+    public_url  = try(join("", ["https://", module.dra_admin[0].public_dns, ":8443/"]), null)
     private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
+    user        = module.dra_admin[0].web_console_user
   }, null)
 }
 
 output "web_console_dam" {
   value = try({
-    public_url  = join("", ["https://", module.mx[0].public_dns, ":8083/"])
+    public_url  = try(join("", ["https://", module.mx[0].public_dns, ":8083/"]), null)
     private_url = join("", ["https://", module.mx[0].private_dns, ":8083/"])
     password    = nonsensitive(local.password)
     user        = module.mx[0].web_console_user

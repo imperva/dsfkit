@@ -229,7 +229,7 @@ variable "license" {
 
 variable "attach_persistent_public_ip" {
   type        = bool
-  description = "Create and attach elastic public IP for the instance"
+  description = "Create and attach an elastic public IP for the instance"
   default     = false
 }
 

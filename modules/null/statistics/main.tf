@@ -7,7 +7,7 @@ locals {
 
   id = var.id == null ? random_uuid.stats_id.result : var.id
 
-  enable_statistics = false
+  enable_statistics = true
 }
 
 resource "random_uuid" "stats_id" {
@@ -20,7 +20,7 @@ locals {
     "artifact" : var.artifact
     "product" : var.product
     "resource_type" : var.resource_type
-    "account_id" : sha256(var.account_id)
+    "account_id": sha256("accountid:${var.account_id}")
     "platform" : var.platform
     "location" : var.location
     "status" : var.status

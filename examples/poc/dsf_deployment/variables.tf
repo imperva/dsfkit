@@ -326,3 +326,7 @@ variable "dra_analytics_ebs_details" {
     volume_type = "gp3"
   }
 }
+
+variable "public_ip" {
+  default = true
+}

@@ -1,7 +1,8 @@
 locals {
   dra_analytics_count = var.enable_dra ? var.dra_analytics_count : 0
 
-  dra_admin_cidr_list = concat([data.aws_subnet.dra_admin.cidr_block], var.enable_dra ? [format("%s/32", module.dra_admin[0].public_ip)] : [])
+  dra_admin_address           = var.enable_dra ? coalesce(module.dra_admin[0].public_ip, module.dra_admin[0].private_ip) : null
+  dra_admin_cidr_list = concat([data.aws_subnet.dra_admin.cidr_block], var.enable_dra ? [format("%s/32", local.dra_admin_address)] : [])
 }
 
 module "dra_admin" {
@@ -19,6 +20,7 @@ module "dra_admin" {
   allowed_analytics_cidrs     = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs           = local.hub_cidr_list
   allowed_ssh_cidrs           = local.workstation_cidr
+  attach_persistent_public_ip = var.public_ip
   key_pair                    = module.key_pair.key_pair.key_pair_name
   tags                        = local.tags
   depends_on = [
@@ -41,8 +43,9 @@ module "dra_analytics" {
   allowed_ssh_cidrs           = local.hub_cidr_list
   key_pair                    = module.key_pair.key_pair.key_pair_name
   archiver_password           = local.password
-  admin_server_private_ip     = module.dra_admin[0].private_ip
-  admin_server_public_ip      = module.dra_admin[0].public_ip
+  dra_admin_adress_for_registration     = module.dra_admin[0].private_ip
+  dra_admin_adress_for_api_access      = local.dra_admin_address
+
   tags                        = local.tags
   depends_on = [
     module.vpc

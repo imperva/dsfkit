@@ -131,7 +131,7 @@ variable "ingress_communication_via_proxy" {
 variable "attach_persistent_public_ip" {
   type        = bool
   default     = false
-  description = "Create public elastic IP for the instance"
+  description = "Create and attach an elastic public IP for the instance"
 }
 
 variable "use_public_ip" {

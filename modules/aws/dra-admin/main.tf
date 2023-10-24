@@ -1,10 +1,11 @@
 locals {
-  public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : null
-  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : null
-  private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+  public_ip  = try(coalesce(aws_eip.dsf_instance_eip[0].public_ip, aws_instance.dsf_base_instance.public_ip), null)
+  public_dns = try(coalesce(aws_eip.dsf_instance_eip[0].public_dns, aws_instance.dsf_base_instance.public_dns), null)
+  private_ip = aws_network_interface.eni.private_ip
 
   security_group_ids = concat(
     [for sg in aws_security_group.dsf_base_sg : sg.id],
+    [for sg in aws_security_group.dsf_base_sg_hub : sg.id],
     var.security_group_ids
   )
 
@@ -12,7 +13,6 @@ locals {
     admin_registration_password_secret_arn = aws_secretsmanager_secret.admin_analytics_registration_password.arn
     admin_password_secret_arn              = aws_secretsmanager_secret.admin_password.arn
   })
-
 }
 
 resource "aws_eip" "dsf_instance_eip" {

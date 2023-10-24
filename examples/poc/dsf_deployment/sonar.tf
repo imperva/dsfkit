@@ -3,10 +3,12 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_public_ip          = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
-  hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
-  hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
-  agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
+  hub_main_address             = var.enable_sonar ? coalesce(module.hub_main[0].public_ip, module.hub_main[0].private_ip) : null
+  hub_dr_address          = var.enable_sonar && var.hub_hadr ? coalesce(module.hub_dr[0].public_ip, module.hub_dr[0].private_ip) : null
+  hub_cidr                = try(format("%s/32", local.hub_main_address), null)
+  hub_dr_cidr             = try(format("%s/32", local.hub_dr_address), null)
+  hub_cidr_list           = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_cidr, local.hub_dr_cidr])
+  agentless_gw_cidr_list  = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
 }
 
 module "hub_main" {
@@ -20,8 +22,8 @@ module "hub_main" {
   password                    = local.password
   ebs                         = var.hub_ebs_details
   instance_type               = var.hub_instance_type
-  attach_persistent_public_ip = true
-  use_public_ip               = true
+  attach_persistent_public_ip = var.public_ip
+  use_public_ip               = var.public_ip
   generate_access_tokens      = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
@@ -34,7 +36,7 @@ module "hub_main" {
   allowed_all_cidrs                 = local.workstation_cidr
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
-    address  = coalesce(mx.public_dns, mx.private_dns)
+    address  = local.mx_address
     username = mx.web_console_user
     password = local.password
   }] : []
@@ -49,18 +51,18 @@ module "hub_dr" {
   version = "1.5.7" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
-  friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
-  subnet_id                    = local.hub_dr_subnet_id
-  binaries_location            = local.tarball_location
-  password                     = local.password
-  ebs                          = var.hub_ebs_details
-  instance_type                = var.hub_instance_type
-  attach_persistent_public_ip  = true
-  use_public_ip                = true
-  hadr_dr_node                 = true
-  main_node_sonarw_public_key  = module.hub_main[0].sonarw_public_key
-  main_node_sonarw_private_key = module.hub_main[0].sonarw_private_key
-  generate_access_tokens       = true
+  friendly_name                   = join("-", [local.deployment_name_salted, "hub", "DR"])
+  subnet_id                       = local.hub_dr_subnet_id
+  binaries_location               = local.tarball_location
+  password                        = local.password
+  ebs                             = var.hub_ebs_details
+  instance_type                   = var.hub_instance_type
+  attach_persistent_public_ip     = var.public_ip
+  use_public_ip                   = var.public_ip
+  hadr_dr_node                    = true
+  main_node_sonarw_public_key     = module.hub_main[0].sonarw_public_key
+  main_node_sonarw_private_key    = module.hub_main[0].sonarw_private_key
+  generate_access_tokens          = true
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
@@ -81,13 +83,13 @@ module "hub_hadr" {
   version = "1.5.7" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
-  sonar_version       = module.globals.tarball_location.version
-  dsf_main_ip         = module.hub_main[0].public_ip
-  dsf_main_private_ip = module.hub_main[0].private_ip
-  dsf_dr_ip           = module.hub_dr[0].public_ip
-  dsf_dr_private_ip   = module.hub_dr[0].private_ip
-  ssh_key_path        = module.key_pair.private_key_file_path
-  ssh_user            = module.hub_main[0].ssh_user
+  sonar_version            = module.globals.tarball_location.version
+  dsf_main_ip              = local.hub_main_address
+  dsf_main_private_ip      = module.hub_main[0].private_ip
+  dsf_dr_ip                = local.hub_dr_address
+  dsf_dr_private_ip        = module.hub_dr[0].private_ip
+  ssh_key_path             = module.key_pair.private_key_file_path
+  ssh_user                 = module.hub_main[0].ssh_user
   depends_on = [
     module.hub_main,
     module.hub_dr
@@ -207,7 +209,7 @@ module "federation" {
   for_each = local.hub_gw_combinations
 
   hub_info = {
-    hub_ip_address           = each.value[0].public_ip
+    hub_ip_address           = coalesce(each.value[0].public_ip, each.value[0].private_ip)
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = each.value[0].ssh_user
   }

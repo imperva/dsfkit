@@ -1,9 +1,9 @@
 locals {
   incoming_folder_path = "/opt/itpba/incoming"
 
-  public_ip  = aws_instance.dsf_base_instance.public_ip
-  public_dns = aws_instance.dsf_base_instance.public_dns
-  private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+  public_ip  = try(coalesce(aws_instance.dsf_base_instance.public_ip), null)
+  public_dns = try(coalesce(aws_instance.dsf_base_instance.public_dns), null)
+  private_ip = aws_network_interface.eni.private_ip
 
   security_group_ids = concat(
     [for sg in aws_security_group.dsf_base_sg : sg.id],
@@ -16,11 +16,11 @@ locals {
     admin_password_secret_arn                 = aws_secretsmanager_secret.admin_password.arn
     archiver_user                             = var.archiver_user
     archiver_password                         = var.archiver_password
-    admin_server_private_ip                   = var.admin_server_private_ip
+    dra_admin_adress_for_registration                   = var.dra_admin_adress_for_registration
   })
 
   readiness_script = templatefile("${path.module}/waiter.tpl", {
-    admin_server_public_ip = var.admin_server_public_ip
+    dra_admin_adress_for_api_access = var.dra_admin_adress_for_api_access
   })
 }
 

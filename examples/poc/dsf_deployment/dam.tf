@@ -4,6 +4,8 @@ locals {
   create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
 
   agent_gw_cidr_list = [data.aws_subnet.agent_gw.cidr_block]
+
+  mx_address              = var.enable_dam ? coalesce(module.mx[0].public_ip, module.mx[0].private_ip) : null
 }
 
 module "mx" {
@@ -25,11 +27,11 @@ module "mx" {
   allowed_hub_cidrs                 = local.hub_cidr_list
 
   hub_details = var.enable_sonar ? {
-    address      = coalesce(module.hub_main[0].public_dns, module.hub_main[0].private_dns)
+    address      = local.hub_main_address
     access_token = module.hub_main[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null
-  attach_persistent_public_ip = true
+  attach_persistent_public_ip = var.public_ip
   large_scale_mode            = var.large_scale_mode.mx
 
   create_server_group = length(var.simulation_db_types_for_agent) > 0
@@ -56,7 +58,7 @@ module "agent_gw" {
   allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
   allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
   management_server_host_for_registration = module.mx[0].private_ip
-  management_server_host_for_api_access   = module.mx[0].public_ip
+  management_server_host_for_api_access   = local.mx_address
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
@@ -73,7 +75,7 @@ module "agent_gw_cluster_setup" {
   cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name
   mx_details = {
-    address  = module.mx[0].public_ip
+    address  = local.mx_address
     port     = 8083
     user     = module.mx[0].web_console_user
     password = local.password

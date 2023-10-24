@@ -29,8 +29,8 @@ The following input variables are **required**:
 * `admin_password`: Password to be used to admin os user
 * `admin_registration_password`: Password to be used to register Analytics Server to Admin Server
 * `archiver_password`:  Password to be used to upload archive files for analysis
-* `admin_server_private_ip`: Private IP of the Admin Server (Used for registration)
-* `admin_server_public_ip`: Public IP of the Admin Server (Used for verifying the analytics server is launched successfully)
+* `dra_admin_adress_for_registration`: Private IP of the Admin Server (Used for registration)
+* `dra_admin_adress_for_api_access`: Public IP of the Admin Server (Used for verifying the analytics server is launched successfully)
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
@@ -55,8 +55,8 @@ module "dra_analytics" {
   admin_password                 = local.password
   archiver_password              = local.password
   key_pair                       = local.key_pair_name
-  admin_server_public_ip         = module.dra_admin.public_ip
-  admin_server_private_ip        = module.dra_admin.private_ip
+  dra_admin_adress_for_api_access         = module.dra_admin.public_ip
+  dra_admin_adress_for_registration        = module.dra_admin.private_ip
 }
 ```
 

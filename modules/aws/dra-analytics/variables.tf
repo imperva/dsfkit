@@ -91,14 +91,14 @@ variable "dra_version" {
   }
 }
 
-variable "admin_server_private_ip" {
+variable "dra_admin_adress_for_registration" {
   type        = string
-  description = "Private IP of the Admin Server"
+  description = "DRA admin server address for registration"
 }
 
-variable "admin_server_public_ip" {
+variable "dra_admin_adress_for_api_access" {
   type        = string
-  description = "Public IP of the Admin Server"
+  description = "DRA admin server address for registration for API access"
 }
 
 variable "instance_type" {
