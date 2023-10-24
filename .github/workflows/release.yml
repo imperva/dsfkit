@@ -177,7 +177,7 @@ jobs:
 
   test_plan:
     needs: deploy_modules
-    uses: ./.github/workflows/plan_sonar_cli.yml
+    uses: ./.github/workflows/plan_cli.yml
     with:
       use_modules_from_terraform_registry: true
       explicit_ref: master
