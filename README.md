@@ -210,7 +210,7 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>2. Restricted network resources and general IAM permissions.
       <br>3. Added a new installation example - single_account_deployment.
       <br>4. Added the minimum required Terraform version to all modules.
-      <br>5. Added the option to provide EC2 AMI filter details for the DSF Hub and the Agentless Gateway via the 'ami' variable. 
+      <br>5. Added the option to provide EC2 AMI filter details for the DSF Hub and Agentless Gateway via the 'ami' variable. 
       <br>6. For user-provided AMI for the DSF node (DSF Hub and the Agentless Gateway) that denies execute access in '/tmp' folder, added the option to specify an alternative path via the 'terraform_script_path_folder' variable.
       <br>7. Passed the password of the DSF node via AWS Secrets Manager.
       <br>8. Added the option to provide a custom S3 bucket location for the Sonar binaries via the 'tarball_location' variable.
@@ -294,7 +294,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
    <td>
       1. Defined separate security groups for the DSF node according to the traffic source type (e.g., web console, Hub).  
-      <br>2. Added the option to provide custom secrets for the DSF Hub and the Agentless Gateway.
+      <br>2. Added the option to provide custom secrets for the DSF Hub and Agentless Gateway.
       <br>3. Updated the POC multi_account_deployment example.
    </td>
   </tr>
@@ -402,6 +402,16 @@ The following table lists the released eDSF Kit versions, their release date and
    <td>
       1. Sonar upgrade Alpha release. It can be used with caution.
       <br/>2. Added support for Terraform version 1.6.x.
+   </td>
+  </tr>
+  <tr>
+   <td>24 Oct 2023
+   </td>
+   <td>1.5.7
+   </td>
+   <td>
+      1. Added the option to provide a custom installation base directory for the DSF Hub and Agentless Gateway via the 'base_directory' variable.
+      <br/>2. Updated the Sonar upgrade Alpha release.
    </td>
   </tr>
 
