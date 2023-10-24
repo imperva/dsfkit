@@ -35,7 +35,7 @@ module "db_onboarding" {
   sonar_version    = module.globals.tarball_location.version
   usc_access_token = module.hub_main[0].access_tokens.usc.token
   hub_info = {
-    hub_ip_address           = module.hub_main[0].public_ip
+    hub_ip_address           = local.hub_main_address
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = module.hub_main[0].ssh_user
   }

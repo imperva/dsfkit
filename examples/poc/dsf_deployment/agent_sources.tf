@@ -1,5 +1,5 @@
 locals {
-  db_types_for_agent = local.create_agent_gw_cluster > 0 ? var.simulation_db_types_for_agent : []
+  db_types_for_agent = try(module.agent_gw_cluster_setup[0].ready == "ready" ? var.simulation_db_types_for_agent : [], []) 
 }
 
 module "db_with_agent" {
@@ -23,7 +23,4 @@ module "db_with_agent" {
     site               = module.mx[0].configuration.default_site
   }
   tags = local.tags
-  depends_on = [
-    module.agent_gw_cluster_setup
-  ]
 }
