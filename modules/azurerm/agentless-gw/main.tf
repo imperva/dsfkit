@@ -58,5 +58,5 @@ module "gw_instance" {
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content
   tags                              = var.tags
-  send_usage_statistics = var.send_usage_statistics
+  send_usage_statistics             = var.send_usage_statistics
 }

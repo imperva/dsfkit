@@ -222,6 +222,6 @@ variable "base_directory" {
 }
 
 variable "send_usage_statistics" {
-  type    = bool
+  type        = bool
   description = "Set to true to send usage statistics."
 }

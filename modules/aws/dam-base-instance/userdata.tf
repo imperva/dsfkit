@@ -32,8 +32,8 @@ locals {
 data "aws_region" "current" {}
 
 module "statistics" {
-  source          = "../../../modules/aws/statistics"
-  count = var.send_usage_statistics ? 1 : 0
+  source = "../../../modules/aws/statistics"
+  count  = var.send_usage_statistics ? 1 : 0
 
   deployment_name = var.name
   product         = "DAM"
@@ -79,7 +79,7 @@ resource "null_resource" "readiness" {
 
 module "statistics_success" {
   source = "../../../modules/aws/statistics"
-  count = var.send_usage_statistics ? 1 : 0
+  count  = var.send_usage_statistics ? 1 : 0
 
   id         = module.statistics[0].id
   status     = "success"

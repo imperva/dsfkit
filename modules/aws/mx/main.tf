@@ -93,6 +93,6 @@ module "mx" {
     enable   = true
     timeout  = local.timeout
   }
-  tags = var.tags
+  tags                  = var.tags
   send_usage_statistics = var.send_usage_statistics
 }
