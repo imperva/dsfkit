@@ -116,7 +116,7 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6">eDSF Kit GitHub Repository</a> 
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7">eDSF Kit GitHub Repository</a> 
    </td>
    <td>
    </td>
@@ -210,7 +210,7 @@ The following table lists the released eDSF Kit versions, their release date and
       <br>2. Restricted network resources and general IAM permissions.
       <br>3. Added a new installation example - single_account_deployment.
       <br>4. Added the minimum required Terraform version to all modules.
-      <br>5. Added the option to provide EC2 AMI filter details for the DSF Hub and the Agentless Gateway via the 'ami' variable. 
+      <br>5. Added the option to provide EC2 AMI filter details for the DSF Hub and Agentless Gateway via the 'ami' variable. 
       <br>6. For user-provided AMI for the DSF node (DSF Hub and the Agentless Gateway) that denies execute access in '/tmp' folder, added the option to specify an alternative path via the 'terraform_script_path_folder' variable.
       <br>7. Passed the password of the DSF node via AWS Secrets Manager.
       <br>8. Added the option to provide a custom S3 bucket location for the Sonar binaries via the 'tarball_location' variable.
@@ -294,7 +294,7 @@ The following table lists the released eDSF Kit versions, their release date and
    </td>
    <td>
       1. Defined separate security groups for the DSF node according to the traffic source type (e.g., web console, Hub).  
-      <br>2. Added the option to provide custom secrets for the DSF Hub and the Agentless Gateway.
+      <br>2. Added the option to provide custom secrets for the DSF Hub and Agentless Gateway.
       <br>3. Updated the POC multi_account_deployment example.
    </td>
   </tr>
@@ -404,6 +404,16 @@ The following table lists the released eDSF Kit versions, their release date and
       <br/>2. Added support for Terraform version 1.6.x.
    </td>
   </tr>
+  <tr>
+   <td>24 Oct 2023
+   </td>
+   <td>1.5.7
+   </td>
+   <td>
+      1. Added the option to provide a custom installation base directory for the DSF Hub and Agentless Gateway via the 'base_directory' variable.
+      <br/>2. Updated the Sonar upgrade Alpha release.
+   </td>
+  </tr>
 
 </table>
 
@@ -447,7 +457,7 @@ e.g., with or without DRA, the number of Agentless Gateways, with or without HAD
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
 
-These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.5.6">eDSF Kit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples">examples</a> directory.
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.5.7">eDSF Kit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples">examples</a> directory.
 Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
 For more details about each example, click on the example name.
@@ -464,73 +474,73 @@ For more details about each example, click on the example name.
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_6.zip">sonar_basic_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_7.zip">sonar_basic_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_hadr_deployment/README.md">Sonar HADR Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_hadr_deployment/README.md">Sonar HADR Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_6.zip">sonar_hadr_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_7.zip">sonar_hadr_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_6.zip">sonar_single_account_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_7.zip">sonar_single_account_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/sonar_multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_6.zip">sonar_multi_account_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_7.zip">sonar_multi_account_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/dsf_deployment/README.md">DSF Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/dsf_deployment/dsf_deployment_1_5_6.zip">dsf_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/dsf_deployment/dsf_deployment_1_5_7.zip">dsf_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_6.zip">dsf_single_account_deployment_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_7.zip">dsf_single_account_deployment_1_5_7.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/sonar_upgrade/README.md">Sonar Upgrade (Alpha)</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/sonar_upgrade/README.md">Sonar Upgrade (Alpha)</a>
       </td>
       <td>All
       </td>
       <td>Upgrade of DSF Hub and Agentless Gateway (formerly Sonar).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/sonar_upgrade/sonar_upgrade_1_5_6.zip">sonar_upgrade_1_5_6.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/sonar_upgrade/sonar_upgrade_1_5_7.zip">sonar_upgrade_1_5_7.zip</a>
       </td>
    </tr>
 </table>
@@ -608,7 +618,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.5.6">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.5.7">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
@@ -696,7 +706,7 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
 
 
-8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.5.6/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.5.7/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 
 9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
@@ -715,30 +725,30 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
     For example: `chmode 400 a_key_pair.pem`
 
 
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.5.6">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
+11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.5.7">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
     Run:
     ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_6.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/poc/sonar_basic_deployment/sonar_basic_deployment_1_5_7.zip
     
     or
     
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_6.zip
-    
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_6.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_5_7.zip
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_6.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_5_7.zip
+    
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_5_7.zip
     
     or
 
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/poc/dsf_deployment/dsf_deployment_1_5_6.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/poc/dsf_deployment/dsf_deployment_1_5_7.zip
     
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.5.6/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_6.zip
+    wget https://github.com/imperva/dsfkit/raw/1.5.7/examples/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_5_7.zip
     ```
 
 12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.
@@ -961,7 +971,7 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 Information about additional topics can be found in specific examples' READMEs, when relevant.
 
-For example:  <a href="https://github.com/imperva/dsfkit/tree/1.5.6/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
+For example:  <a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
 
 These topics include:
 - Storing Terraform state in S3 bucket

@@ -6,7 +6,7 @@ locals {
 
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.enable_dra ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "dra", "admin"])
@@ -23,12 +23,12 @@ module "dra_admin" {
   key_pair                    = local.dra_admin_public_key_name
   instance_profile_name       = var.dra_admin_instance_profile_name
   tags                        = local.tags
-  send_usage_statistics = var.send_usage_statistics
+  send_usage_statistics       = var.send_usage_statistics
 }
 
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = local.dra_analytics_count
 
   friendly_name                = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
@@ -47,7 +47,7 @@ module "dra_analytics" {
   admin_server_private_ip      = module.dra_admin[0].private_ip
   admin_server_public_ip       = module.dra_admin[0].public_ip
   tags                         = local.tags
-  send_usage_statistics = var.send_usage_statistics
+  send_usage_statistics        = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }

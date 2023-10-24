@@ -8,7 +8,7 @@ provider "azurerm" {
 
 module "globals" {
   source  = "imperva/dsf-globals/azurerm"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
 
 }
 

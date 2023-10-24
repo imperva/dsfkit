@@ -94,5 +94,5 @@ module "agent_gw" {
   }
   attach_persistent_public_ip = false
   tags                        = var.tags
-  send_usage_statistics = var.send_usage_statistics
+  send_usage_statistics       = var.send_usage_statistics
 }

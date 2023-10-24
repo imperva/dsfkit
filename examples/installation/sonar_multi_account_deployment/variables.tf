@@ -348,7 +348,7 @@ variable "sonar_machine_base_directory" {
 }
 
 variable "send_usage_statistics" {
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Set to true to enable sending usage statistics, or false to disable."
 }

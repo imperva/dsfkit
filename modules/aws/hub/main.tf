@@ -69,5 +69,5 @@ module "hub_instance" {
   volume_attachment_device_name     = var.volume_attachment_device_name
   tags                              = var.tags
   base_directory                    = var.base_directory
-  send_usage_statistics = var.send_usage_statistics
+  send_usage_statistics             = var.send_usage_statistics
 }

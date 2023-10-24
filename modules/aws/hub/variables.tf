@@ -314,7 +314,7 @@ variable "base_directory" {
 }
 
 variable "send_usage_statistics" {
-  type    = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Set to true to send usage statistics."
 }

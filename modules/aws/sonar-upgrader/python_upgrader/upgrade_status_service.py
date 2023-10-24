@@ -170,7 +170,7 @@ class UpgradeStatusService:
     def get_summary(self):
         upgrade_statuses = self._get_upgrade_statuses()
         # summary = f"Overall upgrade status: {self.get_overall_upgrade_status()}"
-        summary = f"\nDSF nodes upgrade statuses:"
+        summary = f"DSF nodes upgrade statuses:"
         for host in upgrade_statuses.keys():
             padded_host = "{:<45}".format(host)
             optional_message = upgrade_statuses.get(host).get('message')
