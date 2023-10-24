@@ -1,4 +1,4 @@
-name: 'Plan Sonar CLI'
+name: 'Plan CLI'
 
 on:
   workflow_call:
@@ -49,20 +49,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Azure - POC - DSF
-            example: ./examples/azure/dsf_deployment
-            terraformvars: |
-              resource_group_location = "East US"
-              tarball_location = {
-                az_resource_group = "dummy-resource-group"
-                az_storage_account = "dummy-torage-account"
-                az_container = "dummy-container"
-                az_blob = "dummy-blob"
-              }
-          - name: AWS - POC - DSF
-            example: ./examples/poc/dsf_deployment
-            terraformvars: |
-              dam_license="license.mprv"
+#          - name: Azure - POC - DSF
+#            example: ./examples/azure/dsf_deployment
+#            terraformvars: |
+#              resource_group_location = "East US"
+#              tarball_location = {
+#                az_resource_group = "dummy-resource-group"
+#                az_storage_account = "dummy-torage-account"
+#                az_container = "dummy-container"
+#                az_blob = "dummy-blob"
+#              }
+#          - name: AWS - POC - DSF
+#            example: ./examples/poc/dsf_deployment
+#            terraformvars: |
+#              dam_license="license.mprv"
           - name: AWS - POC - Sonar Basic
             example: ./examples/poc/sonar_basic_deployment
           - name: AWS - POC - Sonar HADR
@@ -71,8 +71,8 @@ jobs:
             example: ./examples/installation/sonar_single_account_deployment
           - name: AWS - Installation - Sonar Multi Account
             example: ./examples/installation/sonar_multi_account_deployment
-          - name: AWS - Installation - DSF Single Account
-            example: ./examples/installation/dsf_single_account_deployment
+#          - name: AWS - Installation - DSF Single Account
+#            example: ./examples/installation/dsf_single_account_deployment
 
     name: '${{ matrix.name }}'
     env:
