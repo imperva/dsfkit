@@ -290,14 +290,14 @@ variable "dra_details" {
     password = string
     archiver_password = string
   })
-#  validation {
-#    condition = length(var.dra_details.name) > 0 && length(var.dra_details.address) > 0
-#    error_message = "Each DRA Admin must specify name and address"
-#  }
-#  validation {
-#    condition = length(var.dra_details.username) > 0 && length(var.dra_details.password) > 0
-#    error_message = "Each DRA Admin must specify username and password"
-#  }
+  validation {
+    condition = (var.dra_details == null || (can(var.dra_details.name) && can(var.dra_details.address)))
+    error_message = "Each DRA Admin must specify name and address"
+  }
+  validation {
+    condition = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
+    error_message = "Each DRA Admin must specify username and password"
+  }
   default = null
 }
 
