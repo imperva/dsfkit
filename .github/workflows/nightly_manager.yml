@@ -143,3 +143,25 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  master_sonar_upgrade:
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@master
+    with:
+      use_modules_from_terraform_registry: false
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  dev_sonar_upgrade:
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@dev
+    with:
+      use_modules_from_terraform_registry: false
+      explicit_ref: dev
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
