@@ -9,6 +9,9 @@ from enum import Enum
 
 class UpgradeStatusService:
 
+    # If you change this value, also change it in .gitignore
+    UPGRADE_STATUS_FILE_NAME = "upgrade_status.json"
+
     def __init__(self):
         self.status_dictionary = {}
         self.target_version = None
@@ -67,20 +70,6 @@ class UpgradeStatusService:
         '''
         # assume dsf_node_id in the map, since all nodes were supposed to be added on init_upgrade_status method call
         return self.status_dictionary.get(dsf_node_id).get('status')
-
-    def get_overall_upgrade_status(self):
-        '''
-        Calculates the overall upgrade status.
-        :return: "Not started" if all nodes are in "Not started" status
-                 "Running" if at least one node is running or succeeded in one of the upgrade stages, but not the final stage
-                 "Succeeded" if all nodes are in "Succeeded" status
-                 "Succeeded with warnings" if all nodes are in "Succeeded with warnings" or "Succeeded" statuses and
-                 there is at least one node with "Succeeded with warnings"
-                 "Failed" if at least one node failed one of the upgrade stages, and there are no nodes that are
-                 still running one of the upgrade stages
-        '''
-        # TODO implement
-        return "Running"
 
     def update_upgrade_status(self, dsf_node_id, upgrade_status, message="", flush=True):
         '''
@@ -168,9 +157,9 @@ class UpgradeStatusService:
             return False
 
     def get_summary(self):
-        upgrade_statuses = self._get_upgrade_statuses()
-        # summary = f"Overall upgrade status: {self.get_overall_upgrade_status()}"
-        summary = f"DSF nodes upgrade statuses:"
+        upgrade_statuses = self._read_upgrade_statuses()
+        summary = f"Overall upgrade status: {self.calc_overall_upgrade_status(upgrade_statuses).value}"
+        summary += f"\nDSF nodes upgrade statuses:"
         for host in upgrade_statuses.keys():
             padded_host = "{:<45}".format(host)
             optional_message = upgrade_statuses.get(host).get('message')
@@ -179,37 +168,139 @@ class UpgradeStatusService:
                 summary += f". Message: {optional_message}"
         return summary
 
+    def calc_overall_upgrade_status(self, upgrade_statuses):
+        '''
+        Calculates the overall upgrade status according to the following logic:
+        - "Not started" if all nodes are in "Not started" status
+        - "Running" if at least one node is running or about to run one of the upgrade stages
+        - "Succeeded" if all nodes are in "Succeeded" status
+        - "Succeeded with warnings" if at least one node is in "Succeeded with warnings" status, and the rest of
+           the nodes (can be 0) are in "Succeeded" status
+        -  "Failed" if at least one node failed one of the upgrade stages, and the rest of the nodes (can be 0)
+           are "Succeeded" or "Succeeded with warnings"
+        Examples:
+        - One node is "Test connection succeeded", another node is "Failed" => Overall status is "Running"
+        - One node is "Succeeded", another node is "Not started" => Overall status is "Running"
+        - One node is "Failed", another node is "Not started" => Overall status is "Running"
+        - All nodes are in "Preflight validations succeeded" => Overall status is "Running"
+        :return: The overall upgrade status
+        '''
+        statuses = [obj.get('status') for obj in upgrade_statuses.values()]
+        print(f"Calculating overall upgrade status from statuses: {statuses}")
+
+        is_not_started = self._is_overall_upgrade_status_not_started(statuses)
+        is_running = self._is_overall_upgrade_status_running(statuses)
+        is_succeeded = self._is_overall_upgrade_status_succeeded(statuses)
+        is_succeeded_with_warnings = self._is_overall_upgrade_status_succeeded_with_warnings(statuses)
+        is_failed = self._is_overall_upgrade_status_failed(statuses)
+
+        return self._get_overall_upgrade_status(is_not_started, is_running, is_succeeded, is_succeeded_with_warnings,
+                                                is_failed)
+
     def _calc_initial_upgrade_status(self, exist_dsf_node_status, dsf_node_ids):
         new_statuses = {node_id: exist_dsf_node_status.get(node_id, {"status": UpgradeStatus.NOT_STARTED})
                         for node_id in dsf_node_ids}
         return new_statuses
 
+    def _is_overall_upgrade_status_not_started(self, statuses):
+        '''
+        See documentation of calc_overall_upgrade_status()
+        '''
+        all_count = len(statuses)
+        not_started_count = statuses.count(UpgradeStatus.NOT_STARTED)
+        return all_count == not_started_count
+
+    def _is_overall_upgrade_status_running(self, statuses):
+        '''
+        See documentation of calc_overall_upgrade_status()
+        '''
+        all_count = len(statuses)
+        not_started_count = statuses.count(UpgradeStatus.NOT_STARTED)
+        running_count = statuses.count(UpgradeStatus.RUNNING_TEST_CONNECTION) \
+            + statuses.count(UpgradeStatus.TEST_CONNECTION_SUCCEEDED) \
+            + statuses.count(UpgradeStatus.RUNNING_COLLECT_PYTHON_LOCATION) \
+            + statuses.count(UpgradeStatus.COLLECT_PYTHON_LOCATION_SUCCEEDED) \
+            + statuses.count(UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS) \
+            + statuses.count(UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED) \
+            + statuses.count(UpgradeStatus.RUNNING_UPGRADE) \
+            + statuses.count(UpgradeStatus.UPGRADE_SUCCEEDED) \
+            + statuses.count(UpgradeStatus.RUNNING_POSTFLIGHT_VALIDATIONS) \
+            + statuses.count(UpgradeStatus.POSTFLIGHT_VALIDATIONS_SUCCEEDED)
+        is_not_started_treated_as_running = not_started_count > 0 and not_started_count != all_count
+        return running_count > 0 or is_not_started_treated_as_running
+
+    def _is_overall_upgrade_status_succeeded(self, statuses):
+        '''
+        See documentation of calc_overall_upgrade_status()
+        '''
+        all_count = len(statuses)
+        succeeded_count = statuses.count(UpgradeStatus.SUCCEEDED)
+        return all_count == succeeded_count
+
+    def _is_overall_upgrade_status_succeeded_with_warnings(self, statuses):
+        '''
+        See documentation of calc_overall_upgrade_status()
+        '''
+        all_count = len(statuses)
+        succeeded_count = statuses.count(UpgradeStatus.SUCCEEDED)
+        succeeded_with_warnings_count = statuses.count(UpgradeStatus.SUCCEEDED_WITH_WARNINGS)
+        return succeeded_with_warnings_count > 0 and all_count == (succeeded_count + succeeded_with_warnings_count)
+
+    def _is_overall_upgrade_status_failed(self, statuses):
+        '''
+        See documentation of calc_overall_upgrade_status()
+        '''
+        all_count = len(statuses)
+        failed_count = statuses.count(UpgradeStatus.UPGRADE_FAILED)
+        succeeded_count = statuses.count(UpgradeStatus.SUCCEEDED)
+        succeeded_with_warnings_count = statuses.count(UpgradeStatus.SUCCEEDED_WITH_WARNINGS)
+        return failed_count > 0 and all_count == (failed_count + succeeded_count + succeeded_with_warnings_count)
+
+    def _get_overall_upgrade_status(self, is_not_started, is_running, is_succeeded, is_succeeded_with_warnings,
+                                    is_failed):
+        print(f"Getting overall upgrade status based on: is_not_started: {is_not_started}, is_running: {is_running}, "
+              f"is_succeeded: {is_succeeded}, is_succeeded_with_warnings: {is_succeeded_with_warnings}, "
+              f"is_failed: {is_failed}")
+        true_count = sum([is_not_started, is_running, is_succeeded, is_succeeded_with_warnings, is_failed])
+        if true_count != 1:
+            print(f"Error: Cannot determine the overall upgrade status. Exactly one of is_not_started, "
+                  f"is_running, is_succeeded, is_succeeded_with_warnings and is_failed must be true")
+            return OverallUpgradeStatus.UNKNOWN
+        if is_not_started:
+            return OverallUpgradeStatus.NOT_STARTED
+        if is_running:
+            return OverallUpgradeStatus.RUNNING
+        if is_succeeded:
+            return OverallUpgradeStatus.SUCCEEDED
+        if is_succeeded_with_warnings:
+            return OverallUpgradeStatus.SUCCEEDED_WITH_WARNINGS
+        if is_failed:
+            return OverallUpgradeStatus.FAILED
+
     def _backup_status_file(self):
-        file_name = f'upgrade_status.json'
-        backup_file_name = file_name + '.bkp'
-        copy_file(file_name, backup_file_name)
+        backup_file_name = UpgradeStatusService.UPGRADE_STATUS_FILE_NAME + '.bkp'
+        copy_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, backup_file_name)
 
     def _update_status_file(self, initial_new_upgrade_status, target_version):
         timestamp = int(time.time())  # current timestamp with seconds resolution
-        file_name = f'upgrade_status.json'
         content_dict = {
             "upgrade-statuses": initial_new_upgrade_status,
             "target-version": target_version,
             "timestamp": timestamp
         }
         content_json = format_dictionary_to_json(content_dict, object_serialize_hook=self._enum_to_json)
-        update_file_safely(file_name, content_json)
-        return file_name
+        update_file_safely(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, content_json)
+        return UpgradeStatusService.UPGRADE_STATUS_FILE_NAME
 
-    def _get_upgrade_statuses(self):
+    def _read_upgrade_statuses(self):
         upgrade_status = self._read_upgrade_status_as_json()
         return upgrade_status.get("upgrade-statuses")
 
     def _is_status_file_exist(self):
-        return is_file_exist("upgrade_status.json")
+        return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
 
     def _read_upgrade_status_as_json(self):
-        return read_file_as_json("upgrade_status.json", self._json_to_enum)
+        return read_file_as_json(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, self._json_to_enum)
 
     def _enum_to_json(self, obj):
         if isinstance(obj, Enum):
@@ -246,11 +337,20 @@ class UpgradeStatus(Enum):
     SUCCEEDED_WITH_WARNINGS = "Succeeded with warnings"
 
 
+class OverallUpgradeStatus(Enum):
+    NOT_STARTED = "Not started"
+    RUNNING = "Running"
+    SUCCEEDED = "Succeeded"
+    SUCCEEDED_WITH_WARNINGS = "Succeeded with warnings"
+    FAILED = "Failed"
+    UNKNOWN = "Unknown"
+
+
 def test1():
     service = UpgradeStatusService()
     service.init_upgrade_status(["1.2.3.7", "host2"], "4.13")
-    service.update_upgrade_status("host2", UpgradeStatus.RUNNING_COLLECT_PYTHON_LOCATION, "abcd")
-    service.update_upgrade_status("host2", UpgradeStatus.UPGRADE_SUCCEEDED)
+    service.update_upgrade_status("1.2.3.7", UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED, "abcd")
+    service.update_upgrade_status("host2", UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED)
     service.flush()
     print(service.get_summary())
 
