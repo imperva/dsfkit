@@ -30,7 +30,7 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/sonar-upgrader/*'
+      - 'modules/aws/sonar-upgrader/**'
       - 'examples/sonar_upgrade/*'
 
   pull_request:
@@ -41,7 +41,7 @@ on:
       - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/sonar-upgrader/*'
+      - 'modules/aws/sonar-upgrader/**'
       - 'examples/sonar_upgrade/*'
 
 env:

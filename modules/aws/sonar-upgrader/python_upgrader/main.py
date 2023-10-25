@@ -154,6 +154,11 @@ def test_connection_maybe_with_proxy(dsf_node):
                         CONNECTION_TIMEOUT)
 
 
+def print_summary(upgrade_status_service):
+    print("********** Summary ************")
+    print(upgrade_status_service.get_summary())
+
+
 # Main functions
 
 
@@ -170,17 +175,17 @@ def main(args):
 
     print("********** Start ************")
 
-    if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
-            not args.run_postflight_validations and not args.clean_old_deployments:
-        print("All flags are disabled. Nothing to do here.")
-        # TODO need to add summary here?
-        return
-
     agentless_gw_extended_nodes = get_flat_extended_node_list(agentless_gws, "Agentless Gateway")
     dsf_hub_extended_nodes = get_flat_extended_node_list(hubs, "DSF Hub")
     extended_nodes = agentless_gw_extended_nodes + dsf_hub_extended_nodes
 
     upgrade_status_service = init_upgrade_status(extended_nodes, args.target_version)
+
+    if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
+            not args.run_postflight_validations and not args.clean_old_deployments:
+        print("All flags are disabled. Nothing to do here.")
+        print_summary(upgrade_status_service)
+        return
 
     try:
         if args.test_connection:
@@ -227,8 +232,7 @@ def main(args):
     # Flush upgrade status to status file (in case of an error on the first file write, this line is the manual retry)
     upgrade_status_service.flush()
 
-    print("********** Summary ************")
-    print(upgrade_status_service.get_summary())
+    print_summary(upgrade_status_service)
 
     print("********** End ************")
 
