@@ -8,4 +8,4 @@ fi
 #     exit 1
 # fi'
 # ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${gw_ssh_user}@${dsf_gw_ip} -C $test_cmd
-sudo ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${gw_ssh_user}@${dsf_gw_ip} -C 'sudo $JSONAR_BASEDIR/bin/federated remote'
+ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${gw_ssh_user}@${dsf_gw_ip} -C 'sudo $JSONAR_BASEDIR/bin/federated remote'
