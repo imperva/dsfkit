@@ -93,12 +93,6 @@ resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
-# resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
-#   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
-#   role_definition_name = "Reader"
-#   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
-# }
-
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
   managed_disk_id    = azurerm_managed_disk.external_data_vol.id
   virtual_machine_id = azurerm_linux_virtual_machine.dsf_base_instance.id

@@ -3,11 +3,11 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_main_address             = var.enable_sonar ? coalesce(module.hub_main[0].public_ip, module.hub_main[0].private_ip) : null
+  hub_main_address        = var.enable_sonar ? coalesce(module.hub_main[0].public_ip, module.hub_main[0].private_ip) : null
   hub_dr_address          = var.enable_sonar && var.hub_hadr ? coalesce(module.hub_dr[0].public_ip, module.hub_dr[0].private_ip) : null
   hub_cidr                = try(format("%s/32", local.hub_main_address), null)
   hub_dr_cidr             = try(format("%s/32", local.hub_dr_address), null)
-  hub_cidr_list           = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_cidr, local.hub_dr_cidr])
+  hub_cidr_list           = concat([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block], var.public_ip ? [local.hub_cidr, local.hub_dr_cidr] : [])
   agentless_gw_cidr_list  = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
 }
 
