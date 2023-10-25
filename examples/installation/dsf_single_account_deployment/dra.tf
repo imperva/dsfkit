@@ -45,7 +45,7 @@ module "dra_analytics" {
   instance_profile_name        = var.dra_analytics_instance_profile_name
   archiver_password            = local.password
   dra_admin_adress_for_registration      = module.dra_admin[0].private_ip
-  dra_admin_adress_for_api_access       = module.dra_admin[0].public_ip
+  dra_admin_adress_for_api_access       = module.dra_admin[0].private_ip
   tags                         = local.tags
   send_usage_statistics        = var.send_usage_statistics
   providers = {

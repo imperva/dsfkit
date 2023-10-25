@@ -2,12 +2,10 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_main_public_ip     = var.enable_sonar ? (module.hub_main[0].public_ip != null ? format("%s/32", module.hub_main[0].public_ip) : null) : null
-  hub_dr_public_ip       = var.enable_sonar ? (module.hub_dr[0].public_ip != null ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
-  hub_cidr_list          = compact([data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_main_public_ip, local.hub_dr_public_ip])
+  hub_cidr_list          = compact([data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_main.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
-  hub_main_ip            = var.enable_sonar ? (module.hub_main[0].public_dns != null ? module.hub_main[0].public_dns : module.hub_main[0].private_dns) : null
-  hub_dr_ip              = var.enable_sonar ? (module.hub_dr[0].public_dns != null ? module.hub_dr[0].public_dns : module.hub_dr[0].private_dns) : null
+  hub_main_ip            = var.enable_sonar ? module.hub_main[0].private_dns : null
+  hub_dr_ip              = var.enable_sonar ? module.hub_dr[0].private_dns : null
 }
 
 module "hub_main" {
@@ -46,7 +44,7 @@ module "hub_main" {
   base_directory                    = var.sonar_machine_base_directory
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
-    address  = coalesce(mx.public_dns, mx.private_dns)
+    address  = mx.private_dns
     username = mx.web_console_user
     password = local.password
   }] : []

@@ -27,7 +27,7 @@ module "mx" {
   instance_profile_name             = var.mx_instance_profile_name
 
   hub_details = var.enable_sonar ? {
-    address      = coalesce(module.hub_main[0].public_dns, module.hub_main[0].private_dns)
+    address      = module.hub_main[0].private_dns
     access_token = module.hub_main[0].access_tokens["dam-to-hub"].token
     port         = 8443
   } : null
@@ -56,7 +56,7 @@ module "agent_gw" {
   instance_profile_name     = var.agent_gw_instance_profile_name
 
   management_server_host_for_registration = module.mx[0].private_ip
-  management_server_host_for_api_access   = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
+  management_server_host_for_api_access   = module.mx[0].private_ip
   large_scale_mode                        = var.large_scale_mode.agent_gw
   gateway_group_name                      = local.gateway_group_name
   tags                                    = local.tags
@@ -74,7 +74,7 @@ module "agent_gw_cluster_setup" {
   cluster_name       = var.cluster_name != null ? var.cluster_name : join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
   gateway_group_name = local.gateway_group_name
   mx_details = {
-    address  = coalesce(module.mx[0].public_ip, module.mx[0].private_ip)
+    address  = module.mx[0].private_ip
     port     = 8083
     user     = module.mx[0].web_console_user
     password = local.password
