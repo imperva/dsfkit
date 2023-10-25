@@ -27,6 +27,10 @@ output "archiver_user" {
   value = var.archiver_user
 }
 
+output "archiver_password" {
+  value = var.archiver_password
+}
+
 output "incoming_folder_path" {
   value = local.incoming_folder_path
 }

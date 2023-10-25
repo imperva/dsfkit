@@ -28,7 +28,7 @@ module "mx" {
 
   hub_details = var.enable_sonar ? {
     address      = coalesce(module.hub_main[0].public_dns, module.hub_main[0].private_dns)
-    access_token = module.hub_main[0].access_tokens["dam-to-hub"].token
+    access_token = module.hub_main[0].access_tokens["archiver"].token
     port         = 8443
   } : null
   large_scale_mode      = var.large_scale_mode.mx
