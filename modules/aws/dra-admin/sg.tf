@@ -21,14 +21,14 @@ locals {
       tcp             = [61617, 8443, 8501]
       cidrs           = concat(var.allowed_analytics_cidrs, var.allowed_all_cidrs)
     },
-    {
-      name            = ["hub"]
-      internet_access = false
-      udp             = []
-      tcp             = [8443, 61617, 8501]
-      # This sg element was taken out of local.security_groups_config to avoid cyclic dependency between dsf hub and dra admin (due to bad sg coupling)
-      cidrs           = [] # concat(var.allowed_analytics_cidrs, var.allowed_all_cidrs)
-    },
+    # This sg element was taken out of local.security_groups_config to avoid cyclic dependency between dsf hub and dra admin (due to bad sg coupling)
+    # {
+    #   name            = ["hub_1"]
+    #   internet_access = false
+    #   udp             = []
+    #   tcp             = [8443, 61617, 8501]
+    #   cidrs           = [] # concat(var.allowed_analytics_cidrs, var.allowed_all_cidrs)
+    # },
   ]
 
   create_sg_groups = length(var.security_group_ids) == 0 ? true : false
@@ -83,10 +83,10 @@ resource "aws_security_group" "dsf_base_sg" {
 }
 
 locals {
-  create_hub_sg_groups = local.create_sg_groups && length(local.sg_hub_cidrs) > 0 ? true : false
+  create_hub_sg_groups = local.create_sg_groups ? true : false
   sg_hub = ["hub"]
   sg_hub_tcp_ports             = local.create_hub_sg_groups ? [8443, 61617, 8501] : []
-  sg_hub_cidrs           = []#concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+  sg_hub_cidrs           = distinct(concat(var.allowed_hub_cidrs, var.allowed_all_cidrs))
 }
 
 resource "aws_security_group" "dsf_base_sg_hub" {
@@ -103,8 +103,8 @@ resource "aws_security_group_rule" "dsf_base_sg_hub_rules" {
 
   type = "ingress"
   protocol = "tcp"
-  from_port         = each.value.port
-  to_port           = each.value.port
+  from_port         = each.value
+  to_port           = each.value
   cidr_blocks = local.sg_hub_cidrs
   security_group_id = aws_security_group.dsf_base_sg_hub[0].id
 }
