@@ -33,6 +33,17 @@ on:
       - 'modules/aws/sonar-upgrader/*'
       - 'examples/sonar_upgrade/*'
 
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'master'
+      - 'dev'
+    paths:
+      - 'modules/aws/sonar-upgrader/*'
+      - 'examples/sonar_upgrade/*'
+
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
