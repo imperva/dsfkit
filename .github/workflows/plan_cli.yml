@@ -35,6 +35,7 @@ on:
       - '!master'
       - '!dev'
     paths-ignore:
+      - '.github/**'
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/sonar_upgrade/*'
       - 'installer_machine/*'
