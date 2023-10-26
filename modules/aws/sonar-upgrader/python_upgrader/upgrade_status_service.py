@@ -359,7 +359,7 @@ class UpgradeStatus(Enum):
 
 class OverallUpgradeStatus(Enum):
     NOT_STARTED = "Not started"
-    RUNNING = "Running"
+    RUNNING = "In progress"
     SUCCEEDED = "Succeeded"
     SUCCEEDED_WITH_WARNINGS = "Succeeded with warnings"
     FAILED = "Failed"
