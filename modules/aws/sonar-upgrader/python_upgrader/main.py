@@ -6,7 +6,7 @@ import re
 import socket
 from utils import get_file_path, read_file_contents
 from remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
-from upgrade_status_service import UpgradeStatusService, UpgradeStatus
+from upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from upgrade_exception import UpgradeException
 
 # Helper functions
@@ -154,9 +154,10 @@ def test_connection_maybe_with_proxy(dsf_node):
                         CONNECTION_TIMEOUT)
 
 
-def print_summary(upgrade_status_service):
+def print_summary(upgrade_status_service, overall_upgrade_status=None):
+    summary = upgrade_status_service.get_summary(overall_upgrade_status)
     print("********** Summary ************")
-    print(upgrade_status_service.get_summary())
+    print(summary)
 
 
 # Main functions
@@ -232,9 +233,14 @@ def main(args):
     # Flush upgrade status to status file (in case of an error on the first file write, this line is the manual retry)
     upgrade_status_service.flush()
 
-    print_summary(upgrade_status_service)
+    overall_upgrade_status = upgrade_status_service.get_overall_upgrade_status()
+    print_summary(upgrade_status_service, overall_upgrade_status)
 
     print("********** End ************")
+
+    is_run_successful = verify_successful_run(overall_upgrade_status, args, upgrade_status_service)
+    if is_run_successful is False:
+        raise UpgradeException("One of the upgrade stages failed")
 
 
 def init_upgrade_status(extended_nodes, target_version):
@@ -820,6 +826,62 @@ def extract_postflight_validations_result(script_output):
 
 def are_postflight_validations_passed(postflight_validations_result):
     return postflight_validations_result.get('correct_version')
+
+
+def verify_successful_run(overall_upgrade_status, args, upgrade_status_service):
+    '''
+    Verifies if the scrip run was successful from the applicative point of view.
+    For example, if if no exceptions were raised but the upgrade failed, the run is considered failed.
+    :param overall_upgrade_status: The overall upgrade status provided by the upgrade status service
+    :param args: The program arguments which include the configuration options
+    :param upgrade_status_service
+    :return: True if the run was successful, false otherwise
+    '''
+    if overall_upgrade_status == OverallUpgradeStatus.FAILED or overall_upgrade_status == OverallUpgradeStatus.UNKNOWN:
+        is_successful_run = False
+    elif overall_upgrade_status in (OverallUpgradeStatus.SUCCEEDED, OverallUpgradeStatus.SUCCEEDED_WITH_WARNINGS):
+        is_successful_run = True
+    elif overall_upgrade_status == OverallUpgradeStatus.NOT_STARTED and \
+            not args.test_connection and \
+            not args.run_preflight_validations and \
+            not args.run_upgrade and \
+            not args.run_postflight_validations:
+        is_successful_run = True
+    elif overall_upgrade_status == OverallUpgradeStatus.RUNNING:
+        is_successful_run = verify_successful_run_by_configuration_options(args, upgrade_status_service)
+    else:
+        print("verify_successful_run, unexpected scenario was reached")
+        is_successful_run = False
+
+    return is_successful_run
+
+
+def verify_successful_run_by_configuration_options(args, upgrade_status_service):
+    if args.run_postflight_validations:
+        is_successful_run = upgrade_status_service.are_nodes_with_upgrade_statuses(
+            [UpgradeStatus.POSTFLIGHT_VALIDATIONS_SUCCEEDED,
+             UpgradeStatus.SUCCEEDED,
+             UpgradeStatus.SUCCEEDED_WITH_WARNINGS])
+    elif args.run_upgrade:
+        is_successful_run = upgrade_status_service.are_nodes_with_upgrade_statuses(
+            [UpgradeStatus.UPGRADE_SUCCEEDED,
+             UpgradeStatus.SUCCEEDED,
+             UpgradeStatus.SUCCEEDED_WITH_WARNINGS])
+    elif args.run_preflight_validations:
+        is_successful_run = upgrade_status_service.are_nodes_with_upgrade_statuses(
+            [UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
+             UpgradeStatus.SUCCEEDED,
+             UpgradeStatus.SUCCEEDED_WITH_WARNINGS])
+    elif args.test_connection:
+        is_successful_run = upgrade_status_service.are_nodes_with_upgrade_statuses([
+            UpgradeStatus.TEST_CONNECTION_SUCCEEDED,
+            UpgradeStatus.SUCCEEDED,
+            UpgradeStatus.SUCCEEDED_WITH_WARNINGS])
+    else:
+        print("verify_successful_run_by_configuration_options, unexpected scenario was reached")
+        is_successful_run = False
+
+    return is_successful_run
 
 
 if __name__ == "__main__":

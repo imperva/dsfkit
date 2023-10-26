@@ -71,6 +71,13 @@ class UpgradeStatusService:
         # assume dsf_node_id in the map, since all nodes were supposed to be added on init_upgrade_status method call
         return self.status_dictionary.get(dsf_node_id).get('status')
 
+    def get_upgrade_statuses(self):
+        '''
+        Retrieves the upgrade statuses of all the nodes
+        :return: a lit list of upgrade statuses
+        '''
+        return [obj.get('status') for obj in self.status_dictionary.values()]
+
     def update_upgrade_status(self, dsf_node_id, upgrade_status, message="", flush=True):
         '''
         Updates the upgrade status of a DSF node in the status file
@@ -156,19 +163,33 @@ class UpgradeStatusService:
                 print(f"Failed to update to the upgrade status file with an exception: {str(ex)}")
             return False
 
-    def get_summary(self):
-        upgrade_statuses = self._read_upgrade_statuses()
-        summary = f"Overall upgrade status: {self.calc_overall_upgrade_status(upgrade_statuses).value}"
+    def are_nodes_with_upgrade_statuses(self, statuses):
+        '''
+        Verifies if the upgrade statuses of the nodes equal a specific list of statuses
+        :param statuses: The statuses to check against the current nodes statuses
+        :return: True if all nodes have specific statuses, false otherwise
+        '''
+        upgrade_statuses = self.get_upgrade_statuses()
+        return all(obj in statuses for obj in upgrade_statuses)
+
+    def get_overall_upgrade_status(self):
+        upgrade_statuses = self.get_upgrade_statuses()
+        return self._calc_overall_upgrade_status(upgrade_statuses)
+
+    def get_summary(self, overall_upgrade_status=None):
+        if overall_upgrade_status is None:
+            overall_upgrade_status = self.get_overall_upgrade_status()
+        summary = f"Overall upgrade status: {overall_upgrade_status.value}"
         summary += f"\nDSF nodes upgrade statuses:"
-        for host in upgrade_statuses.keys():
+        for host in self.status_dictionary.keys():
             padded_host = "{:<45}".format(host)
-            optional_message = upgrade_statuses.get(host).get('message')
-            summary += f"\n    {padded_host}: {upgrade_statuses.get(host).get('status').value}"
+            optional_message = self.status_dictionary.get(host).get('message')
+            summary += f"\n    {padded_host}: {self.status_dictionary.get(host).get('status').value}"
             if optional_message is not None:
                 summary += f". Message: {optional_message}"
         return summary
 
-    def calc_overall_upgrade_status(self, upgrade_statuses):
+    def _calc_overall_upgrade_status(self, upgrade_statuses):
         '''
         Calculates the overall upgrade status according to the following logic:
         - "Not started" if all nodes are in "Not started" status
@@ -185,14 +206,13 @@ class UpgradeStatusService:
         - All nodes are in "Preflight validations succeeded" => Overall status is "Running"
         :return: The overall upgrade status
         '''
-        statuses = [obj.get('status') for obj in upgrade_statuses.values()]
-        print(f"Calculating overall upgrade status from statuses: {statuses}")
+        print(f"Calculating overall upgrade status from statuses: {upgrade_statuses}")
 
-        is_not_started = self._is_overall_upgrade_status_not_started(statuses)
-        is_running = self._is_overall_upgrade_status_running(statuses)
-        is_succeeded = self._is_overall_upgrade_status_succeeded(statuses)
-        is_succeeded_with_warnings = self._is_overall_upgrade_status_succeeded_with_warnings(statuses)
-        is_failed = self._is_overall_upgrade_status_failed(statuses)
+        is_not_started = self._is_overall_upgrade_status_not_started(upgrade_statuses)
+        is_running = self._is_overall_upgrade_status_running(upgrade_statuses)
+        is_succeeded = self._is_overall_upgrade_status_succeeded(upgrade_statuses)
+        is_succeeded_with_warnings = self._is_overall_upgrade_status_succeeded_with_warnings(upgrade_statuses)
+        is_failed = self._is_overall_upgrade_status_failed(upgrade_statuses)
 
         return self._get_overall_upgrade_status(is_not_started, is_running, is_succeeded, is_succeeded_with_warnings,
                                                 is_failed)

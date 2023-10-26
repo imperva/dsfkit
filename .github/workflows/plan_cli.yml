@@ -34,6 +34,14 @@ on:
       - '*'
       - '!master'
       - '!dev'
+    paths-ignore:
+      - '.github/**'
+      - 'modules/aws/sonar-upgrader/**'
+      - 'examples/sonar_upgrade/*'
+      - 'installer_machine/*'
+      - 'dsf_instances_permissions_samples/*'
+      - 'permissions_samples/*'
+      - 'security_groups_samples/*'
 
 permissions:
   contents: read
