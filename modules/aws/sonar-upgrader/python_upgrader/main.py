@@ -155,8 +155,9 @@ def test_connection_maybe_with_proxy(dsf_node):
 
 
 def print_summary(upgrade_status_service, overall_upgrade_status=None):
+    summary = upgrade_status_service.get_summary(overall_upgrade_status)
     print("********** Summary ************")
-    print(upgrade_status_service.get_summary(overall_upgrade_status))
+    print(summary)
 
 
 # Main functions
