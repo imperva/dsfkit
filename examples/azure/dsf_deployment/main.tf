@@ -1,15 +1,6 @@
-provider "azurerm" {
-  features {
-    resource_group {
-      prevent_deletion_if_contains_resources = false
-    }
-  }
-}
-
 module "globals" {
   source  = "imperva/dsf-globals/azurerm"
   version = "1.5.7" # latest release tag
-
 }
 
 resource "azurerm_resource_group" "rg" {
