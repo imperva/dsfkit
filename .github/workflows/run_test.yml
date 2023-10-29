@@ -2,28 +2,10 @@ name: 'Run Test'
 
 on:
   workflow_call:
-    #    inputs:
-    #      use_modules_from_terraform_registry:
-    #        required: true
-    #        type: boolean
-    #      explicit_ref:
-    #        required: true
-    #        type: string
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
-  #      AWS_ACCESS_KEY_ID:
-  #        required: true
-  #      AWS_SECRET_ACCESS_KEY:
-  #        required: true
-  #      DAM_LICENSE:
-  #        required: true
-  #
     workflow_dispatch:
-      inputs:
-        use_modules_from_terraform_registry:
-          type: boolean
-          required: false
 
   push:
     branches:
@@ -44,13 +26,6 @@ on:
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/sonar_upgrade/*'
 
-#env:
-#  TF_CLI_ARGS: "-no-color"
-#  TF_INPUT: 0
-#  TF_VAR_agentless_gw_count: 1
-#  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 permissions:
   contents: read
 
@@ -61,13 +36,6 @@ jobs:
       matrix:
         include:
           - name: Sonar Upgrade unit tests
-    #            workspace: sonar_dsf_basic_upgrade-
-    #            enable_sonar: true
-    #            enable_dam: false
-    #            enable_dra: false
-    #            hub_hadr: false
-    #            agentless_gw_hadr: false
-    #            simulation_db_types_for_agentless: "[]"
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
