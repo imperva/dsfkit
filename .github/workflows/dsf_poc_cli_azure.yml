@@ -69,8 +69,8 @@ jobs:
     - name: Set Workspace Name
       run: |
         echo "Event Name: ${{ github.event_name }}"
-        if [ ${{ github.event_name }} != 'schedule' ]; then
-          echo TF_WORKSPACE=${{ matrix.workspace }}schedule-dev >> $GITHUB_ENV
+        if [ ${{ github.event_name }} == 'schedule' ]; then 
+          echo TF_WORKSPACE=${{ matrix.workspace }}${{ github.event_name }}-$REF >> $GITHUB_ENV 
         else
           echo TF_WORKSPACE=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }} >> $GITHUB_ENV
           echo TMP_WORKSPACE_NAME=${{ matrix.workspace }}${{ github.run_number }}-${{ github.run_attempt }}-${{ inputs.explicit_ref }} >> $GITHUB_ENV
@@ -134,7 +134,7 @@ jobs:
 
     - name: Cleaning environment
       run: |
-        if [ ${{ github.event_name }} != 'schedule' ]; then
+        if [ ${{ github.event_name }} == 'schedule' ]; then
           mv $EXAMPLE_DIR/main.tf{,_}
           mv $EXAMPLE_DIR/outputs.tf{,_}
           mv $EXAMPLE_DIR/sonar.tf{,_}
@@ -157,10 +157,10 @@ jobs:
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    # - name: Terraform Apply
-    #   id: apply
-    #   # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    #   run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+    - name: Terraform Apply
+      id: apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       if: always()
