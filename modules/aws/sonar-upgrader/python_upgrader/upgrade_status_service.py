@@ -2,8 +2,8 @@
 
 import time
 
-from utils import update_file_safely, copy_file, format_dictionary_to_json, is_file_exist, read_file_as_json, \
-    value_to_enum
+from .utils import update_file_safely, copy_file, format_dictionary_to_json, is_file_exist, read_file_as_json, \
+    value_to_enum, delete_file
 from enum import Enum
 
 
@@ -33,7 +33,7 @@ class UpgradeStatusService:
         # Read status file if exists
         exist_upgrade_status_json = None
         try:
-            if self._is_status_file_exist():
+            if self.is_status_file_exist():
                 print(f"Upgrade status file was found")
                 exist_upgrade_status_json = self._read_upgrade_status_as_json()
                 print(f"The upgrade status file was read successfully")
@@ -217,6 +217,14 @@ class UpgradeStatusService:
         return self._get_overall_upgrade_status(is_not_started, is_running, is_succeeded, is_succeeded_with_warnings,
                                                 is_failed)
 
+    # This method is public for unit testing purpose
+    def is_status_file_exist(self):
+        return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
+
+    # For unit testing purpose
+    def delete_state_file(self):
+        delete_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
+
     def _calc_initial_upgrade_status(self, exist_dsf_node_status, dsf_node_ids):
         new_statuses = {node_id: exist_dsf_node_status.get(node_id, {"status": UpgradeStatus.NOT_STARTED})
                         for node_id in dsf_node_ids}
@@ -315,9 +323,6 @@ class UpgradeStatusService:
     def _read_upgrade_statuses(self):
         upgrade_status = self._read_upgrade_status_as_json()
         return upgrade_status.get("upgrade-statuses")
-
-    def _is_status_file_exist(self):
-        return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
 
     def _read_upgrade_status_as_json(self):
         return read_file_as_json(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, self._json_to_enum)

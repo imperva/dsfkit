@@ -4,10 +4,10 @@ import argparse
 import json
 import re
 import socket
-from utils import get_file_path, read_file_contents
-from remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
-from upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
-from upgrade_exception import UpgradeException
+from .utils import get_file_path, read_file_contents
+from .remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
+from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
+from .upgrade_exception import UpgradeException
 
 # Helper functions
 

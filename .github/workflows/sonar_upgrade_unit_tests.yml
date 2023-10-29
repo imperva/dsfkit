@@ -1,29 +1,29 @@
-name: 'Run Test'
+name: 'Sonar Upgrade Unit Tests'
 
 on:
   workflow_call:
-    #    inputs:
-    #      use_modules_from_terraform_registry:
-    #        required: true
-    #        type: boolean
-    #      explicit_ref:
-    #        required: true
-    #        type: string
+#    inputs:
+#      use_modules_from_terraform_registry:
+#        required: true
+#        type: boolean
+#      explicit_ref:
+#        required: true
+#        type: string
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
-  #      AWS_ACCESS_KEY_ID:
-  #        required: true
-  #      AWS_SECRET_ACCESS_KEY:
-  #        required: true
-  #      DAM_LICENSE:
-  #        required: true
-  #
-  #  workflow_dispatch:
-  #    inputs:
-  #      use_modules_from_terraform_registry:
-  #        type: boolean
-  #        required: false
+#      AWS_ACCESS_KEY_ID:
+#        required: true
+#      AWS_SECRET_ACCESS_KEY:
+#        required: true
+#      DAM_LICENSE:
+#        required: true
+#
+#  workflow_dispatch:
+#    inputs:
+#      use_modules_from_terraform_registry:
+#        type: boolean
+#        required: false
 
   push:
     branches:
@@ -61,13 +61,13 @@ jobs:
       matrix:
         include:
           - name: Sonar Upgrade unit tests
-    #            workspace: sonar_dsf_basic_upgrade-
-    #            enable_sonar: true
-    #            enable_dam: false
-    #            enable_dra: false
-    #            hub_hadr: false
-    #            agentless_gw_hadr: false
-    #            simulation_db_types_for_agentless: "[]"
+#            workspace: sonar_dsf_basic_upgrade-
+#            enable_sonar: true
+#            enable_dam: false
+#            enable_dra: false
+#            hub_hadr: false
+#            agentless_gw_hadr: false
+#            simulation_db_types_for_agentless: "[]"
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest

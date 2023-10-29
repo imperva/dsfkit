@@ -93,6 +93,19 @@ def is_file_exist(file_path):
     return os.path.exists(file_path)
 
 
+def delete_file(file_path):
+    '''
+    :param file_path: A path to a file
+    delete the file
+    '''
+    try:
+        os.remove(file_path)
+    except FileNotFoundError:
+        raise Exception(f"File not found: {file_path}")
+    except Exception as e:
+        raise Exception(f"Failed to delete file {file_path}: {str(e)}")
+
+
 def read_file_contents(file_path):
     '''
     :param file_path: An absolute path to a file
