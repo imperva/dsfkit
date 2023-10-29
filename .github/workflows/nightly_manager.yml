@@ -134,7 +134,7 @@ jobs:
   #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@fix_azure_nightly_build
     with:
       use_modules_from_terraform_registry: false
       explicit_ref: dev
