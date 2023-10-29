@@ -21,5 +21,5 @@ def test_init_method(setup_for_each_test):
     assert host1_status == UpgradeStatus.NOT_STARTED
 
 
-# def test_test1():
-#     assert 5 == 6
+def test_failure():
+    assert 5 == 6
