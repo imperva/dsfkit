@@ -19,11 +19,11 @@ on:
 #      DAM_LICENSE:
 #        required: true
 #
-#  workflow_dispatch:
-#    inputs:
-#      use_modules_from_terraform_registry:
-#        type: boolean
-#        required: false
+  workflow_dispatch:
+    inputs:
+      use_modules_from_terraform_registry:
+        type: boolean
+        required: false
 
   push:
     branches:
