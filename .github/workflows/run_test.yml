@@ -39,8 +39,8 @@ jobs:
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
-#    env:
-#      PYTHON_UPGRADER_DIR: modules/aws/sonar-upgrader/python_upgrader
+    env:
+      PYTHON_UPGRADER_DIR: modules/aws/sonar-upgrader/python_upgrader
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -72,7 +72,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       - name: Set up Python environment
-        working-directory: modules/aws/sonar-upgrader/python_upgrader
+        working-directory: ${{ PYTHON_UPGRADER_DIR }}
         run: |
           python -m pip install --upgrade pip
           pip install --user virtualenv
@@ -82,10 +82,9 @@ jobs:
           pip install -r tests/requirements-dev.txt
 
       - name: Run tests
-        working-directory: modules/aws/sonar-upgrader/python_upgrader
+        working-directory: ${{ PYTHON_UPGRADER_DIR }}
         run: |
           source venv/bin/activate
-          ls
           pytest
 
       - name: Check how was the workflow run
@@ -99,13 +98,13 @@ jobs:
           fi
 
         # Send job failure to Slack
-#      - name: Send Slack When Failure
-#        run: |
-#          if [ ${{ env.REF }} == 'master' ]; then
-#            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#          elif [ ${{ env.REF }} == 'dev' ]; then
-#            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#          else
-#            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
-#          fi
-#        if: ${{ failure() }}
+      - name: Send Slack When Failure
+        run: |
+          if [ ${{ env.REF }} == 'master' ]; then
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} Prod ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#dsfkit-prod"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          elif [ ${{ env.REF }} == 'dev' ]; then
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} dev ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          else
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+        if: ${{ failure() }}
