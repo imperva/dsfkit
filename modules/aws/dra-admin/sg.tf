@@ -86,7 +86,7 @@ locals {
   create_hub_sg_groups = local.create_sg_groups ? true : false
   sg_hub = ["hub"]
   sg_hub_cidrs           = distinct(concat(var.allowed_hub_cidrs, var.allowed_all_cidrs))
-  sg_hub_tcp_ports             = local.create_hub_sg_groups && length(local.sg_hub_cidrs) > 0 ? [8443, 61617, 8501] : []
+  sg_hub_tcp_ports             = local.create_hub_sg_groups ? [8443, 61617, 8501] : []
 }
 
 resource "aws_security_group" "dsf_base_sg_hub" {
@@ -105,6 +105,6 @@ resource "aws_security_group_rule" "dsf_base_sg_hub_rules" {
   protocol = "tcp"
   from_port         = each.value
   to_port           = each.value
-  cidr_blocks = local.sg_hub_cidrs
+  cidr_blocks = length(local.sg_hub_cidrs) > 0 ? local.sg_hub_cidrs : ["0.0.0.0/32"] # We must provision this rule resource so we use a dummy address in case no cidr blocks are provided
   security_group_id = aws_security_group.dsf_base_sg_hub[0].id
 }
