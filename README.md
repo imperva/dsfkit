@@ -1,15 +1,24 @@
-# Data Security Fabric (DSF) Kit Deployment Guide
+# Data Security Fabric (DSF) Kit Deployment and Upgrade Guide
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 # eDSF Kit
 
-Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment of Imperva's Data Security Fabric.
+Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment and upgrade of Imperva's Data Security Fabric.
+
+## eDSF Kit Deployment
 
 eDSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
 DAM (Data Activity Monitoring) MX and Agent Gateway and DRA (Data Risk Analytics) Admin and Analytics. 
 
 Currently, eDSF Kit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
 on-premises (vSphere) and hybrid environments.
+
+## eDSF Kit Upgrade
+
+eDSF Kit enables you to upgrade DSF Hubs and Agentless Gateways (formerly Sonar) which are deployed on AWS.
+
+In the future, eDSF Kit will enable you to upgrade the full suite of the DSF sub-products, including DAM and DRA, and 
+will support other major clouds, on-premises (vSphere) and hybrid environments.
 
 # About This Guide
 
@@ -26,6 +35,7 @@ This guide covers the following main topics. Additional guides are referenced th
 * How to deploy Imperva’s Data Security Fabric (DSF) with step-by-step instructions.
 * How to verify that the deployment was successful using the eDSF Kit output.
 * How to undeploy DSF with step-by-step instructions.
+* How to upgrade Imperva’s Data Security Fabric (DSF) Hub and Agentless Gateway, with step-by-step instructions.
 
 #### Typographical Conventions
 
@@ -423,29 +433,29 @@ The following table lists the released eDSF Kit versions, their release date and
 
 eDSF Kit offers several deployment modes:
 
-* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the deployment client's machine which must be a Linux machine.
+* **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 
   For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
-* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or eDSF Kit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
   For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 * **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.
-  This mode can  be used in case we don't want to install any software on the deployment client's machine. It can be used to demo DSF on an Imperva AWS Account or on a customer’s AWS account (if the customer supplies credentials).
+  This mode can  be used for purposes similar to the Installer Machine Deployment Mode, but it is usually used by advanced users.
 
   For more details, refer to [Terraform Cloud Deployment Mode](#terraform-cloud-deployment-mode).
 
 The first step in the deployment is to choose the deployment mode most appropriate to you.
 If you need more information to decide on your preferred mode, refer to the detailed instructions for each mode [here](#deployment).
 
-## Prerequisites
+## Deployment Prerequisites
 
 Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
-3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Git [here](https://git-scm.com/downloads).
-4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), download Terraform [here](https://www.terraform.io/downloads). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Latest Supported Terraform Version: 1.5.x. Using a higher version may result in unexpected behavior or errors.
+3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
+4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
 6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
 7. [curl](https://curl.se/) - Command-line tool for transferring data.
 
@@ -552,8 +562,8 @@ Fill out the [eDSF Kit pre-deployment questionnaire](https://forms.gle/CNMhdTuym
 
 ## Installation Software Location and Versioning
 
-When using eDSF Kit there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
-In order to be able to download the installation software during deployment, you must request access beforehand. See [Prerequisites](#prerequisites).
+When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
+In order to be able to download the installation software during deployment, you must request access beforehand. See [Deployment Prerequisites](#deployment-prerequisites).
 
 This includes the following version of the DSF sub-products:
 <table>
@@ -611,10 +621,8 @@ After you have [chosen the deployment mode](#choosing-the-deployment-mode), foll
 
 ## CLI Deployment Mode
 
+This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
-Terraform CLI uses a bash script and therefore requires a Linux/Mac machine.
-
-The first thing to do in this deployment mode is to [download Terraform ](https://www.terraform.io/downloads).
 
 **NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
 
@@ -656,7 +664,7 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
     ```
 6. Run:
     ```bash
-    terraform apply -auto-approve
+    terraform apply
     ```
 
    This should take about 30 minutes.
@@ -679,19 +687,18 @@ The first thing to do in this deployment mode is to [download Terraform ](https:
 
 8. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
 
-**The CLI Deployment is now complete and a functioning version of DSF is now available.**
+**The CLI Deployment is now completed and a functioning version of DSF is now available.**
 
 ## Installer Machine Deployment Mode
 
-This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine which the user creates, instead of on the deployment client's machine. This mode can be used if a Linux machine is not available, or eDSF Kit cannot be run on the available Linux machine, e.g., since it does not have permissions to access the deployment environment.
+This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer.
+This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.
 
 
-2. **Launch an Instance:** Search for RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2 image and click “enter”:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
-
-
-3. Choose the “Community AMI”:<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
+2. **Launch an Instance:** **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
+<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
 
 
 4. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
@@ -700,19 +707,16 @@ This mode is similar to the CLI mode except that the Terraform is run on an EC2 
 5. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine.
 
 
-6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that the deployment's client machine should have access to the installer machine.
+6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
 
 
-7. Expand the “Advanced details” panel:<br>![Advanced details](https://user-images.githubusercontent.com/87799317/203825918-31879c4b-ca61-48e3-a522-c325335c4419.png)
-
-
-8. Copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.5.7/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+8. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.5.7/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
 
 
 9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
 
 
-10. When launching is completed, run SSH to the installer machine from the deployment client's machine:
+10. When launching is completed, run SSH to the installer machine from your computer:
      ```bash
      ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
@@ -966,6 +970,146 @@ In case of failure, the Terraform may have deployed some resources before failin
 2. The DSF deployment is now destroyed and the workspace may be re-used if needed. If this workspace is not being re-used, it may be removed with “Force delete from Terraform Cloud” that can be found under Settings.<br>![delete](https://user-images.githubusercontent.com/87799317/203826179-de7a6c1d-31a1-419d-9c71-61c96cfb7d2e.png)
 
 **NOTE:** Do not remove the workspace before the deployment is completely destroyed. Doing so may lead to leftovers in your AWS account that will require manual deletion which is a tedious process.
+
+# Getting Ready to Upgrade
+
+## Choosing the Upgrade Mode
+
+eDSF Kit offers several upgrade modes:
+
+* **CLI Upgrade Mode:** This mode offers a straightforward upgrade option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
+
+  For more details, refer to [CLI Upgrade Mode](#cli-upgrade-mode).
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+
+  For more details, refer to [Installer Machine Upgrade Mode](#installer-machine-upgrade-mode).
+
+The first step in the upgrade is to choose the upgrade mode most appropriate to you.
+If you need more information to decide on your preferred mode, refer to the detailed instructions for each mode [here](#upgrade).
+
+## Upgrade Prerequisites
+
+Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
+
+1. The upgrade requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
+2. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Git](https://git-scm.com).
+3. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+4. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Python 3](https://www.python.org).
+5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
+6. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
+
+## Upgrade Software Location and Versioning
+
+When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar target version specified in the Terraform example.
+In order to be able to download the upgrade software during upgrade, you must request access beforehand. See [Upgrade Prerequisites](#upgrade-prerequisites).
+
+Sonar version constrains can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module's README.
+
+The target version should be specified in the Sonar upgrade example <a href="https://github.com/imperva/dsfkit/blob/master/examples/sonar_upgrade/main.tf">main.tf</a> file, for example:
+
+   ```terraform
+   target_version = "4.12.0.10.0"
+   ```
+
+# Upgrade
+
+After you have [chosen the upgrade mode](#choosing-the-upgrade-mode), follow the step-by-step instructions below to ensure a successful upgrade. If you have any questions or issues during the upgrade process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
+
+## CLI Upgrade Mode
+
+This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
+This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
+
+1. Download the zip file of the Sonar upgrade example: <a href="https://github.com/imperva/dsfkit/tree/1.5.7/examples/sonar_upgrade/sonar_upgrade_1_5_7.zip">sonar_upgrade_1_5_7.zip</a>.
+
+2. Unzip the zip file in CLI or using your operating system's UI.
+   For example, in CLI:
+   ```bash
+   unzip sonar_upgrade_<x_y_z>.zip
+   
+   >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
+   ```
+
+3. In CLI, navigate to the directory which contains the Terraform files.
+   ```bash
+   cd sonar_upgrade_<x_y_z>
+   
+   >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
+   ```
+
+4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the _main.tf_ file.
+   
+   More information can be found in the <a href="https://github.
+com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module's README.
+
+
+   If you need help doing that, please contact [Imperva Technical Support](https://support.imperva.com/s/).
+
+5. Run:
+    ```bash
+    terraform init
+    ```
+
+6. Run the upgrade:
+    ```bash
+    terraform apply
+    ```
+
+   Wait for it to complete.
+
+
+7. To re-apply when there are no Terraform changes (the Terraform infrastructure matches the configuration), run:
+   ```bash
+   terraform apply -replace="module.sonar_upgrader.null_resource.upgrade_cmd"
+   ```
+
+**The CLI Upgrade is now completed and a functioning upgraded version of DSF is now available.**
+
+## Installer Machine Upgrade Mode
+
+This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer.
+This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+
+
+1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to upgrade, and preferably be in proximity to it.
+
+
+2. **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar.
+
+
+3. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
+
+
+4. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine. 
+
+
+5. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
+
+
+6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.5.7/installer_machine/upgrade_installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
+
+
+9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
+
+
+10. When launching is completed, run SSH to the installer machine from your computer:
+     ```bash
+     ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
+   
+    >>>> Replace the key_pair_file with the name of the file from step 4, and the installer_machine_public_ip with 
+         the public IP of the installer machine which should now be available in the AWS EC2 console.
+         E.g., ssh -i a_key_pair.pem ec2-user@1.2.3.4
+     ```
+
+    **NOTE:** You may need to decrease the access privileges of the key_pair_file in order to be able to use it in for ssh.
+    For example: `chmode 400 a_key_pair.pem`
+
+    
+12. Continue by following the [CLI Upgrade Mode](#cli-upgrade-mode) beginning at step 1.
+
+**Note:** It is safe to destroy the installer machine at any time, since currently no AWS resources are deployed during the upgrade process.
+
+**The Installer Machine Deployment is now completed and a functioning upgraded version of DSF is now available.**
 
 # More Information
 
