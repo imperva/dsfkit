@@ -1,7 +1,7 @@
 # test_upgrade_status_service.py
 
 import pytest
-from python_upgrader.upgrade_status_service import UpgradeStatusService, UpgradeStatus
+from upgrade.upgrade_status_service import UpgradeStatusService, UpgradeStatus
 
 
 @pytest.fixture

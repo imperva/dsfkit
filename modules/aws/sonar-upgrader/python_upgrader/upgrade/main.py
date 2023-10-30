@@ -9,6 +9,14 @@ from .remote_executor import run_remote_script, run_remote_script_via_proxy, tes
 from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from .upgrade_exception import UpgradeException
 
+
+# Constants
+PREFLIGHT_VALIDATIONS_SCRIPT_PATH = "scripts/run_preflight_validations.py"
+GET_PYTHON_LOCATION_SCRIPT_PATH = "scripts/get_python_location.sh"
+UPGRADE_SCRIPT_PATH = "scripts/upgrade_v4_10.sh"
+POSTFLIGHT_VALIDATIONS_SCRIPT_PATH = "scripts/run_postflight_validations.py"
+CLEAN_OLD_DEPLOYMENTS_SCRIPT_PATH = "scripts/clean_old_deployments.sh"
+
 # Helper functions
 
 
@@ -383,13 +391,13 @@ def run_all_preflight_validations(agentless_gw_extended_nodes, dsf_hub_extended_
 
     gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_nodes,
                                                                                     target_version,
-                                                                                    "run_preflight_validations.py",
+                                                                                    PREFLIGHT_VALIDATIONS_SCRIPT_PATH,
                                                                                     python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
     hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_nodes,
                                                                                     target_version,
-                                                                                    "run_preflight_validations.py",
+                                                                                    PREFLIGHT_VALIDATIONS_SCRIPT_PATH,
                                                                                     python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
@@ -470,7 +478,7 @@ def run_preflight_validations(dsf_node, dsf_node_name, target_version, script_fi
 
 
 def run_get_python_location_script(dsf_node):
-    script_file_path = get_file_path("get_python_location.sh")
+    script_file_path = get_file_path(GET_PYTHON_LOCATION_SCRIPT_PATH)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
 
@@ -527,24 +535,24 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
         print("----- Upgrade")
 
     gws_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(agentless_gws, "Agentless Gateway",
-                                                                                  target_version, "upgrade_v4_10.sh",
+                                                                                  target_version, UPGRADE_SCRIPT_PATH,
                                                                                   run_upgrade,
                                                                                   run_postflight_validations,
-                                                                                  "run_postflight_validations.py",
+                                                                                  POSTFLIGHT_VALIDATIONS_SCRIPT_PATH,
                                                                                   clean_old_deployments,
-                                                                                  "clean_old_deployments.sh",
+                                                                                  CLEAN_OLD_DEPLOYMENTS_SCRIPT_PATH,
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
                                                                                   upgrade_status_service)
 
     hub_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(hubs, "DSF Hub", target_version,
-                                                                                  "upgrade_v4_10.sh",
+                                                                                  UPGRADE_SCRIPT_PATH,
                                                                                   run_upgrade,
                                                                                   run_postflight_validations,
-                                                                                  "run_postflight_validations.py",
+                                                                                  POSTFLIGHT_VALIDATIONS_SCRIPT_PATH,
                                                                                   clean_old_deployments,
-                                                                                  "clean_old_deployments.sh",
+                                                                                  CLEAN_OLD_DEPLOYMENTS_SCRIPT_PATH,
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
@@ -685,7 +693,7 @@ def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, st
 def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_script_file_name):
     if run_dummy_upgrade:
         print(f"Running dummy upgrade script")
-        script_file_name = 'dummy_upgrade_script.sh'
+        script_file_name = 'scripts/dummy_upgrade_script.sh'
     else:
         script_file_name = upgrade_script_file_name
     script_file_path = get_file_path(script_file_name)
