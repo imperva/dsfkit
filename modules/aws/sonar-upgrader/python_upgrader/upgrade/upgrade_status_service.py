@@ -2,8 +2,8 @@
 
 import time
 
-from .utils import update_file_safely, copy_file, format_dictionary_to_json, is_file_exist, read_file_as_json, \
-    value_to_enum, delete_file
+from .utils.utils import format_dictionary_to_json_string, format_string_to_json, value_to_enum
+from .utils.file_utils import read_file_contents, update_file_safely, copy_file, is_file_exist
 from enum import Enum
 
 
@@ -33,7 +33,7 @@ class UpgradeStatusService:
         # Read status file if exists
         exist_upgrade_status_json = None
         try:
-            if self.is_status_file_exist():
+            if self._is_status_file_exist():
                 print(f"Upgrade status file was found")
                 exist_upgrade_status_json = self._read_upgrade_status_as_json()
                 print(f"The upgrade status file was read successfully")
@@ -217,14 +217,6 @@ class UpgradeStatusService:
         return self._get_overall_upgrade_status(is_not_started, is_running, is_succeeded, is_succeeded_with_warnings,
                                                 is_failed)
 
-    # This method is public for unit testing purpose
-    def is_status_file_exist(self):
-        return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
-
-    # For unit testing purpose
-    def delete_state_file(self):
-        delete_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
-
     def _calc_initial_upgrade_status(self, exist_dsf_node_status, dsf_node_ids):
         new_statuses = {node_id: exist_dsf_node_status.get(node_id, {"status": UpgradeStatus.NOT_STARTED})
                         for node_id in dsf_node_ids}
@@ -307,7 +299,11 @@ class UpgradeStatusService:
 
     def _backup_status_file(self):
         backup_file_name = UpgradeStatusService.UPGRADE_STATUS_FILE_NAME + '.bkp'
-        copy_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, backup_file_name)
+        try:
+            copy_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, backup_file_name)
+            print(f"File '{UpgradeStatusService.UPGRADE_STATUS_FILE_NAME}' copied to '{backup_file_name}' successfully")
+        except Exception as ex:
+            print(f"Failed to backup file {UpgradeStatusService.UPGRADE_STATUS_FILE_NAME} with an exception: {str(ex)}")
 
     def _update_status_file(self, initial_new_upgrade_status, target_version):
         timestamp = int(time.time())  # current timestamp with seconds resolution
@@ -316,7 +312,7 @@ class UpgradeStatusService:
             "target-version": target_version,
             "timestamp": timestamp
         }
-        content_json = format_dictionary_to_json(content_dict, object_serialize_hook=self._enum_to_json)
+        content_json = format_dictionary_to_json_string(content_dict, object_serialize_hook=self._enum_to_json)
         update_file_safely(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, content_json)
         return UpgradeStatusService.UPGRADE_STATUS_FILE_NAME
 
@@ -324,8 +320,12 @@ class UpgradeStatusService:
         upgrade_status = self._read_upgrade_status_as_json()
         return upgrade_status.get("upgrade-statuses")
 
+    def _is_status_file_exist(self):
+        return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
+
     def _read_upgrade_status_as_json(self):
-        return read_file_as_json(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, self._json_to_enum)
+        file_contents = read_file_contents(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
+        return format_string_to_json(file_contents, self._json_to_enum)
 
     def _enum_to_json(self, obj):
         if isinstance(obj, Enum):
