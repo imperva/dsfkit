@@ -81,7 +81,7 @@ jobs:
           pip install -r requirements.txt
           pip install -r tests/requirements-dev.txt
 
-      - name: Run tests
+      - name: Run unit tests
         working-directory: ${{ env.PYTHON_UPGRADER_DIR }}
         run: |
           source venv/bin/activate
