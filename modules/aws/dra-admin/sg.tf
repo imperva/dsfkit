@@ -85,8 +85,8 @@ resource "aws_security_group" "dsf_base_sg" {
 locals {
   create_hub_sg_groups = local.create_sg_groups ? true : false
   sg_hub = ["hub"]
-  sg_hub_tcp_ports             = local.create_hub_sg_groups ? [8443, 61617, 8501] : []
   sg_hub_cidrs           = distinct(concat(var.allowed_hub_cidrs, var.allowed_all_cidrs))
+  sg_hub_tcp_ports             = local.create_hub_sg_groups && length(local.sg_hub_cidrs) > 0 ? [8443, 61617, 8501] : []
 }
 
 resource "aws_security_group" "dsf_base_sg_hub" {

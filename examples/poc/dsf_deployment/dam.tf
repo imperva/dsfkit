@@ -5,7 +5,7 @@ locals {
 
   agent_gw_cidr_list = [data.aws_subnet.agent_gw.cidr_block]
 
-  mx_address              = var.enable_dam ? coalesce(module.mx[0].public_ip, module.mx[0].private_ip) : null
+  mx_address              = var.enable_dam ? (module.mx[0].public_ip != null ? module.mx[0].public_ip : module.mx[0].private_ip) : null
 }
 
 module "mx" {

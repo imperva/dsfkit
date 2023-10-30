@@ -1,7 +1,7 @@
 locals {
   dra_analytics_count = var.enable_dra ? var.dra_analytics_count : 0
 
-  dra_admin_address           = var.enable_dra ? coalesce(module.dra_admin[0].public_ip, module.dra_admin[0].private_ip) : null
+  dra_admin_address           = var.enable_dra ? (module.dra_admin[0].public_ip != null ? module.dra_admin[0].public_ip : module.dra_admin[0].private_ip) : null
   dra_admin_cidr_list = concat([data.aws_subnet.dra_admin.cidr_block], var.enable_dra ? [format("%s/32", local.dra_admin_address)] : [])
 }
 
