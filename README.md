@@ -1107,7 +1107,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
     
 12. Continue by following the [CLI Upgrade Mode](#cli-upgrade-mode) beginning at step 1.
 
-**IMPORTANT:** It is safe to destroy the installer machine at any time, since currently no AWS resources are deployed during the upgrade process.
+**Note:** It is safe to destroy the installer machine at any time, since currently no AWS resources are deployed during the upgrade process.
 
 **The Installer Machine Deployment is now completed and a functioning upgraded version of DSF is now available.**
 
