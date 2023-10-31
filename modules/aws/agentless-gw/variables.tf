@@ -89,6 +89,12 @@ variable "public_ip" {
   description = "Create public IP for the instance"
 }
 
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Whether to use the DSF instance's public or private IP to connect to the instance"
+}
+
 variable "instance_type" { # https://docs.imperva.com/bundle/z-kb-articles-km/page/a6defd0e.html
   type        = string
   default     = "r6i.xlarge" # 4 cores & 32GB ram
