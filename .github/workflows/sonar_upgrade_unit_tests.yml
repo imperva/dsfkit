@@ -7,25 +7,6 @@ on:
         required: true
   workflow_dispatch:
 
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-    paths:
-      - 'modules/aws/sonar-upgrader/**'
-      - 'examples/sonar_upgrade/*'
-
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
-      - 'dev'
-    paths:
-      - 'modules/aws/sonar-upgrader/**'
-      - 'examples/sonar_upgrade/*'
-
 permissions:
   contents: read
 

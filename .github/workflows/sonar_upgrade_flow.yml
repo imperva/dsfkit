@@ -1,4 +1,4 @@
-name: 'Run Test'
+name: 'Sonar Upgrade Flow'
 
 on:
   workflow_call:
