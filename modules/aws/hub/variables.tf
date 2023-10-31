@@ -140,6 +140,12 @@ variable "use_public_ip" {
   description = "Whether to use the DSF instance's public or private IP to check the instance's health"
 }
 
+variable "termination_protection" {
+  type        = bool
+  default     = true
+  description = "If the instance should have termination protection enabled (Defaults to true)"
+}
+
 variable "binaries_location" {
   type = object({
     s3_bucket = string

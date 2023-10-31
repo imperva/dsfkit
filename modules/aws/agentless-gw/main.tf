@@ -55,6 +55,7 @@ module "gw_instance" {
   terraform_script_path_folder      = var.terraform_script_path_folder
   use_public_ip                     = false
   attach_persistent_public_ip       = false
+  termination_protection            = var.termination_protection
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content
   volume_attachment_device_name     = var.volume_attachment_device_name

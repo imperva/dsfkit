@@ -89,6 +89,12 @@ variable "public_ip" {
   description = "Create public IP for the instance"
 }
 
+variable "termination_protection" {
+  type        = bool
+  default     = true
+  description = "If the instance should have termination protection enabled (Defaults to true)"
+}
+
 variable "instance_type" { # https://docs.imperva.com/bundle/z-kb-articles-km/page/a6defd0e.html
   type        = string
   default     = "r6i.xlarge" # 4 cores & 32GB ram
