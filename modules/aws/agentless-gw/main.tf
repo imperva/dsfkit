@@ -46,6 +46,7 @@ module "gw_instance" {
   password_secret_name              = var.password_secret_name
   ssh_key_path                      = var.ssh_key_pair.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
+  tarball_url                       = var.tarball_url
   hub_sonarw_public_key             = var.hub_sonarw_public_key
   hadr_dr_node                      = var.hadr_dr_node
   main_node_sonarw_public_key       = var.main_node_sonarw_public_key

@@ -146,8 +146,18 @@ variable "binaries_location" {
     s3_region = string
     s3_key    = string
   })
-  description = "S3 DSF installation location"
-  nullable    = false
+  description = "S3 DSF installation location. If tarball_url not set, binaries_location is used"
+  default = {
+    s3_bucket = ""
+    s3_region = ""
+    s3_key    = ""
+  }
+}
+
+variable "tarball_url" {
+  type        = string
+  default     = ""
+  description = "HTTPS DSF installation location. If not set, binaries_location is used"
 }
 
 variable "hadr_dr_node" {
@@ -284,18 +294,18 @@ variable "mx_details" {
 variable "dra_details" {
   description = "List of the DSF DRA to onboard to Sonar Hub"
   type = object({
-    name     = string
-    address  = string
-    username = string
-    password = string
+    name              = string
+    address           = string
+    username          = string
+    password          = string
     archiver_password = string
   })
   validation {
-    condition = (var.dra_details == null || (can(var.dra_details.name) && can(var.dra_details.address)))
+    condition     = (var.dra_details == null || (can(var.dra_details.name) && can(var.dra_details.address)))
     error_message = "Each DRA Admin must specify name and address"
   }
   validation {
-    condition = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
+    condition     = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
     error_message = "Each DRA Admin must specify username and password"
   }
   default = null

@@ -13,6 +13,7 @@ locals {
     installation_s3_bucket              = var.binaries_location.s3_bucket
     installation_s3_region              = var.binaries_location.s3_region
     installation_s3_key                 = var.binaries_location.s3_key
+    tarball_url                         = var.tarball_url
     display_name                        = local.display_name
     password_secret                     = local.password_secret_name
     hub_sonarw_public_key               = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""

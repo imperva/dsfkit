@@ -139,8 +139,18 @@ variable "binaries_location" {
     s3_region = string
     s3_key    = string
   })
-  description = "S3 DSF installation location"
-  nullable    = false
+  description = "S3 DSF installation location. If tarball_url not set, binaries_location is used."
+  default = {
+    s3_bucket = ""
+    s3_region = ""
+    s3_key    = ""
+  }
+}
+
+variable "tarball_url" {
+  type        = string
+  default     = ""
+  description = "HTTPS DSF installation location. If not set, binaries_location is used."
 }
 
 variable "hadr_dr_node" {
