@@ -8,13 +8,13 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.5.6" # latest release tag
+  version       = "1.5.7" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.5.6" # latest release tag
+  version              = "1.5.7" # latest release tag
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   tags                 = local.tags
@@ -87,7 +87,7 @@ module "vpc" {
 ##############################
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
   instance_type               = var.hub_instance_type
@@ -114,7 +114,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   instance_type                = var.hub_instance_type
@@ -143,7 +143,7 @@ module "hub_dr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
@@ -173,7 +173,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.gw_count
 
   friendly_name                = join("-", [local.deployment_name_salted, "gw", count.index, "DR"])
@@ -206,7 +206,7 @@ module "agentless_gw_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
 
   sonar_version       = module.globals.tarball_location.version
   dsf_main_ip         = module.hub_main.public_ip
@@ -223,7 +223,7 @@ module "hub_hadr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.gw_count
 
   sonar_version       = module.globals.tarball_location.version
@@ -256,7 +256,7 @@ locals {
 
 module "federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = length(local.hub_gw_combinations)
 
   hub_info = {
@@ -282,7 +282,7 @@ module "federation" {
 
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -293,7 +293,7 @@ module "rds_mysql" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = contains(var.db_types_to_onboard, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -308,7 +308,7 @@ module "rds_mssql" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.5.6" # latest release tag
+  version  = "1.5.7" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
   sonar_version    = module.globals.tarball_location.version

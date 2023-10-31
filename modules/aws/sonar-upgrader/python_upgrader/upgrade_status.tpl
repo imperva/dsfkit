@@ -1,4 +1,4 @@
-# This file is not in use, it servers as a documentation of the schema of the upgrade state file
+# This file is not in use, it servers as a documentation of the schema of the upgrade status file
 {
     "upgrade-statuses": {
         "host1": {
@@ -14,6 +14,6 @@
             "status": "Preflight validations failed",
             "message": "{\"different_version\": false, \"min_version\": true, \"max_version_hop\": true}"
         }
-    }
+    },
     "target-version": "4.12.0.10.0"
 }

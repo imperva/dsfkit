@@ -77,7 +77,7 @@ variable "dsf_hubs" {
 variable "target_version" {
   type        = string
   default     = null
-  description = "The Sonar target version to upgrade to. The lowest supported version is 4.10 from the second patch onward."
+  description = "The Sonar target version to upgrade to. The lowest supported version is 4.10 from the second patch onward. The format must be 5 digits, e.g., 4.12.0.10.0 (4.12 is not supported)."
 }
 
 variable "connection_timeout" {

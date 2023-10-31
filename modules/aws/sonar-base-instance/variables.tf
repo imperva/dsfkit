@@ -268,3 +268,8 @@ variable "base_directory" {
   default     = "/imperva"
   description = "The base directory where all Sonar related directories will be installed"
 }
+
+variable "send_usage_statistics" {
+  type        = bool
+  description = "Set to true to send usage statistics."
+}

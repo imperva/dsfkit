@@ -12,7 +12,7 @@ locals {
 
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
@@ -50,8 +50,16 @@ module "hub_main" {
     username = mx.web_console_user
     password = local.password
   }] : []
+  dra_details = var.enable_dra? {
+    name              = module.dra_admin[0].display_name
+    address           = module.dra_admin[0].public_ip
+    username          = module.dra_admin[0].ssh_user
+    password          = local.password
+    archiver_password = module.dra_analytics[0].archiver_password
+  } : null
   generate_access_tokens = true
   tags                   = local.tags
+  send_usage_statistics  = var.send_usage_statistics
   providers = {
     aws = aws.provider-1
   }
@@ -59,7 +67,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -96,6 +104,7 @@ module "hub_dr" {
   base_directory                    = var.sonar_machine_base_directory
   generate_access_tokens            = true
   tags                              = local.tags
+  send_usage_statistics             = var.send_usage_statistics
   providers = {
     aws = aws.provider-1
   }
@@ -103,7 +112,7 @@ module "hub_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version       = module.globals.tarball_location.version
@@ -128,7 +137,7 @@ module "hub_hadr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name        = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
@@ -160,6 +169,7 @@ module "agentless_gw_main" {
   instance_profile_name             = var.agentless_gw_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics             = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }
@@ -167,7 +177,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
@@ -202,6 +212,7 @@ module "agentless_gw_dr" {
   instance_profile_name             = var.agentless_gw_instance_profile_name
   base_directory                    = var.sonar_machine_base_directory
   tags                              = local.tags
+  send_usage_statistics             = var.send_usage_statistics
   providers = {
     aws = aws.provider-2
   }
@@ -209,7 +220,7 @@ module "agentless_gw_dr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.5.6" # latest release tag
+  version = "1.5.7" # latest release tag
   count   = length(module.agentless_gw_dr)
 
   sonar_version       = module.globals.tarball_location.version
@@ -255,7 +266,7 @@ locals {
 
 module "federation" {
   source   = "imperva/dsf-federation/null"
-  version  = "1.5.6" # latest release tag
+  version  = "1.5.7" # latest release tag
   for_each = local.hub_gw_combinations
 
   hub_info = {
