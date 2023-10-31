@@ -37,7 +37,7 @@ permissions:
 
 jobs:
   sonar_upgrade_unit_tests:
-    uses: imperva/dsfkit/.github/workflows/sonar_upgrade_unit_tests.yml
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade_unit_tests.yml@${{ github.ref }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -46,7 +46,7 @@ jobs:
 
   sonar_upgrade:
     needs: sonar_upgrade_unit_tests
-    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@${{ github.ref }}
     with:
       use_modules_from_terraform_registry: false
     secrets:
