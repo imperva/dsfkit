@@ -116,7 +116,7 @@ def validate_min_version(source_major_version):
 
 def validate_max_version_hop(source_major_version, target_major_version):
     # TODO handle when 5.x will be released
-    hop = target_major_version - source_major_version
+    hop = round(target_major_version - source_major_version, 2)
     print(f"Version hop: {hop}")
     return hop <= 0.02
 
@@ -136,6 +136,16 @@ def check_free_space(directory, required_space_gb):
     free_space = shutil.disk_usage(directory).free / (2**30)
     print(f"There is {required_space_gb} free space in {directory}")
     return free_space >= required_space_gb
+
+
+def test():
+    # test patch upgrade from 4.10.0.0 to 4.10.0.1
+    # is_valid = validate_max_version_hop(4.10, 4.10)
+
+    # test major version upgrade upgrade from 4.10.0.1.3 to 4.12.0.0.0
+    is_valid = validate_max_version_hop(4.10, 4.12)
+
+    print(f"is_valid: {is_valid}")
 
 
 if __name__ == "__main__":
