@@ -12,22 +12,26 @@ log and summary for the upgraded DSF nodes.
 It utilizes Python to perform this task.
 
 
-## What can be upgraded
+## Upgrade Options
 
 eDSF Kit provides full flexibility as to what can be upgraded: Only DSF Hubs or only Agentless Gateways or both.
 Agenltess Gateway without its Hub, DR without its Main, etc.
+
+It is possible to do a major version upgrade, e.g., from 4.10.0.0.0 to 4.12.0.10.0 or a patch upgrade, e.g., from 4.10.0.0.0 to 4.10.0.1.0.
+
+_target_version_ format in the [main.tf](./main.tf) file must be 5 digits, e.g., 4.12.0.10.0 (4.12 is not supported).
 
 ## Upgrade Stages
 
 The upgrade procedure consists of several stages, in the following order:
 
-1. **Test connection**: Verifies that SSH connectivity exists to all the DSF nodes being upgraded
+1. **Test connection**: Verifies that SSH connectivity exists to all the DSF nodes being upgraded.
 2. **Preflight validations**: Runs a set of validations on each DSF node being upgraded to verify that it is possible 
 and safe to run the upgrade. For more details, refer to [Preflight and Postflight Validations](#preflight_and_postflight_validations). 
 3. For each DSF node being upgraded:
-   1. **Upgrade**: Runs the Sonar script to perform the software upgrade.
+   1. **Upgrade**: Runs the Sonar script which performs the software upgrade.
    2. **Postflight Validations**: Runs a set of validations to verify that the upgrade was successful.
-4. **Summary**: Prints a summary of the upgrade which includes the status of each DSF node.
+4. **Summary**: Prints a summary of the upgrade which includes an overall status and the status of each DSF node.
 
 If during any of these stages an error occurs, the upgrade is aborted by default.
 To continue the upgrade upon errors, change the _stop_on_failure_ variable. (Refer to [variables.tf](./variables.tf))
@@ -44,21 +48,22 @@ The target version is the version you are upgrading to.
 
 #### Preflight validations:
 
-1. The target version is higher than the source version.
+1. The source and target versions are different.
 2. The source version is 4.10 or higher. (eDSF Kit requirement)
 3. The upgrade version hop is 1 or 2, e.g., upgrade from 4.10 to 4.12 is supported, and upgrade from 4.10 to 4.13 is not. (Sonar product requirement)
 4. There are at least 20GB of free space in the <installation-directory>/data directory.
 
 #### Postflight validations:
 
-1. After the upgrade, the Sonar version was changed as expected
+1. After the upgrade, the Sonar software version was changed as expected.
 
 
 ## Upgrade Order
 
 This module ensures a deterministic upgrade order.
 
-As required by the Sonar product, the DSF Hub is upgraded last after the Agentless Gateways.
+As required by the Sonar product, the DSF Hub is upgraded last after the Agentless Gateways. 
+(Limitation: This constraint is enforced even if the DSF Hub being upgraded is not federated to the Agentless Gateways being upgraded)
 
 Among the Agentless Gateways, if more than one is specified, the upgrade order is as appears in the [main.tf](./main.tf) file in the _agentless_gws_ list.
 
