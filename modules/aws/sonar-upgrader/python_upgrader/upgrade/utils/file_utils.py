@@ -1,7 +1,6 @@
 # file_utils.py
 
 import os
-import json
 import shutil
 
 
@@ -37,12 +36,12 @@ def copy_file(source_path, destination_path):
     shutil.copy2(source_path, destination_path)
 
 
-def get_file_path(file_name):
+def join_paths(*args):
     '''
-    Get the absolute path to a file in the same directory as this
+    Join multiple path components into a single path using the appropriate
+    path separator for the current operating system.
     '''
-    file_dir = _get_current_directory()
-    return os.path.join(file_dir, file_name)
+    return os.path.join(*args)
 
 
 def is_file_exist(file_path):
@@ -80,9 +79,3 @@ def read_file_contents(file_path):
     except Exception:
         raise Exception(f"Failed to read contents of file: {file_path}")
 
-
-def _get_current_directory():
-    '''
-    Get the absolute path of the currently executing script
-    '''
-    return os.path.dirname(os.path.abspath(__file__))
