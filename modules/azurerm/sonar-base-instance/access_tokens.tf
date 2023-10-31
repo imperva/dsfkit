@@ -1,7 +1,7 @@
 locals {
   access_tokens = var.generate_access_tokens ? (var.resource_type != "hub" ? [] : [
     {
-      "name" : "dam-to-hub",
+      "name" : "archiver",
       "scopes" : jsonencode(["archiver:service:upload"])
     },
     {

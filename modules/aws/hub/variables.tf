@@ -268,7 +268,7 @@ variable "mx_details" {
   }))
   validation {
     condition = alltrue([
-      for mx in var.mx_details : try(mx.address != null && mx.address != null, false)
+      for mx in var.mx_details : try(mx.name != null && mx.address != null, false)
     ])
     error_message = "Each MX must specify name and address"
   }
@@ -281,6 +281,26 @@ variable "mx_details" {
   default = []
 }
 
+variable "dra_details" {
+  description = "List of the DSF DRA to onboard to Sonar Hub"
+  type = object({
+    name     = string
+    address  = string
+    username = string
+    password = string
+    archiver_password = string
+  })
+  validation {
+    condition = (var.dra_details == null || (can(var.dra_details.name) && can(var.dra_details.address)))
+    error_message = "Each DRA Admin must specify name and address"
+  }
+  validation {
+    condition = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
+    error_message = "Each DRA Admin must specify username and password"
+  }
+  default = null
+}
+
 variable "volume_attachment_device_name" {
   type        = string
   default     = null
@@ -291,4 +311,10 @@ variable "base_directory" {
   type        = string
   default     = "/imperva"
   description = "The base directory where all Sonar related directories will be installed"
+}
+
+variable "send_usage_statistics" {
+  type        = bool
+  default     = true
+  description = "Set to true to send usage statistics."
 }
