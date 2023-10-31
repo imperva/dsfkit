@@ -7,7 +7,9 @@ locals {
   federate_hub_cmds = templatefile("${path.module}/federate_hub.tftpl", {
     ssh_key_path                   = var.hub_info.hub_private_ssh_key_path
     dsf_gw_ip                      = var.gw_info.gw_ip_address
+    dsf_gw_federation_ip           = var.gw_info.gw_federation_ip_address
     dsf_hub_ip                     = var.hub_info.hub_ip_address
+    dsf_hub_federation_ip          = var.hub_info.hub_federation_ip_address
     hub_ssh_user                   = var.hub_info.hub_ssh_user
     hub_proxy_address              = var.hub_proxy_info.proxy_address != null ? var.hub_proxy_info.proxy_address : ""
     hub_proxy_private_ssh_key_path = var.hub_proxy_info.proxy_private_ssh_key_path != null ? var.hub_proxy_info.proxy_private_ssh_key_path : ""
