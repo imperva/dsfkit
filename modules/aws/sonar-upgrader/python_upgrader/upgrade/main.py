@@ -4,12 +4,31 @@ import argparse
 import json
 import re
 import socket
-from utils import get_file_path, read_file_contents
-from remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
-from upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
-from upgrade_exception import UpgradeException
+import os
+from .utils.file_utils import join_paths, read_file_contents
+from .remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
+from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
+from .upgrade_exception import UpgradeException
+
+
+# Constants
+PREFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_preflight_validations.py"
+GET_PYTHON_LOCATION_SCRIPT_NAME = "get_python_location.sh"
+UPGRADE_SCRIPT_NAME = "upgrade_v4_10.sh"
+POSTFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_postflight_validations.py"
+CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 
 # Helper functions
+
+
+def build_script_file_path(script_file_name):
+    file_dir = get_current_directory()
+    return join_paths(file_dir, "scripts", script_file_name)
+
+
+def get_current_directory():
+    # Get the absolute path of the currently executing script
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 def str_to_bool(arg):
@@ -383,13 +402,13 @@ def run_all_preflight_validations(agentless_gw_extended_nodes, dsf_hub_extended_
 
     gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_nodes,
                                                                                     target_version,
-                                                                                    "run_preflight_validations.py",
+                                                                                    PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                     python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
     hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_nodes,
                                                                                     target_version,
-                                                                                    "run_preflight_validations.py",
+                                                                                    PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                     python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
@@ -470,7 +489,7 @@ def run_preflight_validations(dsf_node, dsf_node_name, target_version, script_fi
 
 
 def run_get_python_location_script(dsf_node):
-    script_file_path = get_file_path("get_python_location.sh")
+    script_file_path = build_script_file_path(GET_PYTHON_LOCATION_SCRIPT_NAME)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_bash_script_run_command(script_contents)
 
@@ -492,7 +511,7 @@ def extract_python_location(script_output):
 
 
 def run_preflight_validations_script(dsf_node, target_version, python_location, script_file_name):
-    script_file_path = get_file_path(script_file_name)
+    script_file_path = build_script_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
@@ -527,24 +546,24 @@ def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrad
         print("----- Upgrade")
 
     gws_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(agentless_gws, "Agentless Gateway",
-                                                                                  target_version, "upgrade_v4_10.sh",
+                                                                                  target_version, UPGRADE_SCRIPT_NAME,
                                                                                   run_upgrade,
                                                                                   run_postflight_validations,
-                                                                                  "run_postflight_validations.py",
+                                                                                  POSTFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                   clean_old_deployments,
-                                                                                  "clean_old_deployments.sh",
+                                                                                  CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME,
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
                                                                                   upgrade_status_service)
 
     hub_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(hubs, "DSF Hub", target_version,
-                                                                                  "upgrade_v4_10.sh",
+                                                                                  UPGRADE_SCRIPT_NAME,
                                                                                   run_upgrade,
                                                                                   run_postflight_validations,
-                                                                                  "run_postflight_validations.py",
+                                                                                  POSTFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                   clean_old_deployments,
-                                                                                  "clean_old_deployments.sh",
+                                                                                  CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME,
                                                                                   python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
@@ -688,7 +707,7 @@ def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_scrip
         script_file_name = 'dummy_upgrade_script.sh'
     else:
         script_file_name = upgrade_script_file_name
-    script_file_path = get_file_path(script_file_name)
+    script_file_path = build_script_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
 
     args = get_upgrade_script_args(target_version, tarball_location)
@@ -777,7 +796,7 @@ def run_postflight_validations(extended_node, target_version, script_file_name, 
 
 
 def run_postflight_validations_script(dsf_node, target_version, python_location, script_file_name):
-    script_file_path = get_file_path(script_file_name)
+    script_file_path = build_script_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
@@ -800,7 +819,7 @@ def run_clean_old_deployments(dsf_node, dsf_node_name, script_file_name):
 
 
 def run_clean_old_deployments_script(dsf_node, script_file_name):
-    script_file_path = get_file_path(script_file_name)
+    script_file_path = build_script_file_path(script_file_name)
     script_contents = read_file_contents(script_file_path)
 
     script_run_command = build_bash_script_run_command(script_contents)

@@ -8,7 +8,7 @@ source venv/bin/activate
 
 pip3 install -r ${path}/python_upgrader/requirements.txt
 
-python3 -u ${path}/python_upgrader/main.py \
+PYTHONPATH=${path}/python_upgrader python3 -u -m upgrade.main \
   --target_version "${target_version}" \
   --agentless_gws '${agentless_gws}' \
   --dsf_hubs '${dsf_hubs}' \

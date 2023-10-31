@@ -2,8 +2,8 @@
 
 import time
 
-from utils import update_file_safely, copy_file, format_dictionary_to_json, is_file_exist, read_file_as_json, \
-    value_to_enum
+from .utils.utils import format_dictionary_to_json_string, format_string_to_json, value_to_enum
+from .utils.file_utils import read_file_contents, update_file_safely, copy_file, is_file_exist
 from enum import Enum
 
 
@@ -299,7 +299,11 @@ class UpgradeStatusService:
 
     def _backup_status_file(self):
         backup_file_name = UpgradeStatusService.UPGRADE_STATUS_FILE_NAME + '.bkp'
-        copy_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, backup_file_name)
+        try:
+            copy_file(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, backup_file_name)
+            print(f"File '{UpgradeStatusService.UPGRADE_STATUS_FILE_NAME}' copied to '{backup_file_name}' successfully")
+        except Exception as ex:
+            print(f"Failed to backup file {UpgradeStatusService.UPGRADE_STATUS_FILE_NAME} with an exception: {str(ex)}")
 
     def _update_status_file(self, initial_new_upgrade_status, target_version):
         timestamp = int(time.time())  # current timestamp with seconds resolution
@@ -308,7 +312,7 @@ class UpgradeStatusService:
             "target-version": target_version,
             "timestamp": timestamp
         }
-        content_json = format_dictionary_to_json(content_dict, object_serialize_hook=self._enum_to_json)
+        content_json = format_dictionary_to_json_string(content_dict, object_serialize_hook=self._enum_to_json)
         update_file_safely(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, content_json)
         return UpgradeStatusService.UPGRADE_STATUS_FILE_NAME
 
@@ -320,7 +324,8 @@ class UpgradeStatusService:
         return is_file_exist(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
 
     def _read_upgrade_status_as_json(self):
-        return read_file_as_json(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME, self._json_to_enum)
+        file_contents = read_file_contents(UpgradeStatusService.UPGRADE_STATUS_FILE_NAME)
+        return format_string_to_json(file_contents, self._json_to_enum)
 
     def _enum_to_json(self, obj):
         if isinstance(obj, Enum):
