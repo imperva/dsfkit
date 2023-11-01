@@ -134,6 +134,3 @@ def test_flush(mocker, setup_for_each_test):
     read_file_contents_mock.assert_not_called()
     assert update_file_safely_mock.call_count == 2
 
-
-def test_failure(mocker, setup_for_each_test):
-    assert 1 == 2
