@@ -3,9 +3,9 @@
 
 **Alpha release**
 
-This utility is designed for upgrading DSF Hubs and Agentless Gateways.
+This utility is designed for upgrading DSF Hubs and Agentless Gateways (formerly Sonar).
 
-If you do not wish to use Terraform to run the upgrade, it is possible to bypass it and run the Python code directly. 
+If you do not wish to use Terraform to run the upgrade, it is possible to bypass it and run the Python utility directly. 
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 
 ## Usage
 
-To utilize the upgrade package, run the following command and replace [arguments] with the specific arguments required 
+Run the following command and replace [arguments] with the specific arguments required 
 for your environment configuration:
 
 `python3 -u -m upgrade.main [arguments]`
