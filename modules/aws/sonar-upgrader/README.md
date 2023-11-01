@@ -27,7 +27,7 @@ The upgrade procedure consists of several stages, in the following order:
 
 1. **Test connection**: Verifies that SSH connectivity exists to all the DSF nodes being upgraded.
 2. **Preflight validations**: Runs a set of validations on each DSF node being upgraded to verify that it is possible 
-and safe to run the upgrade. For more details, refer to [Preflight and Postflight Validations](#preflight_and_postflight_validations). 
+and safe to run the upgrade. For more details, refer to [Preflight and Postflight Validations](#preflight-and-postflight-validations). 
 3. For each DSF node being upgraded:
    1. **Upgrade**: Runs the Sonar script which performs the software upgrade.
    2. **Postflight Validations**: Runs a set of validations to verify that the upgrade was successful.
@@ -35,6 +35,13 @@ and safe to run the upgrade. For more details, refer to [Preflight and Postfligh
 
 If during any of these stages an error occurs, the upgrade is aborted by default.
 To continue the upgrade upon errors, change the _stop_on_failure_ variable. (Refer to [variables.tf](./variables.tf))
+
+There are some exceptions to the above rule:
+
+- If DR upgrade fails, the Main is not upgraded regardless of the _stop_on_failure_ value.
+- If Minor upgrade fails, DR and Main are not upgraded regardless of the _stop_on_failure_ value.
+- If an Agentless Gateway upgrade fails, the DSF Hub is not upgraded regardless of the _stop_on_failure_ value. 
+  (Refer to [Upgrade Order](#upgrade-order))
 
 ### Preflight and Postflight Validations
 

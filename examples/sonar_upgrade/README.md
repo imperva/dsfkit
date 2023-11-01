@@ -1,4 +1,4 @@
-# DSF Hub and Agentless Gateway Upgrade POC example
+# DSF Hub and Agentless Gateway Upgrade example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
 **Alpha release**
