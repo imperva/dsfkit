@@ -44,6 +44,7 @@ on:
     types:
       - 'opened'
       - 'reopened'
+      - 'synchronize'
     branches:
       - 'master'
       - 'dev'
@@ -59,6 +60,10 @@ on:
       - 'modules/null/hadr/*'
       - 'examples/poc/sonar_basic_deployment/*'
       - 'examples/poc/sonar_hadr_deployment/*'
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
 
 env:
   TF_CLI_ARGS: "-no-color"
