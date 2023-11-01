@@ -215,11 +215,13 @@ module "federation" {
 
   hub_info = {
     hub_ip_address           = each.value[0].public_ip
+    hub_federation_ip_address = each.value[0].public_ip
     hub_private_ssh_key_path = module.key_pair.private_key_file_path
     hub_ssh_user             = each.value[0].ssh_user
   }
   gw_info = {
     gw_ip_address           = each.value[1].private_ip
+    gw_federation_ip_address = each.value[1].private_ip
     gw_private_ssh_key_path = module.key_pair.private_key_file_path
     gw_ssh_user             = each.value[1].ssh_user
   }

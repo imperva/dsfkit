@@ -1,6 +1,7 @@
 variable "gw_info" {
   type = object({
     gw_ip_address           = string
+    gw_federation_ip_address = string
     gw_private_ssh_key_path = string
     gw_ssh_user             = string
   })
@@ -12,6 +13,7 @@ variable "gw_info" {
 variable "hub_info" {
   type = object({
     hub_ip_address           = string
+    hub_federation_ip_address = string
     hub_private_ssh_key_path = string
     hub_ssh_user             = string
   })

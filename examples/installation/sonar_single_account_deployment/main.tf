@@ -205,11 +205,13 @@ module "federation" {
 
   hub_info = {
     hub_ip_address           = local.hub_gw_combinations[count.index][0].private_ip
+    hub_federation_ip_address = local.hub_gw_combinations[count.index][0].private_ip
     hub_private_ssh_key_path = local.hub_private_key_file_path
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
   gw_info = {
     gw_ip_address           = local.hub_gw_combinations[count.index][1].private_ip
+    gw_federation_ip_address = local.hub_gw_combinations[count.index][1].private_ip
     gw_private_ssh_key_path = local.gw_private_key_file_path
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }

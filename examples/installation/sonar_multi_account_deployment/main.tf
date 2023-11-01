@@ -327,11 +327,13 @@ module "federation" {
   version = "1.5.7" # latest release tag
   gw_info = {
     gw_ip_address           = local.hub_gws_combinations[count.index][1].instance.private_ip
+    gw_federation_ip_address = local.hub_gws_combinations[count.index][1].instance.private_ip
     gw_private_ssh_key_path = local.hub_gws_combinations[count.index][1].private_key_file_path
     gw_ssh_user             = local.hub_gws_combinations[count.index][1].instance.ssh_user
   }
   hub_info = {
     hub_ip_address           = local.hub_gws_combinations[count.index][0].instance.private_ip
+    hub_federation_ip_address = local.hub_gws_combinations[count.index][0].instance.private_ip
     hub_private_ssh_key_path = local.hub_gws_combinations[count.index][0].private_key_file_path
     hub_ssh_user             = local.hub_gws_combinations[count.index][0].instance.ssh_user
   }
