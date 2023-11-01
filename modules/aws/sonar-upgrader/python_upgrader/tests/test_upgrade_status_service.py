@@ -133,3 +133,4 @@ def test_flush(mocker, setup_for_each_test):
     is_file_exist_mock.assert_called_once_with("upgrade_status.json")
     read_file_contents_mock.assert_not_called()
     assert update_file_safely_mock.call_count == 2
+

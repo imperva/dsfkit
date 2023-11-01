@@ -9,8 +9,8 @@ This utility is designed for upgrading DSF Hubs and Agentless Gateways.
 To utilize the upgrade package, run the following command and replace [arguments] with the specific arguments required 
 for your environment configuration:
 
-`python -u -m upgrade.main [arguments]`
+`python3 -u -m upgrade.main [arguments]`
 
 For a list of available arguments and their descriptions, use the following command:
 
-`python -u -m upgrade.main -h`
+`python3 -u -m upgrade.main -h`
