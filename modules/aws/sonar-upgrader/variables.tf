@@ -110,11 +110,11 @@ variable "run_postflight_validations" {
   description = "Whether to run the postflight validations or skip them"
 }
 
-variable "clean_old_deployments" {
-  type        = bool
-  default     = false
-  description = "Whether to clean old deployments after successful upgrade. In case postflight validations run and failed, old deployment directories cleaning will be skipped. This variable is not operational in this POC."
-}
+#variable "clean_old_deployments" {
+#  type        = bool
+#  default     = false
+#  description = "Whether to clean old deployments after successful upgrade. In case postflight validations run and failed, old deployment directories cleaning will be skipped. This variable is not operational in this POC."
+#}
 
 
 variable "stop_on_failure" {
