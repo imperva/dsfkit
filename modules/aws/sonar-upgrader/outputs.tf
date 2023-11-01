@@ -26,9 +26,9 @@ output "run_postflight_validations" {
   value = var.run_postflight_validations
 }
 
-output "clean_old_deployments" {
-  value = var.clean_old_deployments
-}
+#output "clean_old_deployments" {
+#  value = var.clean_old_deployments
+#}
 
 output "stop_on_failure" {
   value = var.stop_on_failure
