@@ -38,6 +38,7 @@ locals {
   ]
 }
 
+
 module "hub_instance" {
   source                            = "../../../modules/aws/sonar-base-instance"
   resource_type                     = "hub"
