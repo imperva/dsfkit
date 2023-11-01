@@ -998,6 +998,13 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
 6. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
 
+If the DSF deployment has not been deployed using the eDSF Kit, it is also necessary to satisfy the following prerequisites:
+
+
+1. Grant the DSF Hubs and Agentless Gateways IAM roles access to the S3 bucket containing the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/DSFIntallationAccessPermissions.txt).
+2. Allow outbound connections from the DSF Hubs and Agentless Gateways to the S3 bucket containing the DSF installation software.
+3. AWS CLI installed on the DSF Hubs and Agentless Gateways.
+
 ## Upgrade Software Location and Versioning
 
 When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar target version specified in the Terraform example.

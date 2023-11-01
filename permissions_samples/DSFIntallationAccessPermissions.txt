@@ -1,0 +1,17 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DSFInstallationAccessPermissions",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::1ef8de27-ed95-40ff-8c08-7969fc1b7901",
+                "arn:aws:s3:::1ef8de27-ed95-40ff-8c08-7969fc1b7901/*"
+            ]
+        }
+    ]
+}
