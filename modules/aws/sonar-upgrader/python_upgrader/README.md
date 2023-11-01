@@ -33,7 +33,7 @@ For a list of available arguments and their descriptions, use the following comm
 
 `python3 -u -m upgrade.main -h`
 
-### Usage Example
+### Usage Examples
 
 In order to run the python command mentioned above, there is a need to provide JSON strings representing the DSF Hubs 
 and/or Agentless Gateways that you want to upgrade.
