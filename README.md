@@ -1001,8 +1001,8 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 If the DSF environment has not been deployed using the eDSF Kit, it is also necessary to satisfy the following prerequisites:
 
 
-1. Allow outbound connections from the DSF Husb and Agentless Gateways to the S3 bucket containing the DSF installation software.
-2. Grant the DSF Hubs and Agentless Gateways IAM roles access to the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/DSFIntallationAccessPermissions.txt).
+1. Grant the DSF Hubs and Agentless Gateways IAM roles access to the S3 bucket containing the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/DSFIntallationAccessPermissions.txt).
+2. Allow outbound connections from the DSF Husb and Agentless Gateways to the S3 bucket containing the DSF installation software.
 3. AWS CLI installed on the DSF Hubs and Agentless Gateways.
 
 ## Upgrade Software Location and Versioning
