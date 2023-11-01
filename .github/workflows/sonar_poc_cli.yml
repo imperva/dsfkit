@@ -37,8 +37,8 @@ on:
       - 'modules/aws/rds-mysql-db/*'
       - 'modules/null/federation/*'
       - 'modules/null/hadr/*'
-      - 'examples/poc/sonar_basic_deployment/*'
-      - 'examples/poc/sonar_hadr_deployment/*'
+      - 'examples/aws/poc/sonar_basic_deployment/*'
+      - 'examples/aws/poc/sonar_hadr_deployment/*'
 
   pull_request:
     types:
@@ -57,8 +57,8 @@ on:
       - 'modules/aws/rds-mysql-db/*'
       - 'modules/null/federation/*'
       - 'modules/null/hadr/*'
-      - 'examples/poc/sonar_basic_deployment/*'
-      - 'examples/poc/sonar_hadr_deployment/*'
+      - 'examples/aws/poc/sonar_basic_deployment/*'
+      - 'examples/aws/poc/sonar_hadr_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -77,12 +77,12 @@ jobs:
       matrix:
         include:
           - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
-            example_dir: ./examples/poc/sonar_basic_deployment
+            example_dir: ./examples/aws/poc/sonar_basic_deployment
             aws_region: eu-west-2
             hub_output: '.dsf_hub.value.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
           - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
-            example_dir: ./examples/poc/sonar_hadr_deployment
+            example_dir: ./examples/aws/poc/sonar_hadr_deployment
             aws_region: eu-west-1
             hub_output: '.dsf_hubs.value.main.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".main.private_ip'

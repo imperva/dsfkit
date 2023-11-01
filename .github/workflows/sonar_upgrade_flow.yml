@@ -19,7 +19,7 @@ on:
       - 'dev'
     paths:
       - 'modules/aws/sonar-upgrader/**'
-      - 'examples/sonar_upgrade/*'
+      - 'examples/aws/sonar_upgrade/*'
 
   pull_request:
     types:
@@ -30,7 +30,7 @@ on:
       - 'dev'
     paths:
       - 'modules/aws/sonar-upgrader/**'
-      - 'examples/sonar_upgrade/*'
+      - 'examples/aws/sonar_upgrade/*'
 
 permissions:
   contents: read
