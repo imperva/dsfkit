@@ -61,7 +61,7 @@ function download_and_extract_tarball() {
         extract_tarball
         rm $TARBALL_FILE_NAME
     else
-      echo "Downloading tarball..."
+      echo "Downloading tarball... (using aws cli)"
       /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} $TARBALL_FILE_NAME --region ${installation_s3_region} >/dev/null
       echo "Downloading tarball completed"
       extract_tarball
