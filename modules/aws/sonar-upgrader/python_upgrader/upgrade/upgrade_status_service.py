@@ -369,17 +369,3 @@ class OverallUpgradeStatus(Enum):
     SUCCEEDED_WITH_WARNINGS = "Succeeded with warnings"
     FAILED = "Failed"
     UNKNOWN = "Unknown"
-
-
-def test1():
-    service = UpgradeStatusService()
-    service.init_upgrade_status(["1.2.3.7", "host2"], "4.13")
-    service.update_upgrade_status("1.2.3.7", UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED, "abcd")
-    service.update_upgrade_status("host2", UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED)
-    service.flush()
-    print(service.get_summary())
-
-
-if __name__ == "__main__":
-    print("UpgradeStatusService test")
-    test1()
