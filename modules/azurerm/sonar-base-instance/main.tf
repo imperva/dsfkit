@@ -72,7 +72,8 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 
   identity {
-    type = "SystemAssigned"
+    type                   = "UserAssigned"
+    identity_ids           = [azurerm_user_assigned_identity.dsf_base.id]
   }
   tags = merge(var.tags, { Name = var.name })
 
@@ -84,20 +85,20 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 }
 
+resource "azurerm_user_assigned_identity" "dsf_base" {
+  name                = "my-user-assigned-identity"
+  resource_group_name = var.resource_group.name
+  location = var.resource_group.location
+}
+
 data "azurerm_subscription" "subscription" {
 }
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
   role_definition_name = "Storage Blob Data Reader"
-  principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+  principal_id         = azurerm_user_assigned_identity.dsf_base.principal_id
 }
-
-# resource "azurerm_role_assignment" "dsf_base_secret_role_assignment" {
-#   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.resource_group.name}/providers/Microsoft.KeyVault/vaults/${azurerm_key_vault.vault.name}"
-#   role_definition_name = "Reader"
-#   principal_id         = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
-# }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
   managed_disk_id    = azurerm_managed_disk.external_data_vol.id

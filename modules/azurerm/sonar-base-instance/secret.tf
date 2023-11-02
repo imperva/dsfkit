@@ -61,7 +61,7 @@ resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {
 resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+  object_id    = azurerm_user_assigned_identity.dsf_base.principal_id
 
   secret_permissions = [
     "Get",
