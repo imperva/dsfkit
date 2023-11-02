@@ -96,10 +96,10 @@ jobs:
         with:
           ref: ${{ env.REF }}
 
-      - name: Change the modules source to local
+      - name: Change the modules source to local (deployment)
         if: ${{ inputs.use_modules_from_terraform_registry == false }}
         run: |
-          find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+          find ${{ env.DEPLOYMENT_EXAMPLE_DIR }} -type f -exec sed -i -f sed.expr {} \;
 
       - name: Sets env vars for environment
         run: |
@@ -220,8 +220,8 @@ jobs:
           set -x
           cat > $UPGRADE_EXAMPLE_DIR/main.tf << EOF
           module "sonar_upgrader" {
-            source  = "../../modules/aws/sonar-upgrader"
-
+            source  = "imperva/dsf-sonar-upgrader/aws"
+          
             agentless_gws = [
               {
                 "main" = {
@@ -258,6 +258,11 @@ jobs:
           EOF
           cat ${UPGRADE_EXAMPLE_DIR}/main.tf
 
+      - name: Change the modules source to local (upgrade)
+        if: ${{ inputs.use_modules_from_terraform_registry == false }}
+        run: |
+          find ${{ env.UPGRADE_EXAMPLE_DIR }} -type f -exec sed -i -f sed.expr {} \;
+  
         # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init for upgrade
         run: terraform -chdir=$UPGRADE_EXAMPLE_DIR init

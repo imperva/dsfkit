@@ -25,13 +25,13 @@ on:
         type: boolean
         required: false
 
-  push:
-    branches:
-      - 'master'
-      - 'dev'
-    paths:
-      - 'modules/aws/sonar-upgrader/*'
-      - 'examples/aws/sonar_upgrade/*'
+  # push:
+  #   branches:
+  #     - 'master'
+  #     - 'dev'
+  #   paths:
+  #     - 'modules/aws/sonar-upgrader/*'
+  #     - 'examples/aws/sonar_upgrade/*'
 
 env:
   TF_CLI_ARGS: "-no-color"
