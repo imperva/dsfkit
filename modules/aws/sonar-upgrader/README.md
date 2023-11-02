@@ -40,8 +40,6 @@ There are some exceptions to the above rule:
 
 - If DR upgrade fails, the Main is not upgraded regardless of the _stop_on_failure_ value.
 - If Minor upgrade fails, DR and Main are not upgraded regardless of the _stop_on_failure_ value.
-- If an Agentless Gateway upgrade fails, the DSF Hub is not upgraded regardless of the _stop_on_failure_ value. 
-  (Refer to [Upgrade Order](#upgrade-order))
 
 ### Preflight and Postflight Validations
 
