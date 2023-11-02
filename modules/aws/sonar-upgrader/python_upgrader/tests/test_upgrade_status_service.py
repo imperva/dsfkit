@@ -177,6 +177,28 @@ def test_get_upgrade_statuses(setup_for_each_test, mocker):
                                        UpgradeStatus.UPGRADE_FAILED, UpgradeStatus.SUCCEEDED.NOT_STARTED])
 
 
+@pytest.mark.parametrize("statuses_list, expected_result", [
+    ([UpgradeStatus.SUCCEEDED, UpgradeStatus.UPGRADE_FAILED, UpgradeStatus.NOT_STARTED], True),
+    ([UpgradeStatus.SUCCEEDED, UpgradeStatus.UPGRADE_FAILED, UpgradeStatus.NOT_STARTED, UpgradeStatus.UPGRADE_SUCCEEDED], True),
+    ([UpgradeStatus.SUCCEEDED, UpgradeStatus.UPGRADE_FAILED], False),
+])
+def test_are_nodes_with_upgrade_statuses(setup_for_each_test, mocker, statuses_list, expected_result):
+    # when
+    mocker.patch('upgrade.upgrade_status_service.is_file_exist', return_value=False)
+    mocker.patch('upgrade.upgrade_status_service.update_file_safely')
+    upgrade_status_service = setup_for_each_test
+    upgrade_status_service.init_upgrade_status(["host1", "host2", "host3"], "4.12")
+    upgrade_status_service.update_upgrade_status("host1", UpgradeStatus.SUCCEEDED)
+    upgrade_status_service.update_upgrade_status("host2", UpgradeStatus.NOT_STARTED)
+    upgrade_status_service.update_upgrade_status("host3", UpgradeStatus.UPGRADE_FAILED)
+
+    # given
+    result = upgrade_status_service.are_nodes_with_upgrade_statuses(statuses_list)
+
+    # then
+    assert result == expected_result
+
+
 @pytest.mark.parametrize("statuses_list, expected_overall_upgrade_status", [
     ([UpgradeStatus.NOT_STARTED, UpgradeStatus.NOT_STARTED, UpgradeStatus.NOT_STARTED], OverallUpgradeStatus.NOT_STARTED),
     ([UpgradeStatus.SUCCEEDED, UpgradeStatus.SUCCEEDED, UpgradeStatus.SUCCEEDED], OverallUpgradeStatus.SUCCEEDED),
