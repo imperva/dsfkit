@@ -998,6 +998,8 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
 6. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
 
+### Additional Prerequisites
+
 If the DSF deployment has not been deployed using the eDSF Kit, it is also necessary to satisfy the following prerequisites:
 
 
@@ -1245,6 +1247,33 @@ Below is a list of possible issues and troubleshooting remediations.
    <td>: exit status 28. Output: + set -e
    </td>
    <td>Rerun “terraform apply”. 
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar upgrade tarball download error - missing IAM role on Sonar node EC2
+   </td>
+   <td>Downloading tarball...<br>
+       fatal error: Unable to locate credentials
+   </td>
+   <td>Attach an IAM role to the Sonar node EC2 with permission to download the tarball. Follow the instructions in the <a href="https://github.com/imperva/dsfkit/tree/master#additional-prerequisites">Additional Prerequisites</a>. 
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar upgrade tarball download error - missing IAM role permission on Sonar node EC2
+   </td>
+   <td>Downloading tarball...<br>
+       fatal error: An error occurred (403) when calling the HeadObject operation: Forbidden
+   </td>
+   <td>Add a policy to the IAM role attached to the Sonar node EC2 with permission to download the tarball. Follow the instructions in the <a href="https://github.com/imperva/dsfkit/tree/master#additional-prerequisites">Additional Prerequisites</a>.
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar upgrade tarball download error - aws cli profile misconfiguration in Sonar node EC2
+   </td>
+   <td>Downloading tarball...<br>
+       fatal error: An error occurred (403) when calling the HeadObject operation: Forbidden
+   </td>
+   <td>Connect with SSH to the Sonar node EC2 and fix the aws cli profile misconfiguration. Run, for example, 'aws sts get-caller-identity' to test it.  
    </td>
   </tr>
 </table>
