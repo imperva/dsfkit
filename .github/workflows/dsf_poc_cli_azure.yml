@@ -49,7 +49,7 @@ jobs:
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
-      EXAMPLE_DIR: ./examples/azure/dsf_deployment
+      EXAMPLE_DIR: ./examples/azure/poc/dsf_deployment
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest

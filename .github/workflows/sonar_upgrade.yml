@@ -53,8 +53,8 @@ jobs:
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
-      DEPLOYMENT_EXAMPLE_DIR: ./examples/poc/dsf_deployment
-      UPGRADE_EXAMPLE_DIR: ./examples/sonar_upgrade
+      DEPLOYMENT_EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
+      UPGRADE_EXAMPLE_DIR: ./examples/aws/sonar_upgrade
       AWS_REGION: eu-west-2
       SONAR_TARGET_VERSION: 4.13.0.10.0
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}

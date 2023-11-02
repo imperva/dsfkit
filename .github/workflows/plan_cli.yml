@@ -37,7 +37,7 @@ on:
     paths-ignore:
       - '.github/**'
       - 'modules/aws/sonar-upgrader/**'
-      - 'examples/sonar_upgrade/*'
+      - 'examples/aws/sonar_upgrade/*'
       - 'installer_machine/*'
       - 'dsf_instances_permissions_samples/*'
       - 'permissions_samples/*'
@@ -62,7 +62,7 @@ jobs:
       matrix:
         include:
           - name: Azure - POC - DSF
-            example: ./examples/azure/dsf_deployment
+            example: ./examples/azure/poc/dsf_deployment
             terraformvars: |
               resource_group_location = "East US"
               tarball_location = {
@@ -72,19 +72,19 @@ jobs:
                 az_blob = "dummy-blob"
               }
           - name: AWS - POC - DSF
-            example: ./examples/poc/dsf_deployment
+            example: ./examples/aws/poc/dsf_deployment
             terraformvars: |
               dam_license="license.mprv"
           - name: AWS - POC - Sonar Basic
-            example: ./examples/poc/sonar_basic_deployment
+            example: ./examples/aws/poc/sonar_basic_deployment
           - name: AWS - POC - Sonar HADR
-            example: ./examples/poc/sonar_hadr_deployment
+            example: ./examples/aws/poc/sonar_hadr_deployment
           - name: AWS - Installation - Sonar Single Account
-            example: ./examples/installation/sonar_single_account_deployment
+            example: ./examples/aws/installation/sonar_single_account_deployment
           - name: AWS - Installation - Sonar Multi Account
-            example: ./examples/installation/sonar_multi_account_deployment
+            example: ./examples/aws/installation/sonar_multi_account_deployment
           - name: AWS - Installation - DSF Single Account
-            example: ./examples/installation/dsf_single_account_deployment
+            example: ./examples/aws/installation/dsf_single_account_deployment
 
     name: '${{ matrix.name }}'
     env:
