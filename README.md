@@ -1118,6 +1118,12 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 
 **The Installer Machine Deployment is now completed and a functioning upgraded version of DSF is now available.**
 
+## Running the Python Upgrade Directly
+
+If you do not wish to use Terraform to run the upgrade, it is possible to bypass it and run the Python utility directly.
+
+Use the <a href="https://github.com/imperva/dsfkit/tree/1.5.7/modules/aws/sonar-upgrader/python_upgrader/README.md">Python Upgrader</a> utility.
+
 # More Information
 
 Information about additional topics can be found in specific examples' READMEs, when relevant.
@@ -1129,6 +1135,7 @@ These topics include:
 - Working with DSF Hub and Agentless Gateway without outbound internet access
 
 # Troubleshooting 
+
 If you encounter a problem that is not covered below, please open a [Github issue](https://github.com/imperva/dsfkit/issues/new) and attach the relevant terraform logs.
 You can automatically persist the logs with the following apply command:
 ```
