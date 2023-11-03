@@ -33,9 +33,9 @@ echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bu
 # For example: /imperva/apps/jsonar/apps/4.11.0.0.0
 JSONAR_BASEDIR=$(grep "^JSONAR_BASEDIR=" /etc/sysconfig/jsonar | cut -d"=" -f2)
 JSONAR_VERSION=$(grep "^JSONAR_VERSION=" /etc/sysconfig/jsonar | cut -d"=" -f2)
-
-# For example, /imperva/apps/jsonar/apps/
-APPS_DIR="${JSONAR_BASEDIR%$JSONAR_VERSION}"
+# For example, /imperva/apps
+APPS_DIR=$(echo "$JSONAR_BASEDIR" | sed "s|/jsonar/apps/${JSONAR_VERSION}||")
+echo "Apps directory: ${APPS_DIR}"
 
 TARBALL_FILE_NAME=$(basename ${installation_s3_key})
 TARBALL_FILE=$APPS_DIR/$TARBALL_FILE_NAME
@@ -44,7 +44,7 @@ VERSION="${TARBALL_FILE#*-}"
 VERSION="${VERSION%.tar.gz}"
 echo "Version: $VERSION"
 
-EXTRACTION_DIR="${APPS_DIR}${VERSION}"
+EXTRACTION_DIR="${APPS_DIR}/jsonar/apps/${VERSION}"
 echo "Tarball extraction directory: $EXTRACTION_DIR"
 
 function extract_tarball() {
@@ -62,7 +62,7 @@ function download_and_extract_tarball() {
         extract_tarball
         rm $TARBALL_FILE_NAME
     else
-      echo "Downloading tarball... (using aws cli)"
+      echo "Downloading tarball to $(pwd) .. (using aws cli)"
       /usr/local/bin/aws s3 cp s3://${installation_s3_bucket}/${installation_s3_key} $TARBALL_FILE_NAME --region ${installation_s3_region} >/dev/null
       echo "Downloading tarball completed"
       extract_tarball
