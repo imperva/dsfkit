@@ -203,7 +203,7 @@ jobs:
         run: |
           echo hub_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.hub_main.public_ip') >> $GITHUB_ENV
           echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[0].private_ip') >> $GITHUB_ENV
-          echo dsf_ssh_key_file_name=../../$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
+          echo dsf_ssh_key_file_name=../../../$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
       - name: Collect Artifacts for deployment
         if: always()
