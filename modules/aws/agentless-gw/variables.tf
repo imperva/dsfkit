@@ -168,10 +168,6 @@ variable "password" {
   type        = string
   sensitive   = true
   description = "Initial password for all users"
-  validation {
-    condition     = var.password == null || try(length(var.password) > 8, false)
-    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
-  }
 }
 
 variable "password_secret_name" {
