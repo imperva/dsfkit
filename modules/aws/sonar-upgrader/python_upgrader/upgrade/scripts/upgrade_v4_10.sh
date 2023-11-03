@@ -30,11 +30,12 @@ installation_s3_region="$1"
 installation_s3_key="$2"
 echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bucket}, in region: ${installation_s3_region}"
 
+# For example: /imperva/apps/jsonar/apps/4.11.0.0.0
 JSONAR_BASEDIR=$(grep "^JSONAR_BASEDIR=" /etc/sysconfig/jsonar | cut -d"=" -f2)
-# In deployments by eDSF Kit, the value is /imperva
-STATE_DIR=$(echo "$JSONAR_BASEDIR" | sed "s|/apps/jsonar/apps.*||")
-echo "State directory: ${STATE_DIR}"
-APPS_DIR=$STATE_DIR/apps
+JSONAR_VERSION=$(grep "^JSONAR_VERSION=" /etc/sysconfig/jsonar | cut -d"=" -f2)
+
+# For example, /imperva/apps/jsonar/apps/
+APPS_DIR="${JSONAR_BASEDIR%$JSONAR_VERSION}"
 
 TARBALL_FILE_NAME=$(basename ${installation_s3_key})
 TARBALL_FILE=$APPS_DIR/$TARBALL_FILE_NAME
@@ -43,7 +44,7 @@ VERSION="${TARBALL_FILE#*-}"
 VERSION="${VERSION%.tar.gz}"
 echo "Version: $VERSION"
 
-EXTRACTION_DIR="${APPS_DIR}/jsonar/apps/${VERSION}"
+EXTRACTION_DIR="${APPS_DIR}${VERSION}"
 echo "Tarball extraction directory: $EXTRACTION_DIR"
 
 function extract_tarball() {
