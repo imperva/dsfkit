@@ -91,7 +91,7 @@ def validate_sonar_version(source_version, target_version):
 
         if not min_version_validation_passed or not max_version_hop_validation_passed:
             print(f"Sonar version validation failed for source version: {source_version} "
-                  f"and target_version {target_major_version}")
+                  f"and target_version {target_version}")
     else:
         print("Source and target versions are the same")
         min_version_validation_passed = True
