@@ -12,6 +12,12 @@ gw1 = {
     "ssh_private_key_file_path": "/home/ssh_key2.pem"
 }
 
+gw2 = {
+    "host": "host2",
+    "ssh_user": "ec2-user",
+    "ssh_private_key_file_path": "/home/ssh_key2.pem"
+}
+
 hub1 = {
     "host": "host100",
     "ssh_user": "ec2-user",
@@ -54,12 +60,12 @@ def setup_for_each_test(mocker):
     test_connection_mock = mocker.patch('upgrade.main.test_connection')
     mocker.patch('upgrade.main.test_connection_via_proxy')
 
-    yield default_args, test_connection_mock
+    yield default_args, upgrade_status_service_mock, test_connection_mock
 
 
 def test_main_all_flags_disabled(setup_for_each_test, mocker):
     # given
-    args, _ = setup_for_each_test
+    args, _, _ = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, False, False, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script')
 
@@ -72,7 +78,7 @@ def test_main_all_flags_disabled(setup_for_each_test, mocker):
 
 def test_main_all_flags_enabled(setup_for_each_test, mocker):
     # given
-    args, test_connection_mock = setup_for_each_test
+    args, _, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], True, True, True, True)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script',
                                           side_effect=create_mocked_run_remote_script_side_effects())
@@ -96,7 +102,7 @@ def test_main_all_flags_enabled(setup_for_each_test, mocker):
 
 def test_main_only_test_connection_enabled(setup_for_each_test, mocker):
     # given
-    args, test_connection_mock = setup_for_each_test
+    args, _, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], True, False, False, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script')
 
@@ -110,7 +116,7 @@ def test_main_only_test_connection_enabled(setup_for_each_test, mocker):
 
 def test_main_only_preflight_enabled(setup_for_each_test, mocker):
     # given
-    args, test_connection_mock = setup_for_each_test
+    args, _, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, True, False, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script',
                                           side_effect=create_mocked_run_remote_script_side_effects())
@@ -130,7 +136,7 @@ def test_main_only_preflight_enabled(setup_for_each_test, mocker):
 
 def test_main_only_upgrade_enabled(setup_for_each_test, mocker):
     # given
-    args, test_connection_mock = setup_for_each_test
+    args, _, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, False, True, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script',
                                           side_effect=create_mocked_run_remote_script_side_effects())
@@ -146,9 +152,9 @@ def test_main_only_upgrade_enabled(setup_for_each_test, mocker):
     assert count_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
 
 
-def test_main_all_flags_enabled(setup_for_each_test, mocker):
+def test_main_only_postflight_enabled(setup_for_each_test, mocker):
     # given
-    args, test_connection_mock = setup_for_each_test
+    args, _, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, False, False, True)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script',
                                           side_effect=create_mocked_run_remote_script_side_effects())
@@ -164,6 +170,30 @@ def test_main_all_flags_enabled(setup_for_each_test, mocker):
     assert count_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
     assert count_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
     assert count_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+
+
+def test_main_skip_successful_host(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [], True, True, True, True)
+    mocker.patch.object(upgrade_status_service_mock, 'should_test_connection', side_effect=lambda host: host == "host2")
+    mocker.patch.object(upgrade_status_service_mock, 'should_collect_python_location', side_effect=lambda host: host == "host2")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host == "host2")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host == "host2")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host == "host2")
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects())
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 4
+    assert count_calls_with_host_and_script(call_args_list, "host2", "get_python_location.sh") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
 
 
 def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
