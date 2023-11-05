@@ -18,6 +18,18 @@ gw2 = {
     "ssh_private_key_file_path": "/home/ssh_key2.pem"
 }
 
+gw3 = {
+    "host": "host3",
+    "ssh_user": "ec2-user",
+    "ssh_private_key_file_path": "/home/ssh_key2.pem",
+    "proxy": {
+        "host": "host100",
+        "ssh_user": "ec2-user",
+        "ssh_private_key_file_path": "/home/ssh_key2.pem",
+    }
+}
+
+
 hub1 = {
     "host": "host100",
     "ssh_user": "ec2-user",
@@ -69,7 +81,6 @@ def setup_for_each_test(mocker):
     mocker.patch('upgrade.main.read_file_contents', side_effect=lambda file_name: file_name + "_content")
 
     test_connection_mock = mocker.patch('upgrade.main.test_connection')
-    mocker.patch('upgrade.main.test_connection_via_proxy')
 
     yield default_args, upgrade_status_service_mock, test_connection_mock
 
@@ -181,6 +192,27 @@ def test_main_only_postflight_enabled(setup_for_each_test, mocker):
     assert count_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
     assert count_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
     assert count_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+
+
+def test_main_host_with_proxy(setup_for_each_test, mocker):
+    # given
+    args, _, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw3}], [], True, True, True, True, True)
+    test_connection_via_proxy_mock = mocker.patch('upgrade.main.test_connection_via_proxy')
+    run_remote_script_via_proxy_mock = mocker.patch('upgrade.main.run_remote_script_via_proxy',
+                                          side_effect=create_mocked_run_remote_script_with_proxy_side_effects())
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_via_proxy_mock.call_count == 1
+    call_args_list = run_remote_script_via_proxy_mock.call_args_list
+    assert len(call_args_list) == 4
+    assert count_calls_with_host_and_script(call_args_list, "host3", "get_python_location.sh") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host3", "upgrade_v4_10.sh") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
 
 
 def test_main_skip_successful_host(setup_for_each_test, mocker):
@@ -355,6 +387,15 @@ def create_mocked_run_remote_script_side_effects(python_location_failure_hosts=N
         else:
             raise Exception("unknown script")
     return mocked_run_remote_script
+
+
+def create_mocked_run_remote_script_with_proxy_side_effects():
+    mocked_run_remote_script = create_mocked_run_remote_script_side_effects()
+    def mocked_run_remote_with_proxy_script(host, remote_user, remote_key_filename, script_contents, script_run_command,
+                                            proxy_host, proxy_user, proxy_key_filename, connection_timeout):
+        return mocked_run_remote_script(host, remote_user, remote_key_filename, script_contents, script_run_command,
+                                        connection_timeout)
+    return mocked_run_remote_with_proxy_script
 
 
 def count_calls_with_host_and_script(call_args_list, host, script_content):
