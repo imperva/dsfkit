@@ -207,6 +207,49 @@ def test_main_skip_successful_host(setup_for_each_test, mocker):
     assert count_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
 
 
+def test_main_preflight_error_with_stop_on_failure_true(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
+        preflight_validations_failure_hosts=["host1"]))
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 3
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 4
+    for host in ["host1", "host2", "host100"]:
+        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+    assert count_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
+
+
+def test_main_preflight_error_with_stop_on_failure_false(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
+        preflight_validations_failure_hosts=["host1"]))
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 3
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 10
+    for host in ["host1", "host2", "host100"]:
+        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+    for host in ["host2", "host100"]:
+        assert count_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
+        assert count_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
+
+
 def test_main_hadr_set_successful(setup_for_each_test, mocker):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
