@@ -22,3 +22,4 @@ myip-default
 *.mprv
 __pycache__/
 upgrade_status.json
+.coverage
