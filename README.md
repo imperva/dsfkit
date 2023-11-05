@@ -10,7 +10,7 @@ Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment and 
 eDSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
 DAM (Data Activity Monitoring) MX and Agent Gateway and DRA (Data Risk Analytics) Admin and Analytics. 
 
-Currently, eDSF Kit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
+Currently, eDSF Kit supports deployments on AWS and Azure cloud providers. In the near future, it will support other major public clouds, 
 on-premises (vSphere) and hybrid environments.
 
 ## eDSF Kit Upgrade
@@ -451,13 +451,15 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
-2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
-3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
-4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
-6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
-7. [curl](https://curl.se/) - Command-line tool for transferring data.
+1. If deploying on AWS, create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
+2. If deploying on Azure, [establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
+   for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided later.
+3. If deploying on AWS,  the deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
+4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
+5. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+6. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
+7. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
+8. [curl](https://curl.se/) - Command-line tool for transferring data.
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -647,22 +649,35 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 4. Optionally make changes to the example's Terraform code to fit your use case. If you need help doing that, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 
-4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-   For simplicity, in this example we will use environment variables:
+5. Terraform leverages the cloud provider's shell environment for authentication. For AWS, refer to the [AWS CLI Configuration Guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html),
+   and for Azure, refer to the [Azure CLI Configuration Guide](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli). In this example, we'll use environment variables for simplicity.
 
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
+   - AWS environment variables
 
-    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
-    ```
+        ```bash
+        export AWS_ACCESS_KEY_ID=${access_key}
+        export AWS_SECRET_ACCESS_KEY=${secret_key}
+        export AWS_REGION=${region}
+    
+        >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
+        ```
+    
+   - Azure environment variables
 
-5. Run:
+        ```bash
+        export ARM_TENANT_ID=${tenant_id}
+        export ARM_SUBSCRIPTION_ID=${subscription_id}
+        export ARM_CLIENT_ID=${client_id}
+        export ARM_CLIENT_SECRET=${client_secret}
+    
+        >>>> Fill the values of the tenant_id, subscription_id, client_id and client_secret placeholders, e.g., export ARM_TENANT_ID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.
+        ```
+
+6. Run:
     ```bash
     terraform init
     ```
-6. Run:
+7. Run:
     ```bash
     terraform apply
     ```
@@ -670,7 +685,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
    This should take about 30 minutes.
 
 
-7. Depending on your deployment:
+8. Depending on your deployment:
    
    To access the DSF Hub, extract the web console admin password and DSF URL using:
     ```bash
@@ -685,7 +700,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
     terraform output "web_console_dra"
     ```
 
-8. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
+9. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
 
 **The CLI Deployment is now completed and a functioning version of DSF is now available.**
 
@@ -930,16 +945,27 @@ In case of failure, the Terraform may have deployed some resources before failin
    
    >>>> Change this command depending on the example you chose
    ```
-2. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-   For simplicity, in this example we will use environment variables:
+2. Terraform leverages the cloud provider's shell environment for authentication. For AWS, refer to the [AWS CLI Configuration Guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html),
+      and for Azure, refer to the [Azure CLI Configuration Guide](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli). In this example, we'll use environment variables for simplicity.
+    - AWS environment variables
+        ```bash
+        export AWS_ACCESS_KEY_ID=${access_key}
+        export AWS_SECRET_ACCESS_KEY=${secret_key}
+        export AWS_REGION=${region}
+    
+        >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
+        ```
+      
+    - Azure environment variables
 
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
-
-    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
-    ```
+        ```bash
+        export ARM_TENANT_ID=${tenant_id}
+        export ARM_SUBSCRIPTION_ID=${subscription_id}
+        export ARM_CLIENT_ID=${client_id}
+        export ARM_CLIENT_SECRET=${client_secret}
+    
+        >>>> Fill the values of the tenant_id, subscription_id, client_id and client_secret placeholders, e.g., export ARM_TENANT_ID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.
+        ```
    
 3. Run:
     ```bash
