@@ -139,6 +139,7 @@ jobs:
           mv $EXAMPLE_DIR/outputs.tf{,_}
           mv $EXAMPLE_DIR/sonar.tf{,_}
           mv $EXAMPLE_DIR/networking.tf{,_}
+          ls -la $EXAMPLE_DIR
           terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
           mv $EXAMPLE_DIR/main.tf{_,}
           mv $EXAMPLE_DIR/outputs.tf{_,}

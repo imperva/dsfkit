@@ -86,7 +86,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {
-  name                = "my-user-assigned-identity"
+  name                = var.name
   resource_group_name = var.resource_group.name
   location = var.resource_group.location
 }

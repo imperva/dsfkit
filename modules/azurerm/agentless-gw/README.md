@@ -50,6 +50,7 @@ To use this module, add the following to your Terraform configuration:
 
 ```
 provider "azurerm" {
+  features {}
 }
 
 module "globals" {
