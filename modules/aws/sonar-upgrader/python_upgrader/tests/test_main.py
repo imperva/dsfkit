@@ -195,6 +195,29 @@ def test_main_only_postflight_enabled(setup_for_each_test, mocker):
     assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
 
 
+def test_main_custom_tarball(setup_for_each_test, mocker):
+    # given
+    args, _, test_connection_mock = setup_for_each_test
+    tarball_location = '{"s3_bucket": "my_custom_bucket", "s3_region": "my_custom_region"}'
+    setup_custom_args(args, [{"main": gw1}], [], True, True, True, True, True, tarball_location=tarball_location)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script',
+                                          side_effect=create_mocked_run_remote_script_side_effects())
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 4
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
+    assert "my_custom_bucket" in call_args_list[2].args[4]
+    assert "my_custom_region" in call_args_list[2].args[4]
+
+
 def test_main_host_with_proxy(setup_for_each_test, mocker):
     # given
     args, _, test_connection_mock = setup_for_each_test
@@ -428,7 +451,7 @@ def test_main_raise_exception_on_overall_status_failed(setup_for_each_test, mock
 
 
 def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
-                      run_postflight_validations, stop_on_failure):
+                      run_postflight_validations, stop_on_failure, tarball_location=None):
     args.agentless_gws = json.dumps(agentless_gws)
     args.dsf_hubs = json.dumps(dsf_hubs)
     args.test_connection = test_connection
@@ -436,6 +459,8 @@ def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_prefli
     args.run_upgrade = run_upgrade
     args.run_postflight_validations = run_postflight_validations
     args.stop_on_failure = stop_on_failure
+    if tarball_location is not None:
+        args.tarball_location = tarball_location
 
 
 def create_mocked_run_remote_script_side_effects(python_location_error_hosts=None,
