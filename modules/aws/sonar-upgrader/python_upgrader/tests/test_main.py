@@ -112,14 +112,14 @@ def test_main_all_flags_enabled(setup_for_each_test, mocker):
     assert test_connection_mock.call_count == 2
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 8
-    assert count_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
 
 
 def test_main_only_test_connection_enabled(setup_for_each_test, mocker):
@@ -150,10 +150,10 @@ def test_main_only_preflight_enabled(setup_for_each_test, mocker):
     test_connection_mock.assert_not_called()
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 4
-    assert count_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_preflight_validations.py") == 1
 
 
 def test_main_only_upgrade_enabled(setup_for_each_test, mocker):
@@ -170,8 +170,8 @@ def test_main_only_upgrade_enabled(setup_for_each_test, mocker):
     test_connection_mock.assert_not_called()
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 2
-    assert count_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
 
 
 def test_main_only_postflight_enabled(setup_for_each_test, mocker):
@@ -188,10 +188,10 @@ def test_main_only_postflight_enabled(setup_for_each_test, mocker):
     test_connection_mock.assert_not_called()
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 4
-    assert count_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
 
 
 def test_main_host_with_proxy(setup_for_each_test, mocker):
@@ -209,10 +209,10 @@ def test_main_host_with_proxy(setup_for_each_test, mocker):
     assert test_connection_via_proxy_mock.call_count == 1
     call_args_list = run_remote_script_via_proxy_mock.call_args_list
     assert len(call_args_list) == 4
-    assert count_calls_with_host_and_script(call_args_list, "host3", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host3", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host3", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host3", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
 
 
 def test_main_skip_successful_host(setup_for_each_test, mocker):
@@ -233,10 +233,10 @@ def test_main_skip_successful_host(setup_for_each_test, mocker):
     assert test_connection_mock.call_count == 1
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 4
-    assert count_calls_with_host_and_script(call_args_list, "host2", "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
 
 
 def test_main_preflight_error_with_stop_on_failure_true(setup_for_each_test, mocker):
@@ -254,8 +254,53 @@ def test_main_preflight_error_with_stop_on_failure_true(setup_for_each_test, moc
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 4
     for host in ["host1", "host2", "host100"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
+
+
+def test_main_upgrade_error_with_stop_on_failure_true(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
+        upgrade_failure_hosts=["host1"]))
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 3
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 7
+    for host in ["host1", "host2", "host100"]:
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
+
+
+def test_main_python_location_error_with_stop_on_failure_false(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
+        python_location_failure_hosts=["host1"]))
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host != "host1")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 3
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 9
+    for host in ["host1", "host2", "host100"]:
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+    for host in ["host2", "host100"]:
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
 def test_main_preflight_error_with_stop_on_failure_false(setup_for_each_test, mocker):
@@ -275,11 +320,11 @@ def test_main_preflight_error_with_stop_on_failure_false(setup_for_each_test, mo
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 10
     for host in ["host1", "host2", "host100"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
     for host in ["host2", "host100"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
 def test_main_hadr_set_successful(setup_for_each_test, mocker):
@@ -296,13 +341,13 @@ def test_main_hadr_set_successful(setup_for_each_test, mocker):
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 20
     for host in ["host1", "host2", "host100", "host101", "host102"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
-def test_main_hadr_set_skip_node_after_hadr_upgrade_failure(setup_for_each_test, mocker):
+def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_false(setup_for_each_test, mocker):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
@@ -317,13 +362,13 @@ def test_main_hadr_set_skip_node_after_hadr_upgrade_failure(setup_for_each_test,
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 12
     for host in ["host1", "host2", "host100", "host101", "host102"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host102", "upgrade_v4_10.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host102", "upgrade_v4_10.sh") == 1
 
 
-def test_main_hadr_set_skip_node_after_hadr_postflight_failure(setup_for_each_test, mocker):
+def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_false(setup_for_each_test, mocker):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
@@ -338,12 +383,12 @@ def test_main_hadr_set_skip_node_after_hadr_postflight_failure(setup_for_each_te
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 14
     for host in ["host1", "host2", "host100", "host101", "host102"]:
-        assert count_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
-        assert count_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host102", "upgrade_v4_10.sh") == 1
-    assert count_calls_with_host_and_script(call_args_list, "host102", "run_preflight_validations.py") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "get_python_location.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host102", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host102", "run_preflight_validations.py") == 1
 
 
 def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
@@ -398,5 +443,5 @@ def create_mocked_run_remote_script_with_proxy_side_effects():
     return mocked_run_remote_with_proxy_script
 
 
-def count_calls_with_host_and_script(call_args_list, host, script_content):
+def count_remote_calls_with_host_and_script(call_args_list, host, script_content):
     return sum(1 for call_args in call_args_list if call_args.args[0] == host and script_content in call_args.args[3])
