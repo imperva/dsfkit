@@ -18,6 +18,10 @@ UPGRADE_SCRIPT_NAME = "upgrade_v4_10.sh"
 POSTFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_postflight_validations.py"
 CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 
+# Globals
+_connection_timeout = None
+_run_dummy_upgrade = False
+
 # Helper functions
 
 
@@ -38,8 +42,8 @@ def str_to_bool(arg):
 
 def set_socket_timeout():
     print(f"Default socket timeout: {socket.getdefaulttimeout()}")
-    socket.setdefaulttimeout(CONNECTION_TIMEOUT)
-    print(f"Default socket timeout was set to {CONNECTION_TIMEOUT} seconds to ensure uniform behavior across "
+    socket.setdefaulttimeout(_connection_timeout)
+    print(f"Default socket timeout was set to {_connection_timeout} seconds to ensure uniform behavior across "
           f"different platforms")
 
 
@@ -146,14 +150,14 @@ def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_com
                                                     dsf_node.get("proxy").get('host'),
                                                     dsf_node.get("proxy").get("ssh_user"),
                                                     dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                                    CONNECTION_TIMEOUT)
+                                                    _connection_timeout)
     else:
         script_output = run_remote_script(dsf_node.get('host'),
                                           dsf_node.get("ssh_user"),
                                           dsf_node.get("ssh_private_key_file_path"),
                                           script_contents,
                                           script_run_command,
-                                          CONNECTION_TIMEOUT)
+                                          _connection_timeout)
     return script_output
 
 
@@ -165,12 +169,12 @@ def test_connection_maybe_with_proxy(dsf_node):
                                   dsf_node.get("proxy").get('host'),
                                   dsf_node.get("proxy").get("ssh_user"),
                                   dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                  CONNECTION_TIMEOUT)
+                                  _connection_timeout)
     else:
         test_connection(dsf_node.get('host'),
                         dsf_node.get("ssh_user"),
                         dsf_node.get("ssh_private_key_file_path"),
-                        CONNECTION_TIMEOUT)
+                        _connection_timeout)
 
 
 def print_summary(upgrade_status_service, overall_upgrade_status=None):
@@ -297,7 +301,7 @@ def parse_args():
     return args
 
 
-def fill_args_defaults():
+def fill_args_defaults(args):
     if args.connection_timeout is None:
         args.connection_timeout = 90
     if args.test_connection is None:
@@ -721,7 +725,7 @@ def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, st
 
 
 def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_script_file_name):
-    if run_dummy_upgrade:
+    if _run_dummy_upgrade:
         print(f"Running dummy upgrade script")
         script_file_name = 'dummy_upgrade_script.sh'
     else:
@@ -868,8 +872,8 @@ def are_postflight_validations_passed(postflight_validations_result):
 
 def verify_successful_run(overall_upgrade_status, args, upgrade_status_service):
     '''
-    Verifies if the scrip run was successful from the applicative point of view.
-    For example, if if no exceptions were raised but the upgrade failed, the run is considered failed.
+    Verifies if the script run was successful from the applicative point of view.
+    For example, if no exceptions were raised but the upgrade failed, the run is considered failed.
     :param overall_upgrade_status: The overall upgrade status provided by the upgrade status service
     :param args: The program arguments which include the configuration options
     :param upgrade_status_service
@@ -922,12 +926,14 @@ def verify_successful_run_by_configuration_options(args, upgrade_status_service)
     return is_successful_run
 
 
+def set_global_variables(connection_timeout):
+    global _connection_timeout
+    _connection_timeout = int(connection_timeout)
+
+
 if __name__ == "__main__":
-    run_dummy_upgrade = False
     args = parse_args()
-
-    fill_args_defaults()
-
-    CONNECTION_TIMEOUT = int(args.connection_timeout)
+    fill_args_defaults(args)
+    set_global_variables(args.connection_timeout)
 
     main(args)
