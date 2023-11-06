@@ -175,22 +175,8 @@ jobs:
     secrets:
       PUSH_TO_OTHER_REPOS_TOKEN_ADMIN: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN_ADMIN }}
 
-  test_plan:
-    needs: deploy_modules
-    uses: ./.github/workflows/plan_cli.yml
-    with:
-      use_modules_from_terraform_registry: true
-      explicit_ref: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-
   release:
-    needs: [test_plan]
+    needs: deploy_modules
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -203,4 +189,28 @@ jobs:
           gh release create ${{ github.event.inputs.future_release }} --verify-tag --latest --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}
-          
+
+  test_plan:
+    needs: release
+    uses: ./.github/workflows/plan_cli.yml
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
+      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+
+  test_apply:
+    needs: test_plan
+    uses: ./.github/workflows/sonar_poc_cli.yml
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
