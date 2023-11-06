@@ -5,6 +5,7 @@ import argparse
 import json
 from upgrade.main import main, fill_args_defaults, set_global_variables
 from upgrade.upgrade_status_service import OverallUpgradeStatus
+from upgrade.upgrade_exception import UpgradeException
 
 gw1 = {
     "host": "host1",
@@ -239,12 +240,17 @@ def test_main_skip_successful_host(setup_for_each_test, mocker):
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
 
 
-def test_main_preflight_error_with_stop_on_failure_true(setup_for_each_test, mocker):
+@pytest.mark.parametrize("preflight_not_pass_hosts, preflight_error_hosts", [
+    (["host1"], []),
+    ([], ["host1"]),
+])
+def test_main_preflight_failure_with_stop_on_failure_true(setup_for_each_test, mocker,
+                                                          preflight_not_pass_hosts, preflight_error_hosts):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        preflight_validations_failure_hosts=["host1"]))
+        preflight_validations_not_pass_hosts=preflight_not_pass_hosts, preflight_validations_error_hosts=preflight_error_hosts))
 
     # when
     main(args)
@@ -258,12 +264,12 @@ def test_main_preflight_error_with_stop_on_failure_true(setup_for_each_test, moc
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
 
 
-def test_main_upgrade_error_with_stop_on_failure_true(setup_for_each_test, mocker):
+def test_main_upgrade_failure_with_stop_on_failure_true(setup_for_each_test, mocker):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        upgrade_failure_hosts=["host1"]))
+        upgrade_error_hosts=["host1"]))
 
     # when
     main(args)
@@ -278,12 +284,12 @@ def test_main_upgrade_error_with_stop_on_failure_true(setup_for_each_test, mocke
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
 
 
-def test_main_python_location_error_with_stop_on_failure_false(setup_for_each_test, mocker):
+def test_main_python_location_failure_with_stop_on_failure_false(setup_for_each_test, mocker):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        python_location_failure_hosts=["host1"]))
+        python_location_error_hosts=["host1"]))
     mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
@@ -303,12 +309,17 @@ def test_main_python_location_error_with_stop_on_failure_false(setup_for_each_te
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
-def test_main_preflight_error_with_stop_on_failure_false(setup_for_each_test, mocker):
+@pytest.mark.parametrize("preflight_not_pass_hosts, preflight_error_hosts", [
+    (["host1"], []),
+    ([], ["host1"]),
+])
+def test_main_preflight_failure_with_stop_on_failure_false(setup_for_each_test, mocker,
+                                                           preflight_not_pass_hosts, preflight_error_hosts):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        preflight_validations_failure_hosts=["host1"]))
+        preflight_validations_not_pass_hosts=preflight_not_pass_hosts, preflight_validations_error_hosts=preflight_error_hosts))
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
 
@@ -352,7 +363,7 @@ def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_fals
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        upgrade_failure_hosts=["host2", "host102"]))
+        upgrade_error_hosts=["host2", "host102"]))
 
     # when
     main(args)
@@ -368,12 +379,18 @@ def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_fals
     assert count_remote_calls_with_host_and_script(call_args_list, "host102", "upgrade_v4_10.sh") == 1
 
 
-def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_false(setup_for_each_test, mocker):
+@pytest.mark.parametrize("postflight_not_pass_hosts, postflight_error_hosts", [
+    (["host2", "host102"], []),
+    ([], ["host2", "host102"]),
+])
+def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_false(setup_for_each_test, mocker,
+                                                                                     postflight_not_pass_hosts,
+                                                                                     postflight_error_hosts):
     # given
     args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
     run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
-        postlight_validations_failure_hosts=["host2", "host102"]))
+        postflight_validations_not_pass_hosts=postflight_not_pass_hosts, postflight_validations_error_hosts=postflight_error_hosts))
 
     # when
     main(args)
@@ -391,6 +408,25 @@ def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_f
     assert count_remote_calls_with_host_and_script(call_args_list, "host102", "run_preflight_validations.py") == 1
 
 
+@pytest.mark.xfail(raises=UpgradeException)
+def test_main_raise_exception_on_overall_status_failed(setup_for_each_test, mocker):
+    # given
+    args, upgrade_status_service_mock, test_connection_mock = setup_for_each_test
+    setup_custom_args(args, [{"main": gw1}], [], True, True, True, True, True)
+    run_remote_script_mock = mocker.patch('upgrade.main.run_remote_script', side_effect=create_mocked_run_remote_script_side_effects(
+        python_location_error_hosts=["host1"]))
+    mocker.patch.object(upgrade_status_service_mock, 'get_overall_upgrade_status', return_value=OverallUpgradeStatus.FAILED)
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host1", "get_python_location.sh") == 1
+
+
 def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
                       run_postflight_validations, stop_on_failure):
     args.agentless_gws = json.dumps(agentless_gws)
@@ -402,33 +438,40 @@ def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_prefli
     args.stop_on_failure = stop_on_failure
 
 
-def create_mocked_run_remote_script_side_effects(python_location_failure_hosts=None,
-                                                 preflight_validations_failure_hosts=None,
-                                                 upgrade_failure_hosts=None,
-                                                 postlight_validations_failure_hosts=None):
+def create_mocked_run_remote_script_side_effects(python_location_error_hosts=None,
+                                                 preflight_validations_not_pass_hosts=None,
+                                                 preflight_validations_error_hosts=None,
+                                                 upgrade_error_hosts=None,
+                                                 postflight_validations_not_pass_hosts=None,
+                                                 postflight_validations_error_hosts=None):
     def mocked_run_remote_script(host, remote_user, remote_key_filename, script_contents, script_run_command,
                                  connection_timeout):
         if "get_python_location.sh" in script_contents:
-            if python_location_failure_hosts is None or host not in python_location_failure_hosts:
-                return "Python location: test_python_location"
-            else:
+            if python_location_error_hosts is not None and host in python_location_error_hosts:
                 return "get_python_location error"
+            else:
+                return "Python location: test_python_location"
         elif "run_preflight_validations.py" in script_contents:
-            if preflight_validations_failure_hosts is None or host not in preflight_validations_failure_hosts:
+            if preflight_validations_error_hosts is not None and host in preflight_validations_error_hosts:
+                return "run_preflight_validations error"
+            elif preflight_validations_not_pass_hosts is not None and host in preflight_validations_not_pass_hosts:
+                return 'Preflight validations result: {"different_version": true, "min_version": true, ' \
+                       '"max_version_hop": true, "enough_free_disk_space": false}'
+            else:
                 return 'Preflight validations result: {"different_version": true, "min_version": true, ' \
                        '"max_version_hop": true, "enough_free_disk_space": true}'
-            else:
-                return "run_preflight_validations error"
         elif "upgrade_v4_10.sh" in script_contents:
-            if upgrade_failure_hosts is None or host not in upgrade_failure_hosts:
-                return "Upgrade completed"
-            else:
+            if upgrade_error_hosts is not None and host in upgrade_error_hosts:
                 return "upgrade error"
-        elif "run_postflight_validations.py" in script_contents:
-            if postlight_validations_failure_hosts is None or host not in postlight_validations_failure_hosts:
-                return 'Postflight validations result: {"correct_version": true}'
             else:
+                return "Upgrade completed"
+        elif "run_postflight_validations.py" in script_contents:
+            if postflight_validations_error_hosts is not None and host in postflight_validations_error_hosts:
                 return "run_postflight_validations error"
+            elif postflight_validations_not_pass_hosts is not None and host in postflight_validations_not_pass_hosts:
+                return 'Postflight validations result: {"correct_version": false}'
+            else:
+                return 'Postflight validations result: {"correct_version": true}'
         else:
             raise Exception("unknown script")
     return mocked_run_remote_script
