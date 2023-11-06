@@ -72,8 +72,8 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   }
 
   identity {
-    type                   = "UserAssigned"
-    identity_ids           = [azurerm_user_assigned_identity.dsf_base.id]
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.dsf_base.id]
   }
   tags = merge(var.tags, { Name = var.name })
 
@@ -88,7 +88,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 resource "azurerm_user_assigned_identity" "dsf_base" {
   name                = var.name
   resource_group_name = var.resource_group.name
-  location = var.resource_group.location
+  location            = var.resource_group.location
 }
 
 data "azurerm_subscription" "subscription" {
