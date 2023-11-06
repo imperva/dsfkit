@@ -424,6 +424,21 @@ The following table lists the released eDSF Kit versions, their release date and
       <br/>2. Updated the Sonar upgrade Alpha release.
    </td>
   </tr>
+  <tr>
+   <td>6 Nov 2023
+   </td>
+   <td>1.6.0
+   </td>
+   <td>
+      1. Sonar upgrade Beta release.
+      <br/>2. Added automatic association between the DSF Hub and the DRA Admin and Analytics. As a result of this association, 
+         the DRA sends its security issues to the DSF Hub, and the DSF Hub sends its security issues and audit from agent 
+         and agentless sources to the DRA.
+      <br/>3. Added the option to provide a URL to download the DSF Hub and Agentless Gateway tarball via the 'tarball_url' variable.
+      <br/>4. Added the option to deploy the Agentless Gateway in a public subnet via the 'use_public_ip' variable.
+      <br/>5. Added the option to provide a different IP for federation via the 'dsf_hub_federation_ip' and 'dsf_gw_federation_ip' variables. 
+   </td>
+  </tr>
 
 </table>
 
