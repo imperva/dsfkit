@@ -1,4 +1,4 @@
-The following table lists _previous_ releases of eDSF Kit versions, their release date, a high-level summary of the release's content and whether they are active or deprecated.
+The following table lists _previous_ releases of eDSF Kit, their release date, a high-level summary of the release's content and whether they are active or deprecated.
 
 <table>
   <tr>
