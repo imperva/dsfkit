@@ -1,8 +1,8 @@
-output "agentless_gw_list" {
+output "agentless_gws" {
   value = var.agentless_gws
 }
 
-output "hub_list" {
+output "dsf_hubs" {
   value = var.dsf_hubs
 }
 
