@@ -1161,7 +1161,9 @@ terraform apply -auto-approve | tee tf.log
 
 Below is a list of possible issues and troubleshooting remediations. 
 
-<table>
+<details>
+ <summary>Common issues</summary>
+ <table>
   <tr>
    <td><strong>Title</strong>
    </td>
@@ -1171,6 +1173,46 @@ Below is a list of possible issues and troubleshooting remediations.
    </td>
   </tr>
   <tr>
+   <td>Sonar HADR setup internal error
+   </td>
+   <td>Replication failed! <br>
+       Replication script exited with code 1
+   </td>
+   <td>Contact Imperva's Technical Support.
+   </td>
+  </tr>
+  <tr>
+   <td>Sonar federation internal error
+   </td>
+   <td>python_commons.http_client.UnexpectedStatusCode: Failed to run: federated_asset_connection_sync. Check /data_vol/sonar-dsf/jsonar/logs/sonarfinder/catalina.out for details., <br>
+       status: 500, data: None <br>
+       See log "/data_vol/sonar-dsf/jsonar/logs/sonarg/federated.log" for details
+   </td>
+   <td>Contact Imperva's Technical Support. 
+   </td>
+  </tr>
+  <tr>
+   <td>DAM configuration script exists with status code 28
+   </td>
+   <td>: exit status 28. Output: + set -e
+   </td>
+   <td>Rerun “terraform apply”. 
+   </td>
+  </tr>
+ </table>
+</details>
+<details>
+ <summary>AWS issues</summary>
+ <table>
+  <tr>
+   <td><strong>Title</strong>
+   </td>
+   <td><strong>Error message</strong>
+   </td>
+   <td><strong>Remediation</strong>
+   </td>
+  </tr>
+    <tr>
    <td>VPC quota exceeded
    </td>
    <td>error creating EC2 VPC: VpcLimitExceeded: The maximum number of VPCs has been reached
@@ -1238,33 +1280,6 @@ Below is a list of possible issues and troubleshooting remediations.
    </td>
   </tr>
   <tr>
-   <td>Sonar HADR setup internal error
-   </td>
-   <td>Replication failed! <br>
-       Replication script exited with code 1
-   </td>
-   <td>Contact Imperva's Technical Support.
-   </td>
-  </tr>
-  <tr>
-   <td>Sonar federation internal error
-   </td>
-   <td>python_commons.http_client.UnexpectedStatusCode: Failed to run: federated_asset_connection_sync. Check /data_vol/sonar-dsf/jsonar/logs/sonarfinder/catalina.out for details., <br>
-       status: 500, data: None <br>
-       See log "/data_vol/sonar-dsf/jsonar/logs/sonarg/federated.log" for details
-   </td>
-   <td>Contact Imperva's Technical Support. 
-   </td>
-  </tr>
-  <tr>
-   <td>DAM configuration script exists with status code 28
-   </td>
-   <td>: exit status 28. Output: + set -e
-   </td>
-   <td>Rerun “terraform apply”. 
-   </td>
-  </tr>
-  <tr>
    <td>Sonar upgrade tarball download error - missing IAM role on Sonar node EC2
    </td>
    <td>Downloading tarball...<br>
@@ -1291,4 +1306,28 @@ Below is a list of possible issues and troubleshooting remediations.
    <td>Connect with SSH to the Sonar node EC2 and fix the aws cli profile misconfiguration. Run, for example, 'aws sts get-caller-identity' to test it.  
    </td>
   </tr>
-</table>
+ </table></details>
+<details>
+ <summary>Azure issues</summary>
+ <table>
+  <tr>
+   <td><strong>Title</strong>
+   </td>
+   <td><strong>Error message</strong>
+   </td>
+   <td><strong>Remediation</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>Cores quota exceeded
+   </td>
+   <td>Error: creating Linux Virtual Machine ...: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=0 -- Original Error: autorest/azure: Service returned an error. Status=<nil> Code="OperationNotAllowed" Message="Operation could not be completed as it results in exceeding approved *** Cores quota.
+   </td>
+   <td>
+   Increase the quota using the link provided in your own error message.
+   </td>
+  </tr>
+ </table>
+</details>
+
+
