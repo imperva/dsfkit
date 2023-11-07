@@ -154,7 +154,7 @@ Latest Supported Terraform Version: 1.5.x. Using a higher version may result in 
 
 The following table lists the _latest_ eDSF Kit releases, their release date and a high-level summary of the release's content.
 
-[Previous releases](https://github.com/imperva/dsfkit/blob/deprecation-linda/PREVIOUS_RELEASES.md)
+[Previous releases](https://github.com/imperva/dsfkit/blob/1.6.0/PREVIOUS_RELEASES.md)
 
 <table>
   <tr>
