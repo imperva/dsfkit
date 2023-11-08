@@ -273,8 +273,10 @@ jobs:
         run: |
           if [ ${{ github.event_name }} == 'schedule' ]; then
             mv $UPGRADE_EXAMPLE_DIR/main.tf{,_}
+            mv $UPGRADE_EXAMPLE_DIR/outputs.tf{,_}
             terraform -chdir=$UPGRADE_EXAMPLE_DIR destroy -auto-approve
             mv $UPGRADE_EXAMPLE_DIR/main.tf{_,}
+            mv $UPGRADE_EXAMPLE_DIR/outputs.tf{_,}
           fi
 
       - name: Terraform Validate for upgrade
