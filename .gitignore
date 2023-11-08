@@ -9,6 +9,7 @@ dsf_hub_ssh_key.pub
 *.svg
 *terraform.tfvars
 *backend.tf
+*backend.tf_
 *gitignore*
 *.terraform*
 *.DS_Store
