@@ -55,6 +55,7 @@ module "gw_instance" {
   skip_instance_health_verification = var.skip_instance_health_verification
   terraform_script_path_folder      = var.terraform_script_path_folder
   use_public_ip                     = var.use_public_ip
+  termination_protection            = var.termination_protection
   attach_persistent_public_ip       = false
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content

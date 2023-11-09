@@ -52,6 +52,7 @@ module "hub_instance" {
   instance_profile_name             = var.instance_profile_name
   attach_persistent_public_ip       = var.attach_persistent_public_ip
   use_public_ip                     = var.use_public_ip
+  termination_protection            = var.termination_protection
   additional_install_parameters     = var.additional_install_parameters
   password                          = var.password
   password_secret_name              = var.password_secret_name

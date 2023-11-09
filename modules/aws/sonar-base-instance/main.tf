@@ -45,7 +45,7 @@ resource "aws_instance" "dsf_base_instance" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  disable_api_termination     = true
+  disable_api_termination     = var.termination_protection
   user_data_replace_on_change = false
   metadata_options {
     http_endpoint = "enabled"
