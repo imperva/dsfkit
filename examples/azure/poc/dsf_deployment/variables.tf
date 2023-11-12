@@ -87,7 +87,7 @@ variable "subnet_ids" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.12"
+  default     = "4.13"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
