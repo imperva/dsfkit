@@ -424,6 +424,8 @@ Some examples are intended for Lab or POC and others for actual DSF deployments 
 
 For more details about each example, click on the example name.
 
+### AWS Examples
+
 <table>
    <tr>
       <td><strong>Example</strong>
@@ -506,6 +508,32 @@ For more details about each example, click on the example name.
       </td>
    </tr>
 </table>
+
+### Azure Examples
+
+<table>
+   <tr>
+      <td><strong>Example</strong>
+      </td>
+      <td><strong>Purpose</strong>
+      </td>
+      <td><strong>Description</strong>
+      </td>
+      <td><strong>Download</strong>
+      </td>
+   </tr>
+  <tr>
+     <td><a href="https://github.com/imperva/dsfkit/blob/1.6.0/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
+     </td>
+     <td>Lab/POC
+     </td>
+     <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking.
+     </td>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/aws/poc/dsf_deployment/dsf_deployment_1_6_0.zip">dsf_deployment_1_6_0.zip</a>
+     </td>
+  </tr>
+</table> 
+   
 
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
