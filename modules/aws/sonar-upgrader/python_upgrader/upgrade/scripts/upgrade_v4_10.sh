@@ -33,24 +33,26 @@ echo "Tarball file name: ${installation_s3_key}, in bucket: ${installation_s3_bu
 # For example: /imperva/apps/jsonar/apps/4.11.0.0.0
 JSONAR_BASEDIR=$(grep "^JSONAR_BASEDIR=" /etc/sysconfig/jsonar | cut -d"=" -f2)
 JSONAR_VERSION=$(grep "^JSONAR_VERSION=" /etc/sysconfig/jsonar | cut -d"=" -f2)
+echo "Current Sonar version ${JSONAR_VERSION}"
+
 # For example, /imperva/apps
-APPS_DIR=$(echo "$JSONAR_BASEDIR" | sed "s|/jsonar/apps/${JSONAR_VERSION}||")
-echo "Apps directory: ${APPS_DIR}"
+EXTRACTION_BASE_DIR=$(echo "$JSONAR_BASEDIR" | sed "s|/jsonar/apps/${JSONAR_VERSION}||")
 
 TARBALL_FILE_NAME=$(basename ${installation_s3_key})
-TARBALL_FILE=$APPS_DIR/$TARBALL_FILE_NAME
+TARBALL_FILE=$EXTRACTION_BASE_DIR/$TARBALL_FILE_NAME
 
 VERSION="${TARBALL_FILE#*-}"
 VERSION="${VERSION%.tar.gz}"
 echo "Version: $VERSION"
 
-EXTRACTION_DIR="${APPS_DIR}/jsonar/apps/${VERSION}"
+EXTRACTION_DIR="${EXTRACTION_BASE_DIR}/jsonar/apps/${VERSION}"
+echo "Tarball extraction base directory: ${EXTRACTION_BASE_DIR}"
 echo "Tarball extraction directory: $EXTRACTION_DIR"
 
 function extract_tarball() {
     echo "Extracting tarball..."
-    sudo tar -xf $TARBALL_FILE_NAME -gz -C $APPS_DIR
-    sudo chown -R sonarw:sonar $APPS_DIR
+    sudo tar -xf $TARBALL_FILE_NAME -gz -C $EXTRACTION_BASE_DIR
+    sudo chown -R sonarw:sonar $EXTRACTION_BASE_DIR
     echo "Extracting tarball completed"
 }
 

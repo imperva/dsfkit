@@ -66,7 +66,8 @@ jobs:
         working-directory: ${{ env.PYTHON_UPGRADER_DIR }}
         run: |
           source venv/bin/activate
-          pytest
+          coverage run -m pytest
+          coverage report
 
       - name: Check how was the workflow run
         id: check-trigger

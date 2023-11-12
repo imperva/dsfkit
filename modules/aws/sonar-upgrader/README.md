@@ -76,3 +76,12 @@ Among the DSF Hubs, if more than one is specified, the upgrade order is as appea
 
 The upgrade order within an HADR replica set is predefined and cannot be changed by the user - Minor first, DR second and Main last. 
 If one is missing, it is skipped.
+
+## Target Version
+
+Supported Sonar target versions are:
+
+- 4.13.0.10.0
+- 4.12.0.10.0
+- 4.11.0.0.0
+- 4.10.0.1.0
