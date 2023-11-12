@@ -391,6 +391,14 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
+### General Prerequisites
+
+1. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
+2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+3. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
+4. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
+5. [curl](https://curl.se/) - Command-line tool for transferring data.
+
 ### AWS Prerequisites
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
@@ -399,16 +407,8 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 ### Azure Prerequisites
 
 1. [establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
-   for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided later.
-2. The deployment requires access to the Sonar binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar binaries to this storage location.
-
-### General Prerequisites
-
-1. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
-2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-3. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
-4. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
-5. [curl](https://curl.se/) - Command-line tool for transferring data.
+   for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided in the future.
+2. The deployment requires access to the Sonar binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar binaries to this storage location as a blob.
 
 
 ## Choosing the Example/Recipe that Fits Your Use Case
@@ -902,7 +902,7 @@ The permissions are separated to different policies. Use the relevant policies a
 
 ### IAM Permissions for Azure
 To be able to create Azure resources inside any Azure Account, you need to provide an Azure User or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
-**NOTE:** Assign the Owner role to the user or app registration service principal temporarily. More detailed permissions will be specified at a later stage.
+**NOTE:** Assign the Owner role to the user or app registration service principal temporarily. More detailed permissions will be specified in the future.
 
 ## IAM Permissions for the DSF Instances on AWS
 
