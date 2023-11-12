@@ -355,6 +355,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>5. Added the option to provide a different IP for federation via the 'dsf_hub_federation_ip' and 'dsf_gw_federation_ip' variables. 
    </td>
   </tr>
+  <tr>
+    <td>14 Nov 2023
+    </td>
+    <td>1.6.1
+    </td>
+    <td>
+       1. Sonar deployment on Azure Beta release.
+    </td>
+  </tr>
 
 </table>
 
@@ -850,6 +859,8 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
 ## IAM Permissions for Running eDSF Kit
 
+### IAM Permissions for AWS 
+
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
@@ -861,7 +872,11 @@ The permissions are separated to different policies. Use the relevant policies a
 **NOTE:** When running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
-## IAM Permissions for the DSF Instances
+### IAM Permissions for Azure
+To be able to create Azure resources inside any Azure Account, you need to provide an Azure User or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
+**NOTE:** Assign the Owner role to the user or app registration service principal temporarily. More detailed permissions will be specified at a later stage.
+
+## IAM Permissions for the DSF Instances on AWS
 
 If you are running an installation example and want to provide your own instance profiles as variables, you can find samples of the
 required permissions here - [DSF Instances Permissions](/dsf_instances_permissions_samples).
