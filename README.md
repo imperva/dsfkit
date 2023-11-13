@@ -10,7 +10,7 @@ Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment and 
 eDSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
 DAM (Data Activity Monitoring) MX and Agent Gateway and DRA (Data Risk Analytics) Admin and Analytics. 
 
-Currently, eDSF Kit supports deployments on AWS cloud. In the near future, it will support other major public clouds, 
+Currently, eDSF Kit supports deployments on AWS and Azure cloud providers. In the near future, it will support other major public clouds, 
 on-premises (vSphere) and hybrid environments.
 
 ## eDSF Kit Upgrade
@@ -143,7 +143,7 @@ Latest Supported Terraform Version: 1.5.x. Using a higher version may result in 
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs">Request access to DSF installation software - Request Form</a>
+   <td><a href="https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs">Request access to DSF installation software on AWS - Request Form</a>
    </td>
    <td> Grants access for a specific AWS account to the DSF installation software.
    </td>
@@ -355,6 +355,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>5. Added the option to provide a different IP for federation via the 'dsf_hub_federation_ip' and 'dsf_gw_federation_ip' variables. 
    </td>
   </tr>
+  <tr>
+    <td>14 Nov 2023
+    </td>
+    <td>1.6.1
+    </td>
+    <td>
+       1. Sonar deployment on Azure Beta release.
+    </td>
+  </tr>
 
 </table>
 
@@ -382,13 +391,25 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
+### General Prerequisites
+
+1. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
+2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
+3. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
+4. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
+5. [curl](https://curl.se/) - Command-line tool for transferring data.
+
+### AWS Prerequisites
+
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
-3. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
-4. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-5. Latest Supported Terraform Version: 1.6.x. Using a higher version may result in unexpected behavior or errors.
-6. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
-7. [curl](https://curl.se/) - Command-line tool for transferring data.
+
+### Azure Prerequisites
+
+1. [establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
+   for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided in the future.
+2. The deployment requires access to the Sonar binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar binaries to this storage location as a blob.
+
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -402,6 +423,8 @@ These examples can be found in the <a href="https://github.com/imperva/dsfkit/tr
 Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
 For more details about each example, click on the example name.
+
+### AWS Examples
 
 <table>
    <tr>
@@ -486,6 +509,32 @@ For more details about each example, click on the example name.
    </tr>
 </table>
 
+### Azure Examples
+
+<table>
+   <tr>
+      <td><strong>Example</strong>
+      </td>
+      <td><strong>Purpose</strong>
+      </td>
+      <td><strong>Description</strong>
+      </td>
+      <td><strong>Download</strong>
+      </td>
+   </tr>
+  <tr>
+     <td><a href="https://github.com/imperva/dsfkit/blob/1.6.0/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
+     </td>
+     <td>Lab/POC
+     </td>
+     <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking.
+     </td>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/aws/poc/dsf_deployment/dsf_deployment_1_6_0.zip">dsf_deployment_1_6_0.zip</a>
+     </td>
+  </tr>
+</table> 
+   
+
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
 
@@ -555,8 +604,6 @@ After you have [chosen the deployment mode](#choosing-the-deployment-mode), foll
 This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 
-**NOTE:** Update the values for the required parameters to complete the installation: example_name, aws_access_key_id, aws_secret_access_key and region
-
 1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.6.0">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
@@ -578,22 +625,35 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 4. Optionally make changes to the example's Terraform code to fit your use case. If you need help doing that, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
 
-4. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-   For simplicity, in this example we will use environment variables:
+5. Terraform leverages the cloud provider's shell environment for authentication. For AWS, refer to the [AWS CLI Configuration Guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html),
+   and for Azure, refer to the [Azure CLI Configuration Guide](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli). In this example, we'll use environment variables for simplicity.
 
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
+   - AWS environment variables
 
-    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
-    ```
+        ```bash
+        export AWS_ACCESS_KEY_ID=${access_key}
+        export AWS_SECRET_ACCESS_KEY=${secret_key}
+        export AWS_REGION=${region}
+    
+        >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
+        ```
+    
+   - Azure environment variables
 
-5. Run:
+        ```bash
+        export ARM_TENANT_ID=${tenant_id}
+        export ARM_SUBSCRIPTION_ID=${subscription_id}
+        export ARM_CLIENT_ID=${client_id}
+        export ARM_CLIENT_SECRET=${client_secret}
+    
+        >>>> Fill the values of the tenant_id, subscription_id, client_id and client_secret placeholders, e.g., export ARM_TENANT_ID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.
+        ```
+
+6. Run:
     ```bash
     terraform init
     ```
-6. Run:
+7. Run:
     ```bash
     terraform apply
     ```
@@ -601,7 +661,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
    This should take about 30 minutes.
 
 
-7. Depending on your deployment:
+8. Depending on your deployment:
    
    To access the DSF Hub, extract the web console admin password and DSF URL using:
     ```bash
@@ -616,7 +676,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
     terraform output "web_console_dra"
     ```
 
-8. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
+9. Access the DSF Hub, DAM or DRA web console from the output in the previous step by entering the outputted URL into a web browser, “admin” as the username and the outputted admin_password value. Note, there is no initial login password for DRA.
 
 **The CLI Deployment is now completed and a functioning version of DSF is now available.**
 
@@ -625,29 +685,30 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer.
 This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
+**NOTE:** The steps provided below are specific to deployment in an AWS environment. For deployment in an Azure environment, it is necessary to [create an Azure virtual machine instance based on Linux/Unix](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu).
+
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.
 
 
-2. **Launch an Instance:** **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar:<br>![Launch an Instance](https://user-images.githubusercontent.com/87799317/203822848-8dd8705d-3c91-4d7b-920a-b89dd9e0998a.png)
-<br>![Community AMI](https://user-images.githubusercontent.com/87799317/203825854-99287e5b-2d68-4a65-9b8b-40ae9a49c90b.png)
+2. **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar.
 
 
-4. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
+3. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
 
 
-5. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine.
+4. Create or select an existing 'Key pair' that you will later use to run SSH to the installer machine.
 
 
-6. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
+5. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
 
 
-8. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.6.0/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.<br>![User data](https://user-images.githubusercontent.com/87799317/203826003-661c829f-d704-43c4-adb7-854b8008577c.png)
+6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.6.0/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
 
 
-9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
+7. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
 
 
-10. When launching is completed, run SSH to the installer machine from your computer:
+8. When launching is completed, run SSH to the installer machine from your computer:
      ```bash
      ssh -i ${key_pair_file} ec2-user@${installer_machine_public_ip}
    
@@ -660,7 +721,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
     For example: `chmode 400 a_key_pair.pem`
 
 
-11. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.6.0">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
+9. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.6.0">eDSF Kit GitHub Repository</a>, e.g., if you choose the "sonar_basic_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment.zip">sonar_basic_deployment.zip</a>.
     Run:
     ```bash
     wget https://github.com/imperva/dsfkit/raw/1.6.0/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_6_0.zip
@@ -686,7 +747,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
     wget https://github.com/imperva/dsfkit/raw/1.6.0/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_6_0.zip
     ```
 
-12. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.
+10. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.
 
 **IMPORTANT:** Do not destroy the installer machine until you are done and have destroyed all other resources. Otherwise, there may be leftovers in your AWS account that will require manual deletion which is a tedious process. For more information see the [Installer Machine Undeployment Mode](#installer-machine-undeployment-mode) section.
 
@@ -793,6 +854,8 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
       >>>> Change the AWS_REGION value in the above screenshot to the AWS region you want to deploy in
       ```
 
+    **NOTE:** The workspace variables mentioned above are tailored for deployment in an AWS environment. For deployment in an Azure environment, it is necessary to include distinct workspace variables, and these will be addressed in a future release.
+
 4. **Run the Terraform:** The following steps complete setting up the eDSF Kit workspace and running the example's Terraform code. 
     * Click on the **Actions** dropdown button from the top navigation bar, and select the "Start new run" option from the list.</br>![Start New Run](https://user-images.githubusercontent.com/52969528/212980571-9071c3e5-400a-42e7-a7d9-5848b8b9fad7.png)
 
@@ -824,6 +887,8 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
 ## IAM Permissions for Running eDSF Kit
 
+### IAM Permissions for AWS 
+
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
@@ -835,7 +900,11 @@ The permissions are separated to different policies. Use the relevant policies a
 **NOTE:** When running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
-## IAM Permissions for the DSF Instances
+### IAM Permissions for Azure
+To be able to create Azure resources inside any Azure Account, you need to provide an Azure User or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
+**NOTE:** Assign the Owner role to the user or app registration service principal temporarily. More detailed permissions will be specified in the future.
+
+## IAM Permissions for the DSF Instances on AWS
 
 If you are running an installation example and want to provide your own instance profiles as variables, you can find samples of the
 required permissions here - [DSF Instances Permissions](/dsf_instances_permissions_samples).
@@ -861,16 +930,27 @@ In case of failure, the Terraform may have deployed some resources before failin
    
    >>>> Change this command depending on the example you chose
    ```
-2. Terraform uses the AWS shell environment for AWS authentication. More details on how to authenticate with AWS are [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).  \
-   For simplicity, in this example we will use environment variables:
+2. Terraform leverages the cloud provider's shell environment for authentication. For AWS, refer to the [AWS CLI Configuration Guide](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html),
+      and for Azure, refer to the [Azure CLI Configuration Guide](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli). In this example, we'll use environment variables for simplicity.
+    - AWS environment variables
+        ```bash
+        export AWS_ACCESS_KEY_ID=${access_key}
+        export AWS_SECRET_ACCESS_KEY=${secret_key}
+        export AWS_REGION=${region}
+    
+        >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
+        ```
+      
+    - Azure environment variables
 
-    ```bash
-    export AWS_ACCESS_KEY_ID=${access_key}
-    export AWS_SECRET_ACCESS_KEY=${secret_key}
-    export AWS_REGION=${region}
-
-    >>>> Fill the values of the access_key, secret_key and region placeholders, e.g., export AWS_ACCESS_KEY_ID=5J5AVVNNHYY4DM6ZJ5N46.
-    ```
+        ```bash
+        export ARM_TENANT_ID=${tenant_id}
+        export ARM_SUBSCRIPTION_ID=${subscription_id}
+        export ARM_CLIENT_ID=${client_id}
+        export ARM_CLIENT_SECRET=${client_secret}
+    
+        >>>> Fill the values of the tenant_id, subscription_id, client_id and client_secret placeholders, e.g., export ARM_TENANT_ID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.
+        ```
    
 3. Run:
     ```bash
