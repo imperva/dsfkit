@@ -118,6 +118,9 @@ upgrade_status.json:
 }
 ```
 
+The user running the upgrade is under no obligation to be aware of the existence of this file. However, it can be 
+helpful for troubleshooting, and the process running the upgrade needs to have the proper permissions to create this 
+file on disk.
 
 ## Target Version
 
