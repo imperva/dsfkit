@@ -92,6 +92,10 @@ In addition, the upgrade status file contains the Sonar target version. In subse
 target version in the _main.tf_ file is an indication of a new upgrade, therefore, in this case, 
 the upgrade status file is copied aside and a new, empty file is created.
 
+The user running the upgrade is under no obligation to be aware of the existence of this file. However, it can be
+helpful for troubleshooting, and the process running the upgrade needs to have the proper permissions to create this
+file on disk.
+
 An example of an upgrade status file:
 
 ```
@@ -117,10 +121,6 @@ upgrade_status.json:
     "timestamp": 1698853337
 }
 ```
-
-The user running the upgrade is under no obligation to be aware of the existence of this file. However, it can be 
-helpful for troubleshooting, and the process running the upgrade needs to have the proper permissions to create this 
-file on disk.
 
 ## Target Version
 
