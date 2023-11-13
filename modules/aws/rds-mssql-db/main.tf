@@ -89,7 +89,6 @@ resource "aws_db_instance" "rds_db" {
 
 data "aws_subnet" "subnet" {
   id   = var.rds_subnet_ids[0]
-  tags = var.tags
 }
 
 resource "aws_security_group" "rds_mssql_access" {
