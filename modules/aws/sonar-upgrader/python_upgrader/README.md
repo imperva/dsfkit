@@ -1,8 +1,6 @@
 # Python Upgrader
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-**Alpha release**
-
 This utility is designed for upgrading DSF Hubs and Agentless Gateways (formerly Sonar).
 
 If you do not wish to use Terraform to run the upgrade, it is possible to bypass it and run the Python utility directly. 

@@ -1,9 +1,6 @@
 # DSF Hub and Agentless Gateway Upgrader
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-**Alpha release** 
-
-
 This Terraform module performs upgrade of DSF Hubs and Agentless Gateways (formerly Sonar).
 
 It performs validations, provides flow management and the ability to run bulk upgrade. It provides a unified upgrade
