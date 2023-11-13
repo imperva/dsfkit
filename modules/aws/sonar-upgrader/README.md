@@ -79,12 +79,12 @@ If one is missing, it is skipped.
 In order to efficiently manage the upgrade flow, an upgrade status file is created on disk in the example's directory
 during the upgrade run.
 
-The upgrade status file keeps track of the upgrade stage and status of each DSF node. 
+The upgrade status file keeps track of the upgrade stage and status of each DSF node being upgraded. 
 
 For example, if the upgrade of a few Agentless Gateways got aborted for some reason and then re-run, the upgrade status 
 file helps skip the Agentless Gateways that were already upgraded.
 
-If between different upgrade runs the upgrade status file is deleted or lost, a new, empty file is created. This is because
+If between subsequent upgrade runs the upgrade status file is deleted or lost, a new, empty file is created. This is because
 the upgrade status file is used to optimize the flow, and loss of this file is recoverable, 
 unlike and not to be confused with, for example, the Terraform state file.
 
