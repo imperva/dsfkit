@@ -20,6 +20,12 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `hub_hadr`: Enable DSF Hub High Availability Disaster Recovery (HADR)
 - `agentless_gw_hadr`: Enable Agentless Gateway High Availability Disaster Recovery (HADR)
 
+## Mandatory Variables
+Before initiating the Terraform deployment, it is essential to set up the following variables:
+- `resource_group_location`: The region of the resource group to which all DSF components will be associated.
+- `tarball_location`: Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container. 
+
+
 ### Networking
 - `subnet_ids`: IDs of the subnets for the deployment. If not specified, a new vpc is created.
 
@@ -27,5 +33,5 @@ Several variables in the `variables.tf` file are important for configuring the d
 To perform the default deployment, run the following command:
 
 ```bash
-terraform apply -auto-approve
+terraform apply -var="resource_group_location=${region}" -var='tarball_location={"az_resource_group": "${storage-resource-group}", "az_storage_account":"${storage_account_name}","az_container":"${container_name}","az_blob":"jsonar-4.13.0.10.0.tar.gz"}' -auto-approve
 ```
