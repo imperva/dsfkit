@@ -74,6 +74,51 @@ Among the DSF Hubs, if more than one is specified, the upgrade order is as appea
 The upgrade order within an HADR replica set is predefined and cannot be changed by the user - Minor first, DR second and Main last. 
 If one is missing, it is skipped.
 
+## Upgrade Status
+
+In order to efficiently manage the upgrade flow, an upgrade status file is created on disk in the example's directory
+during the upgrade run.
+
+The upgrade status file keeps track of the upgrade stage and status of each DSF node. 
+
+For example, if the upgrade of a few Agentless Gateways got aborted for some reason and then re-run, the upgrade status 
+file helps skip the Agentless Gateways that were already upgraded.
+
+If between different upgrade runs the upgrade status file is deleted or lost, a new, empty file is created. This is because
+the upgrade status file is used to optimize the flow, and loss of this file is recoverable, 
+unlike and not to be confused with, for example, the Terraform state file.
+
+In addition, the upgrade status file contains the Sonar target version. In subsequent upgrade runs, a change in the 
+target version in the _main.tf_ file is an indication of a new upgrade, therefore, in this case, 
+the upgrade status file is copied aside and a new, empty file is created.
+
+An example of an upgrade status file:
+
+```
+upgrade_status.json:
+
+{
+    "upgrade-statuses": {
+        "host1": {
+            "status": "Succeeded"
+        },
+        "1.2.4.3-via-proxy-2.2.2.2": {
+            "status": "Running upgrade"
+        },
+        "1.2.3.6": {
+            "status": "Not started"
+        },
+        "1.2.3.7": {
+            "status": "Preflight validations failed",
+            "message": "{\"different_version\": false, \"min_version\": true, \"max_version_hop\": true}"
+        }
+    },
+    "target-version": "4.12.0.10.0",
+    "timestamp": 1698853337
+}
+```
+
+
 ## Target Version
 
 Supported Sonar target versions are:
