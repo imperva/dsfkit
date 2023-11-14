@@ -66,6 +66,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.src_branch }}
+          token: ${{ secrets.PUSH_TO_PROTECTED_BRANCH }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -141,7 +142,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ env.dst_branch }}
-          token: ${{ secrets.PUSH_TO_OTHER_REPOS_TOKEN_ADMIN }}
+          token: ${{ secrets.PUSH_TO_PROTECTED_BRANCH }}
 
       - name: Merge
         run: |
