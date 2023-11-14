@@ -5,6 +5,7 @@ import json
 from decimal import Decimal
 from datetime import datetime
 import shutil
+from packaging.version import Version, parse
 
 
 def main(target_version):
@@ -30,12 +31,12 @@ def try_validate():
 
 def validate():
     source_version, data_dir_path = get_sonar_info()
-    different_version, min_version_validation_passed, max_version_hop_validation_passed = \
+    higher_target_version, min_version_validation_passed, max_version_hop_validation_passed = \
         validate_sonar_version(source_version, target_version)
     enough_free_disk_space = validate_disk_space(data_dir_path)
 
     result = {
-        "different_version": different_version,
+        "higher_target_version": higher_target_version,
         "min_version": min_version_validation_passed,
         "max_version_hop": max_version_hop_validation_passed,
         "enough_free_disk_space": enough_free_disk_space
@@ -82,43 +83,35 @@ def validate_data_dir_path_found(data_dir, jsonar_file_path):
 
 
 def validate_sonar_version(source_version, target_version):
-    different_version = source_version != target_version
-    if different_version:
-        source_major_version = extract_major_version(source_version)
-        target_major_version = extract_major_version(target_version)
-        min_version_validation_passed = validate_min_version(source_major_version)
-        max_version_hop_validation_passed = validate_max_version_hop(source_major_version, target_major_version)
+    higher_target_version_passed = validate_higher_target_version(source_version, target_version)
 
-        if not min_version_validation_passed or not max_version_hop_validation_passed:
-            print(f"Sonar version validation failed for source version: {source_version} "
-                  f"and target_version {target_version}")
-    else:
-        print("Source and target versions are the same")
-        min_version_validation_passed = True
-        max_version_hop_validation_passed = True
+    min_version_validation_passed = validate_min_version(source_version)
+    max_version_hop_validation_passed = validate_max_version_hop(source_version, target_version)
 
-    return different_version, min_version_validation_passed, max_version_hop_validation_passed
+    if not higher_target_version_passed or not min_version_validation_passed or not max_version_hop_validation_passed:
+        print(f"Sonar version validation failed for source version: {source_version} "
+              f"and target_version {target_version}")
+
+    return higher_target_version_passed, min_version_validation_passed, max_version_hop_validation_passed
 
 
-# For example, if version is the string "4.12.0.10.0", returns the number 4.12
-def extract_major_version(version):
-    second_period_index = version.find(".", version.find(".") + 1)
-    if second_period_index != -1:
-        major_version_str = version[:second_period_index]
-        return Decimal(major_version_str)
-    else:
-        raise Exception(f"Invalid version format: {version}, must be x.x.x.x.x")
+def validate_higher_target_version(source_version, target_version):
+    return parse(source_version) < parse(target_version)
 
 
-def validate_min_version(source_major_version):
-    return source_major_version >= 4.10
+# For example, if version is the string "4.12.0.10.0", major is 4 and minor is 12
+def validate_min_version(source_version):
+    return Version(source_version).major > 4 or \
+           (Version(source_version).major == 4 and Version(source_version).minor >= 10)
 
 
-def validate_max_version_hop(source_major_version, target_major_version):
-    # TODO handle when 5.x will be released
-    hop = round(target_major_version - source_major_version, 2)
+def validate_max_version_hop(source_version, target_version):
+    # TODO handle when 5.x will be released (probably this validation will be removed before then)
+    source_minor_version = Version(source_version).minor
+    target_minor_version = Version(target_version).minor
+    hop = target_minor_version - source_minor_version
     print(f"Version hop: {hop}")
-    return hop <= 0.02
+    return hop <= 2
 
 
 def validate_disk_space(data_dir_path):

@@ -477,10 +477,10 @@ def create_mocked_run_remote_script_side_effects(python_location_error_hosts=Non
             if preflight_validations_error_hosts is not None and host in preflight_validations_error_hosts:
                 return "run_preflight_validations error"
             elif preflight_validations_not_pass_hosts is not None and host in preflight_validations_not_pass_hosts:
-                return 'Preflight validations result: {"different_version": true, "min_version": true, ' \
+                return 'Preflight validations result: {"higher_target_version": true, "min_version": true, ' \
                        '"max_version_hop": true, "enough_free_disk_space": false}'
             else:
-                return 'Preflight validations result: {"different_version": true, "min_version": true, ' \
+                return 'Preflight validations result: {"higher_target_version": true, "min_version": true, ' \
                        '"max_version_hop": true, "enough_free_disk_space": true}'
         elif "upgrade_v4_10.sh" in script_contents:
             if upgrade_error_hosts is not None and host in upgrade_error_hosts:

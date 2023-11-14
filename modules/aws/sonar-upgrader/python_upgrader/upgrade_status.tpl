@@ -12,7 +12,7 @@
         },
         "1.2.3.7": {
             "status": "Preflight validations failed",
-            "message": "{\"different_version\": false, \"min_version\": true, \"max_version_hop\": true}"
+            "message": "{\"higher_target_version\": false, \"min_version\": true, \"max_version_hop\": true}"
         }
     },
     "target-version": "4.12.0.10.0"

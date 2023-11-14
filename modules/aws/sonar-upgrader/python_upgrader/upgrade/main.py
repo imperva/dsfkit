@@ -556,7 +556,7 @@ def extract_preflight_validations_result(script_output):
 
 
 def are_preflight_validations_passed(preflight_validations_result):
-    return preflight_validations_result.get('different_version') \
+    return preflight_validations_result.get('higher_target_version') \
            and preflight_validations_result.get('min_version') \
            and preflight_validations_result.get('max_version_hop') \
            and preflight_validations_result.get('enough_free_disk_space')
