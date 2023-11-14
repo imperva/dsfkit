@@ -358,10 +358,10 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
   <tr>
     <td>14 Nov 2023
     </td>
-    <td>1.6.1
+    <td>1.7.0
     </td>
     <td>
-       1. Sonar deployment on Azure Beta release.
+       Sonar deployment on Azure Beta release.
     </td>
   </tr>
 
@@ -1318,6 +1318,15 @@ Below is a list of possible issues and troubleshooting remediations.
    <td>Cores quota exceeded
    </td>
    <td>Error: creating Linux Virtual Machine ...: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=0 -- Original Error: autorest/azure: Service returned an error. Status=<nil> Code="OperationNotAllowed" Message="Operation could not be completed as it results in exceeding approved *** Cores quota.
+   </td>
+   <td>
+   Increase the quota using the link provided in your own error message.
+   </td>
+  </tr>
+  <tr>
+   <td>Public IP quota exceeded
+   </td>
+   <td>Error: "Cannot create more than 10 public IP addresses for this subscription in this region."
    </td>
    <td>
    Increase the quota using the link provided in your own error message.
