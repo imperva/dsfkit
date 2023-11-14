@@ -91,6 +91,7 @@ module "hub_main" {
   sonarw_private_key_secret_name    = var.sonarw_hub_private_key_secret_name
   sonarw_public_key_content         = try(trimspace(file(var.sonarw_hub_public_key_file_path)), null)
   instance_profile_name             = var.hub_instance_profile_name
+  use_public_ip                     = true
   tags                              = local.tags
 }
 
@@ -115,7 +116,7 @@ module "agentless_gw" {
   allowed_hub_cidrs = [data.aws_subnet.main_hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
   ingress_communication_via_proxy = var.use_hub_as_proxy ? {
-    proxy_address              = module.hub_main.private_ip
+    proxy_address              = module.hub_main.public_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_main.ssh_user
   } : null
@@ -142,7 +143,7 @@ module "federation" {
   version = "1.5.6" # latest release tag
 
   hub_info = {
-    hub_ip_address           = local.hub_gw_combinations[count.index][0].private_ip
+    hub_ip_address           = local.hub_gw_combinations[count.index][0].public_ip
     hub_private_ssh_key_path = local.hub_private_key_file_path
     hub_ssh_user             = local.hub_gw_combinations[count.index][0].ssh_user
   }
@@ -152,7 +153,7 @@ module "federation" {
     gw_ssh_user             = local.hub_gw_combinations[count.index][1].ssh_user
   }
   gw_proxy_info = var.use_hub_as_proxy ? {
-    proxy_address              = module.hub_main.private_ip
+    proxy_address              = module.hub_main.public_ip
     proxy_private_ssh_key_path = local.hub_private_key_file_path
     proxy_ssh_user             = module.hub_main.ssh_user
   } : null
