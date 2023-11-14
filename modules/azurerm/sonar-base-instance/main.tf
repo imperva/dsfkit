@@ -83,9 +83,9 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
       custom_data
     ]
   }
-  depends_on = [ 
+  depends_on = [
     azurerm_role_assignment.dsf_base_storage_role_assignment
-   ]
+  ]
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {
