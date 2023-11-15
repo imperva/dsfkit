@@ -131,16 +131,6 @@ def check_free_space(directory, required_space_gb):
     return free_space >= required_space_gb
 
 
-def test():
-    # test patch upgrade from 4.10.0.0 to 4.10.0.1
-    # is_valid = validate_max_version_hop(4.10, 4.10)
-
-    # test major version upgrade upgrade from 4.10.0.1.3 to 4.12.0.0.0
-    is_valid = validate_max_version_hop(4.10, 4.12)
-
-    print(f"is_valid: {is_valid}")
-
-
 if __name__ == "__main__":
     target_version = sys.argv[1]
     main(target_version)
