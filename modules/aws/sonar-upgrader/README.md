@@ -50,10 +50,10 @@ The target version is the version you are upgrading to.
 
 #### Preflight validations:
 
-1. The source and target versions are different.
+1. The target version is higher than the source version.
 2. The source version is 4.10 or higher. (eDSF Kit requirement)
-3. The upgrade version hop is 1 or 2, e.g., upgrade from 4.10 to 4.12 is supported, and upgrade from 4.10 to 4.13 is not. (Sonar product requirement)
-4. There are at least 20GB of free space in the <installation-directory>/data directory.
+3. The upgrade version hop is 2 or lower, e.g., upgrade from 4.10 to 4.12 is supported, and upgrade from 4.10 to 4.13 is not. (Sonar product requirement)
+4. There are at least 20GB of free space in the _<installation-directory>/data_ directory.
 
 #### Postflight validations:
 
@@ -114,7 +114,7 @@ upgrade_status.json:
         },
         "1.2.3.7": {
             "status": "Preflight validations failed",
-            "message": "{\"different_version\": false, \"min_version\": true, \"max_version_hop\": true}"
+            "message": "{\"higher_target_version\": false, \"min_version\": true, \"max_version_hop\": true}"
         }
     },
     "target-version": "4.12.0.10.0",
