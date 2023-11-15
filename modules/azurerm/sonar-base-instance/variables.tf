@@ -144,13 +144,13 @@ variable "hadr_dr_node" {
 
 variable "main_node_sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the main node output. This variable must only be defined for the DR node."
+  description = "SSH public key of the sonarw user taken from the main node output. This variable must only be defined for the DR node."
   default     = null
 }
 
 variable "main_node_sonarw_private_key" {
   type        = string
-  description = "Private key of the sonarw user taken from the main node output. This variable must only be defined for the DR node."
+  description = "SSH private key of the sonarw user taken from the main node output. This variable must only be defined for the DR node."
   default     = null
 }
 
@@ -166,7 +166,7 @@ variable "proxy_info" {
 
 variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the main Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
+  description = "SSH public key of the sonarw user taken from the main Hub output. This variable must only be defined for the Gateway. Used, for example, in federation."
   default     = null
 }
 
@@ -187,13 +187,13 @@ variable "terraform_script_path_folder" {
 variable "sonarw_private_key_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the DSF node sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+  description = "Secret name in AWS secrets manager which holds the DSF node sonarw user SSH private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 variable "sonarw_public_key_content" {
   type        = string
   default     = null
-  description = "The DSF node sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
+  description = "The DSF node sonarw user SSH public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 variable "generate_access_tokens" {
