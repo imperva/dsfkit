@@ -523,7 +523,7 @@ For more details about each example, click on the example name.
       </td>
    </tr>
   <tr>
-     <td><a href="https://github.com/imperva/dsfkit/blob/1.6.0/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.6.0/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
      </td>
      <td>Lab/POC
      </td>
