@@ -364,6 +364,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
        Sonar deployment on Azure Beta release.
     </td>
   </tr>
+  <tr>
+    <td>Coming soon
+    </td>
+    <td>1.7.1
+    </td>
+    <td>
+       Improvements and bug fixes.
+    </td>
+  </tr>
 
 </table>
 
