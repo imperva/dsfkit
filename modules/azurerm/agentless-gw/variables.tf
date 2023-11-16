@@ -215,13 +215,13 @@ variable "terraform_script_path_folder" {
 variable "sonarw_private_key_secret_name" {
   type        = string
   default     = null
-  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user private key - used for remote Agentless Gateway federation, HADR, etc."
+  description = "Secret name in AWS secrets manager which holds the Agentless Gateway sonarw user SSH private key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 variable "sonarw_public_key_content" {
   type        = string
   default     = null
-  description = "The Agentless Gateway sonarw user public key - used for remote Agentless Gateway federation, HADR, etc."
+  description = "The Agentless Gateway sonarw user SSH public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
 variable "send_usage_statistics" {
