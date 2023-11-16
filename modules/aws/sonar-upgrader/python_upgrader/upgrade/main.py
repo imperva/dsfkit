@@ -115,18 +115,18 @@ def generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id):
     return f"{dsf_node_type}, {hadr_node_type_name}, {dsf_node_id}"
 
 
-def get_flat_extended_node_list(hadr_sets, dsf_node_type):
-    extended_nodes = []
+def get_extended_node_dict(hadr_sets, dsf_node_type):
+    extended_nodes = {}
     for hadr_set in hadr_sets:
         main_node = get_extended_node(hadr_set, 'main', 'Main', dsf_node_type)
         if main_node is not None:
-            extended_nodes.append(main_node)
+            extended_nodes[main_node.get('dsf_node_id')] = main_node
         dr_node = get_extended_node(hadr_set, 'dr', 'DR', dsf_node_type)
         if dr_node is not None:
-            extended_nodes.append(dr_node)
+            extended_nodes[dr_node.get('dsf_node_id')] = dr_node
         minor_node = get_extended_node(hadr_set, 'minor', 'Minor', dsf_node_type)
         if minor_node is not None:
-            extended_nodes.append(minor_node)
+            extended_nodes[minor_node.get('dsf_node_id')] = minor_node
     return extended_nodes
 
 
@@ -215,17 +215,17 @@ def main(args):
 
     print("********** Start ************")
 
-    agentless_gw_extended_nodes = get_flat_extended_node_list(agentless_gws, "Agentless Gateway")
-    dsf_hub_extended_nodes = get_flat_extended_node_list(hubs, "DSF Hub")
-    extended_nodes = agentless_gw_extended_nodes + dsf_hub_extended_nodes
+    agentless_gw_extended_node_dict = get_extended_node_dict(agentless_gws, "Agentless Gateway")
+    dsf_hub_extended_node_dict = get_extended_node_dict(hubs, "DSF Hub")
+    extended_node_dict = {**agentless_gw_extended_node_dict, **dsf_hub_extended_node_dict}
 
-    upgrade_status_service = init_upgrade_status(extended_nodes, args.target_version)
+    upgrade_status_service = init_upgrade_status(extended_node_dict, args.target_version)
 
     if is_empty_run(args, upgrade_status_service):
         return
 
     try:
-        run_upgrade_stages(args, extended_nodes, agentless_gw_extended_nodes, dsf_hub_extended_nodes,
+        run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
                            agentless_gws, hubs, tarball_location, upgrade_status_service)
     except UpgradeException as e:
         print(f"### Error message: {e}")
@@ -244,9 +244,9 @@ def main(args):
         raise UpgradeException("One of the upgrade stages failed")
 
 
-def init_upgrade_status(extended_nodes, target_version):
+def init_upgrade_status(extended_node_dict, target_version):
     upgrade_status_service = UpgradeStatusService()
-    dsf_nodes_ids = [node.get('dsf_node_id') for node in extended_nodes]
+    dsf_nodes_ids = list(extended_node_dict)
     upgrade_status_service.init_upgrade_status(dsf_nodes_ids, target_version)
     return upgrade_status_service
 
@@ -260,40 +260,50 @@ def is_empty_run(args, upgrade_status_service):
     return False
 
 
-def run_upgrade_stages(args, extended_nodes, agentless_gw_extended_nodes, dsf_hub_extended_nodes, agentless_gws, hubs,
-                       tarball_location, upgrade_status_service):
+def run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                       agentless_gws, hubs, tarball_location, upgrade_status_service):
+    """
+    Runs the various upgrade stages:
+    - Test connection for all nodes
+    - Preflight validations for all nodes
+    - Upgrade and post upgrade operations per node:
+        - Upgrade
+        - Postflight validations
+        - Clean old deployments
+    Also runs upgrade steps which are smaller than stages:
+        - Collect python location for all nodes
+    """
+    run_test_connection_stage(args, extended_node_dict, upgrade_status_service)
 
-    run_test_connection_stage(args, extended_nodes, upgrade_status_service)
+    python_location_dict = run_collect_python_location_step(args, extended_node_dict, upgrade_status_service)
 
-    python_location_dict = run_collect_python_location_step(args, extended_nodes, upgrade_status_service)
-
-    run_preflight_validations_stage(args, agentless_gw_extended_nodes, dsf_hub_extended_nodes, python_location_dict,
-                                    upgrade_status_service)
+    run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                                    python_location_dict, upgrade_status_service)
 
     run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, tarball_location, python_location_dict,
                                         upgrade_status_service)
 
 
-def run_test_connection_stage(args, extended_nodes, upgrade_status_service):
+def run_test_connection_stage(args, extended_node_dict, upgrade_status_service):
     if args.test_connection:
-        succeeded = test_connection_to_extended_nodes(extended_nodes, args.stop_on_failure, upgrade_status_service)
+        succeeded = test_connection_to_extended_nodes(extended_node_dict, args.stop_on_failure, upgrade_status_service)
         if succeeded:
             print(f"### Test connection to all DSF nodes succeeded")
 
 
-def run_collect_python_location_step(args, extended_nodes, upgrade_status_service):
+def run_collect_python_location_step(args, extended_node_dict, upgrade_status_service):
     python_location_dict = {}
     if should_run_python(args):
-        python_location_dict = collect_python_locations(extended_nodes, args.stop_on_failure,
+        python_location_dict = collect_python_locations(extended_node_dict, args.stop_on_failure,
                                                         upgrade_status_service)
     return python_location_dict
 
 
-def run_preflight_validations_stage(args, agentless_gw_extended_nodes, dsf_hub_extended_nodes, python_location_dict,
-                                    upgrade_status_service):
+def run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                                    python_location_dict, upgrade_status_service):
     if args.run_preflight_validations:
-        preflight_validations_passed = run_all_preflight_validations(agentless_gw_extended_nodes,
-                                                                     dsf_hub_extended_nodes, args.target_version,
+        preflight_validations_passed = run_all_preflight_validations(agentless_gw_extended_node_dict,
+                                                                     dsf_hub_extended_node_dict, args.target_version,
                                                                      python_location_dict, args.stop_on_failure,
                                                                      upgrade_status_service)
         if preflight_validations_passed:
@@ -321,15 +331,15 @@ def run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, tarball_locat
                 print(f"### Upgrade postflight validations didn't pass")
 
 
-def test_connection_to_extended_nodes(extended_nodes, stop_on_failure, upgrade_status_service):
+def test_connection_to_extended_nodes(extended_node_dict, stop_on_failure, upgrade_status_service):
     '''
-    :param extended_nodes:
+    :param extended_node_dict:
     :return: True if test connection to all extended DSF nodes was successful, false if it failed for at least one node
     '''
     print("----- Test connection")
 
     all_success_or_skip = True
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         success_or_skip = maybe_test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_status_service)
         all_success_or_skip = all_success_or_skip and success_or_skip
     return all_success_or_skip
@@ -370,10 +380,10 @@ def should_run_python(args):
     return args.run_preflight_validations or args.run_postflight_validations
 
 
-def collect_python_locations(extended_nodes, stop_on_failure, upgrade_status_service):
+def collect_python_locations(extended_node_dict, stop_on_failure, upgrade_status_service):
     print("----- Collect Python location")
     python_location_dict = {}
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         python_location = maybe_collect_python_location(extended_node, stop_on_failure, upgrade_status_service)
         if python_location is not None:
             python_location_dict[extended_node.get('dsf_node_id')] = python_location
@@ -404,17 +414,17 @@ def collect_python_location(extended_node, stop_on_failure, upgrade_status_servi
         return None
 
 
-def run_all_preflight_validations(agentless_gw_extended_nodes, dsf_hub_extended_nodes, target_version,
+def run_all_preflight_validations(agentless_gw_extended_node_dict, dsf_hub_extended_node_dict, target_version,
                                   python_location_dict, stop_on_failure, upgrade_status_service):
     print("----- Preflight validations")
 
-    gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_nodes,
+    gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_node_dict,
                                                                                     target_version,
                                                                                     PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                     python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
-    hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_nodes,
+    hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_node_dict,
                                                                                     target_version,
                                                                                     PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                     python_location_dict,
@@ -423,10 +433,10 @@ def run_all_preflight_validations(agentless_gw_extended_nodes, dsf_hub_extended_
     return gws_preflight_validations_passed and hub_preflight_validations_passed
 
 
-def run_preflight_validations_for_extended_nodes(extended_nodes, target_version, script_file_name,
+def run_preflight_validations_for_extended_nodes(extended_node_dict, target_version, script_file_name,
                                                  python_location_dict, stop_on_failure, upgrade_status_service):
     all_success_or_skip = True
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         success_or_skip = maybe_run_preflight_validations_for_extended_node(extended_node, target_version,
                                                                             script_file_name, python_location_dict,
                                                                             stop_on_failure, upgrade_status_service)
