@@ -1,13 +1,11 @@
 locals {
-  host         = "https://etnoe723me.execute-api.us-east-1.amazonaws.com"
-  resource     = "dsfkit_stats_dev"
-  stage        = "dev"
-  url          = join("/", [local.host, local.stage, local.resource])
-  header_value = base64decode("amxEU0NhRWwyTTc2NkZVWUtVTFhlNUxyRVpBYVR4akhHd0dGYkExYg==")
+  host         = "https://stats.dsfkitimperva.com"
+  resource     = "dsfkit_usage_stats"
+  url          = join("/", [local.host, local.resource])
 
   id = var.id == null ? random_uuid.stats_id.result : var.id
 
-  enable_statistics = false
+  enable_statistics = true
 }
 
 resource "random_uuid" "stats_id" {
@@ -35,7 +33,6 @@ resource "null_resource" "curl_request" {
     command = <<-EOT
               curl -X POST \
                   -H "Content-Type: application/json" \
-                  -H "x-api-key: ${local.header_value}" \
                   --data '${local.payload}' \
                   '${local.url}' || true
               EOT
