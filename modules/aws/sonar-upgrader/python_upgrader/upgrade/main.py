@@ -18,11 +18,29 @@ UPGRADE_SCRIPT_NAME = "upgrade_v4_10.sh"
 POSTFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_postflight_validations.py"
 CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 
+UNDEFINED_PYTHON_LOCATION = "UNDEFINED_PYTHON_LOCATION"
+
 # Globals
 _connection_timeout = None
 _run_dummy_upgrade = False
 
 # Helper functions
+
+
+def print_inputs(agentless_gws, hubs, tarball_location, args):
+    print("List of Agentless Gateways:")
+    print_hadr_sets(agentless_gws)
+    print("List of DSF Hubs:")
+    print_hadr_sets(hubs)
+    print(f"target_version: {args.target_version}")
+    print(f"connection_timeout: {args.connection_timeout}")
+    print(f"test_connection: {args.test_connection}")
+    print(f"run_preflight_validations: {args.run_preflight_validations}")
+    print(f"run_upgrade: {args.run_upgrade}")
+    print(f"run_postflight_validations: {args.run_postflight_validations}")
+    print(f"clean_old_deployments: {args.clean_old_deployments}")
+    print(f"stop_on_failure: {args.stop_on_failure}")
+    print(f"tarball_location: {tarball_location}")
 
 
 def build_script_file_path(script_file_name):
@@ -99,18 +117,18 @@ def generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id):
     return f"{dsf_node_type}, {hadr_node_type_name}, {dsf_node_id}"
 
 
-def get_flat_extended_node_list(hadr_sets, dsf_node_type):
-    extended_nodes = []
+def get_extended_node_dict(hadr_sets, dsf_node_type):
+    extended_nodes = {}
     for hadr_set in hadr_sets:
         main_node = get_extended_node(hadr_set, 'main', 'Main', dsf_node_type)
         if main_node is not None:
-            extended_nodes.append(main_node)
+            extended_nodes[main_node.get('dsf_node_id')] = main_node
         dr_node = get_extended_node(hadr_set, 'dr', 'DR', dsf_node_type)
         if dr_node is not None:
-            extended_nodes.append(dr_node)
+            extended_nodes[dr_node.get('dsf_node_id')] = dr_node
         minor_node = get_extended_node(hadr_set, 'minor', 'Minor', dsf_node_type)
         if minor_node is not None:
-            extended_nodes.append(minor_node)
+            extended_nodes[minor_node.get('dsf_node_id')] = minor_node
     return extended_nodes
 
 
@@ -128,7 +146,8 @@ def create_extended_node(dsf_node, dsf_node_id, dsf_node_name):
     return {
         "dsf_node": dsf_node,
         "dsf_node_id": dsf_node_id,
-        "dsf_node_name": dsf_node_name
+        "dsf_node_name": dsf_node_name,
+        "python_location": UNDEFINED_PYTHON_LOCATION # Will be filled later
     }
 
 
@@ -199,56 +218,18 @@ def main(args):
 
     print("********** Start ************")
 
-    agentless_gw_extended_nodes = get_flat_extended_node_list(agentless_gws, "Agentless Gateway")
-    dsf_hub_extended_nodes = get_flat_extended_node_list(hubs, "DSF Hub")
-    extended_nodes = agentless_gw_extended_nodes + dsf_hub_extended_nodes
+    agentless_gw_extended_node_dict = get_extended_node_dict(agentless_gws, "Agentless Gateway")
+    dsf_hub_extended_node_dict = get_extended_node_dict(hubs, "DSF Hub")
+    extended_node_dict = {**agentless_gw_extended_node_dict, **dsf_hub_extended_node_dict}
 
-    upgrade_status_service = init_upgrade_status(extended_nodes, args.target_version)
+    upgrade_status_service = init_upgrade_status(extended_node_dict, args.target_version)
 
-    if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
-            not args.run_postflight_validations and not args.clean_old_deployments:
-        print("All flags are disabled. Nothing to do here.")
-        print_summary(upgrade_status_service)
+    if is_empty_run(args, upgrade_status_service):
         return
 
     try:
-        if args.test_connection:
-            succeeded = test_connection_to_extended_nodes(extended_nodes, args.stop_on_failure, upgrade_status_service)
-            if succeeded:
-                print(f"### Test connection to all DSF nodes succeeded")
-
-        python_location_dict = {}
-        if should_run_python(args):
-            python_location_dict = collect_python_locations(extended_nodes, args.stop_on_failure,
-                                                            upgrade_status_service)
-
-        # Preflight validation
-        if args.run_preflight_validations:
-            preflight_validations_passed = run_all_preflight_validations(agentless_gw_extended_nodes,
-                                                                         dsf_hub_extended_nodes, args.target_version,
-                                                                         python_location_dict, args.stop_on_failure,
-                                                                         upgrade_status_service)
-            if preflight_validations_passed:
-                print(f"### Preflight validations passed for all DSF nodes")
-
-        # Upgrade, postflight validations, clean old deployments
-        if args.run_upgrade or args.run_postflight_validations or args.clean_old_deployments:
-            success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
-                                                   args.run_postflight_validations, args.clean_old_deployments,
-                                                   python_location_dict, args.stop_on_failure, tarball_location,
-                                                   upgrade_status_service)
-            print_upgrade_result = args.run_upgrade
-            print_postflight_result = not args.run_upgrade and args.run_postflight_validations
-            if print_upgrade_result:
-                if success:
-                    print(f"### Upgrade succeeded")
-                else:
-                    print(f"### Upgrade failed")
-            if print_postflight_result:
-                if success:
-                    print(f"### Upgrade postflight validations passed")
-                else:
-                    print(f"### Upgrade postflight validations didn't pass")
+        run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                           agentless_gws, hubs, tarball_location, upgrade_status_service)
     except UpgradeException as e:
         print(f"### Error message: {e}")
         print(f"### An error occurred, aborting upgrade...")
@@ -266,85 +247,101 @@ def main(args):
         raise UpgradeException("One of the upgrade stages failed")
 
 
-def init_upgrade_status(extended_nodes, target_version):
+def init_upgrade_status(extended_node_dict, target_version):
     upgrade_status_service = UpgradeStatusService()
-    dsf_nodes_ids = [node.get('dsf_node_id') for node in extended_nodes]
+    dsf_nodes_ids = list(extended_node_dict)
     upgrade_status_service.init_upgrade_status(dsf_nodes_ids, target_version)
     return upgrade_status_service
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
-    parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
-    parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
-    parser.add_argument("--target_version", required=True, help="Target version to upgrade")
-    parser.add_argument("--connection_timeout",
-                        help="Client connection timeout in seconds used for the SSH connections between the "
-                             "installer machine and the DSF nodes being upgraded. Its purpose is to ensure a "
-                             "uniform behavior across different platforms. Note that the SSH server in the DSF nodes "
-                             "may have its own timeout configurations which may override this setting.")
-    parser.add_argument("--test_connection", type=str_to_bool,
-                        help="Whether to test the SSH connection to all DSF nodes being upgraded "
-                             "before starting the upgrade")
-    parser.add_argument("--run_preflight_validations", type=str_to_bool,
-                        help="Whether to run preflight validations")
-    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
-    parser.add_argument("--run_postflight_validations", type=str_to_bool,
-                        help="Whether to run postflight validations")
-    # parser.add_argument("--clean_old_deployments", type=str_to_bool, help="Whether to clean old deployments")
-    parser.add_argument("--stop_on_failure", type=str_to_bool,
-                        help="Whether to stop or continue to upgrade the next DSF nodes in case of failure "
-                             "on a DSF node")
-    parser.add_argument("--tarball_location",
-                        help="JSON-encoded S3 bucket location of the DSF installation software")
-    args = parser.parse_args()
-    return args
+def is_empty_run(args, upgrade_status_service):
+    if not args.test_connection and not args.run_preflight_validations and not args.run_upgrade and \
+            not args.run_postflight_validations and not args.clean_old_deployments:
+        print("All flags are disabled. Nothing to do here.")
+        print_summary(upgrade_status_service)
+        return True
+    return False
 
 
-def fill_args_defaults(args):
-    if args.connection_timeout is None:
-        args.connection_timeout = 90
-    if args.test_connection is None:
-        args.test_connection = True
-    if args.run_preflight_validations is None:
-        args.run_preflight_validations = True
-    if args.run_upgrade is None:
-        args.run_upgrade = True
-    if args.run_postflight_validations is None:
-        args.run_postflight_validations = True
-    if args.stop_on_failure is None:
-        args.stop_on_failure = True
-    if args.tarball_location is None:
-        args.tarball_location = '{"s3_bucket": "1ef8de27-ed95-40ff-8c08-7969fc1b7901", "s3_region": "us-east-1"}'
+def run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                       agentless_gws, hubs, tarball_location, upgrade_status_service):
+    """
+    Runs the various upgrade stages:
+    - Test connection for all nodes
+    - Preflight validations for all nodes
+    - Upgrade and post upgrade operations per node:
+        - Upgrade
+        - Postflight validations
+        - Clean old deployments
+    Also runs upgrade steps which are smaller than stages:
+        - Collect python location for all nodes
+    """
+    run_test_connection_stage(args, extended_node_dict, upgrade_status_service)
 
-    args.clean_old_deployments = False
+    run_collect_python_location_step(args, extended_node_dict, upgrade_status_service)
 
+    run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                                    upgrade_status_service)
 
-def print_inputs(agentless_gws, hubs, tarball_location, args):
-    print("List of Agentless Gateways:")
-    print_hadr_sets(agentless_gws)
-    print("List of DSF Hubs:")
-    print_hadr_sets(hubs)
-    print(f"target_version: {args.target_version}")
-    print(f"connection_timeout: {args.connection_timeout}")
-    print(f"test_connection: {args.test_connection}")
-    print(f"run_preflight_validations: {args.run_preflight_validations}")
-    print(f"run_upgrade: {args.run_upgrade}")
-    print(f"run_postflight_validations: {args.run_postflight_validations}")
-    print(f"clean_old_deployments: {args.clean_old_deployments}")
-    print(f"stop_on_failure: {args.stop_on_failure}")
-    print(f"tarball_location: {tarball_location}")
+    run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, extended_node_dict, tarball_location,
+                                        upgrade_status_service)
 
 
-def test_connection_to_extended_nodes(extended_nodes, stop_on_failure, upgrade_status_service):
+def run_test_connection_stage(args, extended_node_dict, upgrade_status_service):
+    if args.test_connection:
+        succeeded = test_connection_to_extended_nodes(extended_node_dict, args.stop_on_failure, upgrade_status_service)
+        if succeeded:
+            print(f"### Test connection to all DSF nodes succeeded")
+
+
+def run_collect_python_location_step(args, extended_node_dict, upgrade_status_service):
+    """
+    Collects the Python location in the DSF nodes and fills it in the extended_node_dict
+    """
+    if should_run_python(args):
+        collect_python_locations(extended_node_dict, args.stop_on_failure, upgrade_status_service)
+
+
+def run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
+                                    upgrade_status_service):
+    if args.run_preflight_validations:
+        preflight_validations_passed = run_all_preflight_validations(agentless_gw_extended_node_dict,
+                                                                     dsf_hub_extended_node_dict, args.target_version,
+                                                                     args.stop_on_failure, upgrade_status_service)
+        if preflight_validations_passed:
+            print(f"### Preflight validations passed for all DSF nodes")
+
+
+def run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, extended_node_dict, tarball_location,
+                                        upgrade_status_service):
+    if args.run_upgrade or args.run_postflight_validations or args.clean_old_deployments:
+        success = maybe_upgrade_and_postflight(agentless_gws, hubs, extended_node_dict, args.target_version,
+                                               args.run_upgrade, args.run_postflight_validations,
+                                               args.clean_old_deployments, args.stop_on_failure, tarball_location,
+                                               upgrade_status_service)
+        print_upgrade_result = args.run_upgrade
+        print_postflight_result = not args.run_upgrade and args.run_postflight_validations
+        if print_upgrade_result:
+            if success:
+                print(f"### Upgrade succeeded")
+            else:
+                print(f"### Upgrade failed")
+        if print_postflight_result:
+            if success:
+                print(f"### Upgrade postflight validations passed")
+            else:
+                print(f"### Upgrade postflight validations didn't pass")
+
+
+def test_connection_to_extended_nodes(extended_node_dict, stop_on_failure, upgrade_status_service):
     '''
-    :param extended_nodes:
+    :param extended_node_dict:
     :return: True if test connection to all extended DSF nodes was successful, false if it failed for at least one node
     '''
     print("----- Test connection")
 
     all_success_or_skip = True
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         success_or_skip = maybe_test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_status_service)
         all_success_or_skip = all_success_or_skip and success_or_skip
     return all_success_or_skip
@@ -385,14 +382,11 @@ def should_run_python(args):
     return args.run_preflight_validations or args.run_postflight_validations
 
 
-def collect_python_locations(extended_nodes, stop_on_failure, upgrade_status_service):
+def collect_python_locations(extended_node_dict, stop_on_failure, upgrade_status_service):
     print("----- Collect Python location")
-    python_location_dict = {}
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         python_location = maybe_collect_python_location(extended_node, stop_on_failure, upgrade_status_service)
-        if python_location is not None:
-            python_location_dict[extended_node.get('dsf_node_id')] = python_location
-    return python_location_dict
+        extended_node['python_location'] = python_location
 
 
 def maybe_collect_python_location(extended_node, stop_on_failure, upgrade_status_service):
@@ -419,66 +413,51 @@ def collect_python_location(extended_node, stop_on_failure, upgrade_status_servi
         return None
 
 
-def run_all_preflight_validations(agentless_gw_extended_nodes, dsf_hub_extended_nodes, target_version,
-                                  python_location_dict, stop_on_failure, upgrade_status_service):
+def run_all_preflight_validations(agentless_gw_extended_node_dict, dsf_hub_extended_node_dict, target_version,
+                                  stop_on_failure, upgrade_status_service):
     print("----- Preflight validations")
 
-    gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_nodes,
+    gws_preflight_validations_passed = run_preflight_validations_for_extended_nodes(agentless_gw_extended_node_dict,
                                                                                     target_version,
                                                                                     PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
-                                                                                    python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
-    hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_nodes,
+    hub_preflight_validations_passed = run_preflight_validations_for_extended_nodes(dsf_hub_extended_node_dict,
                                                                                     target_version,
                                                                                     PREFLIGHT_VALIDATIONS_SCRIPT_NAME,
-                                                                                    python_location_dict,
                                                                                     stop_on_failure,
                                                                                     upgrade_status_service)
     return gws_preflight_validations_passed and hub_preflight_validations_passed
 
 
-def run_preflight_validations_for_extended_nodes(extended_nodes, target_version, script_file_name,
-                                                 python_location_dict, stop_on_failure, upgrade_status_service):
+def run_preflight_validations_for_extended_nodes(extended_node_dict, target_version, script_file_name, stop_on_failure,
+                                                 upgrade_status_service):
     all_success_or_skip = True
-    for extended_node in extended_nodes:
+    for extended_node in extended_node_dict.values():
         success_or_skip = maybe_run_preflight_validations_for_extended_node(extended_node, target_version,
-                                                                            script_file_name, python_location_dict,
-                                                                            stop_on_failure, upgrade_status_service)
+                                                                            script_file_name, stop_on_failure,
+                                                                            upgrade_status_service)
         all_success_or_skip = all_success_or_skip and success_or_skip
     return all_success_or_skip
 
 
-def maybe_run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name,
-                                                      python_location_dict, stop_on_failure, upgrade_status_service):
+def maybe_run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name, stop_on_failure,
+                                                      upgrade_status_service):
     if upgrade_status_service.should_run_preflight_validations(extended_node.get('dsf_node_id')):
         return run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name,
-                                                           python_location_dict, stop_on_failure,
-                                                           upgrade_status_service)
+                                                           stop_on_failure, upgrade_status_service)
     return True
 
 
-def run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name, python_location_dict,
-                                                stop_on_failure, upgrade_status_service):
-    python_location = python_location_dict[extended_node.get('dsf_node_id')]
-    # TODO this will happen only in case of bug, do we really need it?
-    if python_location is None:
-        print(f"Python location not found in dictionary for {extended_node.get('dsf_node_id')}")
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED,
-                                                     "Python location not found")
-        if stop_on_failure:
-            raise UpgradeException(f"Python location not found in dictionary for {extended_node.get('dsf_node_id')}")
-        else:
-            return False
-
+def run_preflight_validations_for_extended_node(extended_node, target_version, script_file_name, stop_on_failure,
+                                                upgrade_status_service):
     error_message = None
     try:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS)
         preflight_validations_result = run_preflight_validations(extended_node.get('dsf_node'),
                                                                  extended_node.get('dsf_node_name'), target_version,
-                                                                 script_file_name, python_location)
+                                                                 script_file_name, extended_node.get('python_location'))
         if are_preflight_validations_passed(preflight_validations_result):
             print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
             upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
@@ -562,53 +541,55 @@ def are_preflight_validations_passed(preflight_validations_result):
            and preflight_validations_result.get('enough_free_disk_space')
 
 
-def maybe_upgrade_and_postflight(agentless_gws, hubs, target_version, run_upgrade, run_postflight_validations,
-                                 clean_old_deployments, python_location_dict, stop_on_failure, tarball_location,
-                                 upgrade_status_service):
+# Used do_run_postflight_validations since there is a function called run_postflight_validations
+def maybe_upgrade_and_postflight(agentless_gws, hubs, extended_node_dict, target_version, run_upgrade,
+                                 do_run_postflight_validations, clean_old_deployments, stop_on_failure,
+                                 tarball_location, upgrade_status_service):
     if run_upgrade:
         print("----- Upgrade")
 
     gws_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(agentless_gws, "Agentless Gateway",
-                                                                                  target_version, UPGRADE_SCRIPT_NAME,
+                                                                                  extended_node_dict,
+                                                                                  target_version,
+                                                                                  UPGRADE_SCRIPT_NAME,
                                                                                   run_upgrade,
-                                                                                  run_postflight_validations,
+                                                                                  do_run_postflight_validations,
                                                                                   POSTFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                   clean_old_deployments,
                                                                                   CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME,
-                                                                                  python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
                                                                                   upgrade_status_service)
 
-    hub_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(hubs, "DSF Hub", target_version,
+    hub_upgrade_and_postflight_succeeded = maybe_upgrade_and_postflight_hadr_sets(hubs, "DSF Hub",
+                                                                                  extended_node_dict,
+                                                                                  target_version,
                                                                                   UPGRADE_SCRIPT_NAME,
                                                                                   run_upgrade,
-                                                                                  run_postflight_validations,
+                                                                                  do_run_postflight_validations,
                                                                                   POSTFLIGHT_VALIDATIONS_SCRIPT_NAME,
                                                                                   clean_old_deployments,
                                                                                   CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME,
-                                                                                  python_location_dict,
                                                                                   stop_on_failure,
                                                                                   tarball_location,
                                                                                   upgrade_status_service)
     return gws_upgrade_and_postflight_succeeded and hub_upgrade_and_postflight_succeeded
 
 
-# Used do_run_postflight_validations since there is a function called run_postflight_validations
-def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_version, upgrade_script_file_name,
-                                           run_upgrade, do_run_postflight_validations,
+def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, extended_node_dict, target_version,
+                                           upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                            postflight_validations_script_file_name, clean_old_deployments,
-                                           clean_old_deployments_script_file_name, python_location_dict,
+                                           clean_old_deployments_script_file_name,
                                            stop_on_failure, tarball_location, upgrade_status_service):
     all_success_or_skip = True
     for hadr_set in hadr_sets:
-        succeed_or_skipped = maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version,
+        succeed_or_skipped = maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, extended_node_dict,
+                                                                   target_version,
                                                                    upgrade_script_file_name, run_upgrade,
                                                                    do_run_postflight_validations,
                                                                    postflight_validations_script_file_name,
                                                                    clean_old_deployments,
                                                                    clean_old_deployments_script_file_name,
-                                                                   python_location_dict,
                                                                    stop_on_failure,
                                                                    tarball_location,
                                                                    upgrade_status_service)
@@ -616,27 +597,27 @@ def maybe_upgrade_and_postflight_hadr_sets(hadr_sets, dsf_node_type, target_vers
     return all_success_or_skip
 
 
-def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_version, upgrade_script_file_name,
-                                          run_upgrade, do_run_postflight_validations,
+def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, extended_node_dict, target_version,
+                                          upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, clean_old_deployments,
-                                          clean_old_deployments_script_file_name, python_location_dict,
+                                          clean_old_deployments_script_file_name,
                                           stop_on_failure, tarball_location, upgrade_status_service):
     print(f"Checking if running upgrade and/or postflight validations is required for {dsf_node_type} set")
-    if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), dsf_node_type, 'Minor', target_version,
+    if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('minor'), extended_node_dict, target_version,
                                              upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                              postflight_validations_script_file_name, clean_old_deployments,
-                                             clean_old_deployments_script_file_name, python_location_dict,
+                                             clean_old_deployments_script_file_name,
                                              stop_on_failure, tarball_location, upgrade_status_service):
-        if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('dr'), dsf_node_type, 'DR', target_version,
+        if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('dr'), extended_node_dict, target_version,
                                                  upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                                  postflight_validations_script_file_name, clean_old_deployments,
-                                                 clean_old_deployments_script_file_name, python_location_dict,
+                                                 clean_old_deployments_script_file_name,
                                                  stop_on_failure, tarball_location, upgrade_status_service):
-            if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), dsf_node_type, 'Main', target_version,
+            if maybe_upgrade_and_postflight_dsf_node(hadr_set.get('main'), extended_node_dict, target_version,
                                                      upgrade_script_file_name, run_upgrade,
                                                      do_run_postflight_validations,
                                                      postflight_validations_script_file_name, clean_old_deployments,
-                                                     clean_old_deployments_script_file_name, python_location_dict,
+                                                     clean_old_deployments_script_file_name,
                                                      stop_on_failure, tarball_location, upgrade_status_service):
                 return True
         else:
@@ -646,17 +627,15 @@ def maybe_upgrade_and_postflight_hadr_set(hadr_set, dsf_node_type, target_versio
     return False
 
 
-def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_type_name, target_version,
+def maybe_upgrade_and_postflight_dsf_node(dsf_node, extended_node_dict, target_version,
                                           upgrade_script_file_name, run_upgrade, do_run_postflight_validations,
                                           postflight_validations_script_file_name, clean_old_deployments,
-                                          clean_old_deployments_script_file_name, python_location_dict,
+                                          clean_old_deployments_script_file_name,
                                           stop_on_failure, tarball_location, upgrade_status_service):
     if dsf_node is None:
         return True
-    # TODO refactor to use the extended node already created in previous steps
     dsf_node_id = generate_dsf_node_id(dsf_node)
-    dsf_node_name = generate_dsf_node_name(dsf_node_type, hadr_node_type_name, dsf_node_id)
-    extended_node = create_extended_node(dsf_node, dsf_node_id, dsf_node_name)
+    extended_node = extended_node_dict[dsf_node_id]
     if run_upgrade:
         upgrade_success_or_skip = maybe_upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name,
                                                          stop_on_failure, tarball_location, upgrade_status_service)
@@ -666,18 +645,17 @@ def maybe_upgrade_and_postflight_dsf_node(dsf_node, dsf_node_type, hadr_node_typ
     if do_run_postflight_validations:
         postflight_success_or_skip = maybe_run_postflight_validations(extended_node, target_version,
                                                                       postflight_validations_script_file_name,
-                                                                      python_location_dict, stop_on_failure,
-                                                                      upgrade_status_service)
+                                                                      stop_on_failure, upgrade_status_service)
         if not postflight_success_or_skip:
             return False
 
     if clean_old_deployments:
         # TODO add status support when clean_old_deployments will be supported
-        clean_old_deployments_succeeded = run_clean_old_deployments(dsf_node, dsf_node_name,
+        clean_old_deployments_succeeded = run_clean_old_deployments(dsf_node, extended_node.get('dsf_node_name'),
                                                                     clean_old_deployments_script_file_name)
         if not clean_old_deployments_succeeded:
             # In case clean old deployments failed, print a warning without returning false
-            print(f"### Warning: Cleaning old deployments failed for {dsf_node_name}")
+            print(f"### Warning: Cleaning old deployments failed for {extended_node.get('dsf_node_name')}")
 
     return True
 
@@ -757,40 +735,29 @@ def get_tarball_s3_key(target_version):
     return f"jsonar-{target_version}.tar.gz"
 
 
-def maybe_run_postflight_validations(extended_node, target_version, script_file_name, python_location_dict,
-                                     stop_on_failure, upgrade_status_service):
+def maybe_run_postflight_validations(extended_node, target_version, script_file_name, stop_on_failure,
+                                     upgrade_status_service):
     if upgrade_status_service.should_run_postflight_validations(extended_node.get('dsf_node_id')):
-        return run_postflight_validations(extended_node, target_version, script_file_name, python_location_dict,
-                                          stop_on_failure, upgrade_status_service)
+        return run_postflight_validations(extended_node, target_version, script_file_name, stop_on_failure,
+                                          upgrade_status_service)
     return True
 
 
-def run_postflight_validations(extended_node, target_version, script_file_name, python_location_dict,
-                               stop_on_failure, upgrade_status_service):
-    python_location = python_location_dict[extended_node.get('dsf_node_id')]
-    # TODO this will happen only in case of bug, do we really need it?
-    if python_location is None:
-        print(f"Python location not found in dictionary for {extended_node.get('dsf_node_id')}")
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.POSTFLIGHT_VALIDATIONS_FAILED,
-                                                     "Python location not found")
-        if stop_on_failure:
-            raise UpgradeException(f"Python location not found in dictionary for {extended_node.get('dsf_node_id')}")
-        else:
-            return False
-
+def run_postflight_validations(extended_node, target_version, script_file_name, stop_on_failure,
+                               upgrade_status_service):
     print(f"Running postflight validations for {extended_node.get('dsf_node_name')}")
-    print(f"Python location (taken from dictionary) in {extended_node.get('dsf_node_name')} is {python_location}")
 
     error_message = None
     try:
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.RUNNING_POSTFLIGHT_VALIDATIONS)
         postflight_validations_result_json = run_postflight_validations_script(extended_node.get('dsf_node'),
-                                                                               target_version, python_location,
+                                                                               target_version,
+                                                                               extended_node.get('python_location'),
                                                                                script_file_name)
         postflight_validations_result = json.loads(postflight_validations_result_json)
-        print(f"Postflight validations result in {extended_node.get('dsf_node_name')} is {postflight_validations_result}")
+        print(f"Postflight validations result in {extended_node.get('dsf_node_name')} is "
+              f"{postflight_validations_result}")
 
         passed = are_postflight_validations_passed(postflight_validations_result)
         if passed:
@@ -924,6 +891,56 @@ def verify_successful_run_by_configuration_options(args, upgrade_status_service)
         is_successful_run = False
 
     return is_successful_run
+
+
+# Preparation functions
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
+    parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
+    parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
+    parser.add_argument("--target_version", required=True, help="Target version to upgrade")
+    parser.add_argument("--connection_timeout",
+                        help="Client connection timeout in seconds used for the SSH connections between the "
+                             "installer machine and the DSF nodes being upgraded. Its purpose is to ensure a "
+                             "uniform behavior across different platforms. Note that the SSH server in the DSF nodes "
+                             "may have its own timeout configurations which may override this setting.")
+    parser.add_argument("--test_connection", type=str_to_bool,
+                        help="Whether to test the SSH connection to all DSF nodes being upgraded "
+                             "before starting the upgrade")
+    parser.add_argument("--run_preflight_validations", type=str_to_bool,
+                        help="Whether to run preflight validations")
+    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
+    parser.add_argument("--run_postflight_validations", type=str_to_bool,
+                        help="Whether to run postflight validations")
+    # parser.add_argument("--clean_old_deployments", type=str_to_bool, help="Whether to clean old deployments")
+    parser.add_argument("--stop_on_failure", type=str_to_bool,
+                        help="Whether to stop or continue to upgrade the next DSF nodes in case of failure "
+                             "on a DSF node")
+    parser.add_argument("--tarball_location",
+                        help="JSON-encoded S3 bucket location of the DSF installation software")
+    args = parser.parse_args()
+    return args
+
+
+def fill_args_defaults(args):
+    if args.connection_timeout is None:
+        args.connection_timeout = 90
+    if args.test_connection is None:
+        args.test_connection = True
+    if args.run_preflight_validations is None:
+        args.run_preflight_validations = True
+    if args.run_upgrade is None:
+        args.run_upgrade = True
+    if args.run_postflight_validations is None:
+        args.run_postflight_validations = True
+    if args.stop_on_failure is None:
+        args.stop_on_failure = True
+    if args.tarball_location is None:
+        args.tarball_location = '{"s3_bucket": "1ef8de27-ed95-40ff-8c08-7969fc1b7901", "s3_region": "us-east-1"}'
+
+    args.clean_old_deployments = False
 
 
 def set_global_variables(connection_timeout):
