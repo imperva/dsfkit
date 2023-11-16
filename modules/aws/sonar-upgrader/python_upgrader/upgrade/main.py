@@ -262,17 +262,35 @@ def is_empty_run(args, upgrade_status_service):
 
 def run_upgrade_stages(args, extended_nodes, agentless_gw_extended_nodes, dsf_hub_extended_nodes, agentless_gws, hubs,
                        tarball_location, upgrade_status_service):
+
+    run_test_connection_stage(args, extended_nodes, upgrade_status_service)
+
+    python_location_dict = run_collect_python_location_step(args, extended_nodes, upgrade_status_service)
+
+    run_preflight_validations_stage(args, agentless_gw_extended_nodes, dsf_hub_extended_nodes, python_location_dict,
+                                    upgrade_status_service)
+
+    run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, tarball_location, python_location_dict,
+                                        upgrade_status_service)
+
+
+def run_test_connection_stage(args, extended_nodes, upgrade_status_service):
     if args.test_connection:
         succeeded = test_connection_to_extended_nodes(extended_nodes, args.stop_on_failure, upgrade_status_service)
         if succeeded:
             print(f"### Test connection to all DSF nodes succeeded")
 
+
+def run_collect_python_location_step(args, extended_nodes, upgrade_status_service):
     python_location_dict = {}
     if should_run_python(args):
         python_location_dict = collect_python_locations(extended_nodes, args.stop_on_failure,
                                                         upgrade_status_service)
+    return python_location_dict
 
-    # Preflight validation
+
+def run_preflight_validations_stage(args, agentless_gw_extended_nodes, dsf_hub_extended_nodes, python_location_dict,
+                                    upgrade_status_service):
     if args.run_preflight_validations:
         preflight_validations_passed = run_all_preflight_validations(agentless_gw_extended_nodes,
                                                                      dsf_hub_extended_nodes, args.target_version,
@@ -281,7 +299,9 @@ def run_upgrade_stages(args, extended_nodes, agentless_gw_extended_nodes, dsf_hu
         if preflight_validations_passed:
             print(f"### Preflight validations passed for all DSF nodes")
 
-    # Upgrade, postflight validations, clean old deployments
+
+def run_upgrade_and_post_upgrade_stages(args, agentless_gws, hubs, tarball_location, python_location_dict,
+                                        upgrade_status_service):
     if args.run_upgrade or args.run_postflight_validations or args.clean_old_deployments:
         success = maybe_upgrade_and_postflight(agentless_gws, hubs, args.target_version, args.run_upgrade,
                                                args.run_postflight_validations, args.clean_old_deployments,
