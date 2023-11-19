@@ -7,7 +7,7 @@ This Terraform module provisions an all-in-one data security and compliance plat
 4.9 and up
 
 ## Requirements
-* Terraform, refer to [versions.tf](versions.tf) for supported versions.
+* Terraform, refer to [versions.tf](https://github.com/imperva/dsfkit/blob/master/modules/aws/hub/versions.tf) for supported versions.
 * An AWS account.
 * SSH access - key and network path to the DSF Hub instance.
 * Access to the tarball containing Sonar binaries. To request access, [click here](https://docs.google.com/forms/d/e/1FAIpQLSdnVaw48FlElP9Po_36LLsZELsanzpVnt8J08nymBqHuX_ddA/viewform).
