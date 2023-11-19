@@ -181,6 +181,10 @@ variable "dam_version" {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
   }
+  validation {
+    condition     = split(".", var.dam_version)[0] == "14"
+    error_message = "DAM version not supported."
+  }
 }
 
 variable "ami" {
