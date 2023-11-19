@@ -125,7 +125,7 @@ module "dsf_hub_dr" {
 }
 ```
 
-To finalize the HADR registration process between the primary and DR nodes, refer HADR Terraform module [here](https://registry.terraform.io/modules/imperva/dsf-hadr/null/latest)
+To finalize the HADR registration process between the primary and DR nodes, refer to the HADR Terraform module [here](https://registry.terraform.io/modules/imperva/dsf-hadr/null/latest)
 
 ## SSH Access
 SSH access is required to provision this module. To SSH into the DSF Hub instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF Hub instance is not possible, you can use a bastion host as a proxy.
