@@ -30,52 +30,67 @@ The following input variables are **required**:
 
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
-* `password`: Admin password
+* `password`: Initial password for all users
 * `ebs`: AWS EBS details
 * `binaries_location`: S3 DSF installation location
-* `sonarw_public_key`: Public key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub.
-* `sonarw_private_key`: Private key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub.
+* `allowed_web_console_and_api_cidrs`: List of ingress CIDR patterns allowing web console access
+* `allowed_hub_cidrs`: List of ingress CIDR patterns allowing other hubs to access the DSF hub instance
+* `allowed_agentless_gw_cidrs`: List of ingress CIDR patterns allowing DSF Agentless Gateways to access the DSF hub instance
+* `allowed_ssh_cidrs`: List of ingress CIDR patterns allowing ssh access
 
-Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
+The following input variables are **required**: for the DR DSF Hub:
+* `hadr_dr_node`: Indicate a DR DSF Hub
+* `sonarw_public_key`: Public key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
+* `sonarw_private_key`: Private key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
+
+
+Refer to [inputs](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=inputs) for additional variables with default values and additional info.
 
 ## Outputs
 
-Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs
+Please refer to [outputs](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs)
 
 ## Usage
 
-To use this module, add the following to your Terraform configuration:
+To utilize this module with a minimal configuration, include the following in your Terraform setup:
 
 ```
 provider "aws" {
 }
 
-module "globals" {
-  source = "imperva/dsf-globals/aws"
-}
-
 module "dsf_hub" {
   source                        = "imperva/dsf-hub/aws"
-  subnet_id                     = aws_subnet.example.id
+  subnet_id                     = "subnet-*****************"
 
   ssh_key_pair = {
-    ssh_private_key_file_path   = var.ssh_key_path
-    ssh_public_key_name         = var.ssh_name
+    ssh_private_key_file_path   = "ssh_keys/dsf_ssh_key-default"
+    ssh_public_key_name         = "imperva-dsf-1233435325235"
   }
 
-  allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
+  allowed_web_console_and_api_cidrs = ["192.168.21.0/24"]
+  allowed_hub_cidrs                 = ["10.106.108.0/24"]
+  allowed_agentless_gw_cidrs        = ["10.106.104.0/24"]
+  allowed_ssh_cidrs                 = ["192.168.21.0/24"]
 
-  password    = random_password.pass.result
-  ebs                           = {
+  password                          = random_password.pass.result
+  ebs                               = {
     disk_size        = 1000
     provisioned_iops = 0
     throughput       = 125
   }
-  binaries_location             =  module.globals.tarball_location
+  binaries_location                 = {
+    s3_bucket        = "my_S3_bucket"
+    s3_region        = "us-east-1"
+    s3_key           = "jsonar-4.13.0.10.0.tar.gz"
+  }
+  tags                              = {
+    vendor        = "Imperva"
+    product       = "DSF"
+  }
 }
 ```
 
-To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
+To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](https://github.com/imperva/dsfkit/tree/master/examples/aws) directory.
 
 We recommend using a specific version of the module (and not the latest).
 See available released versions in the main repo README [here](https://github.com/imperva/dsfkit#version-history).
@@ -86,14 +101,37 @@ Specify the module's version by adding the version parameter. For example:
 module "dsf_hub" {
   source  = "imperva/dsf-hub/aws"
   version = "x.y.z"
+
+  # The rest of arguments are omitted for brevity
 }
 ```
+
+## DSF Hub DR Node Usage
+
+To ensure high availability and disaster recovery, deploying an additional DSF node as a DR node is necessary. Please incorporate the following into your Terraform configuration:
+
+```
+provider "aws" {
+}
+
+module "dsf_hub_dr" {
+  source              = "imperva/dsf-hub/aws"
+
+  # The rest of arguments are omitted for brevity
+
+  hadr_dr_node        = true
+  sonarw_public_key   = module.hub_main.sonarw_public_key
+  sonarw_private_key  = module.hub_main.sonarw_private_key
+}
+```
+
+To finalize the HADR registration process between the primary and DR nodes, refer HADR Terraform module [here](https://registry.terraform.io/modules/imperva/dsf-hadr/null/latest)
 
 ## SSH Access
 SSH access is required to provision this module. To SSH into the DSF Hub instance, you will need to provide the private key associated with the key pair specified in the key_name input variable. If direct SSH access to the DSF Hub instance is not possible, you can use a bastion host as a proxy.
 
 ## Additional Information
 
-For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.12-sonar-user-guide/page/80401.htm). 
+For more information about the DSF Hub and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.13-sonar-user-guide/page/80401.htm). 
 
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.0).
