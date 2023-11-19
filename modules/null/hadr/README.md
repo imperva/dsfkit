@@ -43,7 +43,7 @@ module "hadr" {
 }
 ```
 
-**The utilization of the hub_hadr module is restricted to situations where the DSF Hub/Agentless Gateway's main and DR nodes are both operational and accessible**<br>
+**The utilization of the hadr module is restricted to situations where the DSF Hub/Agentless Gateway's main and DR nodes are both operational and accessible**<br>
 To accomplish this, initially provision the Hub main and DR nodes using the [DSF Hub module](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest) 
 (similarly for the [Agentless Gateway module](https://registry.terraform.io/modules/imperva/dsf-agentless-gw/aws/latest)) outside the declaration of the HADR Terraform module:
 
@@ -87,12 +87,12 @@ key_name input variable. If direct SSH access to the DSF Hub instance is not pos
 
 ```
 module "hadr" {
-  source                       = "imperva/dsf-hadr/null"
+  source                          = "imperva/dsf-hadr/null"
   # The rest of arguments are omitted for brevity
   ingress_communication_via_proxy = {
-    proxy_address              = "192.168.21.4"
-    proxy_private_ssh_key_path = "ssh_keys/dsf_ssh_key-default"
-    proxy_ssh_user             = "ec2-user"
+    proxy_address                 = "192.168.21.4"
+    proxy_private_ssh_key_path    = "ssh_keys/dsf_ssh_key-default"
+    proxy_ssh_user                = "ec2-user"
   }
 }
 ```

@@ -7,7 +7,7 @@ variable "gw_info" {
   })
 
   nullable    = false
-  description = "Gateway info"
+  description = "Agentless Gateway communication information"
 }
 
 variable "hub_info" {
@@ -19,7 +19,7 @@ variable "hub_info" {
   })
 
   nullable    = false
-  description = "Hub info"
+  description = "DSF Hub communication information"
 }
 
 variable "gw_proxy_info" {
