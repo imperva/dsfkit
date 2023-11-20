@@ -28,7 +28,7 @@ locals {
   }] : [{
     name     = "default_archive_action_set" # https://docs.imperva.com/bundle/v14.7-database-activity-monitoring-user-guide/page/78508.htm
     method   = "POST"
-    url_path = "SecureSphere/api/v1/conf/actionSets/${local.hub_action_set}/${local.hub_action_set}"
+    url_path = "SecureSphere/api/v1/conf/actionSets/${local.hub_action_set}/${local.hub_action_set_action}"
     payload = jsonencode({
       "type" : "SonarArchiver",
       "host" : try(var.hub_details.address, null),
