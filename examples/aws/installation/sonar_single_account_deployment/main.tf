@@ -9,8 +9,6 @@ module "globals" {
   sonar_version = var.sonar_version
 }
 
-data "aws_availability_zones" "available" { state = "available" }
-
 locals {
   workstation_cidr_24 = try(module.globals.my_ip != null ? [format("%s.0/24", regex("\\d*\\.\\d*\\.\\d*", module.globals.my_ip))] : null, null)
 }
