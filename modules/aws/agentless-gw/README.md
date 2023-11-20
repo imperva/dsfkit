@@ -39,7 +39,7 @@ The following input variables are **required**:
 * `allowed_agentless_gw_cidrs`: List of ingress CIDR patterns allowing DSF Agentless Gateways to access the DSF hub instance
 * `allowed_ssh_cidrs`: List of ingress CIDR patterns allowing ssh access
 
-The following input variables are **required**: for the DR Agentless Gateway:
+In addition, the following input variables are **required**: for the DR Agentless Gateway:
 * `hadr_dr_node`: Indicate a DR DSF Hub
 * `main_node_sonarw_public_key`: Public key of the sonarw user taken from the main Agentless Gateway output.
 * `main_node_sonarw_private_key`: Private key of the sonarw user taken from the main Agentless Gateway output.
