@@ -2,8 +2,19 @@
 set -x
 set -e
 
+start_time=$(date +%s)
+
 cookie_file=$(mktemp)
 response_file=$(mktemp)
+
+function exit_on_timeout() {
+  now=$(date +%s)
+  elapsed=$((now-start_time))
+  if [ $elapsed -gt ${timeout} ]; then
+    echo "Timeout reached."
+    exit 1
+  fi
+}
 
 http_code=$(curl -k -s --cookie-jar $cookie_file -o $response_file -w "%%{http_code}" \
   --request POST 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session' \
@@ -27,6 +38,7 @@ while true; do
     fi
   fi
   
+  exit_on_timeout
   echo "sleep 1m"
   sleep 60
 done
@@ -52,6 +64,8 @@ while true; do
       break
     fi
   fi
+
+  exit_on_timeout
   echo "sleep 1m"
   sleep 60
 done
