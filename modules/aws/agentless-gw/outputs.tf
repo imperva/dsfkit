@@ -29,11 +29,12 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  description = "Ssh username"
+  description = "SSH username"
   value       = module.gw_instance.ssh_user
 }
 
 output "instance_id" {
+  description = "AWS EC2 instance ID"
   value = module.gw_instance.instance_id
 }
 

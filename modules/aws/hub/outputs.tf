@@ -34,6 +34,7 @@ output "ssh_user" {
 }
 
 output "instance_id" {
+  description = "AWS EC2 instance ID"
   value = module.hub_instance.instance_id
 }
 
@@ -53,6 +54,7 @@ output "jsonar_uid" {
 }
 
 output "access_tokens" {
+  description = "Access tokens required for initiating an API requests to the DSF Hub"
   value     = module.hub_instance.access_tokens
   sensitive = true
 }
