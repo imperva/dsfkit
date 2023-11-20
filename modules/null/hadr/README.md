@@ -89,7 +89,7 @@ key_name input variable. If direct SSH access to the DSF Hub instance is not pos
 module "hadr" {
   source                          = "imperva/dsf-hadr/null"
   # The rest of arguments are omitted for brevity
-  ingress_communication_via_proxy = {
+  proxy_info = {
     proxy_address                 = "192.168.21.4"
     proxy_private_ssh_key_path    = "ssh_keys/dsf_ssh_key-default"
     proxy_ssh_user                = "ec2-user"

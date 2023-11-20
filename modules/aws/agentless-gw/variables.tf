@@ -148,7 +148,7 @@ variable "hadr_dr_node" {
 
 variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the main Hub output"
+  description = "Public key of the sonarw user taken from the main DSF Hub output"
   nullable    = false
 }
 

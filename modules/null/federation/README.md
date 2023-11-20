@@ -93,6 +93,8 @@ This includes:
 * DSF Hub DR <-> Agentless Gateway main 
 * DSF Hub DR <-> Agentless Gateway DR<br>
 
+**The dsf-federation module should only be executed following the utilization of the [dsf-hadr module](https://registry.terraform.io/modules/imperva/dsf-hadr/null/latest) on every main and DR node pairs**
+
 If your environment involves the same agentless gateway group and SSH key, you can use the following example instead of duplicating the federation modules multiple times.<br>
 Please be aware that the federation module should have a dependency on the HADR module for both the DSF Hub and the Agentless Gateway:
 

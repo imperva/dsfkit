@@ -20,9 +20,9 @@ This Terraform module provisions several resources on AWS to create the DSF Hub.
 * An EBS volume for storage.
 * A security group to allow the required network access to and from the DSF Hub instance.
 * An IAM role with relevant policies.
-* An AWS secret containing the secret required for attaching new Agentless Gateways.
+* An AWS secret containing access password, private key and access tokens.
 
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Hub software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The AWS secret is used in the process of attaching a new Agentless Gateway to the DSF Hub.
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Hub software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The AWS secret is used in the process for storing password, private key, and access tokens.
 
 ## Inputs
 
@@ -40,15 +40,15 @@ The following input variables are **required**:
 
 The following input variables are **required**: for the DR DSF Hub:
 * `hadr_dr_node`: Indicate a DR DSF Hub
-* `sonarw_public_key`: Public key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
-* `sonarw_private_key`: Private key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
+* `main_node_sonarw_public_key`: Public key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
+* `main_node_sonarw_private_key`: Private key of the sonarw user taken from the main DSF Hub output. This variable must only be defined for the DR DSF Hub
 
 
 Refer to [inputs](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=inputs) for additional variables with default values and additional info.
 
 ## Outputs
 
-Please refer to [outputs](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs)
+Please refer to [outputs](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs).
 
 ## Usage
 
@@ -72,9 +72,9 @@ module "dsf_hub" {
   allowed_agentless_gw_cidrs        = ["10.106.104.0/24"]
   allowed_ssh_cidrs                 = ["192.168.21.0/24"]
 
-  password                          = random_password.pass.result
+  password                          = "dsf_hub_password"
   ebs                               = {
-    disk_size        = 1000
+    disk_size        = 500
     provisioned_iops = 0
     throughput       = 125
   }
@@ -115,13 +115,13 @@ provider "aws" {
 }
 
 module "dsf_hub_dr" {
-  source              = "imperva/dsf-hub/aws"
+  source                        = "imperva/dsf-hub/aws"
 
   # The rest of arguments are omitted for brevity
 
-  hadr_dr_node        = true
-  sonarw_public_key   = module.hub_main.sonarw_public_key
-  sonarw_private_key  = module.hub_main.sonarw_private_key
+  hadr_dr_node                  = true
+  main_node_sonarw_public_key   = "dsf_hub_main_public_key"
+  main_node_sonarw_private_key  = "dsf_hub_main_private_key"
 }
 ```
 
@@ -135,7 +135,7 @@ ssh_key_pair input variable. If direct SSH access to the DSF Hub instance is not
 module "dsf_hub" {
   source              = "imperva/dsf-hub/aws"
   # The rest of arguments are omitted for brevity
-  proxy_info = {
+  ingress_communication_via_proxy = {
     proxy_address              = "192.168.21.4"
     proxy_private_ssh_key_path = "ssh_keys/dsf_ssh_key-default"
     proxy_ssh_user             = "ec2-user"
