@@ -150,7 +150,6 @@ Then, use the dsf_hub and agentless_gw outputs for the federation module
 ```
 module "federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.0" # latest release tag
   count   = length(local.hub_gw_combinations)
 
   hub_info = {
