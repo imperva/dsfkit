@@ -119,13 +119,13 @@ variable "agentless_gw_hadr" {
 
 variable "hub_instance_type" {
   type        = string
-  default     = "Standard_E4as_v5"
+  default     = "Standard_E4s_v5"
   description = "Instance type for the DSF Hub"
 }
 
 variable "agentless_gw_instance_type" {
   type        = string
-  default     = "Standard_E4as_v5"
+  default     = "Standard_E4s_v5"
   description = "Instance type for the Agentless Gateway"
 }
 
