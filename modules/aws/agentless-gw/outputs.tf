@@ -35,7 +35,7 @@ output "ssh_user" {
 
 output "instance_id" {
   description = "AWS EC2 instance ID"
-  value = module.gw_instance.instance_id
+  value       = module.gw_instance.instance_id
 }
 
 output "sonarw_public_key" {

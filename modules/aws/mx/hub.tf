@@ -1,16 +1,16 @@
 locals {
-  default_audit_policy  = "Default Rule - All Events"
-  _hub_action_set        = "Send to DSF Hub"
-  _hub_action_set_action = local._hub_action_set
+  default_audit_policy      = "Default Rule - All Events"
+  _hub_action_set           = "Send to DSF Hub"
+  _hub_action_set_action    = local._hub_action_set
   _hub_action_set147        = "Default Archive Action Set"
   _hub_action_set_action147 = local._hub_action_set147
-  hub_action_set = local.dam_version != "14.7" ? local._hub_action_set : local._hub_action_set147
-  hub_action_set_action = local.dam_version != "14.7" ? local._hub_action_set_action : local._hub_action_set_action147
+  hub_action_set            = local.dam_version != "14.7" ? local._hub_action_set : local._hub_action_set147
+  hub_action_set_action     = local.dam_version != "14.7" ? local._hub_action_set_action : local._hub_action_set_action147
 
   # Archiving action set is created differently on 14.7
   dam_version_major = split(".", var.dam_version)[0]
   dam_version_minor = split(".", var.dam_version)[1]
-  dam_version = "${local.dam_version_major}.${local.dam_version_minor}"
+  dam_version       = "${local.dam_version_major}.${local.dam_version_minor}"
 
   action_set_item = var.hub_details == null ? [] : local.dam_version != "14.7" ? [{
     name     = "send_to_hub_action_set" # https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/78508.htm
@@ -25,7 +25,7 @@ locals {
       "strictCertificateChecking" : false
       }
     )
-  }] : [{
+    }] : [{
     name     = "default_archive_action_set" # https://docs.imperva.com/bundle/v14.7-database-activity-monitoring-user-guide/page/78508.htm
     method   = "POST"
     url_path = "SecureSphere/api/v1/conf/actionSets/${local.hub_action_set}/${local.hub_action_set_action}"
@@ -35,10 +35,10 @@ locals {
       "port" : try(var.hub_details.port, null),
       "apiToken" : try(var.hub_details.access_token, null)
       "strictCertificateChecking" : false
-      "actionInterface": "Send to Sonar"
+      "actionInterface" : "Send to Sonar"
       }
     )
-    }]
+  }]
 
   hub_configuration = var.hub_details == null ? [] : concat(local.action_set_item,
     var.large_scale_mode == true ? [] : [{
