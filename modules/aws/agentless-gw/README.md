@@ -118,7 +118,7 @@ module "agentless_gateway_dr" {
   source                        = "imperva/dsf-agentless-gw/aws"
 
   # The rest of arguments are omitted for brevity
-
+  friendly_name                 = "imperva-dsf-agentless-gw-dr"
   hadr_dr_node                  = true
   main_node_sonarw_public_key   = "agentless_gateway_main_public_key"
   main_node_sonarw_private_key  = "agentless_gateway_main_private_key"

@@ -118,7 +118,7 @@ module "dsf_hub_dr" {
   source                        = "imperva/dsf-hub/aws"
 
   # The rest of arguments are omitted for brevity
-
+  friendly_name                 = "imperva-dsf-hub-dr"
   hadr_dr_node                  = true
   main_node_sonarw_public_key   = "dsf_hub_main_public_key"
   main_node_sonarw_private_key  = "dsf_hub_main_private_key"
