@@ -365,7 +365,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
   </tr>
   <tr>
-    <td>Coming soon
+    <td>22 Nov 2023
     </td>
     <td>1.7.1
     </td>
