@@ -1,5 +1,5 @@
 locals {
-  db_types_for_agent = local.create_agent_gw_cluster > 0 ? var.simulation_db_types_for_agent : []
+  db_types_for_agent = local.agent_gw_count > 0 ? var.simulation_db_types_for_agent : []
 }
 
 module "db_with_agent" {
