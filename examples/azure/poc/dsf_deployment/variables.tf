@@ -53,7 +53,7 @@ variable "web_console_cidr" {
 variable "workstation_cidr" {
   type        = list(string)
   default     = null
-  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "vnet_ip_range" {
