@@ -41,7 +41,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs
+Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs
 
 ## Usage
 
