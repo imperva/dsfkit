@@ -49,7 +49,7 @@ Refer to [inputs](https://registry.terraform.io/modules/imperva/dsf-agentless-gw
 
 ## Outputs
 
-Please refer to [outputs](https://registry.terraform.io/modules/imperva/dsf-agentless-gw/aws/latest?tab=outputs)
+Refer to [outputs](https://registry.terraform.io/modules/imperva/dsf-agentless-gw/aws/latest?tab=outputs)
 
 
 ## Usage
