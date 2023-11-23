@@ -1,0 +1,46 @@
+output "public_ip" {
+  description = "Public elastic IP address of the DSF base instance"
+  value       = local.public_ip
+  depends_on = [
+    azurerm_network_interface_security_group_association.nic_ip_association,
+#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
+#    azurerm_role_assignment.dsf_base_storage_role_assignment
+  ]
+}
+
+output "private_ip" {
+  description = "Private IP address of the DSF base instance"
+  value       = local.private_ip
+  depends_on = [
+    azurerm_network_interface_security_group_association.nic_ip_association,
+#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
+#    azurerm_role_assignment.dsf_base_storage_role_assignment
+  ]
+}
+
+output "principal_id" {
+  description = "Principal ID of the DSF node"
+  value       = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+}
+
+output "display_name" {
+  value = local.display_name
+}
+
+output "ssh_user" {
+  value = var.vm_user
+}
+
+output "vm_image" {
+  value = null #local.image_reference
+}
+
+#output "ready" {
+#  description = <<-EOF
+#    Indicates when module is "ready"
+#  EOF
+#  value       = "ready"
+#  depends_on = [
+#    null_resource.readiness
+#  ]
+#}
