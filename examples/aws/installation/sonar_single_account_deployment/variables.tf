@@ -110,7 +110,7 @@ variable "password_secret_name" {
 
 variable "web_console_cidr" {
   type        = list(string)
-  default     = ["0.0.0.0/0"]
+  default     = []
   description = "DSF Hub web console IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
