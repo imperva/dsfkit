@@ -37,6 +37,10 @@ module "federation" {
     gw_private_ssh_key_path  = "ssh_keys/agentless_gateway_ssh_key"
     gw_ssh_user              = "ec2-user"
   }
+  depends_on = [
+    module.dsf_hub,
+    module.dsf_agentless_gw
+  ]
 }
 ```
 
