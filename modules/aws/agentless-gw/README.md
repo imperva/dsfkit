@@ -84,7 +84,7 @@ module "dsf_agentless_gw" {
     s3_region        = "us-east-1"
     s3_key           = "jsonar-4.13.0.10.0.tar.gz"
   }
-  hub_sonarw_public_key             = module.dsf_hub.sonarw_public_key
+  hub_sonarw_public_key             = "dsf_hub_sonarw_user_public_key********"
   tags                              = {
     vendor        = "Imperva"
     product       = "DSF"
