@@ -1,10 +1,10 @@
 locals {
-  db_types_for_agent = local.create_agent_gw_cluster > 0 ? var.simulation_db_types_for_agent : []
+  db_types_for_agent = local.agent_gw_count > 0 ? var.simulation_db_types_for_agent : []
 }
 
 module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.7.0" # latest release tag
+  version = "1.7.1" # latest release tag
   count   = length(local.db_types_for_agent)
 
   friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])

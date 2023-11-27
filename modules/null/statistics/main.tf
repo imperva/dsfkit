@@ -1,7 +1,7 @@
 locals {
-  host         = "https://stats.dsfkitimperva.com"
-  resource     = "dsfkit_usage_stats"
-  url          = join("/", [local.host, local.resource])
+  host     = "https://stats.dsfkitimperva.com"
+  resource = "dsfkit_usage_stats"
+  url      = join("/", [local.host, local.resource])
 
   id = var.id == null ? random_uuid.stats_id.result : var.id
 

@@ -148,7 +148,7 @@ variable "hadr_dr_node" {
 
 variable "hub_sonarw_public_key" {
   type        = string
-  description = "Public key of the sonarw user taken from the main Hub output"
+  description = "Public key of the sonarw user taken from the main DSF Hub output"
   nullable    = false
 }
 
@@ -169,8 +169,8 @@ variable "password" {
   sensitive   = true
   description = "Initial password for all users"
   validation {
-    condition     = var.password == null || try(length(var.password) > 8, false)
-    error_message = "Must be at least 8 characters. Used only if 'password_secret_name' is not set."
+    condition     = var.password == null || try(length(var.password) >= 7, false)
+    error_message = "Must be at least 7 characters. Used only if 'password_secret_name' is not set."
   }
 }
 

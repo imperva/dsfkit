@@ -39,7 +39,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-Please refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-agent-gw/aws/latest?tab=outputs
+Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-agent-gw/aws/latest?tab=outputs
 
 
 ## Usage
@@ -83,4 +83,4 @@ API access to the DSF Management server is required to provision this module. Pl
 
 For more information about the DSF Agent Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v14.11-database-activity-monitoring-user-guide/page/378.htm). 
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.0).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.1).

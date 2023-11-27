@@ -1,7 +1,7 @@
 variable "deployment_name" {
   type        = string
   default     = "imperva-dsf"
-  description = "Deployment name for some of the created resources. Please note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
+  description = "Deployment name for some of the created resources. Note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
 }
 
 variable "aws_profile" {
@@ -27,7 +27,7 @@ variable "sonar_version" {
 variable "additional_tags" {
   type        = list(string)
   default     = []
-  description = "Additional tags to add to the DSFKit resources. Please put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
+  description = "Additional tags to add to the DSFKit resources. Put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
   validation {
     condition = alltrue([
       for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
@@ -110,14 +110,14 @@ variable "password_secret_name" {
 
 variable "web_console_cidr" {
   type        = list(string)
-  default     = ["0.0.0.0/0"]
-  description = "DSF Hub web console IPs range. Please specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  default     = []
+  description = "DSF Hub web console IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
   type        = list(string)
   default     = null
-  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
 variable "hub_ebs_details" {
