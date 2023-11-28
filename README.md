@@ -601,8 +601,8 @@ When specifying a DAM version, only long format is supported.
 
 
 Make sure that the version you are using is supported by all the modules which are part of your deployment.
-To see which versions are supported by each module, refer to the specific module's README. 
-(For example, [DSF Hub module's README](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
+To see which versions are supported by each module, refer to the specific module. 
+(For example, [DSF Hub module](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
 # Deployment 
 
@@ -1032,7 +1032,7 @@ If the DSF deployment has not been deployed using the eDSF Kit, it is also neces
 When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar target version specified in the Terraform example.
 In order to be able to download the upgrade software during upgrade, you must request access beforehand. See [Upgrade Prerequisites](#upgrade-prerequisites).
 
-Sonar version constrains can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module's README.
+Sonar version constrains can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module.
 
 The target version should be specified in the Sonar upgrade example <a href="https://github.com/imperva/dsfkit/blob/master/examples/aws/sonar_upgrade/main.tf">main.tf</a> file, for example:
 
@@ -1066,10 +1066,10 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
    >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
    ```
 
-4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the _main.tf_ file.
-   
-   More information can be found in the <a href="https://github.
-com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module's README.
+4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the <a href="https://github.com/imperva/dsfkit/blob/1.7.1/examples/aws/sonar_upgrade/main.tf">main.tf</a> file.
+
+
+   More information can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module.
 
 
    If you need help doing that, please contact [Imperva Technical Support](https://support.imperva.com/s/).
@@ -1148,7 +1148,7 @@ Use the <a href="https://github.com/imperva/dsfkit/tree/1.7.1/modules/aws/sonar-
 
 # More Information
 
-Information about additional topics can be found in specific examples' READMEs, when relevant.
+Information about additional topics can be found in specific examples, when relevant.
 
 For example:  <a href="https://github.com/imperva/dsfkit/tree/1.7.1/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
 
@@ -1281,7 +1281,7 @@ Below is a list of possible issues and troubleshooting remediations.
    </td>
    <td>Error: No outbound internet access. Either enable outbound internet access, or make sure x is installed in the base ami
    </td>
-   <td>If you intended the DSF node to have outbound intent access, then make sure the private subnets have routing to a NAT gateway or equivalent. If you didn't intend the DSF node to have outbound internet access, follow the instructions for 'Deploying DSF Nodes without Outbound Internet Access' in your example's README.  
+   <td>If you intended the DSF node to have outbound intent access, then make sure the private subnets have routing to a NAT gateway or equivalent. If you didn't intend the DSF node to have outbound internet access, follow the instructions for 'Deploying DSF Nodes without Outbound Internet Access' in your example.  
    </td>
   </tr>
   <tr>
