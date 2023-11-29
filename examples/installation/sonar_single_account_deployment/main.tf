@@ -67,8 +67,8 @@ data "aws_subnet" "subnet_gw" {
 # Generating deployment
 ##############################
 module "hub_main" {
-  source               = "imperva/dsf-hub/aws"
-  version              = "1.5.6" # latest release tag
+  source               = "../../../modules/aws/hub"
+//  version              = "1.5.6" # latest release tag
   friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
   subnet_id            = var.subnet_hub_main
   security_group_ids   = var.security_group_ids_hub
@@ -97,8 +97,8 @@ module "hub_main" {
 
 module "agentless_gw" {
   count                 = var.gw_count
-  source                = "imperva/dsf-agentless-gw/aws"
-  version               = "1.5.6" # latest release tag
+  source               = "../../../modules/aws/agentless-gw"
+//  version               = "1.5.6" # latest release tag
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index])
   subnet_id             = var.subnet_gw
   security_group_ids    = var.security_group_ids_gw
