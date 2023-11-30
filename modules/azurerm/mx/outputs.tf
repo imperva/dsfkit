@@ -29,14 +29,11 @@ output "ssh_user" {
   value       = module.mx.ssh_user
 }
 
-output "vm_image" {
-  value = module.mx.vm_image
-}
-
 output "instance_id" {
   value = module.mx.instance_id
 }
 
+# TODO sivan
 #output "configuration" {
 #  description = "Pre-configured site and service group available for use"
 #  value = {

@@ -195,7 +195,7 @@ variable "license" {
   }
   validation {
     condition     = !fileexists(var.license) || can(regex(".*AV[2,6]500.*", file(var.license)))
-    error_message = "License is invalid. It must allow AWS DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
+    error_message = "License is invalid. It must allow DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
   }
 }
 
@@ -204,8 +204,8 @@ variable "attach_persistent_public_ip" {
   description = "Create and attach elastic public IP for the instance"
   default     = false
 }
-#
-#
+
+# TODO sivan
 #variable "create_server_group" {
 #  type        = bool
 #  description = "Create initial configuration to allow automatic agent on-boarding"

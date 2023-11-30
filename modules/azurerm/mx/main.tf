@@ -83,9 +83,7 @@ module "mx" {
   attach_persistent_public_ip = var.attach_persistent_public_ip
   instance_readiness_params = {
     commands = local.readiness_commands
-    # TODO sivan enable readiness
-#    enable   = true
-    enable   = false
+    enable   = true
     timeout  = local.timeout
   }
   tags                  = var.tags

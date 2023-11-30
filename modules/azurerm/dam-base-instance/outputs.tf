@@ -35,17 +35,12 @@ output "instance_id" {
   value = azurerm_linux_virtual_machine.dsf_base_instance.id
 }
 
-output "vm_image" {
-  value = null #local.image_reference
+output "ready" {
+  description = <<-EOF
+    Indicates when module is "ready"
+  EOF
+  value       = "ready"
+  depends_on = [
+    null_resource.readiness
+  ]
 }
-
-# TODO sivan - uncomment ready
-#output "ready" {
-#  description = <<-EOF
-#    Indicates when module is "ready"
-#  EOF
-#  value       = "ready"
-#  depends_on = [
-#    null_resource.readiness
-#  ]
-#}

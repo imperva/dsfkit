@@ -59,9 +59,13 @@ resource "null_resource" "readiness" {
 
   triggers = {
     instance_id = azurerm_linux_virtual_machine.dsf_base_instance.id
+    custom_script_id = azurerm_virtual_machine_extension.custom_script.id
     commands    = var.instance_readiness_params.commands
   }
-  depends_on = [module.statistics]
+  depends_on = [
+    module.statistics,
+    azurerm_virtual_machine_extension.custom_script
+  ]
 }
 
 module "statistics_success" {

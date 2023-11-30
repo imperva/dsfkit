@@ -117,8 +117,6 @@ EOF
   }
 }
 
-# TODO sivan add variable to determine if it is MX or GW
-
 variable "send_usage_statistics" {
   type        = bool
   description = "Set to true to send usage statistics."
