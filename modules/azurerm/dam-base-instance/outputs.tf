@@ -31,10 +31,15 @@ output "ssh_user" {
   value = var.vm_user
 }
 
+output "instance_id" {
+  value = azurerm_linux_virtual_machine.dsf_base_instance.id
+}
+
 output "vm_image" {
   value = null #local.image_reference
 }
 
+# TODO sivan - uncomment ready
 #output "ready" {
 #  description = <<-EOF
 #    Indicates when module is "ready"

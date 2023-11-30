@@ -52,8 +52,6 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   size                = local.mapper.instance_type[var.dam_model]
   admin_username      = var.vm_user
 
-#  custom_data = base64encode(local.userdata)
-
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
@@ -88,13 +86,6 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     identity_ids = [azurerm_user_assigned_identity.dsf_base.id]
   }
   tags = merge(var.tags, { Name = var.name })
-
-  # Ignore changes to the custom_data attribute (Don't replace on userdata change)
-  lifecycle {
-    ignore_changes = [
-      custom_data
-    ]
-  }
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {

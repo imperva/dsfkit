@@ -109,11 +109,7 @@ variable "dam_version" {
 }
 
 variable "dam_license" {
-  description = <<EOF
-  DAM license information. Must be one of the following:
-  1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-  2. License file path (Make sure it allows AWS DAM models (AV2500/AV6500))
-  EOF
+  description = "License file path"
   type        = string
 }
 

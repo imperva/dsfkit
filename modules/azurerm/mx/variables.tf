@@ -114,71 +114,41 @@ variable "ssh_key" {
   nullable = false
 }
 
-#variable "mx_password" {
-#  type        = string
-#  description = "MX password"
-#  sensitive   = true
-#  validation {
-#    condition     = length(var.mx_password) >= 7 && length(var.mx_password) <= 14
-#    error_message = "Password must be 7-14 characters long"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[A-Z]", var.mx_password))
-#    error_message = "Password must contain at least one uppercase letter"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[a-z]", var.mx_password))
-#    error_message = "Password must contain at least one lowercase letter"
-#  }
-#
-#  validation {
-#    condition     = can(regex("\\d", var.mx_password))
-#    error_message = "Password must contain at least one digit"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
-#    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
-#  }
-#}
-#
-#variable "secure_password" {
-#  type        = string
-#  description = "The password used for communication between the Management Server and the Agent Gateway"
-#  sensitive   = true
-#  validation {
-#    condition     = length(var.secure_password) >= 7 && length(var.secure_password) <= 14
-#    error_message = "Password must be 7-14 characters long"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[A-Z]", var.secure_password))
-#    error_message = "Password must contain at least one uppercase letter"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[a-z]", var.secure_password))
-#    error_message = "Password must contain at least one lowercase letter"
-#  }
-#
-#  validation {
-#    condition     = can(regex("\\d", var.secure_password))
-#    error_message = "Password must contain at least one digit"
-#  }
-#
-#  validation {
-#    condition     = can(regex("[*+#%^:/~.,\\[\\]_]", var.secure_password))
-#    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
-#  }
-#}
-#
-#variable "timezone" {
-#  type    = string
-#  default = "UTC"
-#}
-#
+variable "mx_password" {
+  type        = string
+  description = "MX password. This password will also serve as a secure password, namely for the purpose of for communication between the Management Server and the Agent Gateway."
+  sensitive   = true
+  validation {
+    condition     = length(var.mx_password) >= 7 && length(var.mx_password) <= 14
+    error_message = "Password must be 7-14 characters long"
+  }
+
+  validation {
+    condition     = can(regex("[A-Z]", var.mx_password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    condition     = can(regex("[a-z]", var.mx_password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    condition     = can(regex("\\d", var.mx_password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
+}
+
+variable "timezone" {
+  type    = string
+  default = "UTC"
+}
+
 
 variable "dam_version" {
   type        = string
@@ -216,23 +186,19 @@ variable "large_scale_mode" {
   default     = false
 }
 
-#variable "license" {
-#  description = <<EOF
-#  License information. Must be one of the following:
-#  1. Activation code (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-#  2. License file path
-#  EOF
-#  type        = string
-#  validation {
-#    condition     = fileexists(var.license) || can(regex("^[[:alnum:]]{8}-([[:alnum:]]{4}-){3}[[:alnum:]]{12}$", var.license))
-#    error_message = "Invalid license file (No such file on disk). Can either be an activation code in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx or a path to a license file on disk"
-#  }
-#  validation {
-#    condition     = !fileexists(var.license) || can(regex(".*AV[2,6]500.*", file(var.license)))
-#    error_message = "License is invalid. It must allow AWS DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
-#  }
-#}
-#
+variable "license" {
+  description = "License file path"
+  type        = string
+  validation {
+    condition     = fileexists(var.license)
+    error_message = "Invalid license file (No such file on disk)"
+  }
+  validation {
+    condition     = !fileexists(var.license) || can(regex(".*AV[2,6]500.*", file(var.license)))
+    error_message = "License is invalid. It must allow AWS DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
+  }
+}
+
 variable "attach_persistent_public_ip" {
   type        = bool
   description = "Create and attach elastic public IP for the instance"

@@ -3,7 +3,7 @@ locals {
   version_parts = split(".", var.dam_version)
   dam_major_version = element(local.version_parts, 0)
   dam_azure_image_version   = join(".", [element(local.version_parts, 0), element(local.version_parts, 1), element(local.version_parts, 3)])
-  is_lts_version = false # TODO sivan - lts?
+  is_lts_version = startswith(var.dam_version, "14.7.")
 
   default_vm_image =  {
     publisher = "imperva"

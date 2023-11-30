@@ -13,13 +13,12 @@ module "mx" {
   resource_group                    = local.resource_group
   dam_version                       = var.dam_version
   subnet_id                         = module.network[0].vnet_subnets[0]
-#  license                           = var.dam_license
+  license                           = var.dam_license
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-#  secure_password                   = local.password
-#  mx_password                       = local.password
+  mx_password                       = local.password
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agent_gw_cidrs            = module.network[0].vnet_address_space
   allowed_ssh_cidrs                 = local.workstation_cidr
@@ -31,12 +30,12 @@ module "mx" {
 #    port         = 8443
 #  } : null
   attach_persistent_public_ip = true
-#  large_scale_mode            = var.large_scale_mode.mx
+  large_scale_mode            = var.large_scale_mode.mx
 
 #  create_server_group = length(var.simulation_db_types_for_agent) > 0
   tags                = local.tags
   # TODO sivan - remove and test
-#  send_usage_statistics = false
+  send_usage_statistics = false
   depends_on = [
     module.network
   ]

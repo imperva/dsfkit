@@ -1,4 +1,5 @@
 locals {
+  # TODO sivan model?
   dam_model          = "AVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
@@ -51,20 +52,18 @@ locals {
     # },
   ]
 }
-#
+
 locals {
-#  large_scale_arg = var.large_scale_mode == true ? "--large_scale" : ""
-#  user_data_commands = [
-#    "/opt/SecureSphere/etc/ec2/ec2_auto_ftl --init_mode --user=${var.vm_user} --serverPassword=%mxPassword% --secure_password=%securePassword% --system_password=%securePassword% --timezone=${var.timezone} --time_servers=default --dns_servers=default --dns_domain=default --management_interface=eth0 --check_server_status --initiate_services ${local.license_params} ${local.large_scale_arg}"
-#  ]
-#
-#  https_auth_header = base64encode("admin:${var.mx_password}")
-#  timeout           = 60 * 40
-#
-#  readiness_commands = templatefile("${path.module}/readiness.tftpl", {
-#    mx_address        = local.mx_address_for_api
-#    https_auth_header = local.https_auth_header
-#  })
+  gateway_group     = var.friendly_name
+  custom_script     = "/opt/SecureSphere/azure/bin/azure_arm --component='Management' --timezone='UTC' --sonar_only_mode='false' --password='${var.mx_password}' --gateway_group='${local.gateway_group}' --enc_lic='${local.encrypted_license}' --pass_phrase='${local.license_passphrase}' --large_scale='${var.large_scale_mode}'"
+
+  https_auth_header = base64encode("admin:${var.mx_password}")
+  timeout           = 60 * 40
+
+  readiness_commands = templatefile("${path.module}/readiness.tftpl", {
+    mx_address        = local.mx_address_for_api
+    https_auth_header = local.https_auth_header
+  })
 }
 
 module "mx" {
@@ -76,19 +75,19 @@ module "mx" {
   vm_user                     = var.vm_user
   vm_image                    = var.vm_image
   resource_type               = local.resource_type
-#  mx_password                 = var.mx_password
-#  secure_password             = var.secure_password
   security_groups_config      = local.security_groups_config
   security_group_ids          = var.security_group_ids
   subnet_id                   = var.subnet_id
-#  user_data_commands          = local.user_data_commands
+  custom_script               = local.custom_script
   public_ssh_key               = var.ssh_key.ssh_public_key
   attach_persistent_public_ip = var.attach_persistent_public_ip
-#  instance_readiness_params = {
-#    commands = local.readiness_commands
+  instance_readiness_params = {
+    commands = local.readiness_commands
+    # TODO sivan enable readiness
 #    enable   = true
-#    timeout  = local.timeout
-#  }
+    enable   = false
+    timeout  = local.timeout
+  }
   tags                  = var.tags
   send_usage_statistics = var.send_usage_statistics
 }

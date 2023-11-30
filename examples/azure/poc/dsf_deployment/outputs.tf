@@ -72,7 +72,7 @@ output "dam" {
       private_url      = try(join("", ["https://", module.mx[0].private_ip, ":8083/"]), null)
       password         = nonsensitive(local.password)
       user             = module.mx[0].web_console_user
-#      large_scale_mode = module.mx[0].large_scale_mode
+      large_scale_mode = module.mx[0].large_scale_mode
     }
     # TODO sivan add GWs
   } : null
@@ -85,9 +85,4 @@ output "web_console_dsf_hub" {
     public_url  = join("", ["https://", module.hub_main[0].public_ip, ":8443/"])
     private_url = join("", ["https://", module.hub_main[0].private_ip, ":8443/"])
   }, null)
-}
-
-# TODO sivan - remove
-output "dam_vm_image" {
-  value = module.mx[0].vm_image
 }

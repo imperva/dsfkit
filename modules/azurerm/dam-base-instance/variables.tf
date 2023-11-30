@@ -71,6 +71,21 @@ variable "vm_image" {
   default     = null
 }
 
+variable "instance_readiness_params" {
+  description = "This variable allows the user to configure how to check the readiness and health of the DAM instance after it is launched. Set enable to false to skip the verification, or true to perform the verification. Skipping is not recommended."
+  type = object({
+    enable   = bool
+    commands = string
+    timeout  = number
+  }
+  )
+}
+
+variable "custom_script" {
+  type        = string
+  description = "Command that run on instance startup. Should contain at least the FTL command"
+}
+
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
