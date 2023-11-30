@@ -45,6 +45,12 @@ variable "workstation_cidr" {
   description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "IP ranges from which SSH access to the deployed DSF nodes will be allowed"
+  default = []
+}
+
 variable "additional_install_parameters" {
   default     = ""
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"

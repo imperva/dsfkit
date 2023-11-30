@@ -98,6 +98,7 @@ module "hub" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agentless_gw_cidrs        = [data.aws_subnet.gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   tags                              = local.tags
   depends_on = [
     module.vpc
@@ -122,6 +123,7 @@ module "agentless_gw" {
   }
   allowed_hub_cidrs = [data.aws_subnet.hub.cidr_block]
   allowed_all_cidrs = local.workstation_cidr
+  allowed_ssh_cidrs = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path

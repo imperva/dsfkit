@@ -106,6 +106,7 @@ module "hub_main" {
   allowed_hub_cidrs                 = [data.aws_subnet.dr_hub.cidr_block]
   allowed_agentless_gw_cidrs        = [data.aws_subnet.main_gw.cidr_block, data.aws_subnet.dr_gw.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   tags                              = local.tags
   depends_on = [
     module.vpc
@@ -135,6 +136,7 @@ module "hub_dr" {
   allowed_hub_cidrs          = [data.aws_subnet.main_hub.cidr_block]
   allowed_agentless_gw_cidrs = [data.aws_subnet.main_gw.cidr_block, data.aws_subnet.dr_gw.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   tags                       = local.tags
   depends_on = [
     module.vpc
@@ -160,6 +162,7 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.dr_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.main_hub.cidr_block, data.aws_subnet.dr_hub.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -193,6 +196,7 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.main_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.main_hub.cidr_block, data.aws_subnet.dr_hub.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main.public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
