@@ -52,7 +52,7 @@ echo "Tarball extraction directory: $EXTRACTION_DIR"
 function extract_tarball() {
     echo "Extracting tarball..."
     sudo tar -xf $TARBALL_FILE_NAME -gz -C $EXTRACTION_BASE_DIR
-    sudo chown -R sonarw:sonar $EXTRACTION_BASE_DIR
+    sudo chown -R sonarw:sonar $EXTRACTION_DIR
     echo "Extracting tarball completed"
 }
 
