@@ -34,8 +34,6 @@ module "mx" {
 
 #  create_server_group = length(var.simulation_db_types_for_agent) > 0
   tags                = local.tags
-  # TODO sivan - remove and test
-  send_usage_statistics = false
   depends_on = [
     module.network
   ]

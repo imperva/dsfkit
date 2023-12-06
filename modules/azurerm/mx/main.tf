@@ -1,5 +1,4 @@
 locals {
-  # TODO sivan model?
   dam_model          = "AVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
@@ -72,8 +71,10 @@ module "mx" {
   name                        = var.friendly_name
   dam_version                 = var.dam_version
   dam_model                   = local.dam_model
+  storage_details             = var.storage_details
   vm_user                     = var.vm_user
   vm_image                    = var.vm_image
+  vm_instance_type            = var.vm_instance_type
   resource_type               = local.resource_type
   security_groups_config      = local.security_groups_config
   security_group_ids          = var.security_group_ids

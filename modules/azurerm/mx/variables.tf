@@ -34,12 +34,6 @@ variable "subnet_id" {
   }
 }
 
-#variable "instance_profile_name" {
-#  type        = string
-#  default     = null
-#  description = "Instance profile to assign to the instance. Keep empty if you wish to create a new IAM role and profile"
-#}
-#
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
@@ -139,8 +133,8 @@ variable "mx_password" {
   }
 
   validation {
-    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.mx_password))
-    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+    condition     = can(regex("[*+=#%^:/~.,\\[_]", var.mx_password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[_"
   }
 }
 
@@ -148,7 +142,6 @@ variable "timezone" {
   type    = string
   default = "UTC"
 }
-
 
 variable "dam_version" {
   type        = string
@@ -160,6 +153,18 @@ variable "dam_version" {
   validation {
     condition     = split(".", var.dam_version)[0] == "14"
     error_message = "DAM version not supported."
+  }
+}
+
+variable "storage_details" {
+  type = object({
+    disk_size            = number
+    storage_account_type = string
+  })
+  description = "Compute instance volume attributes for the MX"
+  default = {
+    disk_size = 160
+    storage_account_type = "Standard_LRS"
   }
 }
 
@@ -177,6 +182,12 @@ variable "vm_image" {
     version   = string
   })
   description = "This variable is used for selecting an Azure DAM machine image. If set to null, the image will be determine according to dam_version variable."
+  default     = null
+}
+
+variable "vm_instance_type" {
+  type        = string
+  description = "Instance type for the VM. If set to null, the recommended instance type will be used"
   default     = null
 }
 

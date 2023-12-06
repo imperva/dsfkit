@@ -14,11 +14,6 @@ output "private_ip" {
   ]
 }
 
-output "principal_id" {
-  description = "Principal ID of the DSF node"
-  value       = module.mx.principal_id
-}
-
 output "display_name" {
   description = "Display name"
   value       = module.mx.display_name

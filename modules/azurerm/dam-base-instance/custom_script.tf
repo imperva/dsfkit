@@ -16,6 +16,10 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
         "commandToExecute": "${var.custom_script}"
     }
 PROTECTED_SETTINGS
+
+  timeouts {
+    create = "60m"
+  }
 }
 
 module "statistics" {
@@ -26,6 +30,7 @@ module "statistics" {
   product         = "DAM"
   resource_type   = var.resource_type
   artifact        = join(":", compact([local.vm_image.publisher, local.vm_image.offer, local.vm_image.sku, local.vm_image.version]))
+  location        = var.resource_group.location
 }
 
 resource "null_resource" "readiness" {

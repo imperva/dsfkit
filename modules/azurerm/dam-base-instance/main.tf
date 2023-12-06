@@ -3,18 +3,18 @@ locals {
   private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
   # root volume details
-  root_volume_size  = 160
-  root_volume_type  = "Standard_LRS"
+  root_volume_size  = var.storage_details.disk_size
+  root_volume_type  = var.storage_details.storage_account_type
   root_volume_cache = "ReadWrite"
 
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
+  instance_type = var.vm_instance_type != null? var.vm_instance_type : local.mapper.instance_type[var.dam_model]
   mapper = {
-    # TODO sivan - decide instance types
     instance_type = {
-      AV2500 = "Standard_E4s_v5",
-      AV6500 = "Standard_E4s_v5",
-      AVM150 = "Standard_E4s_v5"
+      AV2500 = "Standard_B4ms",
+      AV6500 = "Standard_E8s_v3",
+      AVM150 = "Standard_D4_v3"
     }
     product_role = {
       mx       = "server",
@@ -22,9 +22,6 @@ locals {
     }
   }
 }
-
-
-# TODO sivan - storage?
 
 resource "azurerm_public_ip" "vm_public_ip" {
   count               = var.attach_persistent_public_ip ? 1 : 0
@@ -49,7 +46,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   name                = var.name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
-  size                = local.mapper.instance_type[var.dam_model]
+  size                = local.instance_type
   admin_username      = var.vm_user
 
   network_interface_ids = [
@@ -79,19 +76,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     product   = local.vm_image.offer
     name      = local.vm_image.sku
   }
-
-  # TODO sivan - ask Eytan
-  identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.dsf_base.id]
-  }
   tags = merge(var.tags, { Name = var.name })
-}
-
-resource "azurerm_user_assigned_identity" "dsf_base" {
-  name                = var.name
-  resource_group_name = var.resource_group.name
-  location            = var.resource_group.location
 }
 
 resource "azurerm_network_interface" "nic" {

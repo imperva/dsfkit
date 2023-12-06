@@ -3,8 +3,6 @@ output "public_ip" {
   value       = local.public_ip
   depends_on = [
     azurerm_network_interface_security_group_association.nic_ip_association,
-#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
-#    azurerm_role_assignment.dsf_base_storage_role_assignment
   ]
 }
 
@@ -13,14 +11,7 @@ output "private_ip" {
   value       = local.private_ip
   depends_on = [
     azurerm_network_interface_security_group_association.nic_ip_association,
-#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
-#    azurerm_role_assignment.dsf_base_storage_role_assignment
   ]
-}
-
-output "principal_id" {
-  description = "Principal ID of the DSF node"
-  value       = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
 }
 
 output "display_name" {
