@@ -3,9 +3,8 @@ locals {
 }
 
 resource "azurerm_virtual_machine_extension" "custom_script" {
-  # TODO sivan - investigate why cause error when passing the license attribute in the command
-#  count  =  var.custom_script != null ? 1 : 0
-  name                 = "customScript"
+  for_each = var.custom_scripts
+  name                 = "customScript_${each.key}"
   virtual_machine_id   = azurerm_linux_virtual_machine.dsf_base_instance.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
@@ -13,7 +12,7 @@ resource "azurerm_virtual_machine_extension" "custom_script" {
 
   protected_settings = <<PROTECTED_SETTINGS
     {
-        "commandToExecute": "${var.custom_script}"
+        "commandToExecute": "${each.value}"
     }
 PROTECTED_SETTINGS
 
@@ -64,7 +63,7 @@ resource "null_resource" "readiness" {
 
   triggers = {
     instance_id = azurerm_linux_virtual_machine.dsf_base_instance.id
-    custom_script_id = azurerm_virtual_machine_extension.custom_script.id
+    ftl_custom_script_id = lookup(azurerm_virtual_machine_extension.custom_script, "ftl", null) != null ? azurerm_virtual_machine_extension.custom_script["ftl"].id : null
     commands    = var.instance_readiness_params.commands
   }
   depends_on = [

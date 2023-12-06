@@ -28,7 +28,7 @@ output "instance_id" {
   value = module.mx.instance_id
 }
 
-# TODO sivan
+# TODO sivan configuration
 #output "configuration" {
 #  description = "Pre-configured site and service group available for use"
 #  value = {

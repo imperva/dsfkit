@@ -91,13 +91,12 @@ variable "instance_readiness_params" {
     enable   = bool
     commands = string
     timeout  = number
-  }
-  )
+  })
 }
 
-variable "custom_script" {
-  type        = string
-  description = "Command that run on instance startup. Should contain at least the FTL command"
+variable "custom_scripts" {
+  type        = map(string)
+  description = "A map of custom scripts to run on the Azure DAM machine, which associates a unique script key with its content. Should contain at least the FTL command with 'ftl' script key"
 }
 
 variable "dam_version" {

@@ -216,7 +216,7 @@ variable "attach_persistent_public_ip" {
   default     = false
 }
 
-# TODO sivan
+# TODO sivan configuration
 #variable "create_server_group" {
 #  type        = bool
 #  description = "Create initial configuration to allow automatic agent on-boarding"

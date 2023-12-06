@@ -54,7 +54,10 @@ locals {
 
 locals {
   gateway_group     = var.friendly_name
-  custom_script     = "/opt/SecureSphere/azure/bin/azure_arm --component='Management' --timezone='UTC' --sonar_only_mode='false' --password='${var.mx_password}' --gateway_group='${local.gateway_group}' --enc_lic='${local.encrypted_license}' --pass_phrase='${local.license_passphrase}' --large_scale='${var.large_scale_mode}'"
+  ftl_script     = "/opt/SecureSphere/azure/bin/azure_arm --component='Management' --timezone='UTC' --sonar_only_mode='false' --password='${var.mx_password}' --gateway_group='${local.gateway_group}' --enc_lic='${local.encrypted_license}' --pass_phrase='${local.license_passphrase}' --large_scale='${var.large_scale_mode}'"
+  custom_scripts = {
+    "ftl" = local.ftl_script
+  }
 
   https_auth_header = base64encode("admin:${var.mx_password}")
   timeout           = 60 * 40
@@ -79,8 +82,8 @@ module "mx" {
   security_groups_config      = local.security_groups_config
   security_group_ids          = var.security_group_ids
   subnet_id                   = var.subnet_id
-  custom_script               = local.custom_script
-  public_ssh_key               = var.ssh_key.ssh_public_key
+  custom_scripts              = local.custom_scripts
+  public_ssh_key              = var.ssh_key.ssh_public_key
   attach_persistent_public_ip = var.attach_persistent_public_ip
   instance_readiness_params = {
     commands = local.readiness_commands

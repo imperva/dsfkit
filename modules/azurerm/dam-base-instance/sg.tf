@@ -7,7 +7,6 @@ locals {
 ### Ingress security group 
 ##############################################################################
 
-# TODO sivan - ask Eytan
 resource "azurerm_network_security_group" "dsf_base_sg" {
   name                = var.name
   location            = var.resource_group.location
