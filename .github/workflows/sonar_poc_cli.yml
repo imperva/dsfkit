@@ -64,7 +64,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   TF_VAR_gw_count: 1
-  TF_VAR_allowed_ssh_cidrs: ["82.166.106.192/27", "62.90.116.64/27", "62.90.30.128/27", "94.188.165.192/27"]
+  TF_VAR_allowed_ssh_cidrs: "[\"82.166.106.192/27\", \"62.90.116.64/27\", \"62.90.30.128/27\", \"94.188.165.192/27\"]"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
