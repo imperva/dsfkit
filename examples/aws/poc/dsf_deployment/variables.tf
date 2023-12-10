@@ -68,6 +68,12 @@ variable "workstation_cidr" {
   description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
 }
 
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "IP ranges from which SSH access to the deployed DSF nodes will be allowed"
+  default = []
+}
+
 variable "vpc_ip_range" {
   type        = string
   default     = "10.0.0.0/16"
