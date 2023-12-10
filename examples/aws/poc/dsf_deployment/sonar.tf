@@ -32,6 +32,7 @@ module "hub_main" {
   allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
     address  = coalesce(mx.public_dns, mx.private_dns)
@@ -77,6 +78,7 @@ module "hub_dr" {
   allowed_agentless_gw_cidrs        = local.agentless_gw_cidr_list
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   tags                              = local.tags
   depends_on = [
     module.vpc
@@ -120,6 +122,7 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_dr.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
@@ -153,6 +156,7 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path

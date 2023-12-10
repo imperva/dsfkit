@@ -18,7 +18,7 @@ module "dra_admin" {
   allowed_web_console_cidrs   = var.web_console_cidr
   allowed_analytics_cidrs     = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs           = local.hub_cidr_list
-  allowed_ssh_cidrs           = local.workstation_cidr
+  allowed_ssh_cidrs           = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   key_pair                    = module.key_pair.key_pair.key_pair_name
   tags                        = local.tags
   depends_on = [
@@ -38,7 +38,7 @@ module "dra_analytics" {
   admin_registration_password = local.password
   admin_password              = local.password
   allowed_admin_cidrs         = [data.aws_subnet.dra_admin.cidr_block]
-  allowed_ssh_cidrs           = local.hub_cidr_list
+  allowed_ssh_cidrs           = concat(local.hub_cidr_list, var.allowed_ssh_cidrs)
   key_pair                    = module.key_pair.key_pair.key_pair_name
   archiver_password           = local.password
   admin_server_private_ip     = module.dra_admin[0].private_ip

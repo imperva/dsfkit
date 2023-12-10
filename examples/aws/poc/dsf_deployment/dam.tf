@@ -21,7 +21,7 @@ module "mx" {
   mx_password                       = local.password
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agent_gw_cidrs            = [data.aws_subnet.agent_gw.cidr_block]
-  allowed_ssh_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   allowed_hub_cidrs                 = local.hub_cidr_list
 
   hub_details = var.enable_sonar ? {
@@ -53,7 +53,7 @@ module "agent_gw" {
   mx_password                             = local.password
   allowed_agent_cidrs                     = [data.aws_subnet.agent_gw.cidr_block]
   allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
-  allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
+  allowed_ssh_cidrs                       = concat([data.aws_subnet.mx.cidr_block], var.allowed_ssh_cidrs)
   allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
   management_server_host_for_registration = module.mx[0].private_ip
   management_server_host_for_api_access   = module.mx[0].public_ip
