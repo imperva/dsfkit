@@ -69,7 +69,7 @@ jobs:
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
-      TF_VAR_allowed_ssh_cidrs: ["82.166.106.192/27", "62.90.116.64/27", "62.90.30.128/27", "94.188.165.192/27"]
+      TF_VAR_allowed_ssh_cidrs: "[\"82.166.106.192/27\", \"62.90.116.64/27\", \"62.90.30.128/27\", \"94.188.165.192/27\"]"
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
