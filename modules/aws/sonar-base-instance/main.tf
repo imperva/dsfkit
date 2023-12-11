@@ -38,7 +38,6 @@ resource "aws_instance" "dsf_base_instance" {
   user_data     = local.install_script
   root_block_device {
     volume_size = local.root_volume_size
-    tags        = merge(var.tags, { Name = var.name })
   }
   iam_instance_profile = local.instance_profile
   network_interface {
@@ -52,6 +51,7 @@ resource "aws_instance" "dsf_base_instance" {
     http_tokens   = "required"
   }
   tags = merge(var.tags, { Name = var.name })
+  volume_tags = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_volume_attachment" "ebs_att" {
