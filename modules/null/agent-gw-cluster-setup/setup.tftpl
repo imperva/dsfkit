@@ -7,7 +7,7 @@ cookie_file=$(mktemp)
 trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:${mx_port}/SecureSphere/api/v1/auth/session; rm -f $cookie_file" EXIT
 
 if ! command -v jq; then
-  echo "jq utility is required to run this module. Please refer to jq installation steps in your worksation platform."
+  echo "jq utility is required to run this module. Refer to jq installation steps in your workstation platform."
   exit 1
 fi
 
