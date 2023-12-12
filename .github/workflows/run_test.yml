@@ -27,3 +27,7 @@ jobs:
 
       - name: Print GitHub Actions Context
         run: echo "${{ toJson(github) }}"
+
+      - name: Print GitHub link
+        run: | 
+          echo "Job link: ${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}/${{ env.GITHUB_JOB }}"
