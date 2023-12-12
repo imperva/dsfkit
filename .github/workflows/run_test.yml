@@ -30,4 +30,4 @@ jobs:
 
       - name: Print GitHub link
         run: | 
-          echo "Job Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}?check_suite_focus=true#step:${{ github.job }}"
+          echo "Job Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs/${{ github.job }}"
