@@ -33,9 +33,9 @@ jobs:
         run: | 
           echo "${{ toJson(job) }}"
 
-      - name: Print GitHub Jobs
+      - name: Print GitHub runner
         run: | 
-          echo "${{ toJson(jobs) }}"
+          echo "${{ toJson(runner) }}"
 
       - name: Print GitHub link
         run: | 
