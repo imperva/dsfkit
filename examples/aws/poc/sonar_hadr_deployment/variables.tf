@@ -62,7 +62,7 @@ variable "workstation_cidr" {
 variable "allowed_ssh_cidrs" {
   type        = list(string)
   description = "IP ranges from which SSH access to the deployed DSF nodes will be allowed"
-  default = []
+  default     = []
 }
 
 variable "additional_install_parameters" {
