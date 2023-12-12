@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  test 1:
+  test_1:
     runs-on: ubuntu-latest
     environment: test
 
