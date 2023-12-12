@@ -20,7 +20,7 @@ output "display_name" {
 }
 
 output "ssh_user" {
-  description = "Ssh username"
+  description = "SSH username"
   value       = module.mx.ssh_user
 }
 

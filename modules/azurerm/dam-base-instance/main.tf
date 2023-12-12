@@ -12,9 +12,9 @@ locals {
   instance_type = var.vm_instance_type != null? var.vm_instance_type : local.mapper.instance_type[var.dam_model]
   mapper = {
     instance_type = {
-      AV2500 = "Standard_B4ms",
-      AV6500 = "Standard_E8s_v3",
-      AVM150 = "Standard_D4_v3"
+      MV2500 = "Standard_B4ms",
+      MV6500 = "Standard_E8s_v3",
+      MVM150 = "Standard_D4_v3"
     }
     product_role = {
       mx       = "server",

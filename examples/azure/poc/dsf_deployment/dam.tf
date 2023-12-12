@@ -1,6 +1,6 @@
 locals {
-#  agent_gw_count          = var.enable_dam ? var.agent_gw_count : 0
-#  gateway_group_name      = "temporaryGatewayGroup"
+  agent_gw_count          = var.enable_dam ? var.agent_gw_count : 0
+  gateway_group_name      = "temporaryGatewayGroup"
 #  create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
 }
 
@@ -39,30 +39,32 @@ module "mx" {
   ]
 }
 
-#module "agent_gw" {
-#  source  = "../../../../modules/aws/agent-gw"
-#  count   = local.agent_gw_count
-#
-#  friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
-#  dam_version                             = var.dam_version
-#  ebs                                     = var.agent_gw_ebs_details
-#  subnet_id                               = local.agent_gw_subnet_id
-#  key_pair                                = module.key_pair.key_pair.key_pair_name
-#  secure_password                         = local.password
-#  mx_password                             = local.password
-#  allowed_agent_cidrs                     = [data.aws_subnet.agent_gw.cidr_block]
-#  allowed_mx_cidrs                        = [data.aws_subnet.mx.cidr_block]
-#  allowed_ssh_cidrs                       = [data.aws_subnet.mx.cidr_block]
-#  allowed_gw_clusters_cidrs               = [data.aws_subnet.agent_gw.cidr_block]
-#  management_server_host_for_registration = module.mx[0].private_ip
-#  management_server_host_for_api_access   = module.mx[0].public_ip
-#  large_scale_mode                        = var.large_scale_mode.agent_gw
-#  gateway_group_name                      = local.gateway_group_name
-#  tags                                    = local.tags
-#  depends_on = [
-#    module.vpc
-#  ]
-#}
+module "agent_gw" {
+  source  = "../../../../modules/azurerm/agent-gw"
+  count   = local.agent_gw_count
+
+  friendly_name                           = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
+  resource_group                          = local.resource_group
+  dam_version                             = var.dam_version
+  subnet_id                               = module.network[0].vnet_subnets[0]
+  ssh_key = {
+    ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
+    ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
+  }
+  mx_password                             = local.password
+  allowed_agent_cidrs                     = module.network[0].vnet_address_space
+  allowed_mx_cidrs                        = module.network[0].vnet_address_space
+  allowed_ssh_cidrs                       = module.network[0].vnet_address_space
+  allowed_gw_clusters_cidrs               = module.network[0].vnet_address_space
+  management_server_host_for_registration = module.mx[0].private_ip
+  management_server_host_for_api_access   = module.mx[0].public_ip
+  large_scale_mode                        = var.large_scale_mode.agent_gw
+  gateway_group_name                      = local.gateway_group_name
+  tags                                    = local.tags
+  depends_on = [
+    module.network
+  ]
+}
 #
 #module "agent_gw_cluster_setup" {
 #  source  = "../../../../modules/null/agent-gw-cluster-setup"

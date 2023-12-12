@@ -123,9 +123,9 @@ variable "dam_model" {
   type        = string
   description = "Enter the Agent Gateway/MX Model. More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
   validation {
-    condition     = contains(["AV2500", "AV6500", "AVM150"], var.dam_model)
+    condition     = contains(["MV2500", "MV6500", "MVM150"], var.dam_model)
     error_message = <<EOF
-     Allowed values for DSF DAM node type: "AV2500", "AV6500", "AVM150"
+     Allowed values for DSF DAM node type: "MV2500", "MV6500", "MVM150"
 EOF
   }
 }

@@ -66,7 +66,6 @@ output "dam" {
       public_ip        = try(module.mx[0].public_ip, null)
       private_ip       = try(module.mx[0].private_ip, null)
       display_name     = try(module.mx[0].display_name, null)
-      principal_id     = try(module.mx[0].principal_id, null)
       ssh_command      = try("ssh -i ${local.private_key_file_path} ${module.mx[0].ssh_user}@${module.mx[0].public_ip}", null)
       public_url       = try(join("", ["https://", module.mx[0].public_ip, ":8083/"]), null)
       private_url      = try(join("", ["https://", module.mx[0].private_ip, ":8083/"]), null)
@@ -74,7 +73,15 @@ output "dam" {
       user             = module.mx[0].web_console_user
       large_scale_mode = module.mx[0].large_scale_mode
     }
-    # TODO sivan add GWs
+    agent_gw = [
+      for idx, val in module.agent_gw : {
+        private_ip       = try(val.private_ip, null)
+        public_ip        = try(val.public_ip, null)
+        display_name     = try(val.display_name, null)
+        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        large_scale_mode = val.large_scale_mode
+      }
+    ]
   } : null
 }
 
