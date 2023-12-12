@@ -28,7 +28,14 @@ jobs:
       - name: Print GitHub Actions Context
         run: | 
           echo "${{ toJson(github) }}"
+
+      - name: Print GitHub Job
+        run: | 
           echo "${{ toJson(job) }}"
+
+      - name: Print GitHub Jobs
+        run: | 
+          echo "${{ toJson(jobs) }}"
 
       - name: Print GitHub link
         run: | 
