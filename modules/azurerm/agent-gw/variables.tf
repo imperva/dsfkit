@@ -208,7 +208,6 @@ variable "agent_listener_port" {
   }
 }
 
-# TODO sivan ask Eytan why not in sg
 variable "agent_listener_ssl" {
   type        = bool
   description = "Use SSL encrypted data tunnels (May increase CPU consumption on the Agent host)."

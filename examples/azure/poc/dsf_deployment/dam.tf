@@ -1,7 +1,7 @@
 locals {
   agent_gw_count          = var.enable_dam ? var.agent_gw_count : 0
   gateway_group_name      = "temporaryGatewayGroup"
-#  create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
+  create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
 }
 
 # TODO sivan - fix all relative modules paths
@@ -18,6 +18,7 @@ module "mx" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
+  vm_instance_type                  = var.mx_instance_type
   mx_password                       = local.password
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agent_gw_cidrs            = module.network[0].vnet_address_space
@@ -51,6 +52,7 @@ module "agent_gw" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
+  vm_instance_type                        = var.agent_gw_instance_type
   mx_password                             = local.password
   allowed_agent_cidrs                     = module.network[0].vnet_address_space
   allowed_mx_cidrs                        = module.network[0].vnet_address_space
@@ -65,21 +67,21 @@ module "agent_gw" {
     module.network
   ]
 }
-#
-#module "agent_gw_cluster_setup" {
-#  source  = "../../../../modules/null/agent-gw-cluster-setup"
-#  count   = local.create_agent_gw_cluster
-#
-#  cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
-#  gateway_group_name = local.gateway_group_name
-#  mx_details = {
-#    address  = module.mx[0].public_ip
-#    port     = 8083
-#    user     = module.mx[0].web_console_user
-#    password = local.password
-#  }
-#  depends_on = [
-#    module.agent_gw,
-#    module.mx
-#  ]
-#}
+
+module "agent_gw_cluster_setup" {
+  source  = "../../../../modules/null/agent-gw-cluster-setup"
+  count   = local.create_agent_gw_cluster
+
+  cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
+  gateway_group_name = local.gateway_group_name
+  mx_details = {
+    address  = module.mx[0].public_ip
+    port     = 8083
+    user     = module.mx[0].web_console_user
+    password = local.password
+  }
+  depends_on = [
+    module.agent_gw,
+    module.mx
+  ]
+}

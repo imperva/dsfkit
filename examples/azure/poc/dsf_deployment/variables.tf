@@ -177,6 +177,18 @@ variable "agentless_gw_instance_type" {
   description = "Instance type for the Agentless Gateway"
 }
 
+variable "mx_instance_type" {
+  type        = string
+  default     = null
+  description = "Instance type for the MX. If set to null, the recommended instance type will be used"
+}
+
+variable "agent_gw_instance_type" {
+  type        = string
+  default     = null
+  description = "Instance type for the Agent Gateway. If set to null, the recommended instance type will be used"
+}
+
 variable "hub_storage_details" {
   type = object({
     disk_size            = number
