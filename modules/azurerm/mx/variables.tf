@@ -216,36 +216,16 @@ variable "attach_persistent_public_ip" {
   default     = false
 }
 
-# TODO sivan configuration
-#variable "create_server_group" {
-#  type        = bool
-#  description = "Create initial configuration to allow automatic agent on-boarding"
-#  default     = false
-#}
-#
-#variable "dra_details" {
-#  description = "Details of the DRA for sending audit logs"
-#  type = object({
-#    address         = string
-#    port            = number
-#    username        = string
-#    password        = string
-#    remoteDirectory = string
-#  })
-#  default = null
-#}
-#
-#variable "hub_details" {
-#  description = "Details of the DSF hub for sending audit logs"
-#  type = object({
-#    address      = string
-#    port         = number
-#    access_token = string
-#  })
-#  default = null
-#}
-#
-#
+variable "hub_details" {
+  description = "Details of the DSF hub for sending audit logs"
+  type = object({
+    address      = string
+    port         = number
+    access_token = string
+  })
+  default = null
+}
+
 variable "send_usage_statistics" {
   type        = bool
   default     = true

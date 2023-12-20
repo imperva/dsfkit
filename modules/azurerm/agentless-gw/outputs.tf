@@ -8,6 +8,7 @@ output "private_ip" {
   value       = module.gw_instance.private_ip
 }
 
+# TODO sivan - investigate about dns or remove it
 output "public_dns" {
   description = "Public dns of IP address of the DSF instance"
   value       = module.gw_instance.public_dns

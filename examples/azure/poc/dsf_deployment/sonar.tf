@@ -25,6 +25,12 @@ module "hub_main" {
   allowed_hub_cidrs                 = module.network[0].vnet_address_space
   allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
   allowed_all_cidrs                 = local.workstation_cidr
+  mx_details = var.enable_dam ? [for mx in module.mx : {
+    name     = mx.display_name
+    address  = coalesce(mx.public_ip, mx.private_ip)
+    username = mx.web_console_user
+    password = local.password
+  }] : []
   tags                              = local.tags
 
   depends_on = [
