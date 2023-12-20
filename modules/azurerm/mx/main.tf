@@ -2,7 +2,7 @@ locals {
 dam_model          = "MVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
-  security_groups_config = [
+  security_groups_config = [ # https://docs.imperva.com/bundle/v14.14-dam-on-microsoft-azure-installation-guide/page/83147.htm
     {
       name            = ["web", "console", "and", "api"]
       internet_access = false
