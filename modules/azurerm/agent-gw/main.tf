@@ -52,7 +52,7 @@ locals {
   ]
   custom_scripts = {
     # TODO sivan - test ; with failure, if not working test with &&
-    "ftl" = join("; ", concat([local.ftl_script], local.cluster_commands))
+    "ftl" = join(" && ", concat([local.ftl_script], local.cluster_commands))
   }
   https_auth_header = base64encode("admin:${var.mx_password}")
   timeout           = 60 * 25
