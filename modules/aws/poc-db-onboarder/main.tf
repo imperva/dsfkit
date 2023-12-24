@@ -62,6 +62,7 @@ locals {
       assetData : {
         "Server Port" : var.database_details.db_port,
         database_name : var.database_details.db_name,
+        "Service Name" : var.database_details.db_name,
         db_engine : var.database_details.db_engine,
         auth_mechanism : "password",
         username : var.database_details.db_username,
