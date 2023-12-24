@@ -6,6 +6,10 @@ output "db_password" {
   value = nonsensitive(local.db_password)
 }
 
+output "db_name" {
+  value = local.db_name
+}
+
 output "db_identifier" {
   value = local.db_identifier
 }

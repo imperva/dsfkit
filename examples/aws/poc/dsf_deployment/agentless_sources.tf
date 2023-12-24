@@ -50,7 +50,7 @@ module "db_onboarding" {
     db_identifier = each.value.db_identifier
     db_address    = each.value.db_address
     db_engine     = each.value.db_engine
-    db_name       = try(each.value.db_name, null)
+    db_name       = each.value.db_name
   }
   tags = local.tags
   depends_on = [
