@@ -3,7 +3,6 @@ locals {
   dam_model          = var.gw_model
   resource_type      = "agent-gw"
 
-  # TODO sivan - handle udp
   security_groups_config = [ #  https://docs.imperva.com/bundle/v14.14-dam-on-microsoft-azure-installation-guide/page/83147.htm
     {
       name            = ["agent"]
@@ -41,7 +40,6 @@ locals {
 resource "random_uuid" "gateway_group_name" {}
 
 locals {
-  # TODO sivan --scaling arg
   ftl_script     = "/opt/SecureSphere/azure/bin/azure_arm --component='Gateway' --product='DAM' --timezone='${var.timezone}' --password='${var.mx_password}' --gateway_group='${local.gateway_group_name}' --management_ip='${var.management_server_host_for_registration}' --model_type='${var.gw_model}' --gateway_mode='sniffing' --agent_listener_port=${var.agent_listener_port} --agent_listener_ssl=${var.agent_listener_ssl} --sonar_only_mode='${var.large_scale_mode}' --scaling=false"
   cluster_commands = [
     "source /etc/profile.d/imperva.sh",
@@ -51,7 +49,6 @@ locals {
     "/opt/SecureSphere/etc/impctl/bin/impctl service start --prepare --transient gateway",
   ]
   custom_scripts = {
-    # TODO sivan - test ; with failure, if not working test with &&
     "ftl" = join(" && ", concat([local.ftl_script], local.cluster_commands))
   }
   https_auth_header = base64encode("admin:${var.mx_password}")
