@@ -85,11 +85,11 @@ jobs:
 
     - name: Terraform Output
       if: always()
-      run: terraform output -json
+      run: terraform output
 
     - name: Save The Keys
       if: always()
-      run: terraform output dsf_private_ssh_key > key.txt
+      run: terraform output dsf_private_ssh_key > ${{ matrix.workspace }}
 
     - name: Collect Artifacts
       if: always()
@@ -97,7 +97,7 @@ jobs:
       with:
         name: collected-keys
         path: |
-          key.txt
+          ${{ matrix.workspace }}
 
     - name: Terraform Destroy
 #      if: always()
