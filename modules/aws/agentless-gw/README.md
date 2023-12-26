@@ -194,4 +194,4 @@ module "dsf_agentless_gw" {
 
 For more information about the Agentless Gateway and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/v4.13-sonar-user-guide/page/80401.htm). 
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.2).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.3).
