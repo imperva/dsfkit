@@ -85,6 +85,12 @@ variable "terraform_script_path_folder" {
   }
 }
 
+variable "enable_audit" {
+  type        = bool
+  description = "Enable audit for asset"
+  default     = true
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)

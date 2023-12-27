@@ -73,7 +73,7 @@ locals {
         admin_email = "admin@email.com",
         arn : var.database_details.db_arn,
         asset_display_name : var.database_details.db_identifier,
-        isMonitored : true
+        isMonitored : var.enable_audit
       }
     }
   }
@@ -101,6 +101,7 @@ resource "null_resource" "onboard_db_to_dsf" {
         db_arn              = var.database_details.db_arn
         account_arn         = local.cloud_account_data.data.id
         usc_access_token    = var.usc_access_token
+        enable_audit        = var.enable_audit
       })
     ]
   }
