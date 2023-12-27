@@ -129,6 +129,24 @@ variable "large_scale_mode" {
   }
 }
 
+variable "simulation_db_types_for_agent" {
+  type        = list(string)
+  default     = ["PostgreSql"]
+  description = "Types of databases to provision on Azure VM with an Agent for simulation purposes. Available types are: 'PostgreSql'. Note: agents won't be created for clusterless dam deployments (Less than 2 Agent Gateways)"
+  validation {
+    condition = alltrue([
+    for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql"], db_type)
+    ])
+    error_message = "Value must be a subset of: ['PostgreSql']"
+  }
+}
+
+variable "agent_source_os" {
+  type        = string
+  default     = "Ubuntu"
+  description = "Agent OS type"
+}
+
 ##############################
 ####    Sonar variables   ####
 ##############################
@@ -151,6 +169,16 @@ variable "tarball_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
+}
+
+variable "dam_agent_installation_location" {
+  type = object({
+    az_resource_group  = string
+    az_storage_account = string
+    az_container       = string
+    az_blob            = string
+  })
+  description = "Storage account and container location of the DSF DAM agent installation software. az_blob is the full path to the installation file within the storage account container"
 }
 
 variable "hub_hadr" {

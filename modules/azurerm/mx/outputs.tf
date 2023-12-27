@@ -28,6 +28,17 @@ output "instance_id" {
   value = module.mx.instance_id
 }
 
+output "configuration" {
+  description = "Pre-configured site and service group available for use"
+  value = {
+    default_site         = local.site
+    default_server_group = local.server_group
+  }
+  depends_on = [
+    null_resource.import_configuration
+  ]
+}
+
 output "web_console_user" {
   value = "admin"
 }

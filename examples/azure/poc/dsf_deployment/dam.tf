@@ -33,7 +33,7 @@ module "mx" {
   attach_persistent_public_ip = true
   large_scale_mode            = var.large_scale_mode.mx
 
-#  create_server_group = length(var.simulation_db_types_for_agent) > 0
+  create_server_group = length(var.simulation_db_types_for_agent) > 0
   tags                = local.tags
   depends_on = [
     module.network

@@ -2,6 +2,7 @@ locals {
   conf_timeout = 60 * 40
 
   configuration_elements = concat(
+    local.service_group_configuration,
     local.hub_configuration
   )
   commands = <<-EOF
