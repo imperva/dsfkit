@@ -39,8 +39,10 @@ if ! curl --fail -k 'https://127.0.0.1:8443/dsf/api/v1/data-sources/${db_arn}' -
         --header "Authorization: Bearer $usc_access_token" \
         --header 'Content-Type: application/json' \
         --data '${database_asset_data}'
+%{ if enable_audit ~}
     echo ********Sleeping 1 minute before syncing gateway and enabling audit logs********
     sleep 60
+%{ endif ~}
 fi
 
 %{ if enable_audit ~}
