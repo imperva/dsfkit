@@ -4,9 +4,8 @@ locals {
 
   db_serivces = [
     "PostgreSql",
-    # TODO sivan add DB?
-#    "MySql",
-#    "MariaDB",
+    "MySql",
+    # "MariaDB",
     # "MsSql",
     # "Oracle",
   ]

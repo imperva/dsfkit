@@ -13,7 +13,7 @@ function install_azcli() {
     command -v az || install_azcli_from_internet
 }
 
-function install_and_start_agent() {
+function install_agent_and_populate_data() {
     if [ ! -d "${agent_installation_dir}/ragent" ]; then
         echo "Downloading agent:"
         az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --name ${az_blob} --file ./${az_blob} --auth-mode login >/dev/null
@@ -26,6 +26,9 @@ function install_and_start_agent() {
         ${agent_installation_dir}/ragent/bin/cli --dcfg ${agent_installation_dir}/ragent/etc --dtarget ${agent_installation_dir}/ragent/etc --dlog ${agent_installation_dir}/ragent/etc/logs/cli registration advanced-register registration-type=Primary is-db-agent=true tunnel-protocol=TCP gw-ip=${agent_gateway_host} gw-port=443 manual-settings-activation=Automatic monitor-network-channels=Both password="${secure_password}" ragent-name="${agent_name}" site='${site}' server-group="${server_group}";
         echo "Starting agent:"
         ${agent_installation_dir}/ragent/bin/rainit start;
+
+        echo "Run database queries:"
+        ${database_queries_commands}
     else
         echo "Agent installation directory already exists, skipping agent installation.."
     fi
@@ -35,7 +38,7 @@ ${package_install}
 echo "Installing database:"
 ${database_installation_commands}
 install_azcli
-install_and_start_agent
+install_agent_and_populate_data
 
 
 

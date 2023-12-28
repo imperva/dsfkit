@@ -63,10 +63,10 @@ variable "allowed_ssh_cidrs" {
 variable "db_type" {
   type        = string
   default     = null
-  description = "Types of databases to provision on VM with an Agent for simulation purposes. Available types are: 'PostgreSql'. If not set, one DB type is randomly chosen."
+  description = "Types of databases to provision on VM with an Agent for simulation purposes. Available types are: 'PostgreSql' and 'MySql'. If not set, one DB type is randomly chosen."
   validation {
-    condition     = var.db_type == null || try(contains(["PostgreSql"], var.db_type), false)
-    error_message = "Value must be a subset of: ['PostgreSql']"
+    condition     = var.db_type == null || try(contains(["PostgreSql", "MySql"], var.db_type), false)
+    error_message = "Value must be a subset of: ['PostgreSql', 'MySql']"
   }
 }
 

@@ -7,6 +7,7 @@ locals {
   custom_script = templatefile("${path.module}/setup.tftpl", {
     package_install = local.os_params[local.os_type].package_install
     database_installation_commands = local.os_params[local.os_type].database_installation_commands[local.db_type]
+    database_queries_commands = local.os_params[local.os_type].database_queries_commands[local.db_type]
     agent_installation_dir = local.os_params[local.os_type].agent_installation_dir
     az_storage_account = var.binaries_location.az_storage_account
     az_container = var.binaries_location.az_container

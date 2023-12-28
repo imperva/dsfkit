@@ -22,21 +22,39 @@ locals {
           if ! sudo systemctl is-active --quiet postgresql; then
               sudo systemctl start postgresql.service
               echo "PostgreSQL service started successfully."
-              echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
           else
               echo "PostgreSQL service is already running. Skipping start."
           fi
         EOF
-#        MySql      = <<-EOF
-#          apt install mysql-server -y
-#          systemctl start mysql.service
-#          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | mysql &>/dev/null' | crontab -
-#        EOF
+        MySql      = <<-EOF
+          command -v mysql || sudo apt install mysql-server -y
+          if ! sudo systemctl is-active --quiet mysql; then
+              sudo systemctl start mysql.service
+              echo "MySQL service started successfully."
+          else
+              echo "MySQL service is already running. Skipping start."
+          fi
+        EOF
 #        MariaDB    = <<-EOF
-#          apt install mariadb-server -y
+#          command -v mariadb || sudo apt install mariadb-server -y
 #          sed -i '/ProtectSystem/d' /usr/lib/systemd/system/mariadb.service
-#          systemctl daemon-reload
-#          systemctl restart mariadb.service
+#          if ! sudo systemctl is-active --quiet mariadb; then
+#              sudo systemctl daemon-reload
+#              sudo systemctl restart mariadb.service
+#              echo "MariaDB service started successfully."
+#          else
+#              echo "MariaDB service is already running. Skipping start."
+#          fi
+#        EOF
+      }
+      database_queries_commands = {
+        PostgreSql = <<-EOF
+          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy1;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
+        EOF
+        MySql      = <<-EOF
+          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | mysql &>/dev/null' | crontab -
+        EOF
+#        MariaDB    = <<-EOF
 #          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | mariadb --socket=/run/mysqld/mysqld.sock &>/dev/null' | crontab -
 #        EOF
       }
