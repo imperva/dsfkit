@@ -36,4 +36,11 @@ PROTECTED_SETTINGS
   timeouts {
     create = "60m"
   }
+
+  # Ignore changes to the protected_settings attribute (Don't replace on custom_script change)
+  lifecycle {
+    ignore_changes = [
+      protected_settings,
+    ]
+  }
 }

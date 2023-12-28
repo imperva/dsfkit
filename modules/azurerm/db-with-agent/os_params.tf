@@ -15,15 +15,18 @@ locals {
             sleep 1
         done
         sudo apt update -y
-        sudo apt install unzip
       EOF
       database_installation_commands = {
         PostgreSql = <<-EOF
-          sudo apt install postgresql -y
-          sudo systemctl start postgresql.service
-          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
+          command -v psql || sudo apt install postgresql -y
+          if ! sudo systemctl is-active --quiet postgresql; then
+              sudo systemctl start postgresql.service
+              echo "PostgreSQL service started successfully."
+              echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
+          else
+              echo "PostgreSQL service is already running. Skipping start."
+          fi
         EOF
-        # TODO sivan - test other DBs
 #        MySql      = <<-EOF
 #          apt install mysql-server -y
 #          systemctl start mysql.service

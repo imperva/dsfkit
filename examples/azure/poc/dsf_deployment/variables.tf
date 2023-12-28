@@ -19,7 +19,7 @@ variable "resource_group_location" {
 variable "deployment_name" {
   type        = string
   default     = "imperva-dsf"
-  description = "Deployment name for some of the created resources. Note that when running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable."
+  description = "Deployment name for some of the created resources."
 }
 
 variable "enable_sonar" {
