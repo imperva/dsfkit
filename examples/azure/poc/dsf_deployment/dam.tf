@@ -4,7 +4,6 @@ locals {
   create_agent_gw_cluster = local.agent_gw_count >= 2 ? 1 : 0
 }
 
-# TODO sivan - fix all relative modules paths
 module "mx" {
   source  = "../../../../modules/azurerm/mx"
   count   = var.enable_dam ? 1 : 0

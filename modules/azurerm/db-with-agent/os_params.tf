@@ -49,7 +49,7 @@ locals {
       }
       database_queries_commands = {
         PostgreSql = <<-EOF
-          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy1;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
+          echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | psql &>/dev/null' | sudo crontab -u postgres -
         EOF
         MySql      = <<-EOF
           echo '* * * * * for i in $(seq 1 500); do echo "select * from dummy;"; done  | mysql &>/dev/null' | crontab -

@@ -9,7 +9,6 @@ locals {
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_agent_sg.id : var.security_group_ids[0]
 
   # root volume details
-  root_volume_size  = 30
   root_volume_type  = "Standard_LRS"
   root_volume_cache = "ReadWrite"
 }
@@ -38,9 +37,7 @@ resource "azurerm_linux_virtual_machine" "agent" {
     public_key = var.ssh_key.ssh_public_key
   }
 
-  # TODO sivan which disk to put?
   os_disk {
-    disk_size_gb         = local.root_volume_size
     caching              = local.root_volume_cache
     storage_account_type = local.root_volume_type
   }
