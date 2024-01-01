@@ -45,13 +45,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: DSF POC - SONAR
-            workspace: azure_cli-
+          - name: DSF POC
+            workspace: azure_cli-all-
+            enable_sonar: true
+            enable_dam: true
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
     env:
       EXAMPLE_DIR: ./examples/azure/poc/dsf_deployment
+      TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
+      TF_VAR_enable_dam: ${{ matrix.enable_dam }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
