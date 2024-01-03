@@ -74,24 +74,24 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
-variable "subnet_ids" {
-  type = object({
-    hub_subnet_id             = string
-    hub_dr_subnet_id          = string
-    agentless_gw_subnet_id    = string
-    agentless_gw_dr_subnet_id = string
-  })
-  default     = null
-  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
-  validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null, false)
-    error_message = "Value must either be null or specified for all."
-  }
-  validation {
-    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values({ for k, v in var.subnet_ids : k => v if k != "db_subnet_ids" }) : can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", subnet_id))]), false)
-    error_message = "Subnet id is invalid."
-  }
-}
+#variable "subnet_ids" {
+#  type = object({
+#    hub_subnet_id             = string
+#    hub_dr_subnet_id          = string
+#    agentless_gw_subnet_id    = string
+#    agentless_gw_dr_subnet_id = string
+#  })
+#  default     = null
+#  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+#  validation {
+#    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null, false)
+#    error_message = "Value must either be null or specified for all."
+#  }
+#  validation {
+#    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values({ for k, v in var.subnet_ids : k => v if k != "db_subnet_ids" }) : can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", subnet_id))]), false)
+#    error_message = "Subnet id is invalid."
+#  }
+#}
 
 
 ##############################

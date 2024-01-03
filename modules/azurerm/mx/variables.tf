@@ -1,6 +1,7 @@
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "resource_group" {
@@ -205,8 +206,8 @@ variable "license" {
     error_message = "Invalid license file (No such file on disk)"
   }
   validation {
-    condition     = !fileexists(var.license) || can(regex(".*AV[2,6]500.*", file(var.license)))
-    error_message = "License is invalid. It must allow DAM models (AV2500/AV6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
+    condition     = !fileexists(var.license) || can(regex(".*V[2,6]500.*", file(var.license)))
+    error_message = "License is invalid. It must allow DAM models (V2500/V6500). More info in https://www.imperva.com/resources/datasheets/Imperva_VirtualAppliances_V2.3_20220518.pdf"
   }
 }
 
