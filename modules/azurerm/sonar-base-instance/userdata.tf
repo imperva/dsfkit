@@ -12,6 +12,7 @@ locals {
     az_storage_account                  = var.binaries_location.az_storage_account
     az_container                        = var.binaries_location.az_container
     az_blob                             = var.binaries_location.az_blob
+    tarball_url                         = var.tarball_url
     display_name                        = local.display_name
     password_secret                     = local.password_secret_name
     hub_sonarw_public_key               = var.resource_type == "agentless-gw" ? var.hub_sonarw_public_key : ""
