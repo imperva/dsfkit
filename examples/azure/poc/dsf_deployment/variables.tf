@@ -141,12 +141,6 @@ variable "simulation_db_types_for_agent" {
   }
 }
 
-variable "agent_source_os" {
-  type        = string
-  default     = "Ubuntu"
-  description = "Agent OS type"
-}
-
 ##############################
 ####    Sonar variables   ####
 ##############################
@@ -203,18 +197,6 @@ variable "agentless_gw_instance_type" {
   type        = string
   default     = "Standard_E4s_v5"
   description = "Instance type for the Agentless Gateway"
-}
-
-variable "mx_instance_type" {
-  type        = string
-  default     = null
-  description = "Instance type for the MX. If set to null, the recommended instance type will be used"
-}
-
-variable "agent_gw_instance_type" {
-  type        = string
-  default     = null
-  description = "Instance type for the Agent Gateway. If set to null, the recommended instance type will be used"
 }
 
 variable "hub_storage_details" {

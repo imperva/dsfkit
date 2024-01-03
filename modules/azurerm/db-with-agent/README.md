@@ -55,7 +55,12 @@ module "db_with_agent" {
     server_group       = module.mx.configuration.default_server_group
     site               = module.mx.configuration.default_site
   }
-  binaries_location    =  var.agent_installation_location
+  binaries_location    = {
+    az_resource_group  = azurerm_resource_group.example.name
+    az_storage_account = "storage_account_name"
+    az_container       = "container_name"
+    az_blob            = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
+  }
 }
 ```
 

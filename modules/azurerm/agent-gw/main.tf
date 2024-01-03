@@ -71,7 +71,6 @@ module "agent_gw" {
   storage_details        = var.storage_details
   vm_user                = var.vm_user
   vm_image               = var.vm_image
-  vm_instance_type       = var.vm_instance_type
   resource_type          = local.resource_type
   security_groups_config = local.security_groups_config
   security_group_ids     = var.security_group_ids

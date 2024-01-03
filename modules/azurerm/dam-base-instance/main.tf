@@ -9,7 +9,7 @@ locals {
 
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
-  instance_type = var.vm_instance_type != null? var.vm_instance_type : local.mapper.instance_type[var.dam_model]
+  instance_type = local.mapper.instance_type[var.dam_model]
   mapper = {
     instance_type = {
       MV2500 = "Standard_B4ms",

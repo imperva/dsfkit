@@ -3,7 +3,7 @@ locals {
   os_types = keys(local.os_params)
 
   db_type           = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
-  os_type           = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
+  os_type           = "Ubuntu"
 
   vm_user = local.os_params[local.os_type].vm_user
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_agent_sg.id : var.security_group_ids[0]
@@ -15,10 +15,6 @@ locals {
 
 resource "random_shuffle" "db" {
   input = local.db_types
-}
-
-resource "random_shuffle" "os" {
-  input = local.os_types
 }
 
 resource "azurerm_linux_virtual_machine" "agent" {

@@ -13,7 +13,7 @@ function install_azcli() {
     command -v az || install_azcli_from_internet
 }
 
-function install_agent_and_populate_data() {
+function install_agent_and_periodic_db_query_cronjob() {
     if [ ! -d "${agent_installation_dir}/ragent" ]; then
         echo "Downloading agent:"
         az storage blob download --account-name ${az_storage_account} --container-name ${az_container} --name ${az_blob} --file ./${az_blob} --auth-mode login >/dev/null
@@ -38,7 +38,7 @@ ${package_install}
 echo "Installing database:"
 ${database_installation_commands}
 install_azcli
-install_agent_and_populate_data
+install_agent_and_periodic_db_query_cronjob
 
 
 

@@ -9,7 +9,7 @@ Imperva’s Management Server is the manager for DAM components. This includes A
 * Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An Azure account.
 * Network access to port 8083 (API and WebConsole)
-* Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v13%22%2C%22planId%22%3A%22securesphere-imperva-dam-13-2%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Afalse%7D%7D).
+* Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D). For DAM LTS version, use [DAM LTS Azure Marketplace image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14-lts%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 
@@ -78,7 +78,7 @@ module "dsf_mx" {
 ```
 
 ## API Access
-API access is required to provision this module. Please make sure to pass the relevant CIDR block, representing your workstation, to allow such access through the `allowed_web_console_and_api_cidrs` variable
+API access is required to provision this module. Please make sure to pass the relevant CIDR block, representing your workstation, to allow such access through the `allowed_web_console_and_api_cidrs` variable.
 
 ## Additional Information
 

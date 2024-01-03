@@ -17,7 +17,6 @@ module "mx" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  vm_instance_type                  = var.mx_instance_type
   mx_password                       = local.password
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_agent_gw_cidrs            = module.network[0].vnet_address_space
@@ -51,7 +50,6 @@ module "agent_gw" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  vm_instance_type                        = var.agent_gw_instance_type
   mx_password                             = local.password
   allowed_agent_cidrs                     = module.network[0].vnet_address_space
   allowed_mx_cidrs                        = module.network[0].vnet_address_space

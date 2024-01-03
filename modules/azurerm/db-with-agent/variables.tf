@@ -70,16 +70,6 @@ variable "db_type" {
   }
 }
 
-variable "os_type" {
-  type        = string
-  default     = null
-  description = "Os type to provision as VM, available types are: ['Ubuntu']"
-  validation {
-    condition     = var.os_type == null || try(contains(["Ubuntu"], var.os_type), false)
-    error_message = "Valid values should contain at least one of the following: 'Ubuntu']"
-  }
-}
-
 variable "registration_params" {
   type = object(
     {

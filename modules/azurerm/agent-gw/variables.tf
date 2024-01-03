@@ -172,7 +172,7 @@ variable "storage_details" {
 variable "vm_user" {
   type        = string
   default     = "adminuser"
-  description = "VM user to use for SSH. Keep empty to use the default user."
+  description = "VM user. Keep empty to use the default user."
 }
 
 variable "vm_image" {
@@ -183,12 +183,6 @@ variable "vm_image" {
     version   = string
   })
   description = "This variable is used for selecting an Azure DAM machine image. If set to null, the image will be determine according to dam_version variable."
-  default     = null
-}
-
-variable "vm_instance_type" {
-  type        = string
-  description = "Instance type for the VM. If set to null, the recommended instance type will be used"
   default     = null
 }
 

@@ -77,7 +77,7 @@ module "dsf_mx" {
 ```
 
 ## API Access
-API access is required to provision this module. Please make sure to pass the relevant CIDR block, representing your workstation, to allow such access through the `sg_ingress_cidr` variable
+API access is required to provision this module. Please make sure to pass the relevant CIDR block, representing your workstation, to allow such access through the `allowed_web_console_and_api_cidrs` variable.
 
 ## Additional Information
 
