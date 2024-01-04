@@ -63,7 +63,7 @@ function install_deps() {
     install_yum_dep_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm epel-release
     install_yum_dep_from_internet jq
     install_yum_dep_from_internet wget
-    test -f /usr/local/bin/aws || install_awscli_from_internet
+    command -v az || install_azcli_from_internet
 }
 
 function create_users_and_groups() {
