@@ -70,7 +70,6 @@ resource "null_resource" "readiness" {
 
   triggers = {
     instance_id = azurerm_linux_virtual_machine.dsf_base_instance.id
-    ftl_custom_script_id = lookup(azurerm_virtual_machine_extension.custom_script, "ftl", null) != null ? azurerm_virtual_machine_extension.custom_script["ftl"].id : null
     commands    = var.instance_readiness_params.commands
   }
   depends_on = [
