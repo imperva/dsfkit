@@ -1376,7 +1376,7 @@ Below is a list of possible issues and troubleshooting remediations.
    <td>compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=400 -- Original Error: Code="ResourcePurchaseValidationFailed" Message="User failed validation to purchase resources. Error message: 'You have not accepted the legal terms on this subscription
    </td>
    <td>
-   Configure programmatic deployment for the desired image, see Azure Prerequisites section.
+   Configure programmatic deployment for the desired image. Follow the instructions in the <a href="https://github.com/imperva/dsfkit/tree/master#azure-prerequisites">Azure Prerequisites</a>.
    </td>
   </tr>
  </table>
