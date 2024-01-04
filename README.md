@@ -391,6 +391,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
        Improvements and bug fixes.
     </td>
   </tr>
+  <tr>
+    <td>8 Jan 2024
+    </td>
+    <td>1.7.4
+    </td>
+    <td>
+       Added support for DAM in Azure.
+    </td>
+  </tr>
 
 </table>
 
