@@ -67,22 +67,22 @@ module "agent_gw" {
   resource_group         = var.resource_group
   name                   = var.friendly_name
   dam_version            = var.dam_version
-  dam_model              = local.dam_model
-  storage_details        = var.storage_details
   vm_user                = var.vm_user
   vm_image               = var.vm_image
   resource_type          = local.resource_type
+  dam_model              = local.dam_model
+  storage_details        = var.storage_details
   security_groups_config = local.security_groups_config
   security_group_ids     = var.security_group_ids
   subnet_id              = var.subnet_id
   custom_scripts         = local.custom_scripts
   public_ssh_key         = var.ssh_key.ssh_public_key
-  attach_persistent_public_ip = false
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true
     timeout  = local.timeout
   }
+  attach_persistent_public_ip = false
   tags                        = var.tags
   send_usage_statistics       = var.send_usage_statistics
 }

@@ -1,9 +1,3 @@
-variable "tags" {
-  description = "A map of tags to add to all resources"
-  type        = map(string)
-  default     = {}
-}
-
 variable "resource_group" {
   type = object({
     name     = string
@@ -33,6 +27,16 @@ variable "subnet_id" {
     condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
     error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
   }
+}
+
+variable "ssh_key" {
+  type = object({
+    ssh_public_key            = string
+    ssh_private_key_file_path = string
+  })
+  description = "SSH materials to access machine"
+
+  nullable = false
 }
 
 variable "security_group_ids" {
@@ -99,14 +103,16 @@ variable "allowed_all_cidrs" {
   default = []
 }
 
-variable "ssh_key" {
+variable "storage_details" {
   type = object({
-    ssh_public_key            = string
-    ssh_private_key_file_path = string
+    disk_size            = number
+    storage_account_type = string
   })
-  description = "SSH materials to access machine"
-
-  nullable = false
+  description = "Compute instance volume attributes for the MX"
+  default = {
+    disk_size = 160
+    storage_account_type = "Standard_LRS"
+  }
 }
 
 variable "mx_password" {
@@ -144,6 +150,12 @@ variable "timezone" {
   default = "UTC"
 }
 
+variable "vm_user" {
+  type        = string
+  default     = "adminuser"
+  description = "VM user. Keep empty to use the default user."
+}
+
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
@@ -155,24 +167,6 @@ variable "dam_version" {
     condition     = split(".", var.dam_version)[0] == "14"
     error_message = "DAM version not supported."
   }
-}
-
-variable "storage_details" {
-  type = object({
-    disk_size            = number
-    storage_account_type = string
-  })
-  description = "Compute instance volume attributes for the MX"
-  default = {
-    disk_size = 160
-    storage_account_type = "Standard_LRS"
-  }
-}
-
-variable "vm_user" {
-  type        = string
-  default     = "adminuser"
-  description = "VM user. Keep empty to use the default user."
 }
 
 variable "vm_image" {
@@ -247,6 +241,12 @@ variable "gateway_group_name" {
     condition     = var.gateway_group_name == null || try(length(var.gateway_group_name) >= 3, false)
     error_message = "The gateway group name must be at least 3 characters long"
   }
+}
+
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "send_usage_statistics" {
