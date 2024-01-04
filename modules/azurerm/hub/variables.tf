@@ -273,6 +273,12 @@ variable "mx_details" {
   default = []
 }
 
+variable "cloud_init_timeout" {
+  type        = number
+  default     = 900
+  description = "Max time to wait for the machine to start"
+}
+
 variable "send_usage_statistics" {
   type        = bool
   default     = true

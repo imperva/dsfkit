@@ -323,6 +323,12 @@ variable "base_directory" {
   description = "The base directory where all Sonar related directories will be installed"
 }
 
+variable "cloud_init_timeout" {
+  type        = number
+  default     = 900
+  description = "Max time to wait for the machine to start"
+}
+
 variable "send_usage_statistics" {
   type        = bool
   default     = true

@@ -224,6 +224,12 @@ variable "sonarw_public_key_content" {
   description = "The Agentless Gateway sonarw user SSH public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
+variable "cloud_init_timeout" {
+  type        = number
+  default     = 900
+  description = "Max time to wait for the machine to start"
+}
+
 variable "send_usage_statistics" {
   type        = bool
   default     = true

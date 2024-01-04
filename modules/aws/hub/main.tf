@@ -70,5 +70,6 @@ module "hub_instance" {
   volume_attachment_device_name     = var.volume_attachment_device_name
   tags                              = var.tags
   base_directory                    = var.base_directory
+  cloud_init_timeout                = var.cloud_init_timeout
   send_usage_statistics             = var.send_usage_statistics
 }
