@@ -6,10 +6,12 @@ locals {
 
   db_policy_by_engine_map = {
     "mysql" : local.mysql_policy,
+    "postgres" : local.postgres_policy,
     "sqlserver-ex" : local.mssql_policy
   }
   server_type_by_engine_map = {
     "mysql" : "AWS RDS MYSQL",
+    "postgres" : "AWS RDS POSTGRESQL",
     "sqlserver-ex" : "AWS RDS MS SQL SERVER"
   }
 }

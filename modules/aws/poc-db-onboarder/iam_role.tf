@@ -24,6 +24,31 @@ locals {
       }
     ]
   })
+  postgres_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        "Sid" : "VisualEditor0",
+        "Effect" : "Allow",
+        "Action" : [
+          "logs:Describe*",
+          "logs:List*",
+          "rds:DescribeDBInstances",
+          "logs:StartQuery",
+          "logs:StopQuery",
+          "logs:TestMetricFilter",
+          "logs:FilterLogEvents",
+          "logs:Get*",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:GetLogEvents",
+          "rds:DescribeDBClusters",
+          "rds:DescribeOptionGroups"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  })
 
   mssql_policy = jsonencode({
     Version = "2012-10-17"
