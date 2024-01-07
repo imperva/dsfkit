@@ -1,11 +1,10 @@
 output "public_ip" {
   description = "Public elastic IP address of the DSF instance"
   value       = local.public_ip
-  depends_on = [
-    azurerm_network_interface_security_group_association.nic_sg_association,
-#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
-    azurerm_role_assignment.vm_identity_role_assignment
-  ]
+#  depends_on = [
+#    azurerm_network_interface_security_group_association.nic_sg_association,
+#    azurerm_role_assignment.vm_identity_role_assignment
+#  ]
 }
 
 output "private_ip" {
@@ -13,21 +12,9 @@ output "private_ip" {
   value       = local.private_ip
   depends_on = [
     azurerm_network_interface_security_group_association.nic_sg_association,
-#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
     azurerm_role_assignment.vm_identity_role_assignment
   ]
 }
-
-#output "public_dns" {
-#  description = "Public DNS of the elastic IP address of the DSF instance"
-#  value       = null
-#}
-
-#output "private_dns" {
-#  description = "Private DNS of the elastic IP address of the DSF instance"
-#  value       = null
-#}
-
 
 output "display_name" {
   value = var.name

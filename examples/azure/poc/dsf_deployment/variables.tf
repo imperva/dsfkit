@@ -269,13 +269,13 @@ variable "dra_admin_instance_size" {
 variable "dra_admin_storage_details" {
   type = object({
     disk_size            = number
-    disk_iops_read_write = number
+    volume_caching       = string
     storage_account_type = string
   })
   description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     disk_size = 260
-    disk_iops_read_write = null
+    volume_caching = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }
@@ -311,13 +311,13 @@ variable "dra_analytics_instance_size" {
 variable "dra_analytics_storage_details" {
   type = object({
     disk_size            = number
-    disk_iops_read_write = number
+    volume_caching       = string
     storage_account_type = string
   })
   description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     disk_size = 1010
-    disk_iops_read_write = null
+    volume_caching = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }

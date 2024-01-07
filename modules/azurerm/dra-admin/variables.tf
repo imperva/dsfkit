@@ -33,17 +33,16 @@ variable "instance_size" {
   description = "VM instance size for the Admin Server"
 }
 
-# todo - probably the iops is redundant - depends of if we use the root disk or not
 variable "storage_details" {
   type = object({
     disk_size            = number
-    disk_iops_read_write = number
+    volume_caching       = string
     storage_account_type = string
   })
   description = "Compute instance volume attributes for the Admin Server"
   default = {
     disk_size = 260
-    disk_iops_read_write = null
+    volume_caching = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }

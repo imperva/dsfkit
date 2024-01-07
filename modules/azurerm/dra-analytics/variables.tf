@@ -36,13 +36,13 @@ variable "instance_size" {
 variable "storage_details" {
   type = object({
     disk_size            = number
-    disk_iops_read_write = number
+    volume_caching       = string
     storage_account_type = string
   })
   description = "Compute instance volume attributes for the Analytics Server"
   default = {
     disk_size = 1010
-    disk_iops_read_write = null
+    volume_caching = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }

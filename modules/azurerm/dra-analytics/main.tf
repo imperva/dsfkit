@@ -4,13 +4,7 @@ locals {
   incoming_folder_path = "/opt/itpba/incoming"
 
   public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
-  #  public_dns = aws_instance.dsf_base_instance.public_dns
   private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
-
-  # root volume details
-  root_volume_size  = 100
-  root_volume_type  = "Standard_LRS"
-  root_volume_cache = "ReadWrite"
 
   install_script = templatefile("${path.module}/setup.tftpl", {
     vault_name                                 = azurerm_key_vault.vault.name
@@ -62,9 +56,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   os_disk {
-    #    disk_size_gb         = local.root_volume_size
     disk_size_gb         = var.storage_details.disk_size
-    caching              = local.root_volume_cache
+    caching              = var.storage_details.volume_caching
     storage_account_type = var.storage_details.storage_account_type
   }
 
@@ -132,24 +125,3 @@ module "statistics_success" {
   status     = "success"
   depends_on = [null_resource.readiness]
 }
-
-# maybe we dont need the dist attachment but we can use only in the root disk, read in the documentation
-# disk attachment
-#resource "azurerm_managed_disk" "external_data_vol" {
-#  name                 = join("-", [var.name, "data", "disk"])
-#  location             = var.resource_group.location
-#  resource_group_name  = var.resource_group.name
-#  create_option        = "Empty"
-#  storage_account_type = var.storage_details.storage_account_type
-#  disk_size_gb         = var.storage_details.disk_size
-#  disk_iops_read_write = var.storage_details.disk_iops_read_write
-#  tags                 = var.tags
-#}
-#
-#resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
-#  virtual_machine_id = azurerm_linux_virtual_machine.vm.id
-#  managed_disk_id    = azurerm_managed_disk.external_data_vol.id
-#  lun                = 11
-#  caching            = "ReadWrite"
-#}
-

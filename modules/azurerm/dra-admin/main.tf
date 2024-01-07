@@ -1,17 +1,9 @@
 locals {
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
-  public_ip  = var.attach_persistent_public_ip ? azurerm_public_ip.vm_public_ip[0].ip_address : azurerm_linux_virtual_machine.vm.public_ip_address
+  public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
+#  public_ip  = var.attach_persistent_public_ip ? azurerm_public_ip.vm_public_ip[0].ip_address : azurerm_linux_virtual_machine.vm.public_ip_address
   private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
-
-#  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
-#  private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
-#  public_dns
-
-  # root volume details
-  root_volume_size  = 100
-  root_volume_type  = "Standard_LRS"
-  root_volume_cache = "ReadWrite"
 
   install_script = templatefile("${path.module}/setup.tftpl", {
     vault_name                              = azurerm_key_vault.vault.name
@@ -40,6 +32,7 @@ resource "azurerm_network_interface_security_group_association" "nic_sg_associat
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
+  # todo - add a condition of allocation_method = static / dynamic based on the attach_persistent_public_ip. check whether the vm public ip behave like dynamic if this resource is not configured?
   count               = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   resource_group_name = var.resource_group.name
@@ -66,9 +59,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   os_disk {
-#    disk_size_gb         = local.root_volume_size
     disk_size_gb         = var.storage_details.disk_size
-    caching              = local.root_volume_cache
+    caching              = var.storage_details.volume_caching
     storage_account_type = var.storage_details.storage_account_type
   }
 
@@ -116,22 +108,3 @@ module "statistics" {
   artifact        = local.image_id
   location        = var.resource_group.location
 }
-
-# disk attachment
-#resource "azurerm_managed_disk" "external_data_vol" {
-#  name                 = join("-", [var.name, "data", "disk"])
-#  location             = var.resource_group.location
-#  resource_group_name  = var.resource_group.name
-#  create_option        = "Empty"
-#  storage_account_type = var.storage_details.storage_account_type
-#  disk_size_gb         = var.storage_details.disk_size
-#  disk_iops_read_write = var.storage_details.disk_iops_read_write
-#  tags                 = var.tags
-#}
-#
-#resource "azurerm_virtual_machine_data_disk_attachment" "data_disk_attachment" {
-#  virtual_machine_id = azurerm_linux_virtual_machine.vm.id
-#  managed_disk_id    = azurerm_managed_disk.external_data_vol.id
-#  lun                = 11
-#  caching            = "ReadWrite"
-#}

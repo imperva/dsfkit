@@ -44,6 +44,10 @@ ssh_password=$(az keyvault secret show --name ${analytics_ssh_password_secret_na
 
 /opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$admin_registration_password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${archiver_user}" --analytics-password "$archiver_password" --admin-server-ip "${admin_server_private_ip}"
 
+# Allow using ssh to the Analytics server with username and password as a WA, because currently there is an issue with exchanging the keys from the hub to the Analytics server
+sed -i 's/.*PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+systemctl restart sshd
+
 echo $ssh_password | passwd --stdin cbadmin
 
 #/opt/itp_global_conf/auto_deploy_cloud.sh --hostname "$(hostname)" --dhcp 1 --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$admin_registration_password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Analytics" --analytics-user "${archiver_user}" --analytics-password "$archiver_password" --admin-server-ip "${admin_server_private_ip}"
