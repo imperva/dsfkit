@@ -1,9 +1,9 @@
 locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
-  hub_public_ip = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
-  hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
-  hub_cidr_list = concat(module.network[0].vnet_address_space, [local.hub_public_ip, local.hub_dr_public_ip])
+  hub_public_ip = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? [format("%s/32", module.hub_main[0].public_ip)] : []) : []
+  hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? [format("%s/32", module.hub_dr[0].public_ip)] : []) : []
+  hub_cidr_list = concat(module.network[0].vnet_address_space, local.hub_public_ip, local.hub_dr_public_ip)
 }
 
 module "hub_main" {

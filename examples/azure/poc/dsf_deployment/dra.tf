@@ -3,6 +3,11 @@ locals {
 
   dra_admin_public_ip = var.enable_dra ? [format("%s/32", module.dra_admin[0].public_ip)] : []
   dra_admin_cidr_list = concat(module.network[0].vnet_address_space, local.dra_admin_public_ip)
+
+  dra_admin_image_exits = var.dra_admin_image_details != null ? true : false
+  dra_admin_vhd_exits = var.dra_admin_vhd_details != null ? true : false
+  dra_analytics_image_exits = var.dra_analytics_image_details != null ? true : false
+  dra_analytics_vhd_exits = var.dra_analytics_vhd_details != null ? true : false
 }
 
 module "dra_admin" {
@@ -15,8 +20,6 @@ module "dra_admin" {
   instance_size = var.dra_admin_instance_size
   storage_details = var.dra_admin_storage_details
   ssh_public_key = tls_private_key.ssh_key.public_key_openssh
-  image_details = var.dra_admin_image_details
-  vhd_details = var.dra_admin_vhd_details
   admin_registration_password = local.password
   admin_ssh_password = local.password
 
@@ -25,8 +28,19 @@ module "dra_admin" {
   allowed_hub_cidrs = local.hub_cidr_list
   allowed_ssh_cidrs = local.workstation_cidr
 
-  attach_persistent_public_ip = true
+  image_vhd_details = {
+    image = local.dra_admin_image_exits ? {
+      resource_group_name = var.dra_admin_image_details.resource_group_name
+      image_id            = var.dra_admin_image_details.image_id
+    } : null,
+    vhd = local.dra_admin_vhd_exits ? {
+      path_to_vhd          = var.dra_admin_vhd_details.path_to_vhd
+      storage_account_name = var.dra_admin_vhd_details.storage_account_name
+      container_name       = var.dra_admin_vhd_details.container_name
+    } : null
+  }
 
+  attach_persistent_public_ip = true
   tags = local.tags
 
   depends_on = [
@@ -44,8 +58,6 @@ module "dra_analytics" {
   instance_size = var.dra_analytics_instance_size
   storage_details = var.dra_analytics_storage_details
   ssh_public_key = tls_private_key.ssh_key.public_key_openssh
-  image_details = var.dra_analytics_image_details
-  vhd_details = var.dra_analytics_vhd_details
   admin_registration_password = local.password
   analytics_ssh_password = local.password
   archiver_password = local.password
@@ -57,6 +69,19 @@ module "dra_analytics" {
 
   admin_server_private_ip = module.dra_admin[0].private_ip
   admin_server_public_ip = module.dra_admin[0].public_ip
+
+  image_vhd_details = {
+    image = local.dra_analytics_image_exits ? {
+      resource_group_name = var.dra_analytics_image_details.resource_group_name
+      image_id            = var.dra_analytics_image_details.image_id
+    } : null,
+    vhd = local.dra_analytics_vhd_exits ? {
+      path_to_vhd          = var.dra_analytics_vhd_details.path_to_vhd
+      storage_account_name = var.dra_analytics_vhd_details.storage_account_name
+      container_name       = var.dra_analytics_vhd_details.container_name
+    } : null
+  }
+
   tags = local.tags
 
   depends_on = [

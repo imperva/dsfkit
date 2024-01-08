@@ -53,37 +53,34 @@ variable "ssh_public_key" {
   nullable = false
 }
 
-# todo - add validation - either image_details or vhd_details must be filled
-variable "image_details" {
+variable "image_vhd_details" {
   type = object({
-    resource_group_name  = string
-    image_id        = string
+    image = optional(object({
+      resource_group_name = string
+      image_id            = string
+    }))
+    vhd = optional(object({
+      path_to_vhd          = string
+      storage_account_name = string
+      container_name       = string
+    }))
   })
-  description = "Image attributes for the Analytics Server"
-  #  nullable    = false
+  description = "Image or VHD details for the Admin Server"
   default = null
-}
 
-variable "vhd_details" {
-  type = object({
-    path_to_vhd          = string
-    storage_account_name = string
-    container_name       = string
-  })
-  default     = null
-  description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
+  validation {
+    condition     = try((var.image_vhd_details.image != null && var.image_vhd_details.vhd == null || (var.image_vhd_details.image == null && var.image_vhd_details.vhd != null)), false)
+    error_message = "Either one of 'image' or 'vhd' should be specified but not both."
+  }
+  validation {
+    condition     = var.image_vhd_details.image == null || try(var.image_vhd_details.image.resource_group_name != null && var.image_vhd_details.image.image_id != null, false)
+    error_message = "Image value must either be null or specified for all"
+  }
+  validation {
+    condition     = var.image_vhd_details.vhd == null || try(var.image_vhd_details.vhd.path_to_vhd != null && var.image_vhd_details.vhd.storage_account_name != null && var.image_vhd_details.vhd.container_name != null, false)
+    error_message = "VHD value must either be null or specified for all"
+  }
 }
-
-#variable "dra_version" {
-#  type        = string
-#  default     = "4.13"
-#  description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Both long and short version formats are supported, for example, 4.11.0.10.0.7 or 4.11. The short format maps to the latest patch."
-#  nullable    = false
-#  validation {
-#    condition     = !startswith(var.dra_version, "4.10.") && !startswith(var.dra_version, "4.9.") && !startswith(var.dra_version, "4.8.") && !startswith(var.dra_version, "4.3.") && !startswith(var.dra_version, "4.2.") && !startswith(var.dra_version, "4.1.")
-#    error_message = "The dra_version value must be 4.11.0.10 or higher"
-#  }
-#}
 
 variable "vm_user" {
   type        = string

@@ -285,10 +285,12 @@ variable "dra_admin_image_details" {
     resource_group_name = string
     image_id            = string
   })
-  description = "Image attributes for the Admin Server"
   default = null
-#  nullable    = false
-  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+  description = "Image attributes for the Admin Server"
+  validation {
+    condition     = var.dra_admin_image_details == null || try(var.dra_admin_image_details.resource_group_name != null && var.dra_admin_image_details.image_id != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
 }
 
 variable "dra_admin_vhd_details" {
@@ -299,7 +301,10 @@ variable "dra_admin_vhd_details" {
   })
   default     = null
   description = "VHD details for creating the Admin server image. Keep empty if you provide an image for the Admin server instead."
-  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+  validation {
+    condition     = var.dra_admin_vhd_details == null || try(var.dra_admin_vhd_details.path_to_vhd != null && var.dra_admin_vhd_details.storage_account_name != null && var.dra_admin_vhd_details.container_name != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
 }
 
 variable "dra_analytics_instance_size" {
@@ -327,10 +332,12 @@ variable "dra_analytics_image_details" {
     resource_group_name = string
     image_id            = string
   })
-  description = "Image attributes for the Analytics Server"
   default = null
-  #  nullable    = false
-  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+  description = "Image attributes for the Analytics Server"
+  validation {
+    condition     = var.dra_analytics_image_details == null || try(var.dra_analytics_image_details.resource_group_name != null && var.dra_analytics_image_details.image_id != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
 }
 
 variable "dra_analytics_vhd_details" {
@@ -341,5 +348,8 @@ variable "dra_analytics_vhd_details" {
   })
   default     = null
   description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
-  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+  validation {
+    condition     = var.dra_analytics_vhd_details == null || try(var.dra_analytics_vhd_details.path_to_vhd != null && var.dra_analytics_vhd_details.storage_account_name != null && var.dra_analytics_vhd_details.container_name != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
 }

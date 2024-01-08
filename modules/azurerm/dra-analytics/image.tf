@@ -3,11 +3,11 @@ locals {
   vm_default_user = "adminuser"
   vm_user         = var.vm_user != null ? var.vm_user : local.vm_default_user
 
-  create_image_from_vhd = var.vhd_details != null ? true : false
-  use_existing_image = var.image_details != null ? true : false
+  create_image_from_vhd = var.image_vhd_details.vhd != null ? true : false
+  use_existing_image = var.image_vhd_details.image != null ? true : false
 
   image_id = (local.use_existing_image ?
-    "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.image_details.resource_group_name}/providers/Microsoft.Compute/images/${var.image_details.image_id}" :
+    "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.image_vhd_details.image.resource_group_name}/providers/Microsoft.Compute/images/${var.image_vhd_details.image.image_id}" :
     "${azurerm_image.created_image[0].id}")
 }
 
@@ -22,7 +22,7 @@ resource "azurerm_image" "created_image" {
     os_type = "Linux"
     caching = "ReadWrite"
     os_state = "Generalized"
-    blob_uri = "https://${var.vhd_details.storage_account_name}.blob.core.windows.net/${var.vhd_details.container_name}/${var.vhd_details.path_to_vhd}"
+    blob_uri = "https://${var.image_vhd_details.vhd.storage_account_name}.blob.core.windows.net/${var.image_vhd_details.vhd.container_name}/${var.image_vhd_details.vhd.path_to_vhd}"
   }
   tags = var.tags
 }
