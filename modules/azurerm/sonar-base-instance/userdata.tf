@@ -57,8 +57,8 @@ resource "null_resource" "readiness" {
 
   provisioner "remote-exec" {
     inline = [
-      "if ! sudo timeout 1200 cloud-init status --wait | grep done &>/dev/null; then",
-      "  cat /var/log/cloud-init-output.log;",
+      "if ! sudo timeout ${var.cloud_init_timeout} cloud-init status --wait | grep done &>/dev/null; then",
+      "  ([[ -f /var/log/cloud-init-output.log ]] && sudo cat /var/log/cloud-init-output.log) || sudo grep cloud-init /var/log/messages;",
       "  echo;",
       "  sudo cloud-init status;",
       "  exit 1;",
