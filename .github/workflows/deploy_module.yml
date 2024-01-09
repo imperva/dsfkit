@@ -80,6 +80,20 @@ jobs:
           - source_module: "aws/db-with-agent"
             destination_repo: "terraform-aws-dsf-db-with-agent"
             begin_tag: 1.0.0
+
+          ## azurerm provider
+          - source_module: "azurerm/mx"
+            destination_repo: "terraform-azurerm-dsf-mx"
+            hidden_submodules: "azurerm/dam-base-instance azurerm/statistics null/statistics"
+            begin_tag: 1.7.4
+          - source_module: "azurerm/agent-gw"
+            destination_repo: "terraform-azurerm-dsf-agent-gw"
+            hidden_submodules: "azurerm/dam-base-instance azurerm/statistics null/statistics"
+            begin_tag: 1.7.4
+          - source_module: "azurerm/db-with-agent"
+            destination_repo: "terraform-azurerm-dsf-db-with-agent"
+            begin_tag: 1.7.4
+
           ## null provider
           - source_module: "null/agent-gw-cluster-setup"
             destination_repo: "terraform-null-dsf-agent-gw-cluster-setup"
