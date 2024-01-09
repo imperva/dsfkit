@@ -1,5 +1,5 @@
 locals {
-dam_model          = "MVM150"
+  dam_model          = "MVM150"
   resource_type      = "mx"
   mx_address_for_api = module.mx.public_ip != null ? module.mx.public_ip : module.mx.private_ip
   security_groups_config = [ # https://docs.imperva.com/bundle/v14.14-dam-on-microsoft-azure-installation-guide/page/83147.htm
@@ -53,8 +53,8 @@ dam_model          = "MVM150"
 }
 
 locals {
-  gateway_group     = var.friendly_name
-  ftl_script     = "/opt/SecureSphere/azure/bin/azure_arm --component='Management' --sonar_only_mode='false' --timezone='${var.timezone}' --password='${var.mx_password}' --gateway_group='${local.gateway_group}' --enc_lic='${local.encrypted_license}' --pass_phrase='${local.license_passphrase}' --large_scale='${var.large_scale_mode}'"
+  gateway_group = var.friendly_name
+  ftl_script    = "/opt/SecureSphere/azure/bin/azure_arm --component='Management' --sonar_only_mode='false' --timezone='${var.timezone}' --password='${var.mx_password}' --gateway_group='${local.gateway_group}' --enc_lic='${local.encrypted_license}' --pass_phrase='${local.license_passphrase}' --large_scale='${var.large_scale_mode}'"
   custom_scripts = {
     "ftl" = local.ftl_script
   }

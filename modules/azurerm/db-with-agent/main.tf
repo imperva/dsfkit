@@ -2,10 +2,10 @@ locals {
   db_types = ["PostgreSql"]
   os_types = keys(local.os_params)
 
-  db_type           = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
-  os_type           = "Ubuntu"
+  db_type = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
+  os_type = "Ubuntu"
 
-  vm_user = local.os_params[local.os_type].vm_user
+  vm_user           = local.os_params[local.os_type].vm_user
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_agent_sg.id : var.security_group_ids[0]
 
   # root volume details

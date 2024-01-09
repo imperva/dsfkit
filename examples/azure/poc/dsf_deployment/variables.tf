@@ -145,7 +145,7 @@ variable "simulation_db_types_for_agent" {
   description = "Types of databases to provision on Azure VM with an Agent for simulation purposes. Available types are: 'PostgreSql' and 'MySql'. Note: agents won't be created for clusterless dam deployments (Less than 2 Agent Gateways)"
   validation {
     condition = alltrue([
-    for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql"], db_type)
+      for db_type in var.simulation_db_types_for_agent : contains(["PostgreSql", "MySql"], db_type)
     ])
     error_message = "Value must be a subset of: ['PostgreSql', 'MySql']"
   }

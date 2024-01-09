@@ -4,7 +4,7 @@ locals {
 
 module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.7.3" # latest release tag
+  version = "1.7.4" # latest release tag
   count   = length(local.db_types_for_agent)
 
   friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])

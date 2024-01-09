@@ -7,12 +7,12 @@ locals {
   )
   commands = <<-EOF
       ${templatefile("${path.module}/configure.tftpl",
-        { mx_address        = local.mx_address_for_api
-          https_auth_header = local.https_auth_header
-          configuration_elements = local.configuration_elements
-          timeout = local.conf_timeout
-        })
-      }
+  { mx_address             = local.mx_address_for_api
+    https_auth_header      = local.https_auth_header
+    configuration_elements = local.configuration_elements
+    timeout                = local.conf_timeout
+})
+}
     EOF
 }
 

@@ -36,7 +36,7 @@ variable "storage_details" {
   })
   description = "Compute instance volume attributes for the MX"
   default = {
-    disk_size = 160
+    disk_size            = 160
     storage_account_type = "Standard_LRS"
   }
 }

@@ -34,9 +34,9 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
       } } : v.max_ip_int <= i.max_ip_int && v.min_ip_int >= i.min_ip_int if v.cidr != i.cidr])]
       destination_address_prefix = "*"
       # The below setup is a workaround for "Provider produced inconsistent final plan" error
-      description = ""
+      description            = ""
       destination_port_range = ""
-      source_address_prefix = ""
+      source_address_prefix  = ""
     }
   }
 
@@ -55,16 +55,16 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
         cidr       = v,
         min_ip_int = (tonumber(split(".", cidrhost(v, 0))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, 0))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, 0))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, 0))[3])
         max_ip_int = (tonumber(split(".", cidrhost(v, -1))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, -1))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, -1))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, -1))[3])
-      } } : v.cidr if !anytrue([for i in { for v in security_rule.value.cidrs : v => {
-        cidr       = v,
-        min_ip_int = (tonumber(split(".", cidrhost(v, 0))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, 0))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, 0))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, 0))[3])
-        max_ip_int = (tonumber(split(".", cidrhost(v, -1))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, -1))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, -1))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, -1))[3])
+        } } : v.cidr if !anytrue([for i in { for v in security_rule.value.cidrs : v => {
+          cidr       = v,
+          min_ip_int = (tonumber(split(".", cidrhost(v, 0))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, 0))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, 0))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, 0))[3])
+          max_ip_int = (tonumber(split(".", cidrhost(v, -1))[0]) * pow(256, 3)) + (tonumber(split(".", cidrhost(v, -1))[1]) * pow(256, 2)) + (tonumber(split(".", cidrhost(v, -1))[2]) * pow(256, 1)) + tonumber(split(".", cidrhost(v, -1))[3])
       } } : v.max_ip_int <= i.max_ip_int && v.min_ip_int >= i.min_ip_int if v.cidr != i.cidr])]
       destination_address_prefix = "*"
       # The below setup is a workaround for "Provider produced inconsistent final plan" error
-      description = ""
+      description            = ""
       destination_port_range = ""
-      source_address_prefix = ""
+      source_address_prefix  = ""
     }
   }
   tags = var.tags

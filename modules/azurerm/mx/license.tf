@@ -13,9 +13,9 @@ data "local_sensitive_file" "license_file" {
 }
 
 locals {
-  license_passphrase      = random_password.passphrase.result
-  license_content         = data.local_sensitive_file.license_file.content
-  encrypted_license       = data.external.encrypted_license.result.cipher_text
+  license_passphrase = random_password.passphrase.result
+  license_content    = data.local_sensitive_file.license_file.content
+  encrypted_license  = data.external.encrypted_license.result.cipher_text
 }
 
 locals {

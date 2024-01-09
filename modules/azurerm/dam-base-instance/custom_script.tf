@@ -1,9 +1,9 @@
 locals {
-  display_name      = var.name
+  display_name = var.name
 }
 
 resource "azurerm_virtual_machine_extension" "custom_script" {
-  for_each = var.custom_scripts
+  for_each             = var.custom_scripts
   name                 = "customScript_${each.key}"
   virtual_machine_id   = azurerm_linux_virtual_machine.dsf_base_instance.id
   publisher            = "Microsoft.Azure.Extensions"

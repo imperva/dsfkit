@@ -88,13 +88,13 @@ output "dam" {
 output "audit_sources" {
   value = {
     agent_sources = [
-    for idx, val in module.db_with_agent :
-    {
-      private_ip  = val.private_ip
-      db_type     = val.db_type
-      os_type     = val.os_type
-      ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-    }
+      for idx, val in module.db_with_agent :
+      {
+        private_ip  = val.private_ip
+        db_type     = val.db_type
+        os_type     = val.os_type
+        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
     ]
   }
 }
