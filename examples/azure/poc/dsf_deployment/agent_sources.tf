@@ -3,7 +3,8 @@ locals {
 }
 
 module "db_with_agent" {
-  source = "../../../../modules/azurerm/db-with-agent"
+  source  = "imperva/dsf-db-with-agent/azurerm"
+  version = "1.7.4" # latest release tag
   count  = length(local.db_types_for_agent)
 
   friendly_name     = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
