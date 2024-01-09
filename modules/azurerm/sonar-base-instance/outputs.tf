@@ -18,16 +18,6 @@ output "private_ip" {
   ]
 }
 
-output "public_dns" {
-  description = "Public DNS of the elastic IP address of the DSF base instance"
-  value       = null
-}
-
-output "private_dns" {
-  description = "Private DNS of the IP address of the DSF base instance"
-  value       = null
-}
-
 output "principal_id" {
   description = "Principal ID of the DSF node"
   value       = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id

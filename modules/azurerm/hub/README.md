@@ -41,7 +41,7 @@ Refer to [variables.tf](variables.tf) for additional variables with default valu
 
 ## Outputs
 
-Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest?tab=outputs
+Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-hub/azurerm/latest?tab=outputs
 
 ## Usage
 
@@ -65,7 +65,7 @@ module "dsf_hub" {
     ssh_public_key            = var.ssh_public_key
   }
 
-  allowed_all_cidrs = [data.aws_vpc.selected.cidr_block]
+  allowed_all_cidrs = [module.network.vnet_address_space]
 
   password    = random_password.pass.result
   storage_details = {

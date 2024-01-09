@@ -391,6 +391,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
        Improvements and bug fixes.
     </td>
   </tr>
+  <tr>
+    <td>9 Jan 2024
+    </td>
+    <td>1.7.4
+    </td>
+    <td>
+       Added support for DAM in Azure.
+    </td>
+  </tr>
 
 </table>
 
@@ -433,9 +442,11 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 
 ### Azure Prerequisites
 
-1. [establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
+1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
    for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided in the future.
-2. The deployment requires access to the Sonar binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar binaries to this storage location as a blob.
+2. Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant DAM image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D). For DAM LTS version, use [DAM LTS Azure Marketplace image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14-lts%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
+For the POC example, configure programmatic deployment also for [Ubuntu Pro 20.04 LTS image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22canonical%22%2C%22offerId%22%3A%220001-com-ubuntu-pro-focal%22%2C%22planId%22%3A%22pro-20_04-lts%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
+3. The deployment requires access to the Sonar and DAM Agent installation binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar and DAM Agent installation binaries to this storage location as a blob.
 
 
 ## Choosing the Example/Recipe that Fits Your Use Case
@@ -554,7 +565,7 @@ For more details about each example, click on the example name.
      </td>
      <td>Lab/POC
      </td>
-     <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking.
+     <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking, DAM (MX and Agent Gateways), and Agent audit sources.
      </td>
      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.3/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_3.zip">dsf_deployment_1_7_3.zip</a>
      </td>
@@ -1357,6 +1368,15 @@ Below is a list of possible issues and troubleshooting remediations.
    </td>
    <td>
    Increase the quota using the link provided in your own error message.
+   </td>
+  </tr>
+  <tr>
+   <td>Image legal terms not accepted
+   </td>
+   <td>compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=400 -- Original Error: Code="ResourcePurchaseValidationFailed" Message="User failed validation to purchase resources. Error message: 'You have not accepted the legal terms on this subscription
+   </td>
+   <td>
+   Configure programmatic deployment for the desired image. Follow the instructions in the <a href="https://github.com/imperva/dsfkit/tree/master#azure-prerequisites">Azure Prerequisites</a>.
    </td>
   </tr>
  </table>

@@ -1,64 +1,65 @@
 # DSF MX
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a DSF Management server (AKA mx) on AWS as an EC2 instance.
+This Terraform module provisions a DSF Management server (AKA mx) on Azure as a virtual machine instance.
 
 Imperva’s Management Server is the manager for DAM components. This includes Agent Gateways and Agents.
 
 ## Requirements
 * Terraform, refer to [versions.tf](versions.tf) for supported versions.
-* An AWS account.
+* An Azure account.
 * Network access to port 8083 (API and WebConsole)
-* Access to DAM AMIs. To request access, subscribe to [Imperva DAM AWS marketplace product](https://aws.amazon.com/marketplace/server/procurement?productId=70f80bc4-26c4-4bea-b867-c5b25b5c9f0d).
-
+* Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D). For DAM LTS version, use [DAM LTS Azure Marketplace image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14-lts%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).
 
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create the DSF MX. These resources include:
-* An EC2 instance for running the software.
-* An EBS volume for storage.
-* AWS security groups to allow the required network access to and from the DSF instance.
-* An IAM role with relevant policies.
-* An AWS KMS.
-* An AWS Elastic Network Interface (ENI).
+* A virtual machine instance for running the software.
+* A security group to allow the required network access to and from the DSF instance.
+* An Azure network interface.
 
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The KMS is used for encrypting sensitive data.
+The virtual machine provide the computing resources needed to run the DSF Management server. The security group controls the inbound and outbound traffic to the instance.
+
 
 ## Inputs
 
 The following input variables are **required**:
 
+* `resource_group`: Resource group to provision all the resources into
 * `subnet_id`: The ID of the subnet in which to launch the DSF instance
-* `key_pair`: AWS key pair name to attach to the instance
+* `ssh_key`: ssh details
 * `mx_password`: MX password
 * `secure_password`: The password used for communication between the Management Server and the Agent Gateway
 * `dam_version`: Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)
-* `license`: DAM license file path or activation key. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
+* `license`: DAM license file path. Make sure this license is valid before deploying DAM otherwise this will result in an invalid deployment and loss of time
 
 Refer to [variables.tf](variables.tf) for additional variables with default values and additional info.
 
 ## Outputs
 
-Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-mx/aws/latest?tab=outputs
+Refer to [outputs](outputs.tf) or https://registry.terraform.io/modules/imperva/dsf-mx/azurerm/latest?tab=outputs
 
 ## Usage
 
 To use this module, add the following to your Terraform configuration:
 
 ```
-provider "aws" {
+provider "azurerm" {
+  features {}
 }
 
 module "mx" {
-  source                       = "imperva/dsf-mx/aws"
-  subnet_id                    = var.subnet
-  key_pair                     = var.key_name
+  source                       = "imperva/dsf-mx/azurerm"
+  resource_group               = azurerm_resource_group.example.name
+  subnet_id                    = azurerm_subnet.example.id
+  ssh_key = {
+    ssh_private_key_file_path = var.ssh_key_path
+    ssh_public_key            = var.ssh_public_key
+  }
   mx_password                  = var.mx_password
-  secure_password              = var.secure_password
   dam_version                  = var.dam_version
   license                      = var.license
-  allowed_all_cidrs            = [data.aws_vpc.selected.cidr_block]
 }
 ```
 
@@ -71,7 +72,7 @@ Specify the module's version by adding the version parameter. For example:
 
 ```
 module "dsf_mx" {
-  source  = "imperva/dsf-mx/aws"
+  source  = "imperva/dsf-mx/azurerm"
   version = "x.y.z"
 }
 ```

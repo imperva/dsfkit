@@ -1,0 +1,25 @@
+#!/bin/bash
+set -x
+
+cookie_file=$(mktemp)
+response_file=$(mktemp)
+
+trap "curl -k -s --cookie $cookie_file --request DELETE https://${mx_address}:8083/SecureSphere/api/v1/auth/session; rm -f $cookie_file $response_file" EXIT
+
+# mx api docs https://docs.imperva.com/bundle/api-docs/page/api/api-overview.htm
+http_code=$(curl -k -s --cookie-jar $cookie_file -o $response_file -w "%%{http_code}" \
+  --request POST 'https://${mx_address}:8083/SecureSphere/api/v1/auth/session' \
+  --header "Authorization: Basic ${https_auth_header}")
+if [ "$http_code" -eq 200 ]; then
+  http_code=$(curl -k -s --cookie $cookie_file -o $response_file -w "%%{http_code}" \
+    --request GET 'https://${mx_address}:8083/SecureSphere/api/v1/administration/license')
+  if [ "$http_code" -eq 200 ]; then
+    exit 0
+  fi
+
+  if [ "$http_code" -eq 406 ]; then
+    echo "License is not valid"
+    echo -e "\e[0;101mLicense is not valid\033[0m"
+    exit 1
+  fi
+fi
