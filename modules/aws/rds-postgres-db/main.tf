@@ -27,7 +27,7 @@ resource "aws_db_subnet_group" "rds_db_sg" {
   tags       = var.tags
 }
 
-resource "aws_db_parameter_group" "example" {
+resource "aws_db_parameter_group" "postgres15_audit" {
   name        = "postgres15-audit-parameter-group"
   family      = "postgres15"
   description = "Custom parameter group for Postgres"
@@ -75,12 +75,12 @@ resource "aws_db_instance" "rds_db" {
   db_name                 = local.db_name
   engine                  = "postgres"
   engine_version          = "15.4"
-  instance_class          = "db.m5d.large"
+  instance_class          = "db.m5.large"
   username                = local.db_username
   password                = local.db_password
-  parameter_group_name    = aws_db_parameter_group.example.name
+  parameter_group_name    = aws_db_parameter_group.postgres15_audit.name
   skip_final_snapshot     = true
-  vpc_security_group_ids  = [aws_security_group.rds_mysql_access.id]
+  vpc_security_group_ids  = [aws_security_group.rds_postgres_access.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_db_sg.name
   identifier              = local.db_identifier
   publicly_accessible     = true
@@ -97,17 +97,17 @@ data "aws_subnet" "subnet" {
   id = var.rds_subnet_ids[0]
 }
 
-resource "aws_security_group" "rds_mysql_access" {
-  description = "RDS MySQL Access"
+resource "aws_security_group" "rds_postgres_access" {
+  description = "RDS PostgreSQL Access"
   vpc_id      = data.aws_subnet.subnet.vpc_id
   tags        = var.tags
 }
 
-resource "aws_security_group_rule" "rds_mysql_access_rule" {
+resource "aws_security_group_rule" "rds_postgres_access_rule" {
   type              = "ingress"
   from_port         = 5432
   to_port           = 5432
   protocol          = "tcp"
   cidr_blocks       = var.security_group_ingress_cidrs
-  security_group_id = aws_security_group.rds_mysql_access.id
+  security_group_id = aws_security_group.rds_postgres_access.id
 }

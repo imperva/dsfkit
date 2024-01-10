@@ -8,6 +8,7 @@ s;imperva/dsf-globals/azurerm;../../../../modules/azurerm/core/globals;
 s;imperva/dsf-hadr/null;../../../../modules/null/hadr;
 s;imperva/dsf-federation/null;../../../../modules/null/federation;
 s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db;../../../../modules/aws/rds-mysql-db;
+s;imperva/dsf-poc-db-onboarder/aws//modules/rds-postgres-db;../../../../modules/aws/rds-postgres-db;
 s;imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db;../../../../modules/aws/rds-mssql-db;
 s;imperva/dsf-poc-db-onboarder/aws;../../../../modules/aws/poc-db-onboarder;
 s;imperva/dsf-mx/aws;../../../../modules/aws/mx;
