@@ -203,6 +203,11 @@ variable "vm_image" {
   description = "VM image details to base image for the compute instance"
 }
 
+variable "vm_image_id" {
+  type = string
+  default = null
+}
+
 variable "vm_user" {
   type        = string
   default     = null

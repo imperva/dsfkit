@@ -48,6 +48,7 @@ module "hub_instance" {
   instance_type                     = var.instance_type
   storage_details                   = var.storage_details
   vm_image                          = var.vm_image
+  vm_image_id                       = var.vm_image_id
   vm_user                           = var.vm_user
   security_groups_config            = local.security_groups_config
   security_group_ids                = var.security_group_ids

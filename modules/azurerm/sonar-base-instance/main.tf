@@ -3,7 +3,7 @@ locals {
   private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
   # root volume details
-  root_volume_size  = 100
+  root_volume_size  = 128
   root_volume_type  = "Standard_LRS"
   root_volume_cache = "ReadWrite"
 
@@ -13,7 +13,7 @@ locals {
   disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
 
-  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
+  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg[0].id : var.security_group_ids[0]
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
@@ -24,15 +24,6 @@ resource "azurerm_public_ip" "vm_public_ip" {
   sku                 = "Standard"
   allocation_method   = "Static"
   tags                = var.tags
-}
-
-data "azurerm_public_ip" "vm_public_ip" {
-  count               = var.attach_persistent_public_ip ? 1 : 0
-  name                = join("-", [var.name, "public", "ip"])
-  resource_group_name = var.resource_group.name
-  depends_on = [
-    azurerm_linux_virtual_machine.dsf_base_instance
-  ]
 }
 
 resource "azurerm_network_interface_security_group_association" "nic_ip_association" {
@@ -64,12 +55,17 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     storage_account_type = local.root_volume_type
   }
 
-  source_image_reference {
-    publisher = local.vm_image.publisher
-    offer     = local.vm_image.offer
-    sku       = local.vm_image.sku
-    version   = local.vm_image.version
+  dynamic "source_image_reference" {
+    for_each = var.vm_image_id == null ? [local.vm_image] : []
+    content {
+      publisher = local.vm_image.publisher
+      offer     = local.vm_image.offer
+      sku       = local.vm_image.sku
+      version   = local.vm_image.version
+    }
   }
+
+  source_image_id = var.vm_image_id
 
   identity {
     type         = "UserAssigned"
@@ -89,15 +85,15 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {
-  name                = var.name
+  name                = replace(var.name, ".", "-")
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
 }
 
-data "azurerm_subscription" "subscription" {
-}
+data "azurerm_subscription" "subscription" {}
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
+  count                = var.binaries_location.az_resource_group != "" ? 1 : 0
   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.dsf_base.principal_id

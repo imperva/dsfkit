@@ -217,6 +217,11 @@ variable "vm_image" {
   default     = null
 }
 
+variable "vm_image_id" {
+  type = string
+  default = null
+}
+
 variable "vm_user" {
   type        = string
   default     = null

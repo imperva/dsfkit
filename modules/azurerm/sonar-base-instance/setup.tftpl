@@ -4,6 +4,8 @@ set -u
 set -x
 cd /root || exit 1
 
+RHEL_MAJOR_VERSION=$(cat /etc/os-release | grep VERSION_ID | sed -E 's/^.*"([0-9]+)\.[0-9]+".*$/\1/')
+
 function internet_access() {
     if [ -z "$${INTERNET_ACCESS-}" ]; then
         timeout=300 # 5 minutes
@@ -51,16 +53,15 @@ function install_azcli_from_internet() {
         exit 1
     fi
     rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
-    dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
-    dnf install azure-cli -y
-    az login --identity
+    yum install -y "https://packages.microsoft.com/config/rhel/$RHEL_MAJOR_VERSION/packages-microsoft-prod.rpm"
+    yum install azure-cli -y
+    az login --identity --allow-no-subscriptions
 }
 
 function install_deps() {
     install_yum_dep_from_internet unzip
     install_yum_dep_from_internet lvm2
-    install_yum_dep_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm epel-release
+    install_yum_dep_from_internet "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$RHEL_MAJOR_VERSION.noarch.rpm" epel-release
     install_yum_dep_from_internet jq
     install_yum_dep_from_internet wget
     command -v az || install_azcli_from_internet
@@ -152,7 +153,7 @@ function install_tarball() {
     # Download installation tarball
     if [[ -n "${tarball_url}" ]]; then
         TARBALL_FILE=$APPS_DIR/$(basename "${tarball_url}")
-        wget "${tarball_url}" -O "$TARBALL_FILE"
+        wget "${tarball_url}" -O "$TARBALL_FILE" --progress=dot:giga
     else
         TARBALL_FILE=$APPS_DIR/$(basename "${az_blob}")
         az storage blob download --account-name "${az_storage_account}" --container-name "${az_container}" --name "${az_blob}" --file "$TARBALL_FILE" --auth-mode login >/dev/null
@@ -186,7 +187,7 @@ function setup() {
     VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
     echo Setup sonar $VERSION
 
-    password=$(az keyvault secret show --vault-name ${vault_name} --name ${password_secret} --query 'value' --output tsv)
+    password=$(az keyvault secret show --vault-name "${vault_name}" --name "${password_secret}" --query 'value' --output tsv)
 
     if verlt $VERSION 4.10; then
         PRODUCT="imperva-data-security"
@@ -194,7 +195,7 @@ function setup() {
         PRODUCT="data-security-fabric"
     fi
 
-    sudo $APPS_DIR/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
+    sudo "$APPS_DIR/jsonar/apps/$VERSION/bin/sonarg-setup" --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \
@@ -205,7 +206,7 @@ function setup() {
         --jsonar-datadir=$DATA_DIR \
         --jsonar-localdir=$LOCAL_DIR \
         --jsonar-logdir=$LOGS_DIR \
-        --jsonar-uid ${jsonar_uuid} \
+        --jsonar-uid "${jsonar_uuid}" \
         --instance-IP-or-DNS=$instance_fqdn \
         $(test "${resource_type}" == "agentless-gw" && echo "--remote-machine") ${additional_install_parameters}
 }
