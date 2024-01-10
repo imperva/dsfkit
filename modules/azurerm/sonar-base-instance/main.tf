@@ -3,7 +3,7 @@ locals {
   private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
   # root volume details
-  root_volume_size  = 100
+  root_volume_size  = 128
   root_volume_type  = "Standard_LRS"
   root_volume_cache = "ReadWrite"
 
