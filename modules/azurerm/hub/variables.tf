@@ -202,8 +202,14 @@ variable "vm_image" {
     sku       = string
     version   = string
   })
-  description = "This variable is used for selecting an Azure machine image. If set to null, the recommended image will be used."
   default     = null
+  description = "This variable is used for selecting an Azure machine image. vm_image_id will override this, and if both are set to null, the recommended image will be used."
+}
+
+variable "vm_image_id" {
+  type        = string
+  default     = null
+  description = "This variable is used for selecting an Azure machine image. "
 }
 
 variable "vm_user" {

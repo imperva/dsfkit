@@ -64,12 +64,17 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     storage_account_type = local.root_volume_type
   }
 
-  source_image_reference {
-    publisher = local.vm_image.publisher
-    offer     = local.vm_image.offer
-    sku       = local.vm_image.sku
-    version   = local.vm_image.version
+  dynamic "source_image_reference" {
+    for_each = var.vm_image_id == null ? [local.vm_image] : []
+    content {
+      publisher = local.vm_image.publisher
+      offer     = local.vm_image.offer
+      sku       = local.vm_image.sku
+      version   = local.vm_image.version
+    }
   }
+
+  source_image_id = var.vm_image_id
 
   identity {
     type         = "UserAssigned"

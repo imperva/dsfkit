@@ -41,6 +41,7 @@ module "gw_instance" {
   instance_type                     = var.instance_type
   storage_details                   = var.storage_details
   vm_image                          = var.vm_image
+  vm_image_id                       = var.vm_image_id
   vm_user                           = var.vm_user
   additional_install_parameters     = var.additional_install_parameters
   password                          = var.password
