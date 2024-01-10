@@ -7,7 +7,7 @@ locals {
 module "mx" {
   source  = "imperva/dsf-mx/azurerm"
   version = "1.7.4" # latest release tag
-  count  = var.enable_dam ? 1 : 0
+  count   = var.enable_dam ? 1 : 0
 
   friendly_name  = join("-", [local.deployment_name_salted, "mx"])
   resource_group = local.resource_group
@@ -42,7 +42,7 @@ module "mx" {
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/azurerm"
   version = "1.7.4" # latest release tag
-  count  = local.agent_gw_count
+  count   = local.agent_gw_count
 
   friendly_name  = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   resource_group = local.resource_group
@@ -68,7 +68,7 @@ module "agent_gw" {
 }
 
 module "agent_gw_cluster_setup" {
-  source  = "imperva/dsf-agent-gw-cluster-setup/null"
+  source = "imperva/dsf-agent-gw-cluster-setup/null"
   count  = local.create_agent_gw_cluster
 
   cluster_name       = join("-", [local.deployment_name_salted, "agent", "gw", "cluster"])
