@@ -1,19 +1,16 @@
-locals {
-  # Skip sg creation if external sg list is given
-  _security_groups_config = length(var.security_group_ids) == 0 ? var.security_groups_config : []
-}
-
 ##############################################################################
 ### Ingress security group 
 ##############################################################################
 
 resource "azurerm_network_security_group" "dsf_base_sg" {
+  count = length(var.security_group_ids) == 0 ? 1 : 0
+
   name                = var.name
   location            = var.resource_group.location
   resource_group_name = var.resource_group.name
 
   dynamic "security_rule" {
-    for_each = { for idx, config in local._security_groups_config : idx => config if length(config.cidrs) > 0 && length(config.tcp) > 0 }
+    for_each = { for idx, config in var.security_group_ids : idx => config if length(config.cidrs) > 0 && length(config.tcp) > 0 }
     content {
       name                    = join("-", [var.name, "tcp", join("-", security_rule.value.name)])
       priority                = 100 + 2 * security_rule.key
@@ -41,7 +38,7 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
   }
 
   dynamic "security_rule" {
-    for_each = { for idx, config in local._security_groups_config : idx => config if length(config.cidrs) > 0 && length(config.udp) > 0 }
+    for_each = { for idx, config in var.security_group_ids : idx => config if length(config.cidrs) > 0 && length(config.udp) > 0 }
     content {
       name                    = join("-", [var.name, "udp", join("-", security_rule.value.name)])
       priority                = 100 + 2 * security_rule.key + 1
