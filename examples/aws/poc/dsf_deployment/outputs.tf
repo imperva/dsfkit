@@ -135,6 +135,7 @@ output "audit_sources" {
     ]
     agentless_sources = var.enable_sonar ? {
       rds_mysql = try(module.rds_mysql[0], null)
+      rds_postgres = try(module.rds_postgres[0], null)
       rds_mssql = try(module.rds_mssql[0], null)
     } : null
   }

@@ -12,6 +12,16 @@ module "rds_mysql" {
   tags                         = local.tags
 }
 
+module "rds_postgres" {
+  source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-postgres-db"
+  version = "1.7.3" # latest release tag
+  count   = contains(local.db_types_for_agentless, "RDS PostgreSQL") ? 1 : 0
+
+  rds_subnet_ids               = local.db_subnet_ids
+  security_group_ingress_cidrs = local.workstation_cidr
+  tags                         = local.tags
+}
+
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
   version = "1.7.4" # latest release tag

@@ -1,7 +1,7 @@
 variable "username" {
   type        = string
   description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name cannot be a word reserved by the database engine."
-  default     = "admin"
+  default     = "postgres"
   validation {
     condition     = length(var.username) > 1
     error_message = "Master username name must be at least 1 characters"
@@ -20,7 +20,7 @@ variable "password" {
 
 variable "identifier" {
   type        = string
-  description = "Name of your MySQL DB from 3 to 63 alphanumeric characters or hyphens, first character must be a letter, must not end with a hyphen or contain two consecutive hyphens."
+  description = "Identifier of your DB from 3 to 63 alphanumeric characters or hyphens, first character must be a letter, must not end with a hyphen or contain two consecutive hyphens."
   default     = ""
   validation {
     condition     = length(var.identifier) == 0 || length(var.identifier) > 3
