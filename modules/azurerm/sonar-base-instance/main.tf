@@ -89,15 +89,16 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {
-  name                = var.name
+  # dots are somewhat common in server names, but aren't allowed in identities
+  name                = replace(var.name, ".", "-")
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
 }
 
-data "azurerm_subscription" "subscription" {
-}
+data "azurerm_subscription" "subscription" {}
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
+  count                = var.binaries_location.az_resource_group != "" ? 1 : 0
   scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.dsf_base.principal_id
