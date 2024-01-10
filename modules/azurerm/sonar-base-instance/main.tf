@@ -13,7 +13,7 @@ locals {
   disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
 
-  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
+  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg[0].id : var.security_group_ids[0]
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
