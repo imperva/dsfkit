@@ -42,7 +42,7 @@ jobs:
 
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
-            public_submodule: "aws/rds-mysql-db aws/rds-mssql-db"
+            public_submodule: "aws/rds-mysql-db aws/rds-mssql-db aws/rds-postgres-db"
             begin_tag: 1.0.0
 
           - source_module: "aws/sonar-upgrader"
