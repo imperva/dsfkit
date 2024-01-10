@@ -205,13 +205,13 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
-#  test_apply:
-#    needs: test_plan
-#    uses: ./.github/workflows/sonar_poc_cli.yml
-#    with:
-#      use_modules_from_terraform_registry: true
-#      explicit_ref: master
-#    secrets:
-#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  test_apply:
+    needs: test_plan
+    uses: ./.github/workflows/sonar_poc_cli.yml
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
