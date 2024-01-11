@@ -4,6 +4,8 @@ set -u
 set -x
 cd /root || exit 1
 
+RHEL_MAJOR_VERSION=$(cat /etc/os-release | grep VERSION_ID | sed -E 's/^.*"([0-9]+)\.[0-9]+".*$/\1/')
+
 function internet_access() {
     if [ -z "$${INTERNET_ACCESS-}" ]; then
         timeout=300 # 5 minutes
@@ -59,7 +61,7 @@ function install_awscli_from_internet() {
 function install_deps() {
     install_yum_dep_from_internet unzip
     install_yum_dep_from_internet lvm2
-    install_yum_dep_from_internet https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm epel-release
+    install_yum_dep_from_internet "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$RHEL_MAJOR_VERSION.noarch.rpm" epel-release
     install_yum_dep_from_internet jq
     install_yum_dep_from_internet wget
     test -f /usr/local/bin/aws || install_awscli_from_internet
