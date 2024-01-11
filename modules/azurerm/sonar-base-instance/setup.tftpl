@@ -154,7 +154,7 @@ function install_tarball() {
     # Download installation tarball
     if [[ -n "${tarball_url}" ]]; then
         TARBALL_FILE=$APPS_DIR/$(basename "${tarball_url}")
-        wget "${tarball_url}" -O "$TARBALL_FILE"
+        wget "${tarball_url}" -O "$TARBALL_FILE" --progress=dot:giga
     else
         TARBALL_FILE=$APPS_DIR/$(basename "${az_blob}")
         az storage blob download --account-name "${az_storage_account}" --container-name "${az_container}" --name "${az_blob}" --file "$TARBALL_FILE" --auth-mode login >/dev/null
