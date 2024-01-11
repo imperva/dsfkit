@@ -77,8 +77,8 @@ variable "storage_details" {
   })
   description = "Compute instance external volume attributes"
   validation {
-    condition     = var.storage_details.disk_size >= 150
-    error_message = "Disk size must be at least 150 GB"
+    condition     = var.storage_details.disk_size >= 128
+    error_message = "Disk size must be at least 128 GB"
   }
 }
 
@@ -89,8 +89,14 @@ variable "vm_image" {
     sku       = string
     version   = string
   })
-  description = "This variable is used for selecting an Azure machine image. If set to null, the recommended image will be used."
   default     = null
+  description = "This variable is used for selecting an Azure machine image. vm_image_id will override this, and if both are set to null, the recommended image will be used."
+}
+
+variable "vm_image_id" {
+  type        = string
+  default     = null
+  description = "This variable is used for selecting an Azure machine image. "
 }
 
 variable "vm_user" {

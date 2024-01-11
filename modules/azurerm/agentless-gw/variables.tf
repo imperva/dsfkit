@@ -95,6 +95,12 @@ variable "public_ip" {
   description = "Create public IP for the instance"
 }
 
+variable "use_public_ip" {
+  type        = bool
+  default     = false
+  description = "Whether to use the DSF instance's public or private IP to connect to the instance"
+}
+
 variable "instance_type" {
   type        = string
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
@@ -183,7 +189,13 @@ variable "vm_image" {
     version   = string
   })
   default     = null
-  description = "VM image details to base image for the compute instance"
+  description = "This variable is used for selecting an Azure machine image. vm_image_id will override this, and if both are set to null, the recommended image will be used."
+}
+
+variable "vm_image_id" {
+  type        = string
+  default     = null
+  description = "This variable is used for selecting an Azure machine image. "
 }
 
 variable "vm_user" {

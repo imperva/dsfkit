@@ -28,7 +28,7 @@ resource "aws_db_subnet_group" "rds_db_sg" {
 }
 
 resource "aws_db_parameter_group" "postgres15_audit" {
-  name        = "postgres15-audit-parameter-group"
+  name        = "${local.db_identifier}-postgres15-audit-pg"
   family      = "postgres15"
   description = "Custom parameter group for Postgres"
 
