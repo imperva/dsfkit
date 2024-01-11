@@ -132,6 +132,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
@@ -143,6 +144,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   master_sonar_upgrade:
     uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@master
