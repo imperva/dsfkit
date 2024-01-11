@@ -77,8 +77,8 @@ variable "storage_details" {
   })
   description = "Compute instance external volume attributes"
   validation {
-    condition     = var.storage_details.disk_size >= 150
-    error_message = "Disk size must be at least 150 GB"
+    condition     = var.storage_details.disk_size >= 128
+    error_message = "Disk size must be at least 128 GB"
   }
 }
 
