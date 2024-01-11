@@ -59,6 +59,7 @@ module "hub_instance" {
   generate_access_tokens            = var.generate_access_tokens
   ssh_key_path                      = var.ssh_key.ssh_private_key_file_path
   binaries_location                 = var.binaries_location
+  tarball_url                       = var.tarball_url
   hadr_dr_node                      = var.hadr_dr_node
   main_node_sonarw_public_key       = var.main_node_sonarw_public_key
   main_node_sonarw_private_key      = var.main_node_sonarw_private_key

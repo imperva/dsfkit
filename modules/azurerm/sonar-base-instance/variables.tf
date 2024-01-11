@@ -138,8 +138,19 @@ variable "binaries_location" {
     az_container       = string
     az_blob            = string
   })
-  description = "Azure DSF installation location"
-  nullable    = false
+  description = "Azure DSF installation location. If tarball_url not set, binaries_location is used"
+  default = {
+    az_resource_group  = ""
+    az_storage_account = ""
+    az_container       = ""
+    az_blob            = ""
+  }
+}
+
+variable "tarball_url" {
+  type        = string
+  default     = ""
+  description = "HTTPS DSF installation location. If not set, binaries_location is used"
 }
 
 variable "hadr_dr_node" {
