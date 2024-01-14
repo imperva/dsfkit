@@ -437,13 +437,13 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 
 ### AWS Prerequisites
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-aws)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
 
 ### Azure Prerequisites
 
 1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it a custom role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
-   under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
+   under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-azure)).
 2. Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant DAM image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D). For DAM LTS version, use [DAM LTS Azure Marketplace image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14-lts%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 For the POC example, configure programmatic deployment also for [Ubuntu Pro 20.04 LTS image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22canonical%22%2C%22offerId%22%3A%220001-com-ubuntu-pro-focal%22%2C%22planId%22%3A%22pro-20_04-lts%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 3. The deployment requires access to the Sonar and DAM Agent installation binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar and DAM Agent installation binaries to this storage location as a blob.
