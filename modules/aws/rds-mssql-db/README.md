@@ -7,7 +7,7 @@ It should be used for poc / pov / lab purposes.
 ## Requirements
 * Terraform v0.13 and up
 * An AWS account
-* Permissions to create RDS MsSQL, S3 bucket (for configuring the audit), and lambda (for generating data on the DB and running queried on it). Required permissions can be found [here](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
+* Permissions to create RDS MsSQL, S3 bucket (for configuring the audit), and lambda (for generating data on the DB and running queried on it). Required permissions can be found [here](/permissions_samples/aws/OnboardMssqlRdsWithDataPermissions.txt).
 
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create and onboard the RDS MsSQL with synthetic data on it. These resources include:
