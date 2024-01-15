@@ -1,5 +1,10 @@
 locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
+
+  hub_public_ip = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
+##  hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
+#  hub_cidr_list = compact([module.network[0].vnet_address_space, local.hub_public_ip])
+##  hub_cidr_list = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
 }
 
 module "hub_main" {
@@ -25,6 +30,9 @@ module "hub_main" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = module.network[0].vnet_address_space
   allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+#  allowed_dra_admin_cidrs           = concat(module.network[0].vnet_address_space, local.dra_admin_public_ip)
+  allowed_dra_admin_cidrs           = module.network[0].vnet_address_space
+  #  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
@@ -32,7 +40,14 @@ module "hub_main" {
     username = mx.web_console_user
     password = local.password
   }] : []
-  tags = local.tags
+  dra_details = var.enable_dra ? {
+    name              = module.dra_admin[0].display_name
+    address           = module.dra_admin[0].public_ip
+    username          = module.dra_admin[0].ssh_user
+    password          = local.password
+    archiver_password = module.dra_analytics[0].archiver_password
+  } : null
+  tags                              = local.tags
 
   depends_on = [
     module.network
@@ -65,6 +80,8 @@ module "hub_main" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = module.network[0].vnet_address_space
   allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+  allowed_dra_admin_cidrs           = concat(module.network[0].vnet_address_space, local.dra_admin_public_ip)
+  #allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   tags                              = local.tags
   depends_on = [

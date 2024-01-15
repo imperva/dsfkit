@@ -3,8 +3,8 @@ output "public_ip" {
   value       = local.public_ip
   depends_on = [
     azurerm_network_interface_security_group_association.nic_sg_association,
-    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
-#    azurerm_role_assignment.vm_identity_storage_role_assignment
+#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
+    azurerm_role_assignment.vm_identity_role_assignment
   ]
 }
 
@@ -13,8 +13,8 @@ output "private_ip" {
   value       = local.private_ip
   depends_on = [
     azurerm_network_interface_security_group_association.nic_sg_association,
-    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
-#    azurerm_role_assignment.vm_identity_storage_role_assignment
+#    azurerm_virtual_machine_data_disk_attachment.data_disk_attachment,
+    azurerm_role_assignment.vm_identity_role_assignment
   ]
 }
 
@@ -28,10 +28,6 @@ output "private_ip" {
 #  value       = null
 #}
 
-#output "principal_id" {
-#  description = "Principal ID of the DSF node"
-#  value       = azurerm_linux_virtual_machine.vm.identity[0].principal_id
-#}
 
 output "display_name" {
   value = var.name
@@ -42,13 +38,18 @@ output "ssh_user" {
 }
 
 output "ssh_password" {
-  value = var.admin_password
+  value = var.admin_ssh_password
 }
 
 # not sure
 output "instance_id" {
   value = azurerm_linux_virtual_machine.vm.id
 }
+
+output "admin_image_id" {
+  value = local.image_id
+}
+
 
 #output "ready" {
 #  description = <<-EOF

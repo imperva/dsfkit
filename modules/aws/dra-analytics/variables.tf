@@ -77,7 +77,7 @@ variable "admin_password" {
 variable "archiver_user" {
   type        = string
   default     = "archiver-user"
-  description = "User to be used to upload archive files for the analytics server"
+  description = "User to be used to upload archive files for the Analytics server"
 }
 
 variable "dra_version" {

@@ -296,6 +296,26 @@ variable "base_directory" {
   description = "The base directory where all Sonar related directories will be installed"
 }
 
+variable "dra_details" {
+  description = "List of the DSF DRA to onboard to Sonar Hub"
+  type = object({
+    name              = string
+    address           = string
+    username          = string
+    password          = string
+    archiver_password = string
+  })
+  validation {
+    condition     = (var.dra_details == null || (can(var.dra_details.name) && can(var.dra_details.address)))
+    error_message = "Each DRA Admin must specify name and address"
+  }
+  validation {
+    condition     = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
+    error_message = "Each DRA Admin must specify username and password"
+  }
+  default = null
+}
+
 variable "cloud_init_timeout" {
   type        = number
   default     = 900

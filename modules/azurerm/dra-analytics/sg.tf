@@ -1,11 +1,11 @@
 locals {
   security_groups_config = [ # https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/63052.htm
     {
-      name            = ["web", "console"]
+      name            = ["dra", "admin"]
       internet_access = false
       udp             = []
       tcp             = [8443]
-      cidrs           = concat(var.allowed_web_console_cidrs, var.allowed_all_cidrs)
+      cidrs           = concat(var.allowed_admin_cidrs, var.allowed_all_cidrs)
     },
     {
       name            = ["other"]
@@ -15,17 +15,17 @@ locals {
       cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
-      name            = ["dra", "analytics"]
+      name            = ["agent", "gateway"]
       internet_access = false
       udp             = []
-      tcp             = [61617, 8443, 8501]
-      cidrs           = concat(var.allowed_analytics_cidrs, var.allowed_all_cidrs)
+      tcp             = [22]
+      cidrs           = concat(var.allowed_agent_gateways_cidrs, var.allowed_all_cidrs)
     },
     {
       name            = ["hub"]
       internet_access = false
       udp             = []
-      tcp             = [8443, 61617, 8501]
+      tcp             = [22]
       cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     }
   ]

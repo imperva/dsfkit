@@ -266,15 +266,6 @@ variable "dra_admin_instance_size" {
   description = "VM instance size for the Admin Server"
 }
 
-variable "dra_admin_image_details" {
-  type = object({
-    resource_group_name = string
-    image_id            = string
-  })
-  description = "Image attributes for the Admin Server"
-  nullable    = false
-}
-
 variable "dra_admin_storage_details" {
   type = object({
     disk_size            = number
@@ -289,14 +280,66 @@ variable "dra_admin_storage_details" {
   }
 }
 
-variable "dra_analytics_ebs_details" {
+variable "dra_admin_image_details" {
   type = object({
-    volume_size = number
-    volume_type = string
+    resource_group_name = string
+    image_id            = string
+  })
+  description = "Image attributes for the Admin Server"
+  default = null
+#  nullable    = false
+  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+}
+
+variable "dra_admin_vhd_details" {
+  type = object({
+    path_to_vhd          = string
+    storage_account_name = string
+    container_name       = string
+  })
+  default     = null
+  description = "VHD details for creating the Admin server image. Keep empty if you provide an image for the Admin server instead."
+  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+}
+
+variable "dra_analytics_instance_size" {
+  type        = string
+  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
+  description = "VM instance size for the Analytics Server"
+}
+
+variable "dra_analytics_storage_details" {
+  type = object({
+    disk_size            = number
+    disk_iops_read_write = number
+    storage_account_type = string
   })
   description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
-    volume_size = 1010
-    volume_type = "gp3"
+    disk_size = 1010
+    disk_iops_read_write = null
+    storage_account_type = "Standard_LRS"
   }
+}
+
+variable "dra_analytics_image_details" {
+  type = object({
+    resource_group_name = string
+    image_id            = string
+  })
+  description = "Image attributes for the Analytics Server"
+  default = null
+  #  nullable    = false
+  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
+}
+
+variable "dra_analytics_vhd_details" {
+  type = object({
+    path_to_vhd          = string
+    storage_account_name = string
+    container_name       = string
+  })
+  default     = null
+  description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
+  # todo - add validation - either one of dra_admin_vhd_details or dra_admin_image_details should be filled
 }

@@ -1,12 +1,11 @@
 locals {
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
-  public_ip  = var.attach_persistent_public_ip ? azurerm_public_ip.vm_public_ip[0].ip_address : azurerm_linux_virtual_machine.vm.public_ip_address
-  private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
+  incoming_folder_path = "/opt/itpba/incoming"
 
-#  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
-#  private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
-#  public_dns
+  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
+  #  public_dns = aws_instance.dsf_base_instance.public_dns
+  private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
 
   # root volume details
   root_volume_size  = 100
@@ -14,9 +13,17 @@ locals {
   root_volume_cache = "ReadWrite"
 
   install_script = templatefile("${path.module}/setup.tftpl", {
-    vault_name                              = azurerm_key_vault.vault.name
-    admin_registration_password_secret_name = azurerm_key_vault_secret.admin_analytics_registration_password.name
-    admin_ssh_password_secret_name          = azurerm_key_vault_secret.ssh_password.name
+    vault_name                                 = azurerm_key_vault.vault.name
+    analytics_archiver_password_name           = azurerm_key_vault_secret.analytics_archiver_password.name
+    admin_analytics_registration_password_name = azurerm_key_vault_secret.admin_analytics_registration_password.name
+    analytics_ssh_password_secret_name         = azurerm_key_vault_secret.ssh_password.name
+    archiver_user                              = var.archiver_user
+    archiver_password                          = var.archiver_password
+    admin_server_private_ip                    = var.admin_server_private_ip
+  })
+
+  readiness_script = templatefile("${path.module}/waiter.tftpl", {
+    admin_server_public_ip = var.admin_server_public_ip
   })
 }
 
@@ -29,7 +36,6 @@ resource "azurerm_network_interface" "nic" {
     name                          = join("-", [var.name, "nic"])
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = try(azurerm_public_ip.vm_public_ip[0].id, null)
   }
   tags = var.tags
 }
@@ -37,16 +43,6 @@ resource "azurerm_network_interface" "nic" {
 resource "azurerm_network_interface_security_group_association" "nic_sg_association" {
   network_interface_id      = azurerm_network_interface.nic.id
   network_security_group_id = local.security_group_id
-}
-
-resource "azurerm_public_ip" "vm_public_ip" {
-  count               = var.attach_persistent_public_ip ? 1 : 0
-  name                = join("-", [var.name, "public", "ip"])
-  resource_group_name = var.resource_group.name
-  location            = var.resource_group.location
-  sku                 = "Standard"
-  allocation_method   = "Static"
-  tags                = var.tags
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -66,7 +62,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   os_disk {
-#    disk_size_gb         = local.root_volume_size
+    #    disk_size_gb         = local.root_volume_size
     disk_size_gb         = var.storage_details.disk_size
     caching              = local.root_volume_cache
     storage_account_type = var.storage_details.storage_account_type
@@ -112,11 +108,32 @@ module "statistics" {
 
   deployment_name = var.name
   product         = "DRA"
-  resource_type   = "dra-admin"
+  resource_type   = "dra-analytics"
   artifact        = local.image_id
   location        = var.resource_group.location
 }
 
+resource "null_resource" "readiness" {
+  provisioner "local-exec" {
+    command     = local.readiness_script
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    azurerm_linux_virtual_machine.vm,
+    module.statistics
+  ]
+}
+
+module "statistics_success" {
+  source = "../../../modules/azurerm/statistics"
+  count  = var.send_usage_statistics ? 1 : 0
+
+  id         = module.statistics[0].id
+  status     = "success"
+  depends_on = [null_resource.readiness]
+}
+
+# maybe we dont need the dist attachment but we can use only in the root disk, read in the documentation
 # disk attachment
 #resource "azurerm_managed_disk" "external_data_vol" {
 #  name                 = join("-", [var.name, "data", "disk"])
@@ -135,3 +152,4 @@ module "statistics" {
 #  lun                = 11
 #  caching            = "ReadWrite"
 #}
+

@@ -1,6 +1,6 @@
 variable "name" {
   type        = string
-  default     = "imperva-dsf-dra-admin"
+  default     = "imperva-dsf-dra-analytics"
   description = "Friendly name to identify all resources"
   validation {
     condition     = length(var.name) >= 3
@@ -28,21 +28,20 @@ variable "resource_group" {
 
 variable "instance_size" {
   type        = string
-# maybe we can use a smaller vm size - requirements - Admin Server: 16 GB RAM, 4 CPU cores and 260 GB of hard drive space
+  # maybe we can use a smaller vm size - requirements - Analytics Server: 16 GB RAM, 4 CPU cores and 1010 GB of hard drive space
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
-  description = "VM instance size for the Admin Server"
+  description = "VM instance size for the Analytics Server"
 }
 
-# todo - probably the iops is redundant - depends of if we use the root disk or not
 variable "storage_details" {
   type = object({
     disk_size            = number
     disk_iops_read_write = number
     storage_account_type = string
   })
-  description = "Compute instance volume attributes for the Admin Server"
+  description = "Compute instance volume attributes for the Analytics Server"
   default = {
-    disk_size = 260
+    disk_size = 1010
     disk_iops_read_write = null
     storage_account_type = "Standard_LRS"
   }
@@ -54,19 +53,15 @@ variable "ssh_public_key" {
   nullable = false
 }
 
-# todo - add validation - either image_details or vhd_details must be filled and only one of them can be filled
+# todo - add validation - either image_details or vhd_details must be filled
 variable "image_details" {
   type = object({
     resource_group_name  = string
     image_id        = string
   })
+  description = "Image attributes for the Analytics Server"
+  #  nullable    = false
   default = null
-  description = "Image attributes for the Admin Server"
-
-  validation {
-    condition     = var.image_details == null || try(var.image_details.resource_group_name != null && var.image_details.image_id != null, false)
-    error_message = "Value must either be null or specified for all"
-  }
 }
 
 variable "vhd_details" {
@@ -76,16 +71,7 @@ variable "vhd_details" {
     container_name       = string
   })
   default     = null
-  description = "VHD details for creating the Admin server image. Keep empty if you provide an image for the Admin server instead."
-
-  validation {
-    condition     = var.vhd_details == null || try(var.vhd_details.path_to_vhd != null && var.vhd_details.storage_account_name != null && var.vhd_details.container_name != null, false)
-    error_message = "Value must either be null or specified for all"
-  }
-#  validation {
-#    condition     = var.vhd_details == null || try(var.vhd_details != null && var.image_details == null, false)
-#    error_message = "Only one of the following should be specified - vhd_details or image_details."
-#  }
+  description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
 }
 
 #variable "dra_version" {
@@ -135,39 +121,60 @@ variable "admin_registration_password" {
   }
 }
 
-variable "admin_ssh_password" {
+variable "analytics_ssh_password" {
   type        = string
-  description = "Password to be used to ssh to the Admin Server"
+  description = "Password to be used to ssh to the Analytics server"
 
   validation {
-    condition     = length(var.admin_ssh_password) >= 7
+    condition     = length(var.analytics_ssh_password) >= 7
     error_message = "Password must be at least 7 characters long"
   }
 
   validation {
-    condition     = can(regex("[A-Z]", var.admin_ssh_password))
+    condition     = can(regex("[A-Z]", var.analytics_ssh_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    condition     = can(regex("[a-z]", var.admin_ssh_password))
+    condition     = can(regex("[a-z]", var.analytics_ssh_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    condition     = can(regex("\\d", var.admin_ssh_password))
+    condition     = can(regex("\\d", var.analytics_ssh_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.admin_ssh_password))
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.analytics_ssh_password))
     error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
 
+variable "archiver_user" {
+  type        = string
+  default     = "archiver-user"
+  description = "User to be used to upload archive files for the Analytics server"
+}
+
+variable "archiver_password" {
+  type        = string
+  description = "Password to be used to upload archive files for analysis"
+}
+
+variable "admin_server_private_ip" {
+  type        = string
+  description = "Private IP of the Admin Server"
+}
+
+variable "admin_server_public_ip" {
+  type        = string
+  description = "Public IP of the Admin Server"
+}
+
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the Admin Server"
+  description = "Subnet id for the Analytics Server"
   validation {
     condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
     error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
@@ -187,38 +194,18 @@ variable "security_group_ids" {
     condition     = alltrue([for item in var.security_group_ids : can(regex(".*Microsoft.Network/networkSecurityGroups/.*", item))])
     error_message = "One or more of the security group ids list is invalid. Each item should match the pattern '.*Microsoft.Network/networkSecurityGroups/<network-security-group-name>"
   }
-#  validation {
-#    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
-#    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
-#  }
+  #  validation {
+  #    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
+  #    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
+  #  }
   default = []
 }
 
-variable "allowed_analytics_cidrs" {
+variable "allowed_admin_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing the Analytics Server to access the DSF Admin Server instance"
   validation {
-    condition     = alltrue([for item in var.allowed_analytics_cidrs : can(cidrnetmask(item))])
-    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
-  }
-  default = []
-}
-
-variable "allowed_ssh_cidrs" {
-  type        = list(string)
-  description = "List of ingress CIDR patterns allowing ssh access"
-  validation {
-    condition     = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
-    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
-  }
-  default = []
-}
-
-variable "allowed_web_console_cidrs" {
-  type        = list(string)
-  description = "List of ingress CIDR patterns allowing web console access"
-  validation {
-    condition     = alltrue([for item in var.allowed_web_console_cidrs : can(cidrnetmask(item))])
+    condition     = alltrue([for item in var.allowed_admin_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default = []
@@ -234,6 +221,26 @@ variable "allowed_hub_cidrs" {
   default = []
 }
 
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing ssh access"
+  validation {
+    condition     = alltrue([for item in var.allowed_ssh_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default = []
+}
+
+variable "allowed_agent_gateways_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing agent gateway access for legacy deployment"
+  validation {
+    condition     = alltrue([for item in var.allowed_agent_gateways_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default = []
+}
+
 variable "allowed_all_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
@@ -242,12 +249,6 @@ variable "allowed_all_cidrs" {
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
   default = []
-}
-
-variable "attach_persistent_public_ip" {
-  type        = bool
-  default     = true
-  description = "Create and attach an Elastic public IP for the instance. If false, a dynamic public IP is used. Relevant only if the DRA Admin is in a public subnet (ignored if in a private subnet). Currently, due to a DRA limitation, must only be true."
 }
 
 variable "send_usage_statistics" {

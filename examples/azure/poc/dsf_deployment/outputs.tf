@@ -15,6 +15,8 @@ output "generated_network" {
   value = try({
     vnet    = module.network[0].vnet_id
     subnets = module.network[0].vnet_subnets
+    # todo - remove
+    address_space = module.network[0].vnet_address_space
   }, null)
 }
 
@@ -70,17 +72,16 @@ output "dra" {
       display_name = try(module.dra_admin[0].display_name, null)
 #      role_arn     = try(module.dra_admin[0].iam_role, null)
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}", null)
-      ssh_password = try(nonsensitive(local.password), null)
 #      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
     }
-#    analytics = [
-#      for idx, val in module.dra_analytics : {
-#        private_ip    = val.private_ip
+    analytics = [
+      for idx, val in module.dra_analytics : {
+        private_ip    = val.private_ip
 #        private_dns   = val.private_dns
-#        archiver_user = val.archiver_user
-#        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-#      }
-#    ]
+        archiver_user = val.archiver_user
+        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      }
+    ]
   } : null
 }
 

@@ -24,6 +24,16 @@ resource "azurerm_key_vault" "vault" {
   #  }
 }
 
+resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
+  key_vault_id = azurerm_key_vault.vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_user_assigned_identity.user_assigned_identity.principal_id
+
+  secret_permissions = [
+    "Get",
+  ]
+}
+
 resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {
   key_vault_id = azurerm_key_vault.vault.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -36,13 +46,14 @@ resource "azurerm_key_vault_access_policy" "vault_owner_access_policy" {
   ]
 }
 
-resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
+resource "azurerm_key_vault_secret" "analytics_archiver_password" {
+  name         = join("-", [var.name, "analytics", "archiver", "password"])
+  value        = var.archiver_password
   key_vault_id = azurerm_key_vault.vault.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azurerm_user_assigned_identity.user_assigned_identity.principal_id
-
-  secret_permissions = [
-    "Get",
+  content_type = "DRA Analytics archiver password"
+  tags         = var.tags
+  depends_on = [
+    azurerm_key_vault_access_policy.vault_owner_access_policy
   ]
 }
 
@@ -58,10 +69,10 @@ resource "azurerm_key_vault_secret" "admin_analytics_registration_password" {
 }
 
 resource "azurerm_key_vault_secret" "ssh_password" {
-  name         = join("-", [var.name, "admin", "ssh", "password"])
-  value        = var.admin_ssh_password
+  name         = join("-", [var.name, "analytics", "ssh", "password"])
+  value        = var.analytics_ssh_password
   key_vault_id = azurerm_key_vault.vault.id
-  content_type = "DRA Admin ssh password"
+  content_type = "DRA Analytics ssh password"
   tags         = var.tags
   depends_on = [
     azurerm_key_vault_access_policy.vault_owner_access_policy
