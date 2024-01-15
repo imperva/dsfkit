@@ -200,7 +200,6 @@ jobs:
           mv $EXAMPLE_DIR/dam.tf{_,}
           mv $EXAMPLE_DIR/agent_sources.tf{_,}
           mv $EXAMPLE_DIR/networking.tf{_,}
-#        todo - mv $EXAMPLE_DIR/dra.tf{_,}
         fi
 
     - name: Terraform Validate
