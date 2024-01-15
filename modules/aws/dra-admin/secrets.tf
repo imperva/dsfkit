@@ -1,6 +1,6 @@
 resource "aws_secretsmanager_secret" "admin_analytics_registration_password" {
   name_prefix = "${var.friendly_name}-admin-analytics-registration-password"
-  description = "DRA admin_registration_password"
+  description = "DRA admin registration password"
   tags        = var.tags
 }
 
@@ -11,7 +11,7 @@ resource "aws_secretsmanager_secret_version" "admin_analytics_registration_passw
 
 resource "aws_secretsmanager_secret" "admin_password" {
   name_prefix = "${var.friendly_name}-admin-password"
-  description = "DRA admin_registration_password"
+  description = "DRA admin password"
   tags        = var.tags
 }
 

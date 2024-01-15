@@ -74,25 +74,22 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
-#variable "subnet_ids" {
-#  type = object({
-#    hub_subnet_id             = string
-#    hub_dr_subnet_id          = string
-#    agentless_gw_subnet_id    = string
-#    agentless_gw_dr_subnet_id = string
-#  })
-#  default     = null
-#  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
-#  validation {
-#    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null, false)
-#    error_message = "Value must either be null or specified for all."
-#  }
-#  validation {
-#    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values({ for k, v in var.subnet_ids : k => v if k != "db_subnet_ids" }) : can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", subnet_id))]), false)
-#    error_message = "Subnet id is invalid."
-#  }
-#}
-
+variable "subnet_ids" {
+  type = object({
+    hub_subnet_id             = string
+    hub_dr_subnet_id          = string
+    agentless_gw_subnet_id    = string
+    agentless_gw_dr_subnet_id = string
+    dra_admin_subnet_id       = string
+    dra_analytics_subnet_id   = string
+  })
+  default     = null
+  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+  validation {
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null, false)
+    error_message = "Value must either be null or specified for all."
+  }
+}
 
 ##############################
 ####    DAM variables     ####
@@ -236,4 +233,70 @@ variable "sonar_machine_base_directory" {
   type        = string
   default     = "/imperva"
   description = "The base directory where all Sonar related directories will be installed"
+}
+##############################
+####    DRA variables     ####
+##############################
+
+variable "enable_dra" {
+  type        = bool
+  default     = true
+  description = "Provision DRA Admin and Analytics"
+}
+
+variable "dra_analytics_count" {
+  type        = number
+  default     = 1
+  description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
+}
+
+variable "dra_version" {
+  type        = string
+  default     = "4.13"
+  description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
+  validation {
+    condition     = !startswith(var.dra_version, "4.10.") && !startswith(var.dra_version, "4.9.") && !startswith(var.dra_version, "4.8.") && !startswith(var.dra_version, "4.3.") && !startswith(var.dra_version, "4.2.") && !startswith(var.dra_version, "4.1.")
+    error_message = "The dra_version value must be 4.11.0.10 or higher"
+  }
+}
+
+variable "dra_admin_instance_size" {
+  type        = string
+  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
+  description = "VM instance size for the Admin Server"
+}
+
+variable "dra_admin_image_details" {
+  type = object({
+    resource_group_name = string
+    image_id            = string
+  })
+  description = "Image attributes for the Admin Server"
+  nullable    = false
+}
+
+variable "dra_admin_storage_details" {
+  type = object({
+    disk_size            = number
+    disk_iops_read_write = number
+    storage_account_type = string
+  })
+  description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    disk_size = 260
+    disk_iops_read_write = null
+    storage_account_type = "Standard_LRS"
+  }
+}
+
+variable "dra_analytics_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    volume_size = 1010
+    volume_type = "gp3"
+  }
 }
