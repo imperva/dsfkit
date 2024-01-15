@@ -59,6 +59,7 @@ module "gw_instance" {
   attach_persistent_public_ip       = var.public_ip
   sonarw_private_key_secret_name    = var.sonarw_private_key_secret_name
   sonarw_public_key_content         = var.sonarw_public_key_content
+  base_directory                    = var.base_directory
   tags                              = var.tags
   cloud_init_timeout                = var.cloud_init_timeout
   send_usage_statistics             = var.send_usage_statistics

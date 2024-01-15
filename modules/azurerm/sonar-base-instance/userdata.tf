@@ -5,6 +5,7 @@ locals {
 
   instance_address = var.use_public_ip ? local.public_ip : local.private_ip
   display_name     = var.name
+  sonar_base_directory   = var.base_directory != null ? var.base_directory : ""
 
   script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
   install_script = templatefile("${path.module}/setup.tftpl", {
@@ -23,6 +24,7 @@ locals {
     additional_install_parameters       = var.additional_install_parameters
     firewall_ports                      = join(" ", flatten([for i in var.security_groups_config : i.tcp]))
     access_tokens_array                 = local.access_tokens_array
+    base_directory                      = local.sonar_base_directory
   })
 }
 

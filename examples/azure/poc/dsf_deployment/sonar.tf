@@ -14,6 +14,7 @@ module "hub_main" {
   password                    = local.password
   storage_details             = var.hub_storage_details
   instance_type               = var.hub_instance_type
+  base_directory              = var.sonar_machine_base_directory
   attach_persistent_public_ip = true
   use_public_ip               = true
   generate_access_tokens      = true
@@ -50,6 +51,7 @@ module "hub_dr" {
   password                     = local.password
   storage_details              = var.hub_storage_details
   instance_type                = var.hub_instance_type
+  base_directory              = var.sonar_machine_base_directory
   attach_persistent_public_ip  = true
   use_public_ip                = true
   hadr_dr_node                 = true
@@ -99,6 +101,7 @@ module "agentless_gw_main" {
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = var.tarball_location
   instance_type         = var.agentless_gw_instance_type
+  base_directory        = var.sonar_machine_base_directory
   password              = local.password
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
   ssh_key = {
@@ -130,6 +133,7 @@ module "agentless_gw_dr" {
   storage_details              = var.agentless_gw_storage_details
   binaries_location            = var.tarball_location
   instance_type                = var.agentless_gw_instance_type
+  base_directory               = var.sonar_machine_base_directory
   password                     = local.password
   hub_sonarw_public_key        = module.hub_main[0].sonarw_public_key
   hadr_dr_node                 = true

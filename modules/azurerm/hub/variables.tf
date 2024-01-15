@@ -290,6 +290,12 @@ variable "mx_details" {
   default = []
 }
 
+variable "base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}
+
 variable "cloud_init_timeout" {
   type        = number
   default     = 900

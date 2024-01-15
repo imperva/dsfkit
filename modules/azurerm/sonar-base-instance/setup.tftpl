@@ -281,11 +281,10 @@ function firewall_open_ports() {
     systemctl restart firewalld
 }
 
-STATE_DIR=/imperva
-DATA_DIR=$STATE_DIR/data
-LOGS_DIR=$STATE_DIR/logs
-LOCAL_DIR=$STATE_DIR/local
-APPS_DIR=$STATE_DIR/apps
+DATA_DIR="${base_directory}/data"
+LOGS_DIR="${base_directory}/logs"
+LOCAL_DIR="${base_directory}/local"
+APPS_DIR="${base_directory}/apps"
 
 install_deps
 firewall_open_ports || true
