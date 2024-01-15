@@ -56,7 +56,7 @@ function install_azcli_from_internet() {
     dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
     dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
     dnf install azure-cli -y
-    az login --identity
+    az login --identity --allow-no-subscriptions
 }
 
 function install_deps() {
