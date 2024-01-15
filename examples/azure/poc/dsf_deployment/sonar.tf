@@ -53,7 +53,7 @@ module "hub_main" {
   ]
 }
 
-module "hub_dr" {
+/*module "hub_dr" {
   source  = "imperva/dsf-hub/azurerm"
   version = "1.7.5" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
@@ -246,3 +246,4 @@ module "federation" {
     module.agentless_gw_hadr
   ]
 }
+*/
