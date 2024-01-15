@@ -110,6 +110,17 @@ jobs:
             hidden_submodules: "aws/statistics null/statistics"
             begin_tag: 1.0.0
 
+            # todo - hadar add when deploying dra
+#          ## azurerm provider
+#          - source_module: "azurerm/dra-admin"
+#            destination_repo: "terraform-azurerm-dsf-dra-admin"
+#            hidden_submodules: "azurerm/statistics null/statistics"
+#            begin_tag: 1.7.5
+#          - source_module: "azurerm/dra-analytics"
+#            destination_repo: "terraform-azurerm-dsf-dra-analytics"
+#            hidden_submodules: "azurerm/statistics null/statistics"
+#            begin_tag: 1.7.5
+
           # Globals
           ## aws provider
           - source_module: "aws/core/globals"

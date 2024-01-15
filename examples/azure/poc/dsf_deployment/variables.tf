@@ -108,6 +108,7 @@ variable "dam_version" {
 variable "dam_license" {
   description = "License file path"
   type        = string
+  default     = null
 }
 
 variable "large_scale_mode" {
@@ -134,6 +135,7 @@ variable "dam_agent_installation_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF DAM agent installation software. az_blob is the full path to the installation file within the storage account container"
+  default = null
 }
 
 variable "simulation_db_types_for_agent" {
@@ -162,6 +164,7 @@ variable "sonar_version" {
   }
 }
 
+# todo - rename to sonar_tarball_location
 variable "tarball_location" {
   type = object({
     az_resource_group  = string
@@ -169,7 +172,8 @@ variable "tarball_location" {
     az_container       = string
     az_blob            = string
   })
-  description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
+  description = "Storage account and container location of the DSF Sonar installation software. az_blob is the full path to the tarball file within the storage account container"
+  default     = null
 }
 
 variable "hub_hadr" {
@@ -250,15 +254,6 @@ variable "dra_analytics_count" {
   description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
 }
 
-variable "dra_version" {
-  type        = string
-  default     = "4.13"
-  description = "The DRA version to install. Supported versions are 4.11.0.10 and up. Both long and short version formats are supported, for example, 4.11.0.10 or 4.11. The short format maps to the latest patch."
-  validation {
-    condition     = !startswith(var.dra_version, "4.10.") && !startswith(var.dra_version, "4.9.") && !startswith(var.dra_version, "4.8.") && !startswith(var.dra_version, "4.3.") && !startswith(var.dra_version, "4.2.") && !startswith(var.dra_version, "4.1.")
-    error_message = "The dra_version value must be 4.11.0.10 or higher"
-  }
-}
 
 variable "dra_admin_instance_size" {
   type        = string

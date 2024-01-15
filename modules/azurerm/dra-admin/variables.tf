@@ -26,9 +26,17 @@ variable "resource_group" {
   description = "Resource group details"
 }
 
+variable "subnet_id" {
+  type        = string
+  description = "Subnet id for the Admin Server"
+  validation {
+    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
+  }
+}
+
 variable "instance_size" {
   type        = string
-# maybe we can use a smaller vm size - requirements - Admin Server: 16 GB RAM, 4 CPU cores and 260 GB of hard drive space
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
   description = "VM instance size for the Admin Server"
 }
@@ -148,16 +156,6 @@ variable "admin_ssh_password" {
   }
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "Subnet id for the Admin Server"
-  validation {
-    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
-    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
-  }
-}
-
-# todo - handle - who use it?
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
@@ -170,10 +168,6 @@ variable "security_group_ids" {
     condition     = alltrue([for item in var.security_group_ids : can(regex(".*Microsoft.Network/networkSecurityGroups/.*", item))])
     error_message = "One or more of the security group ids list is invalid. Each item should match the pattern '.*Microsoft.Network/networkSecurityGroups/<network-security-group-name>"
   }
-#  validation {
-#    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
-#    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
-#  }
   default = []
 }
 

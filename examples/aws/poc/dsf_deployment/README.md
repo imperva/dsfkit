@@ -17,7 +17,7 @@ The deployment is modular and allows users to deploy one or more of the followin
    - Agent Gateways
 4. DRA
    - Admin server
-   - Analytic servers
+   - Analytics servers
 5. Audit sources
    - Agent audit sources (EC2 instances)
    - Agentless audit sources (RDS instances)
@@ -35,7 +35,7 @@ enable_sonar = false
 enable_dra = false
 ```
 
-This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
+This configuration will enable the DAM module while disabling the DSF Sonar and DRA modules.
 
 #### 2. DRA Only Deployment
 
@@ -46,7 +46,7 @@ enable_sonar = false
 enable_dra = true
 ```
 
-This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
+This configuration will enable the DRA module while disabling the DSF Sonar and DAM modules.
 
 #### 3. Sonar Only Deployment
 
@@ -71,7 +71,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `enable_dra`: Enable DRA sub-product
 
 ### Server Count
-- `dra_analytics_count`: Number of DRA Analytic servers
+- `dra_analytics_count`: Number of DRA Analytics servers
 - `agentless_gw_count`: Number of Agentless Gateways
 - `agent_gw_count`: Number of Agent Gateways
 

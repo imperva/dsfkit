@@ -81,7 +81,6 @@ module "dra_analytics" {
       container_name       = var.dra_analytics_vhd_details.container_name
     } : null
   }
-
   tags = local.tags
 
   depends_on = [

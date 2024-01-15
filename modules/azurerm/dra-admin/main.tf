@@ -1,8 +1,12 @@
 locals {
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
-  public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
 #  public_ip  = var.attach_persistent_public_ip ? azurerm_public_ip.vm_public_ip[0].ip_address : azurerm_linux_virtual_machine.vm.public_ip_address
+  # hadar - when the following enabled, got an error of "waiting for completion of Security Group Association for Network Interface" on the hub
+  #  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
+
+# hadar - work: public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
+    public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
   private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
 
   install_script = templatefile("${path.module}/setup.tftpl", {
@@ -41,6 +45,15 @@ resource "azurerm_public_ip" "vm_public_ip" {
   allocation_method   = "Static"
   tags                = var.tags
 }
+#
+#data "azurerm_public_ip" "vm_public_ip" {
+#  count               = var.attach_persistent_public_ip ? 1 : 0
+#  name                = join("-", [var.name, "public", "ip"])
+#  resource_group_name = var.resource_group.name
+#  depends_on = [
+#    azurerm_linux_virtual_machine.vm
+#  ]
+#}
 
 resource "azurerm_linux_virtual_machine" "vm" {
   name                  = var.name

@@ -63,7 +63,7 @@ module "hub_dr" {
   password                     = local.password
   storage_details              = var.hub_storage_details
   instance_type                = var.hub_instance_type
-  base_directory               = var.sonar_machine_base_directory
+  base_directory              = var.sonar_machine_base_directory
   attach_persistent_public_ip  = true
   use_public_ip                = true
   hadr_dr_node                 = true

@@ -26,9 +26,17 @@ variable "resource_group" {
   description = "Resource group details"
 }
 
+variable "subnet_id" {
+  type        = string
+  description = "Subnet id for the Analytics Server"
+  validation {
+    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
+  }
+}
+
 variable "instance_size" {
   type        = string
-  # maybe we can use a smaller vm size - requirements - Analytics Server: 16 GB RAM, 4 CPU cores and 1010 GB of hard drive space
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
   description = "VM instance size for the Analytics Server"
 }
@@ -169,21 +177,10 @@ variable "admin_server_public_ip" {
   description = "Public IP of the Admin Server"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "Subnet id for the Analytics Server"
-  validation {
-    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
-    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
-  }
-}
-
-# todo - handle - who use it?
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
   validation {
-    # validate if true
     condition     = length(var.security_group_ids) == 0 || length(var.security_group_ids) == 1
     error_message = "Can't contain more than a single element"
   }
@@ -191,10 +188,6 @@ variable "security_group_ids" {
     condition     = alltrue([for item in var.security_group_ids : can(regex(".*Microsoft.Network/networkSecurityGroups/.*", item))])
     error_message = "One or more of the security group ids list is invalid. Each item should match the pattern '.*Microsoft.Network/networkSecurityGroups/<network-security-group-name>"
   }
-  #  validation {
-  #    condition     = alltrue([for item in var.security_group_ids : substr(item, 0, 3) == "sg-"])
-  #    error_message = "One or more of the security group Ids list is invalid. Each item should be in the format of 'sg-xx..xxx'"
-  #  }
   default = []
 }
 
