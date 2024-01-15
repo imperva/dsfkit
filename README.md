@@ -437,13 +437,13 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 
 ### AWS Prerequisites
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-running-edsf-kit)).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-aws)).
 2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
 
 ### Azure Prerequisites
 
-1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it the necessary role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
-   for the associated subscription. Note, Assign the Owner role to the app registration on a temporary basis. More specific permissions will be provided in the future.
+1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it a custom role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) 
+   under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-azure)).
 2. Configure programmatic deployment for the desired version of Imperva DAM by [enabling it on the relevant DAM image from the Azure Marketplace](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D). For DAM LTS version, use [DAM LTS Azure Marketplace image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14-lts%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 For the POC example, configure programmatic deployment also for [Ubuntu Pro 20.04 LTS image](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22canonical%22%2C%22offerId%22%3A%220001-com-ubuntu-pro-focal%22%2C%22planId%22%3A%22pro-20_04-lts%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D).
 3. The deployment requires access to the Sonar and DAM Agent installation binaries. Establish an Azure Storage account along with a container, and proceed to upload the Sonar and DAM Agent installation binaries to this storage location as a blob.
@@ -930,17 +930,20 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
-1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/GeneralRequiredPermissions.txt).
-2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/permissions_samples/CreateNetworkResourcesPermissions.txt).
-3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/OnboardMysqlRdsPermissions.txt).
-4. In order to onboard a MsSQL RDS with audit configured and with synthetic data, use the permissions specified here - [onboard MsSQL RDS with synthetic data permissions](/permissions_samples/OnboardMssqlRdsWithDataPermissions.txt).
+1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/aws/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/permissions_samples/aws/CreateNetworkResourcesPermissions.txt).
+3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/aws/OnboardMysqlRdsPermissions.txt).
+4. In order to onboard a MsSQL RDS with audit configured and with synthetic data, use the permissions specified here - [onboard MsSQL RDS with synthetic data permissions](/permissions_samples/aws/OnboardMssqlRdsWithDataPermissions.txt).
 
 **NOTE:** When running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
 ### IAM Permissions for Azure
-To be able to create Azure resources inside any Azure Account, you need to provide an Azure User or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
-**NOTE:** Assign the Owner role to the user or app registration service principal temporarily. More detailed permissions will be specified in the future.
+To be able to create Azure resources inside any Azure Account, you need to provide an Azure user or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
+Use the relevant permissions according to your needs:
+
+1. For general required permissions such as create a virtual machine, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/azure/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VNET, NAT Gateway etc., add the permissions specified here - [create network resources permissions](/permissions_samples/azure/CreateNetworkResourcesPermissions.txt).
 
 ## IAM Permissions for the DSF Instances on AWS
 
@@ -1052,7 +1055,7 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 If the DSF deployment has not been deployed using the eDSF Kit, it is also necessary to satisfy the following prerequisites:
 
 
-1. Grant the DSF Hubs and Agentless Gateways IAM roles access to the S3 bucket containing the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/DSFIntallationAccessPermissions.txt).
+1. Grant the DSF Hubs and Agentless Gateways IAM roles access to the S3 bucket containing the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/aws/DSFIntallationAccessPermissions.txt).
 2. Allow outbound connections from the DSF Hubs and Agentless Gateways to the S3 bucket containing the DSF installation software.
 3. AWS CLI installed on the DSF Hubs and Agentless Gateways.
 

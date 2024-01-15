@@ -1,0 +1,17 @@
+"permissions": [
+    {
+        "actions": [
+            "Microsoft.Network/natGateways/write",
+            "Microsoft.Network/natGateways/join/action",
+            "Microsoft.Network/natGateways/delete",
+            "Microsoft.Network/virtualNetworks/write",
+            "Microsoft.Network/virtualNetworks/delete",
+            "Microsoft.Network/virtualNetworks/subnets/write",
+            "Microsoft.Network/virtualNetworks/subnets/join/action",
+            "Microsoft.Network/virtualNetworks/subnets/delete"
+        ],
+        "notActions": [],
+        "dataActions": [],
+        "notDataActions": []
+    }
+]
