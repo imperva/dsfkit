@@ -247,6 +247,12 @@ variable "sonarw_public_key_content" {
   description = "The Agentless Gateway sonarw user SSH public key - used for remote Agentless Gateway federation, HADR, etc."
 }
 
+variable "base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}
+
 variable "cloud_init_timeout" {
   type        = number
   default     = 900

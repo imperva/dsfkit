@@ -219,6 +219,12 @@ variable "generate_access_tokens" {
   description = "Generate access tokens for connecting to USC / connect DAM to the DSF Hub"
 }
 
+variable "base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}
+
 variable "cloud_init_timeout" {
   type        = number
   default     = 900

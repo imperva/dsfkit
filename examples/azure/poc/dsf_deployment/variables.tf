@@ -231,3 +231,9 @@ variable "additional_install_parameters" {
   default     = ""
   description = "Additional params for installation tarball. More info in https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/80035.htm"
 }
+
+variable "sonar_machine_base_directory" {
+  type        = string
+  default     = "/imperva"
+  description = "The base directory where all Sonar related directories will be installed"
+}
