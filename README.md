@@ -400,7 +400,17 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
        Added support for DAM in Azure.
     </td>
   </tr>
-
+  <tr>
+    <td>16 Jan 2024
+    </td>
+    <td>1.7.5
+    </td>
+    <td>
+      1. Added a new agentless source for AWS - RDS PostreSQL.
+      <br/>2. Updated Azure IAM required permissions.
+      <br/>3. Improvements and bug fixes.
+    </td>
+  </tr>
 </table>
 
 # Getting Ready to Deploy
