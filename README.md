@@ -567,7 +567,7 @@ For more details about each example, click on the example name.
      </td>
      <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking, DAM (MX and Agent Gateways), and Agent audit sources.
      </td>
-     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.4/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_4.zip">dsf_deployment_1_7_4.zip</a>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.4/examples/azure/poc/dsf_deployment/dsf_deployment_1_7_4.zip">dsf_deployment_1_7_4.zip</a>
      </td>
   </tr>
 </table> 
