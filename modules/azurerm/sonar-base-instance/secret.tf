@@ -34,7 +34,13 @@ locals {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "vault" {
-  name                       = trim(substr(var.name, -24, -1), "-")
+  # the vault name has quite a few restrictions:
+  #   - alphanumeric only
+  #   - 3 to 24 characters only
+  #   - must start with a letter and end with a letter or number
+  # for these reason, and to keep it from loosing uniqueness between different names,
+  # we use a base64 hash of the server name to get the maximum entropy possible in 24 characters
+  name                       = format("a%s", substr(replace(replace(replace(base64sha256(var.name), "+", ""), "/", ""), "=", ""), 0, 23))
   location                   = var.resource_group.location
   resource_group_name        = var.resource_group.name
   enabled_for_deployment     = true
@@ -69,7 +75,8 @@ resource "azurerm_key_vault_access_policy" "vault_vm_access_policy" {
 }
 
 resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
-  name         = join("-", [var.name, "sonarw", "private", "key"])
+  # dots are somewhat common in server names, but aren't allowed in vault secrets
+  name         = join("-", [replace(var.name, ".", "-"), "sonarw", "private", "key"])
   value        = chomp(local.main_node_sonarw_private_key)
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "sonarw ssh private key"
@@ -80,7 +87,8 @@ resource "azurerm_key_vault_secret" "sonarw_private_key_secret" {
 }
 
 resource "azurerm_key_vault_secret" "password_key_secret" {
-  name         = join("-", [var.name, "password"])
+  # dots are somewhat common in server names, but aren't allowed in vault secrets
+  name         = join("-", [replace(var.name, ".", "-"), "password"])
   value        = chomp(var.password)
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "password"
@@ -92,7 +100,8 @@ resource "azurerm_key_vault_secret" "password_key_secret" {
 
 resource "azurerm_key_vault_secret" "access_tokens" {
   count        = length(local.access_tokens)
-  name         = join("-", [var.name, local.access_tokens[count.index].name, "access", "token"])
+  # dots are somewhat common in server names, but aren't allowed in vault secrets
+  name         = join("-", [replace(var.name, ".", "-"), local.access_tokens[count.index].name, "access", "token"])
   value        = random_uuid.access_tokens[count.index].result
   key_vault_id = azurerm_key_vault.vault.id
   content_type = "access token"
