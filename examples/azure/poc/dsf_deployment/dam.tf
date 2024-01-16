@@ -6,7 +6,7 @@ locals {
 
 module "mx" {
   source  = "imperva/dsf-mx/azurerm"
-  version = "1.7.4" # latest release tag
+  version = "1.7.5" # latest release tag
   count   = var.enable_dam ? 1 : 0
 
   friendly_name  = join("-", [local.deployment_name_salted, "mx"])
@@ -41,7 +41,7 @@ module "mx" {
 
 module "agent_gw" {
   source  = "imperva/dsf-agent-gw/azurerm"
-  version = "1.7.4" # latest release tag
+  version = "1.7.5" # latest release tag
   count   = local.agent_gw_count
 
   friendly_name  = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
