@@ -475,6 +475,7 @@ variable "dam_license" {
   2. License file path
   EOF
   type        = string
+  default     = null
 }
 
 variable "large_scale_mode" {

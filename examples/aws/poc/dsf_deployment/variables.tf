@@ -137,6 +137,7 @@ variable "dam_license" {
   2. License file path (Make sure it allows AWS DAM models (AV2500/AV6500))
   EOF
   type        = string
+  default     = null
 }
 
 variable "large_scale_mode" {
