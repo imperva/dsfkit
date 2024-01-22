@@ -1,12 +1,7 @@
 locals {
   security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
 
-#  public_ip  = var.attach_persistent_public_ip ? azurerm_public_ip.vm_public_ip[0].ip_address : azurerm_linux_virtual_machine.vm.public_ip_address
-  # hadar - when the following enabled, got an error of "waiting for completion of Security Group Association for Network Interface" on the hub
-  #  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
-
-# hadar - work: public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
-    public_ip = azurerm_public_ip.vm_public_ip[0].ip_address
+  public_ip  = azurerm_linux_virtual_machine.vm.public_ip_address
   private_ip = azurerm_linux_virtual_machine.vm.private_ip_address
 
   install_script = templatefile("${path.module}/setup.tftpl", {
@@ -36,7 +31,6 @@ resource "azurerm_network_interface_security_group_association" "nic_sg_associat
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
-  # todo - add a condition of allocation_method = static / dynamic based on the attach_persistent_public_ip. check whether the vm public ip behave like dynamic if this resource is not configured?
   count               = var.attach_persistent_public_ip ? 1 : 0
   name                = join("-", [var.name, "public", "ip"])
   resource_group_name = var.resource_group.name
@@ -108,7 +102,7 @@ data "azurerm_subscription" "subscription" {}
 resource "azurerm_role_assignment" "vm_identity_role_assignment" {
   scope                = data.azurerm_subscription.subscription.id
   principal_id         = azurerm_user_assigned_identity.user_assigned_identity.principal_id
-  role_definition_name = "Reader"
+  role_definition_name = "Storage Blob Data Reader"
 }
 
 module "statistics" {

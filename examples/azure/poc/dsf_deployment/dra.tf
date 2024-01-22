@@ -65,7 +65,6 @@ module "dra_analytics" {
   allowed_admin_cidrs = module.network[0].vnet_address_space
   # todo - remove the workstation cidr from the allowed ssh cidrs
   allowed_ssh_cidrs = concat(local.workstation_cidr, local.hub_cidr_list)
-  #  allowed_hub_cidrs = module.network[0].vnet_address_space
 
   admin_server_private_ip = module.dra_admin[0].private_ip
   admin_server_public_ip = module.dra_admin[0].public_ip

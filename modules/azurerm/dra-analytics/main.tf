@@ -92,7 +92,7 @@ data "azurerm_subscription" "subscription" {}
 resource "azurerm_role_assignment" "vm_identity_role_assignment" {
   scope                = data.azurerm_subscription.subscription.id
   principal_id         = azurerm_user_assigned_identity.user_assigned_identity.principal_id
-  role_definition_name = "Reader"
+  role_definition_name = "Storage Blob Data Reader"
 }
 
 module "statistics" {
