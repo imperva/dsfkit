@@ -250,9 +250,3 @@ variable "simulation_db_types_for_agentless" {
     error_message = "Value must be a subset of: ['MsSQL']"
   }
 }
-
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
-}

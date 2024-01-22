@@ -12,7 +12,7 @@ locals {
   cloud_account_data = {
     data = {
       applianceId   = 1,
-      applianceType = LOCAL.APPLIANCETYPE,
+      applianceType = local.applianceType,
       serverType    = var.cloud_account_data.type,
       gatewayId     = var.assignee_gw
       id            = var.cloud_account_data.id,
@@ -29,7 +29,7 @@ locals {
   database_data = {
     data : {
       applianceId : 1,
-      applianceType : LOCAL.APPLIANCETYPE,
+      applianceType : local.applianceType,
       gatewayId : var.assignee_gw,
       parentAssetId : local.cloud_account_data.data.id,
       serverType : var.database_data.server_type,

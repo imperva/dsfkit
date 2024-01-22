@@ -18,12 +18,8 @@ output "db_address" {
   value = local.db_address
 }
 
-# output "db_endpoint" {
-#   value = aws_db_instance.rds_db.endpoint
-# }
-
 output "db_id" {
-  value = azurerm_mssql_database.example.id
+  value = azurerm_mssql_database.db.id
 }
 
 output "db_engine" {

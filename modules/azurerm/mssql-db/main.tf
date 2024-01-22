@@ -3,17 +3,13 @@ resource "random_password" "db_password" {
   special = true
 }
 
-resource "random_pet" "db_id" {
-}
+resource "random_pet" "db_id" {}
 
 locals {
-  db_username   = "administrator"
-  db_password   = random_password.db_password.result
-  db_identifier = "edsf-db-demo-${random_pet.db_id.id}"
+  db_username           = var.username
+  db_password           = length(var.password) > 0 ? var.password : random_password.db_password.result
+  db_identifier         = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
   db_address    = "${local.db_identifier}.database.windows.net"
-}
-
-locals {
   server_name      = local.db_identifier
   database_name    = local.db_identifier
   eventhub_ns_name = local.db_identifier
@@ -33,10 +29,12 @@ resource "azurerm_mssql_server" "server" {
 }
 
 resource "azurerm_mssql_firewall_rule" "allow_inbound" {
-  name                = join("-", [local.server_name, "allow-all"])
+  count = length(var.security_group_ingress_cidrs)
+
+  name                = join("-", [local.server_name, count.index])
   server_id         = azurerm_mssql_server.server.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "255.255.255.255"
+  start_ip_address    = cidrhost(var.security_group_ingress_cidrs[count.index], 0)
+  end_ip_address      = cidrhost(var.security_group_ingress_cidrs[count.index], -1)
 }
 
 resource "azurerm_mssql_database" "db" {
@@ -46,15 +44,15 @@ resource "azurerm_mssql_database" "db" {
   tags        = var.tags
 }
 
-resource "azurerm_mssql_server_extended_auditing_policy" "example" {
+resource "azurerm_mssql_server_extended_auditing_policy" "policy" {
   server_id                               = azurerm_mssql_server.server.id
-  storage_endpoint                        = azurerm_storage_account.example.primary_blob_endpoint
-  storage_account_access_key              = azurerm_storage_account.example.primary_access_key
+  storage_endpoint                        = azurerm_storage_account.sa.primary_blob_endpoint
+  storage_account_access_key              = azurerm_storage_account.sa.primary_access_key
   storage_account_access_key_is_secondary = false
   retention_in_days                       = 30
 }
 
-resource "azurerm_eventhub_namespace" "example" {
+resource "azurerm_eventhub_namespace" "ns" {
   name                = local.eventhub_ns_name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
@@ -62,41 +60,38 @@ resource "azurerm_eventhub_namespace" "example" {
   tags                = var.tags
 }
 
-resource "azurerm_eventhub" "example" {
+resource "azurerm_eventhub" "eventhub" {
   name                = local.eventhub_name
-  namespace_name      = azurerm_eventhub_namespace.example.name
+  namespace_name      = azurerm_eventhub_namespace.ns.name
   resource_group_name = var.resource_group.name
 
   partition_count   = 2
   message_retention = 1
 }
 
-data "azurerm_eventhub_namespace_authorization_rule" "example" {
+data "azurerm_eventhub_namespace_authorization_rule" "auth_rule" {
   name                = "RootManageSharedAccessKey"
-  namespace_name      = azurerm_eventhub_namespace.example.name
+  namespace_name      = azurerm_eventhub_namespace.ns.name
   resource_group_name = var.resource_group.name
 }
 
-resource "azurerm_monitor_diagnostic_setting" "example" {
-  name                           = "example-diagnotic-setting"
-  target_resource_id             = "${azurerm_mssql_server.server.id}/databases/master"
-  eventhub_authorization_rule_id = data.azurerm_eventhub_namespace_authorization_rule.example.id
-  eventhub_name                  = azurerm_eventhub.example.name
-  # log_analytics_workspace_id     = azurerm_log_analytics_workspace.example.id
+resource "azurerm_monitor_diagnostic_setting" "settings" {
+  name                           = "diagnotic-setting"
+  target_resource_id             = "${azurerm_mssql_database.db.server_id}/databases/master" # creates an expilicit dependency on the database
+  eventhub_authorization_rule_id = data.azurerm_eventhub_namespace_authorization_rule.auth_rule.id
+  eventhub_name                  = azurerm_eventhub.eventhub.name
 
   enabled_log {
     category = "SQLSecurityAuditEvents"
-    # azurerm_storage_management_policy = azurerm_storage_management_policy.example.id
   }
 
   metric {
     category = "AllMetrics"
   }
-  depends_on = [ azurerm_mssql_database.db ]
 }
 
-resource "azurerm_storage_account" "example" {
-  name                = join("-", [local.db_identifier, "storage"])
+resource "azurerm_storage_account" "sa" {
+  name                         = "sonar${replace(random_pet.db_id.id, "-", "")}"
   resource_group_name          = var.resource_group.name
   location                     = var.resource_group.location
 
@@ -106,14 +101,9 @@ resource "azurerm_storage_account" "example" {
 
   allow_nested_items_to_be_public = false
 
-#   network_rules {
-#     default_action             = "Deny"
-#     ip_rules                   = ["127.0.0.1"]
-#     virtual_network_subnet_ids = [azurerm_subnet.example.id]
-#     bypass                     = ["AzureServices"]
-#   }
-
   identity {
     type = "SystemAssigned"
   }
+
+  tags = var.tags
 }

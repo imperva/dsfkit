@@ -59,7 +59,13 @@ jobs:
             hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
             begin_tag: 1.0.0
 
-          ## null provider
+          - source_module: "azurerm/poc-db-onboarder"
+            destination_repo: "terraform-azurerm-dsf-poc-db-onboarder"
+            public_submodule: "azurerm/mssql-db"
+            hidden_submodules: "null/poc-db-onboarder"
+            begin_tag: 1.0.0
+
+            ## null provider
           - source_module: "null/hadr"
             destination_repo: "terraform-null-dsf-hadr"
             begin_tag: 1.0.0

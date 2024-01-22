@@ -52,4 +52,5 @@ module "onboard_db_to_dsf" {
   hub_info = var.hub_info
   hub_proxy_info = var.hub_proxy_info
   terraform_script_path_folder = var.terraform_script_path_folder
+  depends_on = [ azurerm_role_assignment.dsf_base_owner_role_assignment ]
 }

@@ -6,17 +6,16 @@ module "mssql" {
   source = "../../../../modules/azurerm/mssql-db"
   count   = contains(local.db_types_for_agentless, "MsSQL") ? 1 : 0
   resource_group = local.resource_group
-  # security_group_ingress_cidrs = local.workstation_cidr
+  security_group_ingress_cidrs = local.workstation_cidr
 
   tags = local.tags
 }
 
-module "db_onboarding1" {
+module "db_onboarding" {
   source = "../../../../modules/azurerm/poc-db-onboarder"
   for_each = { for idx, val in concat(module.mssql) : idx => val }
 
   resource_group = local.resource_group
-  sonar_version    = var.sonar_version
   usc_access_token = nonsensitive(module.hub_main[0].access_tokens.usc.token)
   hub_info = {
     hub_ip_address           = module.hub_main[0].public_ip

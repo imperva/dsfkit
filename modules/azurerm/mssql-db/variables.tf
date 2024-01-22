@@ -9,7 +9,7 @@ variable "resource_group" {
 variable "username" {
   type        = string
   description = "Master username must contain 1–16 alphanumeric characters, the first character must be a letter, and name cannot be a word reserved by the database engine."
-  default     = "admin"
+  default     = "edsf-admin"
   validation {
     condition     = length(var.username) > 1
     error_message = "Master username name must be at least 1 characters"
@@ -33,6 +33,17 @@ variable "identifier" {
   validation {
     condition     = length(var.identifier) == 0 || length(var.identifier) > 3
     error_message = "identifier name must be at least 3 characters"
+  }
+}
+
+variable "security_group_ingress_cidrs" {
+  type        = list(string)
+  description = "List of allowed ingress cidr ranges for access to the database"
+  validation {
+    condition = alltrue([
+      for address in var.security_group_ingress_cidrs : can(cidrnetmask(address))
+    ]) && (length(var.security_group_ingress_cidrs) > 0)
+    error_message = "Each item of the 'security_group_ingress_cidrs' must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
   }
 }
 

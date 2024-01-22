@@ -100,8 +100,7 @@ resource "azurerm_user_assigned_identity" "dsf_base" {
   location            = var.resource_group.location
 }
 
-data "azurerm_subscription" "current" {
-}
+data "azurerm_subscription" "current" {}
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
   scope                = "${data.azurerm_subscription.current.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"

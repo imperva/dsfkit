@@ -289,12 +289,6 @@ variable "simulation_db_types_for_agentless" {
   }
 }
 
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access"
-}
-
 ##############################
 ####    DRA variables     ####
 ##############################
