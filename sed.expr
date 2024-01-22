@@ -18,4 +18,7 @@ s;imperva/dsf-dra-admin/aws;../../../../modules/aws/dra-admin;
 s;imperva/dsf-dra-analytics/aws;../../../../modules/aws/dra-analytics;
 s;imperva/dsf-agent-gw-cluster-setup/null;../../../../modules/null/agent-gw-cluster-setup;
 s;imperva/dsf-sonar-upgrader/aws;../../../modules/aws/sonar-upgrader;
+s;imperva/dsf-mx/azurerm;../../../../modules/azurerm/mx;
+s;imperva/dsf-agent-gw/azurerm;../../../../modules/azurerm/agent-gw;
+s;imperva/dsf-db-with-agent/azurerm;../../../../modules/azurerm/db-with-agent;
 /latest release tag/c\
