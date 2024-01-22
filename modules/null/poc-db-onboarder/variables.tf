@@ -34,35 +34,30 @@ variable "assignee_gw" {
   }
 }
 
-variable "assignee_role" {
-  type        = string
-  description = "IAM role of the asset assignee"
-  nullable    = false
-}
-
 variable "usc_access_token" {
   type        = string
   description = "DSF Hub access token with USC scope"
 }
 
-variable "database_details" {
+variable "cloud_account_data" {
   type = object({
-    db_username   = string
-    db_password   = string
-    db_arn        = string
-    db_port       = number
-    db_engine     = string
-    db_identifier = string
-    db_address    = string
-    db_name       = string
+    id               = string
+    name             = string
+    type             = string
+    connections_data = list(any)
   })
-  description = "database details"
-  nullable    = false
+  description = "Cloud account data"
+}
 
-  validation {
-    condition     = contains(["mysql", "postgres", "sqlserver-ex"], var.database_details.db_engine)
-    error_message = "Allowed values for db engine: 'mysql', 'postgres', 'sqlserver-ex'"
-  }
+variable "database_data" {
+  type = object({
+    server_type = string
+    id          = string
+    name        = string
+    location    = string
+    hostname    = string
+    port        = number
+  })
 }
 
 variable "terraform_script_path_folder" {
@@ -79,10 +74,4 @@ variable "enable_audit" {
   type        = bool
   description = "Enable audit for asset"
   default     = true
-}
-
-variable "tags" {
-  description = "A map of tags to add to all resources"
-  type        = map(string)
-  default     = {}
 }

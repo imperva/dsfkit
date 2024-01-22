@@ -280,7 +280,7 @@ variable "additional_install_parameters" {
 variable "simulation_db_types_for_agentless" {
   type        = list(string)
   default     = ["RDS MsSQL"]
-  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'RDS MySQL' and 'RDS MsSQL'. 'RDS MsSQL' includes simulation data."
+  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'RDS MySQL', 'RDS PostgreSQL' and 'RDS MsSQL'. 'RDS MsSQL' includes simulation data."
   validation {
     condition = alltrue([
       for db_type in var.simulation_db_types_for_agentless : contains(["RDS MySQL", "RDS MsSQL", "RDS PostgreSQL"], db_type)
