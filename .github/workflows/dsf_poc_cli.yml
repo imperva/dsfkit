@@ -1,4 +1,4 @@
-name: 'DSF POC CLI'
+name: 'DSF POC CLI - AWS'
 
 on:
   workflow_call:
@@ -24,6 +24,31 @@ on:
       use_modules_from_terraform_registry:
         type: boolean
         required: false
+
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/**'
+      - '!modules/aws/sonar-upgrader/*'
+      - '!modules/aws/statistics/*'
+      - 'modules/null/**'
+      - '!modules/null/statistics/*'
+      - 'examples/aws/poc/dsf_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/**'
+      - '!modules/aws/sonar-upgrader/*'
+      - '!modules/aws/statistics/*'
+      - 'modules/null/**'
+      - '!modules/null/statistics/*'
+      - 'examples/aws/poc/dsf_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"

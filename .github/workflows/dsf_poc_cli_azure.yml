@@ -27,6 +27,25 @@ on:
         type: boolean
         required: false
 
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/azurerm/**'
+      - 'modules/null/**'
+      - 'examples/azure/poc/dsf_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/azurerm/**'
+      - 'modules/null/**'
+      - 'examples/azure/poc/dsf_deployment/*'
+
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0

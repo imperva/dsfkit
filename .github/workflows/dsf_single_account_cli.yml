@@ -1,4 +1,4 @@
-name: 'DSF Single Account CLI'
+name: 'DSF Single Account CLI - AWS'
 
 concurrency:
   group: dsf_single_account
@@ -30,6 +30,37 @@ on:
         required: true
       DAM_LICENSE:
         required: true
+
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/**'
+      - '!modules/aws/db-with-agent/*'
+      - '!modules/aws/poc-db-onboarder/*'
+      - '!modules/aws/rds-mssql-db/*'
+      - '!modules/aws/rds-mysql-db/*'
+      - '!modules/aws/rds-postgres-db/*'
+      - '!modules/aws/sonar-upgrader/*'
+      - 'modules/null/**'
+      - 'examples/aws/poc/dsf_single_account_deployment/*'
+
+  pull_request:
+    types:
+      - 'opened'
+      - 'reopened'
+    branches:
+      - 'dev'
+    paths:
+      - 'modules/aws/**'
+      - '!modules/aws/db-with-agent/*'
+      - '!modules/aws/poc-db-onboarder/*'
+      - '!modules/aws/rds-mssql-db/*'
+      - '!modules/aws/rds-mysql-db/*'
+      - '!modules/aws/rds-postgres-db/*'
+      - '!modules/aws/sonar-upgrader/*'
+      - 'modules/null/**'
+      - 'examples/aws/poc/dsf_single_account_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"
