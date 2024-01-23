@@ -23,4 +23,6 @@ s;imperva/dsf-sonar-upgrader/aws;../../../modules/aws/sonar-upgrader;
 s;imperva/dsf-mx/azurerm;../../../../modules/azurerm/mx;
 s;imperva/dsf-agent-gw/azurerm;../../../../modules/azurerm/agent-gw;
 s;imperva/dsf-db-with-agent/azurerm;../../../../modules/azurerm/db-with-agent;
+s;imperva/dsf-dra-admin/azurerm;../../../../modules/azurerm/dra-admin;
+s;imperva/dsf-dra-analytics/azurerm;../../../../modules/azurerm/dra-analytics;
 /latest release tag/c\

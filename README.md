@@ -417,6 +417,17 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>3. Improvements and bug fixes.
     </td>
   </tr>
+<tr>
+    <td>23 Jan 2024
+    </td>
+    <td>1.7.6
+    </td>
+    <td>
+      1. Added support for DRA in Azure.
+      <br/>2. Added a new agentless source for Azure - MsSQL.
+      <br/>3. Improvements and bug fixes.
+    </td>
+  </tr>
 </table>
 
 # Getting Ready to Deploy
