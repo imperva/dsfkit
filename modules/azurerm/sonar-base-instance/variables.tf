@@ -105,9 +105,9 @@ variable "vm_user" {
   description = "VM user to use for SSH. Keep empty to use the default user."
 }
 
-variable "instance_type" {
+variable "instance_size" {
   type        = string
-  description = "vm type for the DSF base instance"
+  description = "VM size for the DSF base instance"
 }
 
 variable "password" {

@@ -29,7 +29,7 @@ locals {
         "Resource" : [
           aws_secretsmanager_secret.analytics_archiver_password.arn,
           aws_secretsmanager_secret.admin_registration_password.arn,
-          aws_secretsmanager_secret.admin_password.arn
+          aws_secretsmanager_secret.analytics_ssh_password.arn
         ]
       }
     ]
@@ -39,14 +39,14 @@ locals {
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
   count       = var.instance_profile_name == null ? 1 : 0
-  name_prefix = "${var.friendly_name}-dra-analytics-instance-iam-profile"
+  name_prefix = "${var.name}-dra-analytics-instance-iam-profile"
   role        = local.role_name
   tags        = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.instance_profile_name == null ? 1 : 0
-  name                = "${var.friendly_name}-role"
+  name                = "${var.name}-role"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {

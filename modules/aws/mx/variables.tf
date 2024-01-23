@@ -245,7 +245,7 @@ variable "create_server_group" {
 }
 
 variable "dra_details" {
-  description = "Details of the DRA for sending audit logs"
+  description = "Details of the DRA for sending audit logs in the legacy format. More info in https://docs.imperva.com/bundle/v4.14-data-risk-analytics-installation-guide/page/60553.htm"
   type = object({
     address         = string
     port            = number

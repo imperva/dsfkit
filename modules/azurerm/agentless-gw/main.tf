@@ -38,7 +38,7 @@ module "gw_instance" {
   security_groups_config            = local.security_groups_config
   security_group_ids                = var.security_group_ids
   public_ssh_key                    = var.ssh_key.ssh_public_key
-  instance_type                     = var.instance_type
+  instance_size                     = var.instance_size
   storage_details                   = var.storage_details
   vm_image                          = var.vm_image
   vm_image_id                       = var.vm_image_id

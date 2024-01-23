@@ -68,7 +68,7 @@ See available released versions in the main repo README [here](https://github.co
 Specify the module's version by adding the version parameter. For example:
 
 ```
-module "dsf_dra_admin" {
+module "dsf_dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
   version = "x.y.z"
 }

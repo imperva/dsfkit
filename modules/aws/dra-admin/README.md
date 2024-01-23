@@ -18,7 +18,7 @@ This Terraform module provisions several resources on AWS. These resources inclu
 * AWS Secrets that hold the passwords.
 * An AWS Elastic Network Interface (ENI).
 
-The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The KMS is used for encrypting sensitive data.
+The EC2 instance and EBS volume provide the computing and storage resources needed to run the DSF Admin Server software. The security group controls the inbound and outbound traffic to the instance, while the IAM role grants the necessary permissions to access AWS resources. The KMS is used for encrypting sensitive data.
 
 ## Inputs
 
@@ -54,7 +54,7 @@ module "dra_admin" {
 }
 ```
 
-To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/) directory.
+To see a complete example of how to use this module in a DSF deployment with other modules, check out the [examples](../../../examples/aws/) directory.
 
 We recommend using a specific version of the module (and not the latest).
 See available released versions in the main repo README [here](https://github.com/imperva/dsfkit#version-history).

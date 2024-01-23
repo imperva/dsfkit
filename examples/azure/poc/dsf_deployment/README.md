@@ -1,7 +1,7 @@
 # DSF Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This example provides DSF (Data Security Fabric) deployment with DSF Hub, Agentless Gateways, DAM (Database Activity Monitoring) and Agent audit sources.
+This example provides a full DSF (Data Security Fabric) deployment with DSF Hub, Agentless Gateways, DAM (Database Activity Monitoring), DRA (Data Risk Analytics) and Agent and Agentless audit sources.
 
 ## Modularity
 The deployment is modular and allows users to deploy one or more of the following modules:
@@ -15,8 +15,12 @@ The deployment is modular and allows users to deploy one or more of the followin
 3. DAM
    - MX
    - Agent Gateways
-4. Audit sources
-   - Agent audit sources (virtual machine instances)
+4. DRA
+   - Admin server
+   - Analytics servers
+5. Audit sources
+   - Agent audit sources (Virtual Machine instances)
+   - Agentless audit source (SQL Server instance)
 
 ### Deploying Specific Modules
 
@@ -28,19 +32,32 @@ To deploy only the DAM module, set the following variables in your Terraform con
 ```
 enable_dam = true
 enable_sonar = false
+enable_dra = false
 ```
 
-This configuration will enable the DAM module while disabling the Sonar module.
+This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
 
-#### 2. Sonar Only Deployment
+#### 2. DRA Only Deployment
+
+To deploy only the DRA module, set the following variables in your Terraform configuration:
+```
+enable_dam = false
+enable_sonar = false
+enable_dra = true
+```
+
+This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
+
+#### 3. Sonar Only Deployment
 
 To deploy only the Sonar module, set the following variables in your Terraform configuration:
 ```
 enable_dam = false
 enable_sonar = true
+enable_dra = false
 ```
 
-This configuration will enable the Sonar module, including the DSF Hub, while disabling the DAM module.
+This configuration will enable the Sonar module, including the DSF Hub, while disabling the DAM and DRA modules.
 
 Feel free to customize your deployment by setting the appropriate variables based on your requirements.
 
@@ -50,8 +67,10 @@ Several variables in the `variables.tf` file are important for configuring the d
 ### Sub-Products
 - `enable_sonar`: Enable Sonar sub-product
 - `enable_dam`: Enable DAM sub-product
+- `enable_dra`: Enable DRA sub-product
 
 ### Server Count
+- `dra_analytics_count`: Number of DRA Analytics servers
 - `agentless_gw_count`: Number of Agentless Gateways
 - `agent_gw_count`: Number of Agent Gateways
 
@@ -65,9 +84,11 @@ Several variables in the `variables.tf` file are important for configuring the d
 ## Mandatory Variables
 Before initiating the Terraform deployment, it is essential to set up the following variables:
 - `resource_group_location`: The region of the resource group to which all DSF components will be associated.
-- `tarball_location`: Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container. 
-- `dam_agent_installation_location`: Storage account and container location of the DAM Agent installation software. az_blob is the full path to the installation file within the storage account container.
-- `dam_license`: DAM license file path.
+- `tarball_location`: Only when deploying Sonar, storage account and container location of the DSF Sonar installation software. 'az_blob' is the full path to the tarball file within the storage account container. 
+- `dam_agent_installation_location`: Only when deploying DAM, storage account and container location of the DAM Agent installation software. 'az_blob' is the full path to the installation file within the storage account container.
+- `dam_license`: Only when deploying DAM, DAM license file path.
+- `dra_admin_image_details` or `dra_admin_vhd_details`: Only when deploying DRA, the image or VHD details of the DRA Admin server.
+- `dra_analytics_image_details` or `dra_analytics_vhd_details`: Only when deploying DRA, the image or VHD details of the DRA Analytics server.
 
 ## Default Example
 To perform the default deployment, run the following command:

@@ -296,8 +296,8 @@ variable "dra_details" {
   type = object({
     name              = string
     address           = string
-    username          = string
     password          = string
+    archiver_username = string
     archiver_password = string
   })
   validation {
@@ -305,8 +305,8 @@ variable "dra_details" {
     error_message = "Each DRA Admin must specify name and address"
   }
   validation {
-    condition     = (var.dra_details == null || (can(var.dra_details.username) && can(var.dra_details.password)))
-    error_message = "Each DRA Admin must specify username and password"
+    condition     = (var.dra_details == null || (can(var.dra_details.archiver_username) && can(var.dra_details.archiver_password) && can(var.dra_details.password)))
+    error_message = "Each DRA Admin must specify archiver_username, archiver_password and password"
   }
   default = null
 }

@@ -68,6 +68,22 @@ jobs:
             workspace: azure_cli-all-
             enable_sonar: true
             enable_dam: true
+            enable_dra: true
+          - name: DSF POC - SONAR
+            workspace: azure_cli-sonar-
+            enable_sonar: true
+            enable_dam: false
+            enable_dra: false
+          - name: DSF POC - DAM
+            workspace: azure_cli-dam-
+            enable_sonar: false
+            enable_dam: true
+            enable_dra: false
+          - name: DSF POC - DRA
+            workspace: azure_cli-dra-
+            enable_sonar: false
+            enable_dam: false
+            enable_dra: true
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
@@ -75,6 +91,7 @@ jobs:
       EXAMPLE_DIR: ./examples/azure/poc/dsf_deployment
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
+      TF_VAR_enable_dra: ${{ matrix.enable_dra }}
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -146,6 +163,16 @@ jobs:
           az_blob = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
         }
         simulation_db_types_for_agent=["PostgreSql", "MySql"]
+        dra_admin_vhd_details = {
+          storage_account_name = "dsfinstallation"
+          container_name       = "dra"
+          path_to_vhd          = "DRA-4.13.0.20.0.3_30207_x86_64-Admin.vhd"
+        }
+        dra_analytics_vhd_details = {
+          storage_account_name = "dsfinstallation"
+          container_name       = "dra"
+          path_to_vhd          = "DRA-4.13.0.20.0.3_30207_x86_64-Analytics.vhd"
+        }
         EOF
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
@@ -178,6 +205,7 @@ jobs:
           mv $EXAMPLE_DIR/outputs.tf{,_}
           mv $EXAMPLE_DIR/sonar.tf{,_}
           mv $EXAMPLE_DIR/dam.tf{,_}
+          mv $EXAMPLE_DIR/dra.tf{,_}
           mv $EXAMPLE_DIR/agent_sources.tf{,_}
           mv $EXAMPLE_DIR/networking.tf{,_}
           ls -la $EXAMPLE_DIR
@@ -186,6 +214,7 @@ jobs:
           mv $EXAMPLE_DIR/outputs.tf{_,}
           mv $EXAMPLE_DIR/sonar.tf{_,}
           mv $EXAMPLE_DIR/dam.tf{_,}
+          mv $EXAMPLE_DIR/dra.tf{,_}
           mv $EXAMPLE_DIR/agent_sources.tf{_,}
           mv $EXAMPLE_DIR/networking.tf{_,}
         fi

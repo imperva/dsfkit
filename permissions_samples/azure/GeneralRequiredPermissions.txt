@@ -52,7 +52,10 @@
                     "Microsoft.Authorization/roleAssignments/delete",
                     "Microsoft.Compute/virtualMachines/extensions/read",
                     "Microsoft.Compute/virtualMachines/extensions/write",
-                    "Microsoft.Compute/virtualMachines/extensions/delete"
+                    "Microsoft.Compute/virtualMachines/extensions/delete",
+                    "Microsoft.Compute/images/read",
+                    "Microsoft.Compute/images/write",
+                    "Microsoft.Compute/images/delete"
                 ],
                 "notActions": [],
                 "dataActions": [],
