@@ -30,7 +30,7 @@ output "sonar" {
       ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}", null)
       tokens       = nonsensitive(module.hub_main[0].access_tokens)
     }
-    /*hub_dr = var.hub_hadr ? {
+    hub_dr = var.hub_hadr ? {
       public_ip    = try(module.hub_dr[0].public_ip, null)
       private_ip   = try(module.hub_dr[0].private_ip, null)
       jsonar_uid   = try(module.hub_dr[0].jsonar_uid, null)
@@ -57,31 +57,7 @@ output "sonar" {
         principal_id = try(val.principal_id, null)
         ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
-    ] : []*/
-  } : null
-}
-
-output "dra" {
-  value = var.enable_dra ? {
-    admin_server = {
-      public_ip    = try(module.dra_admin[0].public_ip, null)
-#      public_dns   = try(module.dra_admin[0].public_dns, null)
-      private_ip   = try(module.dra_admin[0].private_ip, null)
-#      private_dns  = try(module.dra_admin[0].private_dns, null)
-      display_name = try(module.dra_admin[0].display_name, null)
-#      role_arn     = try(module.dra_admin[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}", null)
-      ssh_password = try(nonsensitive(local.password), null)
-#      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
-    }
-#    analytics = [
-#      for idx, val in module.dra_analytics : {
-#        private_ip    = val.private_ip
-#        private_dns   = val.private_dns
-#        archiver_user = val.archiver_user
-#        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
-#      }
-#    ]
+    ] : []
   } : null
 }
 

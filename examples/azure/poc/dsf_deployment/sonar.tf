@@ -3,7 +3,7 @@ locals {
 
   hub_public_ip = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
-#  WA since the following doesn't work: hub_cidr_list = concat(module.network[0].vnet_address_space, compact([local.hub_public_ip, local.hub_dr_public_ip]))
+  #  WA since the following doesn't work: hub_cidr_list = concat(module.network[0].vnet_address_space, compact([local.hub_public_ip, local.hub_dr_public_ip]))
   hub_cidr_list = var.enable_sonar ? (var.hub_hadr ? concat(module.network[0].vnet_address_space, [local.hub_public_ip, local.hub_dr_public_ip]) : concat(module.network[0].vnet_address_space, [local.hub_public_ip])) : module.network[0].vnet_address_space
 }
 
@@ -53,7 +53,7 @@ module "hub_main" {
   ]
 }
 
-/*module "hub_dr" {
+module "hub_dr" {
   source  = "imperva/dsf-hub/azurerm"
   version = "1.7.5" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
@@ -246,4 +246,3 @@ module "federation" {
     module.agentless_gw_hadr
   ]
 }
-*/
