@@ -192,7 +192,6 @@ module "db_onboarding" {
   version  = "1.7.5" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
-  sonar_version    = module.globals.tarball_location.version
   usc_access_token = module.hub.access_tokens.usc.token
   hub_info = {
     hub_ip_address           = module.hub.public_ip
