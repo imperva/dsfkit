@@ -10,9 +10,9 @@ locals {
     admin_ssh_password_secret_name          = azurerm_key_vault_secret.ssh_password.name
   })
 
-#  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
-#    admin_server_public_ip = try(local.public_ip, local.private_ip)
-#  })
+  #  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
+  #    admin_server_public_ip = try(local.public_ip, local.private_ip)
+  #  })
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -45,11 +45,11 @@ resource "azurerm_public_ip" "vm_public_ip" {
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                  = var.name
-  resource_group_name   = var.resource_group.name
-  location              = var.resource_group.location
-  size                  = var.instance_size
-  admin_username        = local.vm_user
+  name                = var.name
+  resource_group_name = var.resource_group.name
+  location            = var.resource_group.location
+  size                = var.instance_size
+  admin_username      = local.vm_user
 
   network_interface_ids = [
     azurerm_network_interface.nic.id

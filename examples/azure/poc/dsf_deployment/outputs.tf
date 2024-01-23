@@ -13,8 +13,8 @@ output "dsf_private_ssh_key_file_path" {
 
 output "generated_network" {
   value = try({
-    vnet    = module.network[0].vnet_id
-    subnets = module.network[0].vnet_subnets
+    vnet          = module.network[0].vnet_id
+    subnets       = module.network[0].vnet_subnets
     address_space = module.network[0].vnet_address_space
   }, null)
 }

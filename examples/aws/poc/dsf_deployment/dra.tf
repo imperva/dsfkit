@@ -6,7 +6,7 @@ locals {
 
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/aws"
-  version = "1.7.5" # latest release tag
+  version = "1.7.6" # latest release tag
   count   = var.enable_dra ? 1 : 0
 
   name                        = join("-", [local.deployment_name_salted, "dra", "admin"])
@@ -22,7 +22,7 @@ module "dra_admin" {
   allowed_ssh_cidrs           = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   attach_persistent_public_ip = true
 
-  tags                        = local.tags
+  tags = local.tags
   depends_on = [
     module.vpc
   ]
@@ -30,7 +30,7 @@ module "dra_admin" {
 
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
-  version = "1.7.5" # latest release tag
+  version = "1.7.6" # latest release tag
 
   count                       = local.dra_analytics_count
   name                        = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])

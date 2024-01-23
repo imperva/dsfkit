@@ -4,10 +4,10 @@ locals {
 
 module "mssql" {
   source  = "imperva/dsf-poc-db-onboarder/azurerm//modules/mssql-db"
-  version = "1.7.5" # latest release tag
+  version = "1.7.6" # latest release tag
   count   = contains(local.db_types_for_agentless, "MsSQL") ? 1 : 0
 
-  resource_group = local.resource_group
+  resource_group               = local.resource_group
   security_group_ingress_cidrs = local.workstation_cidr
 
   tags = local.tags
@@ -15,10 +15,10 @@ module "mssql" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/azurerm"
-  version  = "1.7.5" # latest release tag
+  version  = "1.7.6" # latest release tag
   for_each = { for idx, val in concat(module.mssql) : idx => val }
 
-  resource_group = local.resource_group
+  resource_group   = local.resource_group
   usc_access_token = module.hub_main[0].access_tokens.usc.token
   hub_info = {
     hub_ip_address           = module.hub_main[0].public_ip
