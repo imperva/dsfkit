@@ -52,14 +52,11 @@ variable "usc_access_token" {
 
 variable "database_details" {
   type = object({
-    db_username   = string
-    db_password   = string
-    db_id         = string
+    db_server_id  = string
     db_port       = number
     db_engine     = string
     db_identifier = string
     db_address    = string
-    db_name       = string
   })
   description = "database details"
 

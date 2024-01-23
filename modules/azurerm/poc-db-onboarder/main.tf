@@ -26,7 +26,7 @@ module "onboard_db_to_dsf" {
   enable_audit = var.enable_audit
   
   database_data = {
-    id = var.database_details.db_id
+    id = var.database_details.db_server_id
     name = var.database_details.db_identifier
     location = var.resource_group.location
     hostname = var.database_details.db_address

@@ -22,6 +22,10 @@ output "db_id" {
   value = azurerm_mssql_database.db.id
 }
 
+output "db_server_id" {
+  value = azurerm_mssql_server.server.id
+}
+
 output "db_engine" {
   value = "mssql"
 }
