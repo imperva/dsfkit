@@ -13,9 +13,9 @@ locals {
     admin_ssh_password_secret_arn          = aws_secretsmanager_secret.admin_ssh_password.arn
   })
 
-#  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
-#    admin_server_public_ip = try(local.public_ip, local.private_ip)
-#  })
+  #  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
+  #    admin_server_public_ip = try(local.public_ip, local.private_ip)
+  #  })
 }
 
 resource "aws_eip" "dsf_instance_eip" {

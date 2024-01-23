@@ -13,7 +13,7 @@ locals {
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/azurerm"
   version = "1.7.6" # latest release tag
-  count  = var.enable_dra ? 1 : 0
+  count   = var.enable_dra ? 1 : 0
 
   name                        = join("-", [local.deployment_name_salted, "dra", "admin"])
   subnet_id                   = module.network[0].vnet_subnets[0]
@@ -51,7 +51,7 @@ module "dra_admin" {
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/azurerm"
   version = "1.7.6" # latest release tag
-  count  = local.dra_analytics_count
+  count   = local.dra_analytics_count
 
   name                        = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
   subnet_id                   = module.network[0].vnet_subnets[1]
