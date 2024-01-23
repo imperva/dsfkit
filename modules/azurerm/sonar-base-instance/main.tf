@@ -44,7 +44,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   name                = var.name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
-  size                = var.instance_type
+  size                = var.instance_size
   admin_username      = local.vm_user
 
   custom_data = base64encode(local.install_script)

@@ -137,6 +137,7 @@ variable "dam_license" {
   2. License file path (Make sure it allows AWS DAM models (AV2500/AV6500))
   EOF
   type        = string
+  default     = null
 }
 
 variable "large_scale_mode" {
@@ -250,12 +251,12 @@ variable "hub_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 250
     provisioned_iops = 0
     throughput       = 125
   }
+  description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }
 
 variable "agentless_gw_ebs_details" {
@@ -264,12 +265,12 @@ variable "agentless_gw_ebs_details" {
     provisioned_iops = number
     throughput       = number
   })
-  description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
     throughput       = 125
   }
+  description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }
 
 variable "additional_install_parameters" {

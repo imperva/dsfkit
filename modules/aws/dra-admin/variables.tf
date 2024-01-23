@@ -1,10 +1,14 @@
-variable "friendly_name" {
+variable "name" {
   type        = string
   default     = "imperva-dsf-dra-admin"
-  description = "Friendly name, EC2 Instance Name"
+  description = "Name to identify all resources"
   validation {
-    condition     = length(var.friendly_name) > 3
-    error_message = "Deployment name must be at least 3 characters"
+    condition     = length(var.name) >= 3
+    error_message = "Name must be at least 3 characters"
+  }
+  validation {
+    condition     = can(regex("^\\p{L}.*", var.name))
+    error_message = "Must start with a letter"
   }
 }
 
@@ -66,32 +70,32 @@ variable "admin_registration_password" {
   }
 }
 
-variable "admin_password" {
+variable "admin_ssh_password" {
   type        = string
-  description = "Password to be used to admin os user"
+  description = "Password to be used to ssh to the Admin Server"
 
   validation {
-    condition     = length(var.admin_password) >= 7
+    condition     = length(var.admin_ssh_password) >= 7
     error_message = "Password must be at least 7 characters long"
   }
 
   validation {
-    condition     = can(regex("[A-Z]", var.admin_password))
+    condition     = can(regex("[A-Z]", var.admin_ssh_password))
     error_message = "Password must contain at least one uppercase letter"
   }
 
   validation {
-    condition     = can(regex("[a-z]", var.admin_password))
+    condition     = can(regex("[a-z]", var.admin_ssh_password))
     error_message = "Password must contain at least one lowercase letter"
   }
 
   validation {
-    condition     = can(regex("\\d", var.admin_password))
+    condition     = can(regex("\\d", var.admin_ssh_password))
     error_message = "Password must contain at least one digit"
   }
 
   validation {
-    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.admin_password))
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.admin_ssh_password))
     error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }

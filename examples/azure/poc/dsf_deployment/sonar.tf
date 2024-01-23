@@ -1,5 +1,10 @@
 locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
+
+  hub_public_ip = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
+  hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
+#  WA since the following doesn't work: hub_cidr_list = concat(module.network[0].vnet_address_space, compact([local.hub_public_ip, local.hub_dr_public_ip]))
+  hub_cidr_list = var.enable_sonar ? (var.hub_hadr ? concat(module.network[0].vnet_address_space, [local.hub_public_ip, local.hub_dr_public_ip]) : concat(module.network[0].vnet_address_space, [local.hub_public_ip])) : module.network[0].vnet_address_space
 }
 
 module "hub_main" {
@@ -13,7 +18,7 @@ module "hub_main" {
   binaries_location           = var.tarball_location
   password                    = local.password
   storage_details             = var.hub_storage_details
-  instance_type               = var.hub_instance_type
+  instance_size               = var.hub_instance_size
   base_directory              = var.sonar_machine_base_directory
   attach_persistent_public_ip = true
   use_public_ip               = true
@@ -25,14 +30,23 @@ module "hub_main" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = module.network[0].vnet_address_space
   allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   mx_details = var.enable_dam ? [for mx in module.mx : {
     name     = mx.display_name
     address  = coalesce(mx.public_ip, mx.private_ip)
     username = mx.web_console_user
     password = local.password
   }] : []
-  tags = local.tags
+  dra_details = var.enable_dra ? {
+    name              = module.dra_admin[0].display_name
+    address           = module.dra_admin[0].public_ip
+    password          = local.password
+    archiver_username = module.dra_analytics[0].archiver_user
+    archiver_password = module.dra_analytics[0].archiver_password
+  } : null
+  tags                              = local.tags
 
   depends_on = [
     module.network
@@ -50,7 +64,7 @@ module "hub_dr" {
   binaries_location            = var.tarball_location
   password                     = local.password
   storage_details              = var.hub_storage_details
-  instance_type                = var.hub_instance_type
+  instance_size                = var.hub_instance_size
   base_directory               = var.sonar_machine_base_directory
   attach_persistent_public_ip  = true
   use_public_ip                = true
@@ -65,7 +79,9 @@ module "hub_dr" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_hub_cidrs                 = module.network[0].vnet_address_space
   allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+  allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
+  allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
   tags                              = local.tags
   depends_on = [
     module.network
@@ -100,7 +116,7 @@ module "agentless_gw_main" {
   subnet_id             = module.network[0].vnet_subnets[0]
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = var.tarball_location
-  instance_type         = var.agentless_gw_instance_type
+  instance_size         = var.agentless_gw_instance_size
   base_directory        = var.sonar_machine_base_directory
   password              = local.password
   hub_sonarw_public_key = module.hub_main[0].sonarw_public_key
@@ -111,6 +127,7 @@ module "agentless_gw_main" {
   allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
   allowed_hub_cidrs          = module.network[0].vnet_address_space
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename
@@ -132,7 +149,7 @@ module "agentless_gw_dr" {
   subnet_id                    = module.network[0].vnet_subnets[1]
   storage_details              = var.agentless_gw_storage_details
   binaries_location            = var.tarball_location
-  instance_type                = var.agentless_gw_instance_type
+  instance_size                = var.agentless_gw_instance_size
   base_directory               = var.sonar_machine_base_directory
   password                     = local.password
   hub_sonarw_public_key        = module.hub_main[0].sonarw_public_key
@@ -146,6 +163,7 @@ module "agentless_gw_dr" {
   allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
   allowed_hub_cidrs          = module.network[0].vnet_address_space
   allowed_all_cidrs          = local.workstation_cidr
+  allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
     proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = local_sensitive_file.ssh_key.filename

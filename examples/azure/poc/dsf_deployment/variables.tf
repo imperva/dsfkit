@@ -34,6 +34,12 @@ variable "enable_dam" {
   description = "Provision DAM MX and Agent Gateways"
 }
 
+variable "enable_dra" {
+  type        = bool
+  default     = true
+  description = "Provision DRA Admin and Analytics"
+}
+
 variable "agentless_gw_count" {
   type        = number
   default     = 1
@@ -44,6 +50,12 @@ variable "agent_gw_count" {
   type        = number
   default     = 2 # Minimum count for a cluster
   description = "Number of Agent Gateways. Provisioning Agent Gateways requires the enable_dam variable to be set to 'true'."
+}
+
+variable "dra_analytics_count" {
+  type        = number
+  default     = 1
+  description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
 }
 
 variable "password" {
@@ -59,13 +71,19 @@ variable "password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub and MX web console IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DSF Hub, MX and DRA Admin web consoles IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
   type        = list(string)
   default     = null
-  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+}
+
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "IP ranges from which SSH access to the deployed DSF nodes will be allowed"
+  default     = []
 }
 
 variable "vnet_ip_range" {
@@ -74,25 +92,24 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
-#variable "subnet_ids" {
-#  type = object({
-#    hub_subnet_id             = string
-#    hub_dr_subnet_id          = string
-#    agentless_gw_subnet_id    = string
-#    agentless_gw_dr_subnet_id = string
-#  })
-#  default     = null
-#  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
-#  validation {
-#    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null, false)
-#    error_message = "Value must either be null or specified for all."
-#  }
-#  validation {
-#    condition     = var.subnet_ids == null || try(alltrue([for subnet_id in values({ for k, v in var.subnet_ids : k => v if k != "db_subnet_ids" }) : can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", subnet_id))]), false)
-#    error_message = "Subnet id is invalid."
-#  }
-#}
-
+variable "subnet_ids" {
+  type = object({
+    hub_subnet_id             = string
+    hub_dr_subnet_id          = string
+    agentless_gw_subnet_id    = string
+    agentless_gw_dr_subnet_id = string
+    mx_subnet_id              = string
+    agent_gw_subnet_id        = string
+    dra_admin_subnet_id       = string
+    dra_analytics_subnet_id   = string
+  })
+  default     = null
+  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+  validation {
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null, false)
+    error_message = "Value must either be null or specified for all."
+  }
+}
 
 ##############################
 ####    DAM variables     ####
@@ -111,6 +128,7 @@ variable "dam_version" {
 variable "dam_license" {
   description = "License file path"
   type        = string
+  default     = null
 }
 
 variable "large_scale_mode" {
@@ -137,6 +155,7 @@ variable "dam_agent_installation_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF DAM agent installation software. az_blob is the full path to the installation file within the storage account container"
+  default = null
 }
 
 variable "simulation_db_types_for_agent" {
@@ -172,7 +191,8 @@ variable "tarball_location" {
     az_container       = string
     az_blob            = string
   })
-  description = "Storage account and container location of the DSF installation software. az_blob is the full path to the tarball file within the storage account container"
+  description = "Storage account and container location of the DSF Sonar installation software. az_blob is the full path to the tarball file within the storage account container"
+  default     = null
 }
 
 variable "hub_hadr" {
@@ -187,16 +207,16 @@ variable "agentless_gw_hadr" {
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
-variable "hub_instance_type" {
+variable "hub_instance_size" {
   type        = string
   default     = "Standard_E4s_v5"
-  description = "Instance type for the DSF Hub"
+  description = "Instance size for the DSF Hub"
 }
 
-variable "agentless_gw_instance_type" {
+variable "agentless_gw_instance_size" {
   type        = string
   default     = "Standard_E4s_v5"
-  description = "Instance type for the Agentless Gateway"
+  description = "Instance size for the Agentless Gateway"
 }
 
 variable "hub_storage_details" {
@@ -236,4 +256,101 @@ variable "sonar_machine_base_directory" {
   type        = string
   default     = "/imperva"
   description = "The base directory where all Sonar related directories will be installed"
+}
+##############################
+####    DRA variables     ####
+##############################
+
+variable "dra_admin_instance_size" {
+  type        = string
+  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
+  description = "VM instance size for the Admin Server"
+}
+
+variable "dra_admin_storage_details" {
+  type = object({
+    disk_size            = number
+    volume_caching       = string
+    storage_account_type = string
+  })
+  description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    disk_size = 260
+    volume_caching = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+}
+
+variable "dra_admin_image_details" {
+  type = object({
+    resource_group_name = string
+    image_id            = string
+  })
+  default = null
+  description = "Image attributes for the Admin Server"
+  validation {
+    condition     = var.dra_admin_image_details == null || try(var.dra_admin_image_details.resource_group_name != null && var.dra_admin_image_details.image_id != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
+}
+
+variable "dra_admin_vhd_details" {
+  type = object({
+    path_to_vhd          = string
+    storage_account_name = string
+    container_name       = string
+  })
+  default     = null
+  description = "VHD details for creating the Admin server image. Keep empty if you provide an image for the Admin server instead."
+  validation {
+    condition     = var.dra_admin_vhd_details == null || try(var.dra_admin_vhd_details.path_to_vhd != null && var.dra_admin_vhd_details.storage_account_name != null && var.dra_admin_vhd_details.container_name != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
+}
+
+variable "dra_analytics_instance_size" {
+  type        = string
+  default     = "Standard_E4as_v5" # 4 cores & 32GB ram
+  description = "VM instance size for the Analytics Server"
+}
+
+variable "dra_analytics_storage_details" {
+  type = object({
+    disk_size            = number
+    volume_caching       = string
+    storage_account_type = string
+  })
+  description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
+  default = {
+    disk_size = 1010
+    volume_caching = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+}
+
+variable "dra_analytics_image_details" {
+  type = object({
+    resource_group_name = string
+    image_id            = string
+  })
+  default = null
+  description = "Image attributes for the Analytics Server"
+  validation {
+    condition     = var.dra_analytics_image_details == null || try(var.dra_analytics_image_details.resource_group_name != null && var.dra_analytics_image_details.image_id != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
+}
+
+variable "dra_analytics_vhd_details" {
+  type = object({
+    path_to_vhd          = string
+    storage_account_name = string
+    container_name       = string
+  })
+  default     = null
+  description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
+  validation {
+    condition     = var.dra_analytics_vhd_details == null || try(var.dra_analytics_vhd_details.path_to_vhd != null && var.dra_analytics_vhd_details.storage_account_name != null && var.dra_analytics_vhd_details.container_name != null, false)
+    error_message = "Value must either be null or specified for all"
+  }
 }

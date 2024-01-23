@@ -53,8 +53,8 @@ module "hub_main" {
   dra_details = var.enable_dra ? {
     name              = module.dra_admin[0].display_name
     address           = module.dra_admin[0].public_ip
-    username          = module.dra_admin[0].ssh_user
     password          = local.password
+    archiver_username = module.dra_analytics[0].archiver_user
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
   generate_access_tokens = true

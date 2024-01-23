@@ -3,6 +3,7 @@ locals {
 
   configuration_elements = concat(
     local.service_group_configuration,
+    local.dra_configuration,
     local.hub_configuration
   )
   commands = <<-EOF

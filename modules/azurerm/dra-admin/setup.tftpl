@@ -1,0 +1,45 @@
+#!/bin/bash
+set -x
+exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
+echo BEGIN
+
+function install-azure-cli(){
+  rpm --import https://packages.microsoft.com/keys/microsoft.asc
+  dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+  dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+  dnf install azure-cli -y
+  az login --identity
+}
+
+date '+%Y-%m-%d %H:%M:%S'
+my_nameserver=$(ifconfig eth0 | grep "inet " | awk '{print $2}')
+my_ip=$(ifconfig eth0 | grep "inet " | awk '{print $2}')
+my_default_gw=$(ip route show | grep default | awk '{print $3}')
+my_cidr=$(awk -F. '{
+    split($0, octets)
+    for (i in octets) {
+        mask += 8 - log(2**8 - octets[i])/log(2);
+    }
+    print mask
+}' <<< $(ifconfig eth0 | grep "inet " | awk '{print $4}'))
+
+sudo su
+export ITP_HOME=/opt/itp
+export CATALINA_HOME=/opt/apache-tomcat
+chmod +x /opt/itp_global_conf/auto_deploy.sh
+sed -i 's/^hosts:.*/hosts: files dns/' /etc/nsswitch.conf
+
+install-azure-cli
+
+admin_registration_password=$(az keyvault secret show --name ${admin_registration_password_secret_name} --vault-name ${vault_name} --query "value" --output tsv)
+ssh_password=$(az keyvault secret show --name ${admin_ssh_password_secret_name} --vault-name ${vault_name} --query "value" --output tsv)
+
+/opt/itp_global_conf/auto_deploy.sh --hostname "$(hostname)" --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$admin_registration_password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Admin"
+
+echo $ssh_password | passwd --stdin cbadmin
+
+# Allow using this host as jump box
+sed -i 's/.*AllowTcpForwarding.*/AllowTcpForwarding yes/g' /etc/ssh/sshd_config
+systemctl restart sshd
+
+#/opt/itp_global_conf/auto_deploy_cloud.sh --hostname "$(hostname)" --dhcp 1 --ip-address "$my_ip" --dns-servers "$my_nameserver" --registration-password "$password" --cidr "$my_cidr" --default-gateway "$my_default_gw" --machine-type "Admin"
