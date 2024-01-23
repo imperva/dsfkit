@@ -44,12 +44,19 @@ resource "azurerm_mssql_database" "db" {
   tags        = var.tags
 }
 
+data "azurerm_subscription" "current" {}
+
 resource "azurerm_mssql_server_extended_auditing_policy" "policy" {
   server_id                               = azurerm_mssql_server.server.id
   storage_endpoint                        = azurerm_storage_account.sa.primary_blob_endpoint
   storage_account_access_key              = azurerm_storage_account.sa.primary_access_key
   storage_account_access_key_is_secondary = false
-  retention_in_days                       = 30
+  retention_in_days                       = 0
+
+  enabled = true
+  log_monitoring_enabled = true
+
+  storage_account_subscription_id = data.azurerm_subscription.current.subscription_id
 }
 
 resource "azurerm_eventhub_namespace" "ns" {
@@ -76,17 +83,16 @@ data "azurerm_eventhub_namespace_authorization_rule" "auth_rule" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "settings" {
-  name                           = "diagnotic-setting"
+  name                           = "sonar_diagnostic_settings"
   target_resource_id             = "${azurerm_mssql_database.db.server_id}/databases/master" # creates an expilicit dependency on the database
+
   eventhub_authorization_rule_id = data.azurerm_eventhub_namespace_authorization_rule.auth_rule.id
   eventhub_name                  = azurerm_eventhub.eventhub.name
 
+  # storage_account_id = azurerm_storage_account.sa.id
+
   enabled_log {
     category = "SQLSecurityAuditEvents"
-  }
-
-  metric {
-    category = "AllMetrics"
   }
 }
 
