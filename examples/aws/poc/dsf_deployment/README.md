@@ -35,7 +35,7 @@ enable_sonar = false
 enable_dra = false
 ```
 
-This configuration will enable the DAM module while disabling the DSF Sonar and DRA modules.
+This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
 
 #### 2. DRA Only Deployment
 
@@ -46,7 +46,7 @@ enable_sonar = false
 enable_dra = true
 ```
 
-This configuration will enable the DRA module while disabling the DSF Sonar and DAM modules.
+This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
 
 #### 3. Sonar Only Deployment
 
