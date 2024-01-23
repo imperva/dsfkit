@@ -257,6 +257,19 @@ variable "sonar_machine_base_directory" {
   default     = "/imperva"
   description = "The base directory where all Sonar related directories will be installed"
 }
+
+variable "simulation_db_types_for_agentless" {
+  type        = list(string)
+  default     = ["MsSQL"]
+  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'MsSQL'."
+  validation {
+    condition = alltrue([
+      for db_type in var.simulation_db_types_for_agentless : contains(["MsSQL"], db_type)
+    ])
+    error_message = "Value must be a subset of: ['MsSQL']"
+  }
+}
+
 ##############################
 ####    DRA variables     ####
 ##############################

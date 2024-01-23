@@ -31,7 +31,6 @@ locals {
 locals {
   password           = var.password != null ? var.password : module.globals.random_password
   workstation_cidr   = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  database_cidr      = var.database_cidr != null ? var.database_cidr : local.workstation_cidr_24
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   tags               = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted })
   main_hub_subnet_id = var.subnet_ids != null ? var.subnet_ids.main_hub_subnet_id : module.vpc[0].public_subnets[0]
@@ -317,7 +316,6 @@ module "db_onboarding" {
   version  = "1.7.5" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
 
-  sonar_version    = module.globals.tarball_location.version
   usc_access_token = module.hub_main.access_tokens.usc.token
   hub_info = {
     hub_ip_address           = module.hub_main.public_ip

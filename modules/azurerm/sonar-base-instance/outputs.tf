@@ -20,7 +20,7 @@ output "private_ip" {
 
 output "principal_id" {
   description = "Principal ID of the DSF node"
-  value       = azurerm_linux_virtual_machine.dsf_base_instance.identity[0].principal_id
+  value       = azurerm_user_assigned_identity.dsf_base.principal_id
 }
 
 output "main_node_sonarw_public_key" {

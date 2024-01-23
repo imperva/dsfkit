@@ -1,3 +1,11 @@
+variable "resource_group" {
+  type = object({
+    name     = string
+    location = string
+  })
+  description = "Resource group details"
+}
+
 variable "hub_info" {
   type = object({
     hub_ip_address           = string
@@ -5,7 +13,6 @@ variable "hub_info" {
     hub_ssh_user             = string
   })
 
-  nullable    = false
   description = "Hub info"
 }
 
@@ -27,7 +34,6 @@ variable "hub_proxy_info" {
 variable "assignee_gw" {
   type        = string
   description = "jsonar uid of the assignee DSF Agentless Gateway"
-  nullable    = false
   validation {
     condition     = length(var.assignee_gw) >= 35
     error_message = "Should be uuid in the form of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
@@ -36,8 +42,7 @@ variable "assignee_gw" {
 
 variable "assignee_role" {
   type        = string
-  description = "IAM role of the asset assignee"
-  nullable    = false
+  description = "Principal ID of the asset assignee"
 }
 
 variable "usc_access_token" {
@@ -47,21 +52,17 @@ variable "usc_access_token" {
 
 variable "database_details" {
   type = object({
-    db_username   = string
-    db_password   = string
-    db_arn        = string
+    db_server_id  = string
     db_port       = number
     db_engine     = string
     db_identifier = string
     db_address    = string
-    db_name       = string
   })
   description = "database details"
-  nullable    = false
 
   validation {
-    condition     = contains(["mysql", "postgres", "sqlserver-ex"], var.database_details.db_engine)
-    error_message = "Allowed values for db engine: 'mysql', 'postgres', 'sqlserver-ex'"
+    condition     = contains(["mssql"], var.database_details.db_engine)
+    error_message = "Allowed values for db engine: 'mssql'"
   }
 }
 

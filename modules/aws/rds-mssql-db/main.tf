@@ -3,8 +3,7 @@ resource "random_password" "db_password" {
   special = false
 }
 
-resource "random_pet" "db_id" {
-}
+resource "random_pet" "db_id" {}
 
 resource "random_id" "salt" {
   byte_length = 2

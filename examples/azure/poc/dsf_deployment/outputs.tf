@@ -115,6 +115,10 @@ output "audit_sources" {
         ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
+    agentless_sources = var.enable_sonar ? {
+      mssql = try(module.mssql[0], null)
+    } : null
+
   }
 }
 
