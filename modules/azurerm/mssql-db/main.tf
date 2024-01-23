@@ -89,8 +89,6 @@ resource "azurerm_monitor_diagnostic_setting" "settings" {
   eventhub_authorization_rule_id = data.azurerm_eventhub_namespace_authorization_rule.auth_rule.id
   eventhub_name                  = azurerm_eventhub.eventhub.name
 
-  # storage_account_id = azurerm_storage_account.sa.id
-
   enabled_log {
     category = "SQLSecurityAuditEvents"
   }
