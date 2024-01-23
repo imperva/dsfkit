@@ -13,9 +13,9 @@ locals {
     admin_ssh_password_secret_arn          = aws_secretsmanager_secret.admin_ssh_password.arn
   })
 
-  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
-    admin_server_public_ip = try(local.public_ip, local.private_ip)
-  })
+#  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
+#    admin_server_public_ip = try(local.public_ip, local.private_ip)
+#  })
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -71,22 +71,22 @@ module "statistics" {
   artifact        = "ami://${sha256(data.aws_ami.selected-ami.image_id)}@${var.dra_version}"
 }
 
-resource "null_resource" "readiness" {
-  provisioner "local-exec" {
-    command     = local.readiness_script
-    interpreter = ["/bin/bash", "-c"]
-  }
-  depends_on = [
-    aws_instance.dsf_base_instance,
-    module.statistics
-  ]
-}
-
-module "statistics_success" {
-  source = "../../../modules/aws/statistics"
-  count  = var.send_usage_statistics ? 1 : 0
-
-  id         = module.statistics[0].id
-  status     = "success"
-  depends_on = [null_resource.readiness]
-}
+#resource "null_resource" "readiness" {
+#  provisioner "local-exec" {
+#    command     = local.readiness_script
+#    interpreter = ["/bin/bash", "-c"]
+#  }
+#  depends_on = [
+#    aws_instance.dsf_base_instance,
+#    module.statistics
+#  ]
+#}
+#
+#module "statistics_success" {
+#  source = "../../../modules/aws/statistics"
+#  count  = var.send_usage_statistics ? 1 : 0
+#
+#  id         = module.statistics[0].id
+#  status     = "success"
+#  depends_on = [null_resource.readiness]
+#}
