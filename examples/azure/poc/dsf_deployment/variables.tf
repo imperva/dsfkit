@@ -154,7 +154,6 @@ variable "dam_agent_installation_location" {
     az_container       = string
     az_blob            = string
   })
-  default = null
   description = "Storage account and container location of the DSF DAM agent installation software. az_blob is the full path to the installation file within the storage account container"
   default = null
 }
