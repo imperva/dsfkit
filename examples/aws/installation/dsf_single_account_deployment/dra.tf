@@ -9,13 +9,13 @@ module "dra_admin" {
   version = "1.7.5" # latest release tag
   count   = var.enable_dra ? 1 : 0
 
-  friendly_name               = join("-", [local.deployment_name_salted, "dra", "admin"])
+  name                        = join("-", [local.deployment_name_salted, "dra", "admin"])
   subnet_id                   = var.subnet_ids.dra_admin_subnet_id
   security_group_ids          = var.security_group_ids_dra_admin
   dra_version                 = module.globals.dra_version
   ebs                         = var.dra_admin_ebs_details
   admin_registration_password = local.password
-  admin_password              = local.password
+  admin_ssh_password          = local.password
   allowed_web_console_cidrs   = var.web_console_cidr
   allowed_analytics_cidrs     = [data.aws_subnet.dra_analytics.cidr_block]
   allowed_hub_cidrs           = local.hub_cidr_list
@@ -31,13 +31,13 @@ module "dra_analytics" {
   version = "1.7.5" # latest release tag
   count   = local.dra_analytics_count
 
-  friendly_name                = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
+  name                         = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
   subnet_id                    = var.subnet_ids.dra_analytics_subnet_id
   security_group_ids           = var.security_group_ids_dra_analytics
   dra_version                  = module.globals.dra_version
   ebs                          = var.dra_analytics_ebs_details
   admin_registration_password  = local.password
-  admin_password               = local.password
+  analytics_ssh_password       = local.password
   allowed_admin_cidrs          = [data.aws_subnet.dra_admin.cidr_block]
   allowed_agent_gateways_cidrs = local.agent_gw_cidr_list
   allowed_hub_cidrs            = local.hub_cidr_list

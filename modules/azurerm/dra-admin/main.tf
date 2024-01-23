@@ -10,9 +10,9 @@ locals {
     admin_ssh_password_secret_name          = azurerm_key_vault_secret.ssh_password.name
   })
 
-  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
-    admin_server_public_ip = try(local.public_ip, local.private_ip)
-  })
+#  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
+#    admin_server_public_ip = try(local.public_ip, local.private_ip)
+#  })
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -111,22 +111,22 @@ module "statistics" {
   location        = var.resource_group.location
 }
 
-resource "null_resource" "readiness" {
-  provisioner "local-exec" {
-    command     = local.readiness_script
-    interpreter = ["/bin/bash", "-c"]
-  }
-  depends_on = [
-    azurerm_linux_virtual_machine.vm,
-    module.statistics
-  ]
-}
-
-module "statistics_success" {
-  source = "../../../modules/azurerm/statistics"
-  count  = var.send_usage_statistics ? 1 : 0
-
-  id         = module.statistics[0].id
-  status     = "success"
-  depends_on = [null_resource.readiness]
-}
+#resource "null_resource" "readiness" {
+#  provisioner "local-exec" {
+#    command     = local.readiness_script
+#    interpreter = ["/bin/bash", "-c"]
+#  }
+#  depends_on = [
+#    azurerm_linux_virtual_machine.vm,
+#    module.statistics
+#  ]
+#}
+#
+#module "statistics_success" {
+#  source = "../../../modules/azurerm/statistics"
+#  count  = var.send_usage_statistics ? 1 : 0
+#
+#  id         = module.statistics[0].id
+#  status     = "success"
+#  depends_on = [null_resource.readiness]
+#}
