@@ -1,7 +1,7 @@
 # DSF Deployment example
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This example provides DSF (Data Security Fabric) deployment with DSF Hub, Agentless Gateways, DAM (Database Activity Monitoring), DRA (Data Risk Analytics) and Agent audit sources.
+This example provides a full DSF (Data Security Fabric) deployment with DSF Hub, Agentless Gateways, DAM (Database Activity Monitoring), DRA (Data Risk Analytics) and Agent and Agentless audit sources.
 
 ## Modularity
 The deployment is modular and allows users to deploy one or more of the following modules:
@@ -17,9 +17,10 @@ The deployment is modular and allows users to deploy one or more of the followin
    - Agent Gateways
 4. DRA
    - Admin server
-   - Analytics server
+   - Analytics servers
 5. Audit sources
-   - Agent audit sources (virtual machine instances)
+   - Agent audit sources (Virtual Machine instances)
+   - Agentless audit source (SQL Server instance)
 
 ### Deploying Specific Modules
 
@@ -34,7 +35,7 @@ enable_sonar = false
 enable_dra = false
 ```
 
-This configuration will enable the DAM module while disabling the DSF Sonar and DRA modules.
+This configuration will enable the DAM module while disabling the DSF Hub and DRA modules.
 
 #### 2. DRA Only Deployment
 
@@ -45,7 +46,7 @@ enable_sonar = false
 enable_dra = true
 ```
 
-This configuration will enable the DRA module while disabling the DSF Sonar and DAM modules.
+This configuration will enable the DRA module while disabling the DSF Hub and DAM modules.
 
 #### 3. Sonar Only Deployment
 

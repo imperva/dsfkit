@@ -6,7 +6,7 @@ This Terraform module provisions a DSF DRA Admin instance on Azure as a Virtual 
 ## Requirements
 * Terraform, refer to [versions.tf](versions.tf) for supported versions.
 * An Azure account.
-* DRA image or VHD located in an Azure Storage account. [Request access to vhd here](https://docs.google.com/forms/d/e/1FAIpQLSc7PFqBQWdWajo83yKeaB7u9TFolXCsRAtuJdDFqwVcwAV8xA/viewform). <br/>
+* DRA image or VHD located in an Azure Storage account. [Request access to vhd here](https://docs.google.com/forms/d/e/1FAIpQLSfCBUGHN04u2gK8IoxuHl4TLooBWUl7cK7ihS9Q5ZHwafNBHA/viewform). <br/>
 There is an option to provide details for either the image or the VHD. When supplying the VHD details, Terraform will use them to create the image and this image will be utilized to create the Virtual Machine.  
 
 **NOTE:** In case you are not yet an Imperva customer, [please contact our team](https://www.imperva.com/contact-us/).

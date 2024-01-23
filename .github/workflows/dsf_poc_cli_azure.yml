@@ -69,6 +69,21 @@ jobs:
             enable_sonar: true
             enable_dam: true
             enable_dra: true
+          - name: DSF POC - SONAR
+            workspace: azure_cli-sonar-
+            enable_sonar: true
+            enable_dam: false
+            enable_dra: false
+          - name: DSF POC - DAM
+            workspace: azure_cli-dam-
+            enable_sonar: false
+            enable_dam: true
+            enable_dra: false
+          - name: DSF POC - DRA
+            workspace: azure_cli-dra-
+            enable_sonar: false
+            enable_dam: false
+            enable_dra: true
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest

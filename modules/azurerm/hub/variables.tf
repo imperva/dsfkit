@@ -109,10 +109,10 @@ variable "allowed_all_cidrs" {
   default = []
 }
 
-variable "instance_type" {
+variable "instance_size" {
   type        = string
   default     = "Standard_E8_v5" # 8 cores & 64GB ram
-  description = "instance type for the DSF hub"
+  description = "instance size for the DSF hub"
 }
 
 variable "storage_details" {

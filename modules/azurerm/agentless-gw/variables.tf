@@ -101,10 +101,10 @@ variable "use_public_ip" {
   description = "Whether to use the DSF instance's public or private IP to connect to the instance"
 }
 
-variable "instance_type" {
+variable "instance_size" {
   type        = string
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
-  description = "Ec2 instance type for the Agentless Gateway"
+  description = "Instance size for the Agentless Gateway"
 }
 
 variable "storage_details" {

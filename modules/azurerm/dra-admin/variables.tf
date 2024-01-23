@@ -26,33 +26,11 @@ variable "resource_group" {
   description = "Resource group details"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "Subnet id for the Admin Server"
-  validation {
-    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
-    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
-  }
-}
 
 variable "instance_size" {
   type        = string
   default     = "Standard_E4as_v5" # 4 cores & 32GB ram
   description = "VM instance size for the Admin Server"
-}
-
-variable "storage_details" {
-  type = object({
-    disk_size            = number
-    volume_caching       = string
-    storage_account_type = string
-  })
-  description = "Compute instance volume attributes for the Admin Server"
-  default = {
-    disk_size = 260
-    volume_caching = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
 }
 
 variable "ssh_public_key" {
@@ -156,6 +134,15 @@ variable "admin_ssh_password" {
   }
 }
 
+variable "subnet_id" {
+  type        = string
+  description = "Subnet id for the Admin Server"
+  validation {
+    condition     = can(regex(".*Microsoft.Network/virtualNetworks/.*/subnets/.*", var.subnet_id))
+    error_message = "The variable must match the pattern 'Microsoft.Network/virtualNetworks/<virtualNetworkName>/subnets/<subnetName>'"
+  }
+}
+
 variable "security_group_ids" {
   type        = list(string)
   description = "Security group Ids to attach to the instance. If provided, no security groups are created and all allowed_*_cidrs variables are ignored."
@@ -225,6 +212,20 @@ variable "attach_persistent_public_ip" {
   type        = bool
   default     = true
   description = "Create and attach an Elastic public IP for the instance. If false, a dynamic public IP is used. Relevant only if the DRA Admin is in a public subnet (ignored if in a private subnet). Currently, due to a DRA limitation, must only be true."
+}
+
+variable "storage_details" {
+  type = object({
+    disk_size            = number
+    volume_caching       = string
+    storage_account_type = string
+  })
+  description = "Compute instance volume attributes for the Admin Server"
+  default = {
+    disk_size = 260
+    volume_caching = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
 }
 
 variable "send_usage_statistics" {

@@ -34,6 +34,12 @@ variable "enable_dam" {
   description = "Provision DAM MX and Agent Gateways"
 }
 
+variable "enable_dra" {
+  type        = bool
+  default     = true
+  description = "Provision DRA Admin and Analytics"
+}
+
 variable "agentless_gw_count" {
   type        = number
   default     = 1
@@ -44,6 +50,12 @@ variable "agent_gw_count" {
   type        = number
   default     = 2 # Minimum count for a cluster
   description = "Number of Agent Gateways. Provisioning Agent Gateways requires the enable_dam variable to be set to 'true'."
+}
+
+variable "dra_analytics_count" {
+  type        = number
+  default     = 1
+  description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
 }
 
 variable "password" {
@@ -59,13 +71,19 @@ variable "password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub and MX web console IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DSF Hub, MX and DRA Admin web consoles IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
   type        = list(string)
   default     = null
-  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+  description = "IP ranges from which SSH/API access will be allowed to setup the deployment. If not set, the subnet (x.x.x.0/24) of the public IP of the computer where the Terraform is run is used. Format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
+}
+
+variable "allowed_ssh_cidrs" {
+  type        = list(string)
+  description = "IP ranges from which SSH access to the deployed DSF nodes will be allowed"
+  default     = []
 }
 
 variable "vnet_ip_range" {
@@ -80,6 +98,8 @@ variable "subnet_ids" {
     hub_dr_subnet_id          = string
     agentless_gw_subnet_id    = string
     agentless_gw_dr_subnet_id = string
+    mx_subnet_id              = string
+    agent_gw_subnet_id        = string
     dra_admin_subnet_id       = string
     dra_analytics_subnet_id   = string
   })
@@ -164,7 +184,6 @@ variable "sonar_version" {
   }
 }
 
-# todo - rename to sonar_tarball_location
 variable "tarball_location" {
   type = object({
     az_resource_group  = string
@@ -188,16 +207,16 @@ variable "agentless_gw_hadr" {
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
-variable "hub_instance_type" {
+variable "hub_instance_size" {
   type        = string
   default     = "Standard_E4s_v5"
-  description = "Instance type for the DSF Hub"
+  description = "Instance size for the DSF Hub"
 }
 
-variable "agentless_gw_instance_type" {
+variable "agentless_gw_instance_size" {
   type        = string
   default     = "Standard_E4s_v5"
-  description = "Instance type for the Agentless Gateway"
+  description = "Instance size for the Agentless Gateway"
 }
 
 variable "hub_storage_details" {
@@ -241,19 +260,6 @@ variable "sonar_machine_base_directory" {
 ##############################
 ####    DRA variables     ####
 ##############################
-
-variable "enable_dra" {
-  type        = bool
-  default     = true
-  description = "Provision DRA Admin and Analytics"
-}
-
-variable "dra_analytics_count" {
-  type        = number
-  default     = 1
-  description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
-}
-
 
 variable "dra_admin_instance_size" {
   type        = string

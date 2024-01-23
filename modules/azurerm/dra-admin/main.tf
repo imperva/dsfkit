@@ -9,6 +9,10 @@ locals {
     admin_registration_password_secret_name = azurerm_key_vault_secret.admin_analytics_registration_password.name
     admin_ssh_password_secret_name          = azurerm_key_vault_secret.ssh_password.name
   })
+
+  readiness_script = templatefile("${path.module}/../dra-analytics/waiter.tftpl", {
+    admin_server_public_ip = try(local.public_ip, local.private_ip)
+  })
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -39,15 +43,6 @@ resource "azurerm_public_ip" "vm_public_ip" {
   allocation_method   = "Static"
   tags                = var.tags
 }
-#
-#data "azurerm_public_ip" "vm_public_ip" {
-#  count               = var.attach_persistent_public_ip ? 1 : 0
-#  name                = join("-", [var.name, "public", "ip"])
-#  resource_group_name = var.resource_group.name
-#  depends_on = [
-#    azurerm_linux_virtual_machine.vm
-#  ]
-#}
 
 resource "azurerm_linux_virtual_machine" "vm" {
   name                  = var.name
@@ -114,4 +109,24 @@ module "statistics" {
   resource_type   = "dra-admin"
   artifact        = local.image_id
   location        = var.resource_group.location
+}
+
+resource "null_resource" "readiness" {
+  provisioner "local-exec" {
+    command     = local.readiness_script
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    azurerm_linux_virtual_machine.vm,
+    module.statistics
+  ]
+}
+
+module "statistics_success" {
+  source = "../../../modules/azurerm/statistics"
+  count  = var.send_usage_statistics ? 1 : 0
+
+  id         = module.statistics[0].id
+  status     = "success"
+  depends_on = [null_resource.readiness]
 }

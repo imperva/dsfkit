@@ -17,7 +17,6 @@ module "dra_admin" {
   name = join("-", [local.deployment_name_salted, "dra", "admin"])
   subnet_id = module.network[0].vnet_subnets[0]
   resource_group = local.resource_group
-  instance_size = var.dra_admin_instance_size
   storage_details = var.dra_admin_storage_details
   ssh_public_key = tls_private_key.ssh_key.public_key_openssh
   admin_registration_password = local.password
@@ -26,7 +25,7 @@ module "dra_admin" {
   allowed_web_console_cidrs = var.web_console_cidr
   allowed_analytics_cidrs = module.network[0].vnet_address_space
   allowed_hub_cidrs = local.hub_cidr_list
-  allowed_ssh_cidrs = local.workstation_cidr
+  allowed_ssh_cidrs = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
 
   image_vhd_details = {
     image = local.dra_admin_image_exits ? {
@@ -55,7 +54,6 @@ module "dra_analytics" {
   name = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
   subnet_id = module.network[0].vnet_subnets[1]
   resource_group = local.resource_group
-  instance_size = var.dra_analytics_instance_size
   storage_details = var.dra_analytics_storage_details
   ssh_public_key = tls_private_key.ssh_key.public_key_openssh
   admin_registration_password = local.password
@@ -63,8 +61,8 @@ module "dra_analytics" {
   archiver_password = local.password
 
   allowed_admin_cidrs = module.network[0].vnet_address_space
-  # todo - remove the workstation cidr from the allowed ssh cidrs
   allowed_ssh_cidrs = concat(local.workstation_cidr, local.hub_cidr_list)
+  #allowed_ssh_cidrs = concat(var.allowed_ssh_cidrs, local.hub_cidr_list, local.workstation_cidr)
 
   admin_server_private_ip = module.dra_admin[0].private_ip
   admin_server_public_ip = module.dra_admin[0].public_ip
