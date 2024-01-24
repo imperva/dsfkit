@@ -1,5 +1,5 @@
 locals {
-  dra_action_set              = "Send to DRA Behavior Analytics"
+  dra_action_set = "Send to DRA Behavior Analytics"
   # todo - currently it is not working because there is a bug in the mx
   dra_all_events_audit_policy = "CounterBreach for Database - All Events"
   dra_all_logins_audit_policy = "CounterBreach for Database - Logins Logouts"
@@ -25,7 +25,7 @@ locals {
         "useAuthenticationKey" : false,
         "authenticationKeyPath" : " ",
         "authenticationKeyPassphrase" : " "
-      }
+        }
       )
     },
     {
@@ -47,7 +47,7 @@ locals {
             "at-time" : "03:00:00"
           }
         }
-      }
+        }
       )
     },
     {
@@ -69,7 +69,7 @@ locals {
             "at-time" : "02:30:00"
           }
         }
-      }
+        }
       )
     }
   ]

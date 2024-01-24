@@ -49,16 +49,16 @@ variable "storage_details" {
   })
   description = "Compute instance volume attributes for the Analytics Server"
   default = {
-    disk_size = 1010
-    volume_caching = "ReadWrite"
+    disk_size            = 1010
+    volume_caching       = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }
 
 variable "ssh_public_key" {
-  type = string
+  type        = string
   description = "SSH public key to access machine"
-  nullable = false
+  nullable    = false
 }
 
 variable "image_vhd_details" {
@@ -74,7 +74,7 @@ variable "image_vhd_details" {
     }))
   })
   description = "Image or VHD details for the Admin Server"
-  default = null
+  default     = null
 
   validation {
     condition     = try((var.image_vhd_details.image != null && var.image_vhd_details.vhd == null || (var.image_vhd_details.image == null && var.image_vhd_details.vhd != null)), false)

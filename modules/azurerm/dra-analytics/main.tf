@@ -40,11 +40,11 @@ resource "azurerm_network_interface_security_group_association" "nic_sg_associat
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                  = var.name
-  resource_group_name   = var.resource_group.name
-  location              = var.resource_group.location
-  size                  = var.instance_size
-  admin_username        = local.vm_user
+  name                = var.name
+  resource_group_name = var.resource_group.name
+  location            = var.resource_group.location
+  size                = var.instance_size
+  admin_username      = local.vm_user
 
   network_interface_ids = [
     azurerm_network_interface.nic.id

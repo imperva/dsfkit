@@ -7,7 +7,7 @@ locals {
 
 locals {
   applianceType = "DSF_HUB"
-  admin_email = "admin@email.com"
+  admin_email   = "admin@email.com"
 
   cloud_account_data = {
     data = {

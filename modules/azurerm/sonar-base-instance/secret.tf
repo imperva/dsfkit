@@ -99,7 +99,7 @@ resource "azurerm_key_vault_secret" "password_key_secret" {
 }
 
 resource "azurerm_key_vault_secret" "access_tokens" {
-  count        = length(local.access_tokens)
+  count = length(local.access_tokens)
   # dots are somewhat common in server names, but aren't allowed in vault secrets
   name         = join("-", [replace(var.name, ".", "-"), local.access_tokens[count.index].name, "access", "token"])
   value        = random_uuid.access_tokens[count.index].result

@@ -34,9 +34,9 @@ variable "instance_size" {
 }
 
 variable "ssh_public_key" {
-  type = string
+  type        = string
   description = "SSH public key to access machine"
-  nullable = false
+  nullable    = false
 }
 
 variable "image_vhd_details" {
@@ -52,7 +52,7 @@ variable "image_vhd_details" {
     }))
   })
   description = "Image or VHD details for the Admin Server"
-  default = null
+  default     = null
 
   validation {
     condition     = try((var.image_vhd_details.image != null && var.image_vhd_details.vhd == null || (var.image_vhd_details.image == null && var.image_vhd_details.vhd != null)), false)
@@ -62,10 +62,10 @@ variable "image_vhd_details" {
     condition     = var.image_vhd_details.image == null || try(var.image_vhd_details.image.resource_group_name != null && var.image_vhd_details.image.image_id != null, false)
     error_message = "Image value must either be null or specified for all"
   }
-    validation {
-      condition     = var.image_vhd_details.vhd == null || try(var.image_vhd_details.vhd.path_to_vhd != null && var.image_vhd_details.vhd.storage_account_name != null && var.image_vhd_details.vhd.container_name != null, false)
-      error_message = "VHD value must either be null or specified for all"
-    }
+  validation {
+    condition     = var.image_vhd_details.vhd == null || try(var.image_vhd_details.vhd.path_to_vhd != null && var.image_vhd_details.vhd.storage_account_name != null && var.image_vhd_details.vhd.container_name != null, false)
+    error_message = "VHD value must either be null or specified for all"
+  }
 }
 
 variable "vm_user" {
@@ -222,8 +222,8 @@ variable "storage_details" {
   })
   description = "Compute instance volume attributes for the Admin Server"
   default = {
-    disk_size = 260
-    volume_caching = "ReadWrite"
+    disk_size            = 260
+    volume_caching       = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }

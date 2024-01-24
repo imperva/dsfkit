@@ -155,7 +155,7 @@ variable "dam_agent_installation_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF DAM agent installation software. az_blob is the full path to the installation file within the storage account container"
-  default = null
+  default     = null
 }
 
 variable "simulation_db_types_for_agent" {
@@ -260,7 +260,7 @@ variable "sonar_machine_base_directory" {
 
 variable "simulation_db_types_for_agentless" {
   type        = list(string)
-  default     = ["MsSQL"]
+  default     = []
   description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'MsSQL'."
   validation {
     condition = alltrue([
@@ -288,8 +288,8 @@ variable "dra_admin_storage_details" {
   })
   description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
-    disk_size = 260
-    volume_caching = "ReadWrite"
+    disk_size            = 260
+    volume_caching       = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }
@@ -299,7 +299,7 @@ variable "dra_admin_image_details" {
     resource_group_name = string
     image_id            = string
   })
-  default = null
+  default     = null
   description = "Image attributes for the Admin Server"
   validation {
     condition     = var.dra_admin_image_details == null || try(var.dra_admin_image_details.resource_group_name != null && var.dra_admin_image_details.image_id != null, false)
@@ -335,8 +335,8 @@ variable "dra_analytics_storage_details" {
   })
   description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
-    disk_size = 1010
-    volume_caching = "ReadWrite"
+    disk_size            = 1010
+    volume_caching       = "ReadWrite"
     storage_account_type = "Standard_LRS"
   }
 }
@@ -346,7 +346,7 @@ variable "dra_analytics_image_details" {
     resource_group_name = string
     image_id            = string
   })
-  default = null
+  default     = null
   description = "Image attributes for the Analytics Server"
   validation {
     condition     = var.dra_analytics_image_details == null || try(var.dra_analytics_image_details.resource_group_name != null && var.dra_analytics_image_details.image_id != null, false)

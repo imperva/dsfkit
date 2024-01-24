@@ -18,7 +18,7 @@ locals {
 module "network" {
   count               = 1
   source              = "Azure/network/azurerm"
-  version = "5.3.0"
+  version             = "5.3.0"
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = local.resource_group.name
   address_spaces      = [var.vnet_ip_range]
