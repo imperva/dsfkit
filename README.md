@@ -420,7 +420,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
 <tr>
     <td>24 Jan 2024
     </td>
-    <td>1.7.7
+    <td>1.7.8
     </td>
     <td>
       1. Added support for DRA in Azure.
