@@ -35,82 +35,47 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-locals {
+
+module "onboard_db_to_dsf" {
+  source = "../../../modules/null/poc-db-onboarder"
+
+  assignee_gw = var.assignee_gw
+
+  usc_access_token = var.usc_access_token
+  enable_audit     = var.enable_audit
+
+  database_data = {
+    id = {
+      name = "arn"
+      value = var.database_details.db_arn
+    }
+    name        = var.database_details.db_identifier
+    hostname    = var.database_details.db_address
+    port        = var.database_details.db_port
+    server_type = local.server_type_by_engine_map[var.database_details.db_engine]
+  }
+
   cloud_account_data = {
-    data = {
-      applianceId   = 1,
-      applianceType = "DSF_HUB",
-      id            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}",
-      serverType    = "AWS",
-      auditState    = "NO",
-      gatewayId     = var.assignee_gw
-      assetData = {
-        admin_email        = "admin@email.com",
-        "Server Port"      = 443,
-        asset_display_name = "Auto Onboarded AWS Account",
-        auth_mechanism     = "default",
-        arn                = "arn:aws:iam::${data.aws_caller_identity.current.account_id}",
-        region             = data.aws_region.current.name,
-      }
+    id = {
+      name = "arn"
+      value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}"
     }
-  }
-  database_asset_data = {
-    data : {
-      applianceType : "DSF_HUB",
-      applianceId : 1,
-      serverType : local.server_type_by_engine_map[var.database_details.db_engine],
-      gatewayId : var.assignee_gw,
-      parentAssetId : local.cloud_account_data.data.id,
-      assetData : {
-        "Server Port" : var.database_details.db_port,
-        database_name : var.database_details.db_name,
-        "Service Name" : var.database_details.db_name,
-        db_engine : var.database_details.db_engine,
-        auth_mechanism : "password",
-        username : var.database_details.db_username,
-        password : var.database_details.db_password,
-        region : data.aws_region.current.name,
-        asset_source : "AWS",
-        "Server Host Name" : var.database_details.db_address,
-        admin_email = "admin@email.com",
-        arn : var.database_details.db_arn,
-        asset_display_name : var.database_details.db_identifier,
-        isMonitored : var.enable_audit
-      }
-    }
-  }
-}
-
-resource "null_resource" "onboard_db_to_dsf" {
-  connection {
-    type        = "ssh"
-    user        = var.hub_info.hub_ssh_user
-    private_key = file(var.hub_info.hub_private_ssh_key_path)
-    host        = var.hub_info.hub_ip_address
-
-    bastion_host        = local.bastion_host
-    bastion_private_key = local.bastion_private_key
-    bastion_user        = local.bastion_user
-
-    script_path = local.script_path
+    name = data.aws_caller_identity.current.account_id
+    type = "AWS"
+    connections_data = []
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      templatefile("${path.module}/onboard.tftpl", {
-        cloud_account_data  = jsonencode(local.cloud_account_data),
-        database_asset_data = jsonencode(local.database_asset_data)
-        db_arn              = var.database_details.db_arn
-        account_arn         = local.cloud_account_data.data.id
-        usc_access_token    = var.usc_access_token
-        enable_audit        = var.enable_audit
-      })
-    ]
+  cloud_account_additional_data = {
+    auth_mechanism     = "default"
+    region             = data.aws_region.current.name
   }
-  triggers = {
-    db_arn = var.database_details.db_arn
+  database_additional_data = {
+    region = data.aws_region.current.name
   }
-  depends_on = [
-    aws_iam_role_policy_attachment.policy_attach
-  ]
+
+  hub_info                     = var.hub_info
+  hub_proxy_info               = var.hub_proxy_info
+  terraform_script_path_folder = var.terraform_script_path_folder
+
+  depends_on                   = [aws_iam_role_policy_attachment.policy_attach]
 }

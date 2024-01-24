@@ -26,7 +26,10 @@ module "onboard_db_to_dsf" {
   enable_audit     = var.enable_audit
 
   database_data = {
-    id          = var.database_details.db_server_id
+    id          = {
+      name = "asset_id"
+      value = var.database_details.db_server_id
+    }
     name        = var.database_details.db_identifier
     location    = var.resource_group.location
     hostname    = var.database_details.db_address
@@ -35,7 +38,10 @@ module "onboard_db_to_dsf" {
   }
 
   cloud_account_data = {
-    id   = data.azurerm_subscription.current.id
+    id   = {
+      name = "asset_id"
+      value = data.azurerm_subscription.current.id
+    }
     name = data.azurerm_subscription.current.display_name
     type = "AZURE"
     connections_data = [
@@ -47,6 +53,10 @@ module "onboard_db_to_dsf" {
         }
       }
     ]
+  }
+
+  database_additional_data = {
+    location = var.resource_group.location
   }
 
   hub_info                     = var.hub_info

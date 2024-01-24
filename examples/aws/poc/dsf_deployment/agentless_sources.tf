@@ -38,9 +38,7 @@ module "rds_mssql" {
 }
 
 module "db_onboarding" {
-  source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.7.7" # latest release tag
-  for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql) : idx => val }
+  for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql, module.rds_postgres) : idx => val }
 
   usc_access_token = module.hub_main[0].access_tokens.usc.token
   hub_info = {
