@@ -412,7 +412,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     <td>1.7.5
     </td>
     <td>
-      1. Added a new Agentless source for AWS - RDS PostreSQL.
+      1. Added a new agentless source for AWS - RDS PostreSQL.
       <br/>2. Updated Azure IAM required permissions.
       <br/>3. Improvements and bug fixes.
     </td>
@@ -424,7 +424,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
     <td>
       1. Added support for DRA in Azure.
-      <br/>2. Added a new Agentless source for Azure - MsSQL.
+      <br/>2. Added a new agentless source for Azure - MSSQL.
       <br/>3. Improvements and bug fixes.
     </td>
   </tr>
