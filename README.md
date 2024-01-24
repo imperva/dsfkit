@@ -417,7 +417,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>3. Improvements and bug fixes.
     </td>
   </tr>
-<tr>
+  <tr>
     <td>24 Jan 2024
     </td>
     <td>1.7.8
@@ -426,6 +426,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       1. Added support for DRA in Azure.
       <br/>2. Added a new agentless source for Azure - MSSQL.
       <br/>3. Improvements and bug fixes.
+    </td>
+  </tr>
+  <tr>
+    <td>Coming soon
+    </td>
+    <td>
+    </td>
+    <td>
+      1. Added support for Terraform version 1.7.x.
     </td>
   </tr>
 </table>
