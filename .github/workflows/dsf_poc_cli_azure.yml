@@ -215,7 +215,7 @@ jobs:
           mv $EXAMPLE_DIR/outputs.tf{_,}
           mv $EXAMPLE_DIR/sonar.tf{_,}
           mv $EXAMPLE_DIR/dam.tf{_,}
-          mv $EXAMPLE_DIR/dra.tf{,_}
+          mv $EXAMPLE_DIR/dra.tf{_,}
           mv $EXAMPLE_DIR/agent_sources.tf{_,}
           mv $EXAMPLE_DIR/agentless_sources.tf{_,}
           mv $EXAMPLE_DIR/networking.tf{_,}
