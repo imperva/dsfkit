@@ -53,6 +53,7 @@ output "dam_agent_installation_location" {
   value = {
     s3_bucket = var.tarball_s3_bucket.bucket
     s3_region = var.tarball_s3_bucket.region
+    s3_key    = null
   }
 }
 
