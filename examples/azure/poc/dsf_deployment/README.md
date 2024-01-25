@@ -79,6 +79,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `agentless_gw_hadr`: Enable Agentless Gateway High Availability Disaster Recovery (HADR)
 
 ### Audit Sources for Simulation Purposes
+- `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway
 - `simulation_db_types_for_agent`: Types of databases to provision for Agent Gateways
 
 ## Mandatory Variables

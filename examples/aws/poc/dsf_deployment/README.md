@@ -61,7 +61,6 @@ This configuration will enable the Sonar module, including the DSF Hub, while di
 
 Feel free to customize your deployment by setting the appropriate variables based on your requirements.
 
-
 ## Variables
 Several variables in the `variables.tf` file are important for configuring the deployment. The following variables dictate the deployment content and should be paid more attention to:
 
