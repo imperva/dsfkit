@@ -49,6 +49,13 @@ output "tarball_location" {
   }
 }
 
+output "dam_agent_installation_location" {
+  value = object({
+    s3_bucket = var.tarball_s3_bucket.bucket
+    s3_region = var.tarball_s3_bucket.region
+  })
+}
+
 output "dra_version" {
   value = local.dra_version
 }

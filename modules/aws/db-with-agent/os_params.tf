@@ -6,9 +6,9 @@ locals {
       ami_ssh_user           = "ec2-user"
       agent_installation_dir = "/opt/imperva",
       binaries_location = {
-        s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-        s3_key    = "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
-        s3_region = "us-east-1"
+        s3_bucket = var.binaries_location.s3_bucket
+        s3_key    = var.binaries_location.s3_key != null ? var.binaries_location.s3_key : "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
+        s3_region = var.binaries_location.s3_region
       }
       package_install = <<-EOF
         yum update -y
@@ -42,9 +42,9 @@ locals {
       ami_ssh_user           = "ubuntu"
       agent_installation_dir = "/usr/imperva",
       binaries_location = {
-        s3_bucket = "1ef8de27-ed95-40ff-8c08-7969fc1b7901"
-        s3_key    = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
-        s3_region = "us-east-1"
+        s3_bucket = var.binaries_location
+        s3_key    = var.binaries_location.s3_key != null ? var.binaries_location.s3_key : "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
+        s3_region = var.binaries_location.s3_region
       }
       package_install = <<-EOF
         apt update -y
