@@ -1,15 +1,20 @@
 locals {
   sonar_tarball_s3_key_map = {
-    "4.13"      = "jsonar-4.13.0.10.0.tar.gz"
+    "4.13"      = "jsonar-4.13.0.20.0.tar.gz"
+    "4.13.0.20" = "jsonar-4.13.0.20.0.tar.gz"
     "4.13.0.10" = "jsonar-4.13.0.10.0.tar.gz"
 
-    "4.12"      = "jsonar-4.12.0.10.0.tar.gz"
+    "4.12"      = "jsonar-4.12.0.20.0.tar.gz"
+    "4.12.0.20" = "jsonar-4.12.0.20.0.tar.gz"
     "4.12.0.10" = "jsonar-4.12.0.10.0.tar.gz"
 
-    "4.11"     = "jsonar-4.11.0.0.0.tar.gz"
+    "4.11"     = "jsonar-4.11.0.2.0.tar.gz"
+    "4.11.0.2" = "jsonar-4.11.0.2.0.tar.gz"
+    "4.11.0.1" = "jsonar-4.11.0.1.0.tar.gz"
     "4.11.0.0" = "jsonar-4.11.0.0.0.tar.gz"
 
-    "4.10"     = "jsonar-4.10.0.1.0.tar.gz"
+    "4.10"     = "jsonar-4.10.0.2.0.tar.gz"
+    "4.10.0.2" = "jsonar-4.10.0.2.0.tar.gz"
     "4.10.0.1" = "jsonar-4.10.0.1.0.tar.gz"
     "4.10.0.0" = "jsonar-4.10.0.0.0.tar.gz"
 
