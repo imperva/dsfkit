@@ -45,7 +45,7 @@ module "hub_instance" {
   name                              = var.friendly_name
   subnet_id                         = var.subnet_id
   public_ssh_key                    = var.ssh_key.ssh_public_key
-  instance_type                     = var.instance_type
+  instance_size                     = var.instance_size
   storage_details                   = var.storage_details
   vm_image                          = var.vm_image
   vm_image_id                       = var.vm_image_id

@@ -18,6 +18,7 @@ locals {
 module "network" {
   count               = 1
   source              = "Azure/network/azurerm"
+  version             = "5.3.0"
   vnet_name           = "${local.deployment_name_salted}-${module.globals.current_user_name}"
   resource_group_name = local.resource_group.name
   address_spaces      = [var.vnet_ip_range]
@@ -86,8 +87,8 @@ resource "azurerm_nat_gateway_public_ip_association" "nat_gw_public_ip_associati
   public_ip_address_id = azurerm_public_ip.nat_gw_public_ip.id
 }
 
+# subnet 1 is the private subnet
 resource "azurerm_subnet_nat_gateway_association" "nat_gw_vnet_association" {
-  count          = length(local.subnet_prefixes)
-  subnet_id      = module.network[0].vnet_subnets[count.index]
+  subnet_id      = module.network[0].vnet_subnets[1]
   nat_gateway_id = azurerm_nat_gateway.nat_gw.id
 }

@@ -13,7 +13,7 @@ locals {
   disk_data_iops  = var.storage_details.disk_iops_read_write
   disk_data_cache = "ReadWrite"
 
-  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg.id : var.security_group_ids[0]
+  security_group_id = length(var.security_group_ids) == 0 ? azurerm_network_security_group.dsf_base_sg[0].id : var.security_group_ids[0]
 }
 
 resource "azurerm_public_ip" "vm_public_ip" {
@@ -44,7 +44,7 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
   name                = var.name
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
-  size                = var.instance_type
+  size                = var.instance_size
   admin_username      = local.vm_user
 
   custom_data = base64encode(local.install_script)
@@ -94,16 +94,16 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
 }
 
 resource "azurerm_user_assigned_identity" "dsf_base" {
-  name                = var.name
+  # dots are somewhat common in server names, but aren't allowed in identities
+  name                = replace(var.name, ".", "-")
   resource_group_name = var.resource_group.name
   location            = var.resource_group.location
 }
 
-data "azurerm_subscription" "subscription" {
-}
+data "azurerm_subscription" "current" {}
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
-  scope                = "${data.azurerm_subscription.subscription.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
+  scope                = "${data.azurerm_subscription.current.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.dsf_base.principal_id
 }

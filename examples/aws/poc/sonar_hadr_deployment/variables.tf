@@ -47,12 +47,6 @@ variable "web_console_cidr" {
   description = "DSF Hub web console CIDR blocks in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
-variable "database_cidr" {
-  type        = list(string)
-  default     = null # workstation ip
-  description = "CIDR blocks allowing dummy database access in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]"
-}
-
 variable "workstation_cidr" {
   type        = list(string)
   default     = null

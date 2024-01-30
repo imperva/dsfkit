@@ -68,7 +68,7 @@ See available released versions in the main repo README [here](https://github.co
 Specify the module's version by adding the version parameter. For example:
 
 ```
-module "dsf_dra_admin" {
+module "dsf_dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
   version = "x.y.z"
 }
@@ -78,4 +78,4 @@ module "dsf_dra_admin" {
 
 For more information about the DSF DRA Analytics and its features, refer to the official documentation [here](https://docs.imperva.com/bundle/z-kb-articles-km/page/4e487f3c.html). 
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.5).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.8).

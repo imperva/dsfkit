@@ -15,7 +15,6 @@ on:
 
   push:
     branches:
-      - 'master'
       - 'dev'
     paths:
       - 'modules/aws/sonar-upgrader/**'
@@ -26,7 +25,6 @@ on:
       - 'opened'
       - 'reopened'
     branches:
-      - 'master'
       - 'dev'
     paths:
       - 'modules/aws/sonar-upgrader/**'

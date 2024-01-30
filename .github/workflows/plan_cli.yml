@@ -78,6 +78,14 @@ jobs:
                 az_blob = "dummy-blob"
               }
               dam_license="license.mprv"
+              dra_admin_image_details = {
+                resource_group_name = "dummy-resource-group"
+                image_id = "dummy-admin-image-id"
+              }
+              dra_analytics_image_details = {
+                resource_group_name = "dummy-resource-group"
+                image_id = "dummy-analytics-image-id"
+              }
           - name: AWS - POC - DSF
             example: ./examples/aws/poc/dsf_deployment
             terraformvars: |
@@ -128,7 +136,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: ~1.6.0
+          terraform_version: ~1.7.0
 
       - name: Create License File
         env:

@@ -43,6 +43,7 @@ jobs:
           - source_module: "aws/poc-db-onboarder"
             destination_repo: "terraform-aws-dsf-poc-db-onboarder"
             public_submodule: "aws/rds-mysql-db aws/rds-mssql-db aws/rds-postgres-db"
+            hidden_submodules: "null/poc-db-onboarder"
             begin_tag: 1.0.0
 
           - source_module: "aws/sonar-upgrader"
@@ -59,7 +60,13 @@ jobs:
             hidden_submodules: "azurerm/sonar-base-instance azurerm/statistics null/statistics"
             begin_tag: 1.0.0
 
-          ## null provider
+          - source_module: "azurerm/poc-db-onboarder"
+            destination_repo: "terraform-azurerm-dsf-poc-db-onboarder"
+            public_submodule: "azurerm/mssql-db"
+            hidden_submodules: "null/poc-db-onboarder"
+            begin_tag: 1.0.0
+
+            ## null provider
           - source_module: "null/hadr"
             destination_repo: "terraform-null-dsf-hadr"
             begin_tag: 1.0.0
@@ -109,6 +116,16 @@ jobs:
             destination_repo: "terraform-aws-dsf-dra-analytics"
             hidden_submodules: "aws/statistics null/statistics"
             begin_tag: 1.0.0
+
+          ## azurerm provider
+          - source_module: "azurerm/dra-admin"
+            destination_repo: "terraform-azurerm-dsf-dra-admin"
+            hidden_submodules: "azurerm/statistics null/statistics"
+            begin_tag: 1.7.6
+          - source_module: "azurerm/dra-analytics"
+            destination_repo: "terraform-azurerm-dsf-dra-analytics"
+            hidden_submodules: "azurerm/statistics null/statistics"
+            begin_tag: 1.7.6
 
           # Globals
           ## aws provider

@@ -1,4 +1,4 @@
-name: 'Sonar POC CLI'
+name: 'Sonar POC CLI - AWS'
 
 on:
   workflow_call:
@@ -25,18 +25,9 @@ on:
 
   push:
     branches:
-      - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/core/*'
-      - 'modules/aws/sonar-base-instance/*'
-      - 'modules/aws/hub/*'
-      - 'modules/aws/agentless-gw/*'
-      - 'modules/aws/poc-db-onboarder/*'
-      - 'modules/aws/rds-mssql-db/*'
-      - 'modules/aws/rds-mysql-db/*'
-      - 'modules/null/federation/*'
-      - 'modules/null/hadr/*'
+      - 'examples/aws/poc/dsf_deployment/*'
       - 'examples/aws/poc/sonar_basic_deployment/*'
       - 'examples/aws/poc/sonar_hadr_deployment/*'
 
@@ -45,18 +36,9 @@ on:
       - 'opened'
       - 'reopened'
     branches:
-      - 'master'
       - 'dev'
     paths:
-      - 'modules/aws/core/*'
-      - 'modules/aws/sonar-base-instance/*'
-      - 'modules/aws/hub/*'
-      - 'modules/aws/agentless-gw/*'
-      - 'modules/aws/poc-db-onboarder/*'
-      - 'modules/aws/rds-mssql-db/*'
-      - 'modules/aws/rds-mysql-db/*'
-      - 'modules/null/federation/*'
-      - 'modules/null/hadr/*'
+      - 'examples/aws/poc/dsf_deployment/*'
       - 'examples/aws/poc/sonar_basic_deployment/*'
       - 'examples/aws/poc/sonar_hadr_deployment/*'
 
@@ -145,7 +127,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
-        terraform_version: ~1.6.0
+        terraform_version: ~1.7.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
