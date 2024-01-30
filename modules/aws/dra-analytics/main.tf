@@ -19,8 +19,8 @@ locals {
     admin_server_private_ip                   = var.admin_server_private_ip
   })
 
-  readiness_script = templatefile("${path.module}/waiter.tftpl", {
-    admin_server_public_ip = var.admin_server_public_ip
+  readiness_script = templatefile("${path.module}/readiness.tftpl", {
+    admin_server_public_ip = try(var.admin_server_public_ip, var.admin_server_private_ip)
   })
 }
 
