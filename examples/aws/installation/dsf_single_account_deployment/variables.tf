@@ -461,7 +461,7 @@ variable "sonar_machine_base_directory" {
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
-  default     = "14.13.1.10"
+  default     = "14.14.1.10"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
