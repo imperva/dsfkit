@@ -143,13 +143,13 @@ Latest Supported Terraform Version: 1.7.x. Using a higher version may result in 
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs">Request access to DSF installation software on AWS</a>
+   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AWS.md">Request access to DSF installation software on AWS</a>
    </td>
    <td> Grants access for a specific AWS account to the DSF installation software.
    </td>
   </tr>
   <tr>
-   <td><a href="https://docs.google.com/document/d/12r8olpvT1H4A_ZKUJBO_2AbTO7qmyihe1hQjHo-N3qg">Request access to DSF installation software on Azure</a>
+   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AZURE.md">Request access to DSF installation software on Azure</a>
    </td>
    <td> Copies DSF installation to Azure storage account and configures programmatic deployment for Azure images.
    </td>
@@ -476,13 +476,13 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 ### AWS Prerequisites
 
 1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-aws)).
-2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
+2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AWS.md).
 
 ### Azure Prerequisites
 
 1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it a custom role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) (without role assignment conditions) 
    under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-azure)).
-2. The deployment requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/12r8olpvT1H4A_ZKUJBO_2AbTO7qmyihe1hQjHo-N3qg).
+2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AZURE.md).
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -1078,7 +1078,7 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
 
-1. The upgrade requires access to the DSF installation software. [Click here to request access](https://docs.google.com/document/d/1Ci7sghwflPsfiEb7CH79z1bNI74x_lsChE5w_cG4rMs).
+1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AWS.md).
 2. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Git](https://git-scm.com).
 3. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 4. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Python 3](https://www.python.org).

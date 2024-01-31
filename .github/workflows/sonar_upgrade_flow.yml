@@ -19,6 +19,7 @@ on:
     paths:
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/aws/sonar_upgrade/*'
+      - '!**/README.md'
 
   pull_request:
     types:
@@ -29,6 +30,7 @@ on:
     paths:
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/aws/sonar_upgrade/*'
+      - '!**/README.md'
 
 permissions:
   contents: read
