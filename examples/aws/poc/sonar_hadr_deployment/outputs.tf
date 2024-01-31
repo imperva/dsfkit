@@ -74,3 +74,7 @@ output "mysql_db_details" {
 output "mssql_db_details" {
   value = try(module.rds_mssql, null)
 }
+
+output "postgres_db_details" {
+  value = try(module.rds_postgres, null)
+}

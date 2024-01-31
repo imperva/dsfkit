@@ -12,10 +12,10 @@ This deployment consists of:
 5. Creation of a new “Demo DB” - RDS MySQL
 6. Auto configuration of the RDS MySQL to enable native audit
 7. Onboarding the DB to the Agentless Gateway
-8. There is an option to create also an RDS MsSQL with audit configured and with synthetic data on it. In order to do so, use the variable 'db_types_to_onboard' and specify which DBs to create and onboard.</br>
+8. There is an option to create also an RDS MsSQL with audit configured and with synthetic data on it. In order to do so, use the variable 'simulation_db_types_for_agentless' and specify which DBs to create and onboard.</br>
     For example, in order to create both 'RDS MySQL' and 'RDS MsSQL', run the following:
     ```bash
-      terraform apply -auto-approve -var 'db_types_to_onboard=["RDS MySQL", "RDS MsSQL"]'
+      terraform apply -auto-approve -var 'simulation_db_types_for_agentless=["RDS MySQL", "RDS MsSQL"]'
    ```
     For more details, go to the rds-mssql-db module
 
