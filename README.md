@@ -333,7 +333,8 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
    </td>
    <td>
       1. Sonar upgrade Alpha release. It can be used with caution.
-      <br/>2. Added support for Terraform version 1.6.x.
+      <br/>2. Added support for DSF version 4.13/14.13.
+      <br/>3. Added support for Terraform version 1.6.x.
    </td>
   </tr>
   <tr>
@@ -429,12 +430,13 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
   </tr>
   <tr>
-    <td>Coming soon
+    <td>31 Jan 2024
+    </td>
+    <td>1.7.9
     </td>
     <td>
-    </td>
-    <td>
-      1. Added support for Terraform version 1.7.x.
+      1. Added support for DSF version 4.14/14.14.
+      <br/>2. Added support for Terraform version 1.7.x.
     </td>
   </tr>
 </table>
