@@ -79,6 +79,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    azurerm_network_interface_security_group_association.nic_sg_association
+  ]
 }
 
 resource "azurerm_user_assigned_identity" "user_assigned_identity" {
