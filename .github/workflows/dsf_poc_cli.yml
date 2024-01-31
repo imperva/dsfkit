@@ -30,7 +30,7 @@ on:
       - 'dev'
     paths:
       - 'modules/aws/**'
-      - '!modules/aws/sonar-upgrader/*'
+      - '!modules/aws/sonar-upgrader/**'
       - '!modules/aws/statistics/*'
       - 'modules/null/**'
       - '!modules/null/statistics/*'

@@ -41,7 +41,7 @@ on:
       - '!modules/aws/rds-mssql-db/*'
       - '!modules/aws/rds-mysql-db/*'
       - '!modules/aws/rds-postgres-db/*'
-      - '!modules/aws/sonar-upgrader/*'
+      - '!modules/aws/sonar-upgrader/**'
       - 'modules/null/**'
       - 'examples/aws/poc/dsf_single_account_deployment/*'
 
