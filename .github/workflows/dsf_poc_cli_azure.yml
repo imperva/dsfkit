@@ -91,7 +91,9 @@ jobs:
       EXAMPLE_DIR: ./examples/azure/poc/dsf_deployment
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
-      TF_VAR_enable_dra: ${{ matrix.enable_dra }}
+      TF_VAR_hub_hadr: false
+      TF_VAR_agentless_gw_hadr: false
+      TF_VAR_agentless_gw_count: 1
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
