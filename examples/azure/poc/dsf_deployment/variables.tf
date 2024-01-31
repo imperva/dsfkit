@@ -260,7 +260,7 @@ variable "sonar_machine_base_directory" {
 
 variable "simulation_db_types_for_agentless" {
   type        = list(string)
-  default     = []
+  default     = ["MsSQL"]
   description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'MsSQL'."
   validation {
     condition = alltrue([
