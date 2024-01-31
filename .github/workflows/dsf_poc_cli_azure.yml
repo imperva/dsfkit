@@ -1,4 +1,5 @@
 name: 'DSF POC CLI - Azure'
+
 on:
   workflow_call:
     inputs:
