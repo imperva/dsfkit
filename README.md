@@ -160,7 +160,7 @@ Latest Supported Terraform Version: 1.7.x. Using a higher version may result in 
 
 The following table lists the _latest_ eDSF Kit releases, their release date and a high-level summary of the release's content.
 
-[Previous releases](https://github.com/imperva/dsfkit/blob/1.6.0/PREVIOUS_RELEASES.md)
+[Previous releases](https://github.com/imperva/dsfkit/blob/1.7.9/PREVIOUS_RELEASES.md)
 
 <table>
   <tr>
@@ -1133,7 +1133,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
    >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
    ```
 
-4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the <a href="https://github.com/imperva/dsfkit/blob/1.7.1/examples/aws/sonar_upgrade/main.tf">main.tf</a> file.
+4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the <a href="https://github.com/imperva/dsfkit/blob/1.7.9/examples/aws/sonar_upgrade/main.tf">main.tf</a> file.
 
 
    More information can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module.
