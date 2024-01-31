@@ -4,7 +4,7 @@ Imperva’s Data Security Fabric product, aka DSF, consists of four sub-products
 1. DSF Hub and Agentless Gateway (formerly Sonar)
 2. DAM MX and Agent Gateway 
 3. DRA Admin and Analytics 
-4. DAM Agent audit resource for POC purposes
+4. DAM Agent audit source for POC purposes
 
 The following 3 links allow you to request access to the installation software of the three subproducts for the AWS account where you want to deploy DSF.
 
@@ -18,7 +18,7 @@ When deploying to multiple AWS accounts, use multiple forms.
    1. **Open only to Imperva employees**
    2. Includes:
       1. DSF Hub and Agentless Gateway (formerly Sonar)
-      2. DAM Agent audit resource for POC purposes 
+      2. DAM Agent audit source for POC purposes 
    3. Requesting access is for all versions and all regions
 
 2. [eDSF Kit - Request access to DAM AMI](https://aws.amazon.com/marketplace/pp/prodview-3wa5bmj5ol4g4) (In AWS Marketplace)
