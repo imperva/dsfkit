@@ -439,6 +439,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>2. Added support for Terraform version 1.7.x.
     </td>
   </tr>
+  <tr>
+    <td>Coming soon
+    </td>
+    <td>
+    </td>
+    <td>
+      1. Moved AWS and Azure access request google forms to eDSF Kit open source code.
+    </td>
+  </tr>
 </table>
 
 # Getting Ready to Deploy
