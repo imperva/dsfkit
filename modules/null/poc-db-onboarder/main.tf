@@ -17,12 +17,12 @@ locals {
       gatewayId     = var.assignee_gw
       id            = var.cloud_account_data.id.value,
       assetData = merge({
-        admin_email        = local.admin_email,
-        asset_display_name = "Auto Onboarded Account: (${var.cloud_account_data.name})",
-        (var.cloud_account_data.id.name)           = var.cloud_account_data.id.value,
-        "Server Host Name" = "${var.cloud_account_data.type}.com",
-        connections        = var.cloud_account_data.connections_data
-      },
+        admin_email                      = local.admin_email,
+        asset_display_name               = "Auto Onboarded Account: (${var.cloud_account_data.name})",
+        (var.cloud_account_data.id.name) = var.cloud_account_data.id.value,
+        "Server Host Name"               = "${var.cloud_account_data.type}.com",
+        connections                      = var.cloud_account_data.connections_data
+        },
       var.cloud_account_additional_data)
     }
   }
@@ -38,13 +38,13 @@ locals {
       assetData : merge({
         admin_email = local.admin_email,
         asset_display_name : var.database_data.name,
-        (var.database_data.id.name)           = var.database_data.id.value,
+        (var.database_data.id.name) = var.database_data.id.value,
         "Server Host Name" : var.database_data.hostname,
         "Server Port" : var.database_data.port,
         "Server IP" : var.database_data.hostname,
         isMonitored : var.enable_audit
-      },
-      var.database_additional_data
+        },
+        var.database_additional_data
       )
     }
   }
@@ -79,6 +79,6 @@ resource "null_resource" "onboard_db_to_dsf" {
 
   triggers = {
     db_id = var.database_data.id.name
-#    always_run = "${timestamp()}"
+    #    always_run = "${timestamp()}"
   }
 }

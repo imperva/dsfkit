@@ -46,7 +46,7 @@ module "onboard_db_to_dsf" {
 
   database_data = {
     id = {
-      name = "arn"
+      name  = "arn"
       value = var.database_details.db_arn
     }
     name        = var.database_details.db_identifier
@@ -57,17 +57,17 @@ module "onboard_db_to_dsf" {
 
   cloud_account_data = {
     id = {
-      name = "arn"
+      name  = "arn"
       value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}"
     }
-    name = data.aws_caller_identity.current.account_id
-    type = "AWS"
+    name             = data.aws_caller_identity.current.account_id
+    type             = "AWS"
     connections_data = []
   }
 
   cloud_account_additional_data = {
-    auth_mechanism     = "default"
-    region             = data.aws_region.current.name
+    auth_mechanism = "default"
+    region         = data.aws_region.current.name
   }
   database_additional_data = {
     region = data.aws_region.current.name
@@ -77,5 +77,5 @@ module "onboard_db_to_dsf" {
   hub_proxy_info               = var.hub_proxy_info
   terraform_script_path_folder = var.terraform_script_path_folder
 
-  depends_on                   = [aws_iam_role_policy_attachment.policy_attach]
+  depends_on = [aws_iam_role_policy_attachment.policy_attach]
 }
