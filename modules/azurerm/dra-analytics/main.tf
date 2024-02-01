@@ -16,8 +16,8 @@ locals {
     admin_server_private_ip                    = var.admin_server_private_ip
   })
 
-  readiness_script = templatefile("${path.module}/waiter.tftpl", {
-    admin_server_public_ip = var.admin_server_public_ip
+  readiness_script = templatefile("${path.module}/readiness.tftpl", {
+    admin_server_public_ip = try(var.admin_server_public_ip, var.admin_server_private_ip)
   })
 }
 
@@ -79,6 +79,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 
   tags = var.tags
+
+  depends_on = [
+    azurerm_network_interface_security_group_association.nic_sg_association
+  ]
 }
 
 resource "azurerm_user_assigned_identity" "user_assigned_identity" {

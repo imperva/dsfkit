@@ -42,7 +42,7 @@ variable "usc_access_token" {
 variable "cloud_account_data" {
   type = object({
     id = object({
-      name = string
+      name  = string
       value = string
     })
     name             = string
@@ -53,28 +53,28 @@ variable "cloud_account_data" {
 }
 
 variable "cloud_account_additional_data" {
-  type = any
+  type        = any
   description = "Cloud account additinal data"
-  default = {}
+  default     = {}
 }
 
 variable "database_data" {
   type = object({
     server_type = string
     id = object({
-      name = string
+      name  = string
       value = string
     })
-    name        = string
-    hostname    = string
-    port        = number
+    name     = string
+    hostname = string
+    port     = number
   })
 }
 
 variable "database_additional_data" {
-  type = any
+  type        = any
   description = "Database additinal data"
-  default = {}
+  default     = {}
 }
 
 variable "terraform_script_path_folder" {

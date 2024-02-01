@@ -6,7 +6,7 @@ variable "deployment_name" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.13"
+  default     = "4.14"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
@@ -142,14 +142,14 @@ variable "agentless_gw_ebs_details" {
   }
 }
 
-variable "db_types_to_onboard" {
+variable "simulation_db_types_for_agentless" {
   type        = list(string)
   default     = ["RDS MySQL"]
-  description = "DB types to onboard, available types are - 'RDS MySQL', 'RDS MsSQL' with data"
+  description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'RDS MySQL', 'RDS PostgreSQL' and 'RDS MsSQL'. 'RDS MsSQL' includes simulation data."
   validation {
     condition = alltrue([
-      for db_type in var.db_types_to_onboard : contains(["RDS MySQL", "RDS MsSQL"], db_type)
+      for db_type in var.simulation_db_types_for_agentless : contains(["RDS MySQL", "RDS MsSQL", "RDS PostgreSQL"], db_type)
     ])
-    error_message = "Valid values should contain at least one of the following: 'RDS MySQL', 'RDS MsSQL'."
+    error_message = "Value must be a subset of: ['RDS MySQL', 'RDS MsSQL', 'RDS PostgreSQL']"
   }
 }

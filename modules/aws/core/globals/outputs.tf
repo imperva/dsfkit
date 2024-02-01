@@ -63,12 +63,12 @@ output "dra_version" {
 
 output "sonar_supported_versions" {
   description = "Sonar versions which are supported by at least one module"
-  value = local.sonar_supported_versions
+  value       = local.sonar_supported_versions
 }
 
 output "sonar_fully_supported_versions" {
   description = "Sonar versions which are supported in by all modules"
-  value = local.sonar_fully_supported_versions
+  value       = local.sonar_fully_supported_versions
 }
 
 output "dra_supported_versions" {

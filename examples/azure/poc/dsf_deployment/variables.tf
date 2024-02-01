@@ -118,7 +118,7 @@ variable "subnet_ids" {
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
-  default     = "14.13.1.10"
+  default     = "14.14.1.10"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,2}$", var.dam_version))
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
@@ -176,7 +176,7 @@ variable "simulation_db_types_for_agent" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.13"
+  default     = "4.14"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
@@ -260,7 +260,7 @@ variable "sonar_machine_base_directory" {
 
 variable "simulation_db_types_for_agentless" {
   type        = list(string)
-  default     = []
+  default     = ["MsSQL"]
   description = "Types of databases to provision and onboard to an Agentless Gateway for simulation purposes. Available types are: 'MsSQL'."
   validation {
     condition = alltrue([

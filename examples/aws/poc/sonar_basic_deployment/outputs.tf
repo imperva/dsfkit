@@ -54,6 +54,10 @@ output "mssql_db_details" {
   value = try(module.rds_mssql, null)
 }
 
+output "postgres_db_details" {
+  value = try(module.rds_postgres, null)
+}
+
 output "generated_network" {
   value = try({
     vpc             = module.vpc[0].vpc_id

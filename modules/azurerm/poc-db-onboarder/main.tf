@@ -26,8 +26,8 @@ module "onboard_db_to_dsf" {
   enable_audit     = var.enable_audit
 
   database_data = {
-    id          = {
-      name = "asset_id"
+    id = {
+      name  = "asset_id"
       value = var.database_details.db_server_id
     }
     name        = var.database_details.db_identifier
@@ -38,8 +38,8 @@ module "onboard_db_to_dsf" {
   }
 
   cloud_account_data = {
-    id   = {
-      name = "asset_id"
+    id = {
+      name  = "asset_id"
       value = data.azurerm_subscription.current.id
     }
     name = data.azurerm_subscription.current.display_name
