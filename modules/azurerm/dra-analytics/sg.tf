@@ -71,4 +71,8 @@ resource "azurerm_network_security_group" "dsf_base_sg" {
     }
   }
   tags = var.tags
+
+  depends_on = [
+    azurerm_network_interface.nic
+  ]
 }
