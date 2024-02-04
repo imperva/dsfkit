@@ -25,8 +25,8 @@ locals {
   }
   sonar_supported_versions       = keys(local.sonar_tarball_s3_key_map)
   sonar_fully_supported_versions = setsubtract(local.sonar_supported_versions, ["4.9", "4.10.0.0", "4.10.0.1", "4.10"])
-  s3_object                      = var.tarball_s3_key != null ? var.tarball_s3_key : local.sonar_tarball_s3_key_map[var.sonar_version]
-  s3_object_version              = regex("\\d\\.\\d*", local.s3_object)
+  sonar_installation_s3_key      = var.installation_s3_key != null ? var.installation_s3_key : join("/", [local.sonar_installation_s3_prefix, local.sonar_tarball_s3_key_map[var.sonar_version]])
+  sonar_s3_object_version        = regex("\\d\\.\\d*", local.sonar_installation_s3_key)
 }
 
 locals {
@@ -48,6 +48,11 @@ locals {
 
   dra_supported_versions = keys(local.dra_version_map)
   dra_version            = lookup(local.dra_version_map, var.dra_version, var.dra_version)
+}
+
+locals {
+  sonar_installation_s3_prefix = "sonar"
+  dam_agent_installation_s3_prefix = "dam-agent"
 }
 
 resource "random_id" "salt" {

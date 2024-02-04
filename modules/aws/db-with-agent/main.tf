@@ -7,7 +7,9 @@ locals {
   binaries_location = {
     s3_bucket = var.binaries_location.s3_bucket
     s3_region = var.binaries_location.s3_region
-    s3_key    = var.binaries_location.s3_key != null ? var.binaries_location.s3_key : local.os_params[local.os_type].image_name
+    s3_object = var.binaries_location.s3_object != null ? var.binaries_location.s3_object : local.os_params[local.os_type].installation_filename
+    s3_key    = var.binaries_location.s3_prefix != null ? join("/", var.binaries_location.s3_prefix, var.binaries_location.s3_object) : local.binaries_location.s3_object
+    s3_bucket_and_prefix = var.binaries_location.s3_prefix != null ? join("/", local.binaries_location.s3_bucket, var.binaries_location.s3_prefix) : local.binaries_location.s3_bucket
   }
 }
 

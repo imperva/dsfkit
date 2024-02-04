@@ -42,18 +42,19 @@ output "tags" {
 
 output "tarball_location" {
   value = {
-    s3_bucket = var.tarball_s3_bucket.bucket
-    s3_region = var.tarball_s3_bucket.region
-    s3_key    = local.s3_object
-    version   = local.s3_object_version
+    s3_bucket = var.installation_s3_bucket.bucket
+    s3_region = var.installation_s3_bucket.region
+    s3_key    = local.sonar_installation_s3_key
+    version   = local.sonar_s3_object_version
   }
 }
 
 output "dam_agent_installation_location" {
   value = {
-    s3_bucket = var.tarball_s3_bucket.bucket
-    s3_region = var.tarball_s3_bucket.region
-    s3_key    = null
+    s3_bucket = var.installation_s3_bucket.bucket
+    s3_region = var.installation_s3_bucket.region
+    s3_prefix = local.dam_agent_installation_s3_prefix
+    s3_object = null
   }
 }
 
