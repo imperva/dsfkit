@@ -4,7 +4,11 @@ locals {
 
   db_type           = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
   os_type           = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
-  binaries_location = var.binaries_location != null ? var.binaries_location : local.os_params[local.os_type].binaries_location
+  binaries_location = {
+    s3_bucket = var.binaries_location.s3_bucket
+    s3_region = var.binaries_location.s3_region
+    s3_key    = var.binaries_location.s3_key != null ? var.binaries_location.s3_key : local.os_params[local.os_type].image_name
+  }
 }
 
 resource "random_shuffle" "db" {
