@@ -473,7 +473,7 @@ def run_preflight_validations_script(args, dsf_node, dsf_node_name, python_locat
     script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
     print(f"'Run preflight validations' python script output:\n{script_output}")
 
-    preflight_validations_result = json.loads(script_output)
+    preflight_validations_result = json.loads(extract_preflight_validations_result(script_output))
     print(f"Preflight validations result in {dsf_node_name} is {preflight_validations_result}")
     return preflight_validations_result
 
@@ -498,17 +498,6 @@ def extract_python_location(script_output):
         return match.group(1)
     else:
         raise Exception("Pattern 'Python location: ...' not found in 'Get python location' script output")
-
-
-def run_preflight_validations_script(dsf_node, target_version, python_location, script_file_name):
-    script_file_path = build_script_file_path(script_file_name)
-    script_contents = read_file_contents(script_file_path)
-    script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
-    # print(f"script_run_command: {script_run_command}")
-
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
-    print(f"'Run preflight validations' python script output:\n{script_output}")
-    return extract_preflight_validations_result(script_output)
 
 
 def extract_preflight_validations_result(script_output):
