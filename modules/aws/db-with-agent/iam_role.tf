@@ -28,7 +28,7 @@ locals {
           "s3:GetObject"
         ]
         "Resource" : [
-          "arn:aws:s3:::${local.binaries_location.s3_bucket_and_prefix}/*",
+          "arn:aws:s3:::${local.s3_bucket_and_prefix}/*",
         ]
       }
     ]
