@@ -20,9 +20,9 @@ locals {
 
   # For example, if the binaries_location.s3_key is "path/to/file.zip", then the s3_bucket_prefix will be "path/to"
   # If the binaries_location.s3_key is "file.zip", then the s3_bucket_prefix will be null
-  s3_bucket_prefix     = try(regex("^(.*)/[^/]+", var.binaries_location.s3_key), null)
-  s3_key               = local.s3_bucket_prefix != null ? join("/", local.s3_bucket_prefix, var.binaries_location.s3_key) : var.binaries_location.s3_key
-  s3_bucket_and_prefix = local.s3_bucket_prefix != null ? join("/", var.binaries_location.s3_bucket, local.s3_bucket_prefix) : var.binaries_location.s3_bucket
+  s3_bucket_prefix     = try(regex("^(.*)/[^/]+", var.binaries_location.s3_key)[0], null)
+  s3_key               = local.s3_bucket_prefix != null ? join("/", [local.s3_bucket_prefix, var.binaries_location.s3_key]) : var.binaries_location.s3_key
+  s3_bucket_and_prefix = local.s3_bucket_prefix != null ? join("/", [var.binaries_location.s3_bucket, local.s3_bucket_prefix]) : var.binaries_location.s3_bucket
 }
 
 resource "aws_eip" "dsf_instance_eip" {
