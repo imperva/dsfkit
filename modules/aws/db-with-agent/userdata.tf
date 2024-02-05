@@ -16,8 +16,8 @@ locals {
       sudo ./aws/install
       export PATH=$PATH:/usr/local/bin:/usr/local/bin
       echo "Downloading agent:"
-      INSTALLATION_FILE=${local.s3_object}
-      aws s3 cp s3://${var.binaries_location.s3_bucket}/${local.s3_key} . --region ${var.binaries_location.s3_region}
+      INSTALLATION_FILE=${local.installation_s3_object}
+      aws s3 cp s3://${var.binaries_location.s3_bucket}/${local.installation_s3_key} . --region ${var.binaries_location.s3_region}
       chmod +x ./"$INSTALLATION_FILE"
       echo "Installing agent:"
       ./"$INSTALLATION_FILE" -n -d ${local.agent_installation_dir}
