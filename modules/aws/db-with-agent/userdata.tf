@@ -16,11 +16,12 @@ locals {
       sudo ./aws/install
       export PATH=$PATH:/usr/local/bin:/usr/local/bin
       echo "Downloading agent:"
-      aws s3 cp s3://${local.binaries_location.s3_bucket}/${local.binaries_location.s3_key} .
-      chmod +x ./${local.binaries_location.s3_key}
+      INSTALLATION_FILE=${local.installation_s3_object}
+      aws s3 cp s3://${var.binaries_location.s3_bucket}/${local.installation_s3_key} . --region ${var.binaries_location.s3_region}
+      chmod +x ./"$INSTALLATION_FILE"
       echo "Installing agent:"
-      ./${local.binaries_location.s3_key} -n -d ${local.agent_installation_dir}
-      rm ${local.binaries_location.s3_key}
+      ./"$INSTALLATION_FILE" -n -d ${local.agent_installation_dir}
+      rm "$INSTALLATION_FILE"
       echo "Registering agent:"
       ${local.agent_installation_dir}/ragent/bin/cli --dcfg ${local.agent_installation_dir}/ragent/etc --dtarget ${local.agent_installation_dir}/ragent/etc --dlog ${local.agent_installation_dir}/ragent/etc/logs/cli registration advanced-register registration-type=Primary is-db-agent=true tunnel-protocol=TCP gw-ip=${var.registration_params.agent_gateway_host} gw-port=443 manual-settings-activation=Automatic monitor-network-channels=Both password="${var.registration_params.secure_password}" ragent-name="${join("-", [var.friendly_name, random_id.salt.hex])}" site='${var.registration_params.site}' server-group="${var.registration_params.server_group}";
       echo "Starting agent:"

@@ -22,15 +22,13 @@ locals {
     "Version" : "2012-10-17",
     "Statement" : [
       {
-        "Sid" : "VisualEditor0",
+        "Sid" : "getFileFromS3BucketPrefix",
         "Effect" : "Allow",
         "Action" : [
-          "s3:GetObject",
-          "s3:ListBucket"
+          "s3:GetObject"
         ]
         "Resource" : [
-          "arn:aws:s3:::${local.binaries_location.s3_bucket}",
-          "arn:aws:s3:::${local.binaries_location.s3_bucket}/*",
+          "arn:aws:s3:::${local.installation_s3_bucket_and_prefix}/*",
         ]
       }
     ]

@@ -18,6 +18,8 @@ UPGRADE_SCRIPT_NAME = "upgrade_v4_10.sh"
 POSTFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_postflight_validations.py"
 CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 
+SONAR_INSTALLATION_S3_PREFIX = "sonar"
+
 UNDEFINED_PYTHON_LOCATION = "UNDEFINED_PYTHON_LOCATION"
 
 # Globals
@@ -732,7 +734,7 @@ def get_upgrade_script_args(target_version, tarball_location):
 
 
 def get_tarball_s3_key(target_version):
-    return f"jsonar-{target_version}.tar.gz"
+    return f"{SONAR_INSTALLATION_S3_PREFIX}/jsonar-{target_version}.tar.gz"
 
 
 def maybe_run_postflight_validations(extended_node, target_version, script_file_name, stop_on_failure,

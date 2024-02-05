@@ -17,6 +17,11 @@ locals {
   security_group_ids = concat(
     [for sg in aws_security_group.dsf_base_sg : sg.id],
   var.security_group_ids)
+
+  # For example, if the binaries_location.s3_key is "path/to/file.zip", then the installation_s3_prefix will be "path/to"
+  # If the binaries_location.s3_key is "file.zip", then the installation_s3_prefix will be null
+  installation_s3_prefix            = try(regex("^(.*)/[^/]+", var.binaries_location.s3_key)[0], null)
+  installation_s3_bucket_and_prefix = local.installation_s3_prefix != null ? join("/", [var.binaries_location.s3_bucket, local.installation_s3_prefix]) : var.binaries_location.s3_bucket
 }
 
 resource "aws_eip" "dsf_instance_eip" {

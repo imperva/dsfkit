@@ -126,7 +126,7 @@ variable "binaries_location" {
     s3_region = string
     s3_key    = string
   })
-  description = "S3 DSF installation location. If tarball_url not set, binaries_location is used"
+  description = "S3 DSF installation location. If tarball_url not set, binaries_location is used. For example, { s3_bucket = 'my-bucket', s3_region = 'us-west-2', s3_key = 'installation-files/my-file'}. This means that the path to the installation file is s3://my-bucket/installation-files/my-file"
   default = {
     s3_bucket = ""
     s3_region = ""

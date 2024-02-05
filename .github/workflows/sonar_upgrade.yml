@@ -101,11 +101,6 @@ jobs:
         run: |
           find ${{ env.DEPLOYMENT_EXAMPLE_DIR }} -type f -exec sed -i -f sed.expr {} \;
 
-      - name: Sets env vars for environment
-        run: |
-          echo "TF_VAR_tarball_s3_bucket=0ed58e18-0c0c-11ed-861d-0242ac120003" >> $GITHUB_ENV
-        if: github.ref != 'refs/heads/"master"'
-
       - name: Create terraform backend file for the deployment
         run: |
           cat << EOF > $DEPLOYMENT_EXAMPLE_DIR/backend.tf

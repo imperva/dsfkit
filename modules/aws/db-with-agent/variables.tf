@@ -79,9 +79,10 @@ variable "binaries_location" {
   type = object({
     s3_bucket = string
     s3_region = string
-    s3_key    = string
+    s3_prefix = string
+    s3_object = string
   })
-  description = "S3 DSF DAM agent installation location"
+  description = "S3 DSF DAM agent installation location. For example, { s3_bucket = 'my-bucket', s3_region = 'us-west-2', s3_prefix = 'installation-files', s3_object = 'my-file' }. This means that the path to the installation file is s3://my-bucket/installation-files/my-file. If you don't have a prefix or an object, keep them null."
   nullable    = false
 }
 
