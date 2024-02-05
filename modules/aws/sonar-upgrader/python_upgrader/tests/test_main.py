@@ -3,7 +3,7 @@
 import pytest
 import argparse
 import json
-from upgrade.main import main, fill_args_defaults, set_global_variables
+from upgrade.main import main, set_global_variables, argument_parser
 from upgrade.upgrade_status_service import OverallUpgradeStatus
 from upgrade.upgrade_exception import UpgradeException
 
@@ -51,19 +51,11 @@ hub3 = {
 
 @pytest.fixture
 def setup_for_each_test(mocker):
-    default_args = argparse.Namespace(
-        agentless_gws=[],
-        dsf_hubs=[],
-        target_version="4.13",
-        connection_timeout=None,
-        test_connection=None,
-        run_preflight_validations=None,
-        run_upgrade=None,
-        run_postflight_validations=None,
-        stop_on_failure=None,
-        tarball_location=None,
-    )
-    fill_args_defaults(default_args)
+    args = argument_parser().parse_args([
+        '--agentless_gws', '',
+        '--dsf_hubs', '',
+        '--target_version', '4.13',
+    ])
     set_global_variables(100)
 
     # mock UpgradeStatusService class functions
@@ -83,7 +75,7 @@ def setup_for_each_test(mocker):
 
     test_connection_mock = mocker.patch('upgrade.main.test_connection')
 
-    yield default_args, upgrade_status_service_mock, test_connection_mock
+    yield args, upgrade_status_service_mock, test_connection_mock
 
 
 def test_main_all_flags_disabled(setup_for_each_test, mocker):
