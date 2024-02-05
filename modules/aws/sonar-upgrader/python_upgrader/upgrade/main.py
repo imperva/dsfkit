@@ -898,7 +898,7 @@ def verify_successful_run_by_configuration_options(args, upgrade_status_service)
 # Preparation functions
 
 
-def parse_args():
+def argument_parser():
     parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
     parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
     parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
@@ -928,7 +928,7 @@ def parse_args():
     parser.add_argument("--tarball_location",
                         default='{"s3_bucket": "1ef8de27-ed95-40ff-8c08-7969fc1b7901", "s3_region": "us-east-1"}',
                         help="JSON-encoded S3 bucket location of the DSF installation software")
-    return parser.parse_args()
+    return parser
 
 
 def set_global_variables(connection_timeout):
@@ -937,7 +937,7 @@ def set_global_variables(connection_timeout):
 
 
 if __name__ == "__main__":
-    args = parse_args()
+    args = argument_parser().parse_args()
     set_global_variables(args.connection_timeout)
 
     main(args)
