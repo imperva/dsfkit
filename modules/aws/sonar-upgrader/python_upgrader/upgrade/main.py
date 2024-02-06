@@ -422,43 +422,43 @@ def run_preflight_validations(args, agentless_gw_extended_node_dict,
     print("----- Preflight validations")
 
     successful = True
-    for node in chain(agentless_gw_extended_node_dict.values(), dsf_hub_extended_node_dict.values()):
-        if upgrade_status_service.should_run_preflight_validations(node.get('dsf_node_id')):
-            node_successful = run_preflight_validations_for_node(args, node, upgrade_status_service)
+    for extended_node in chain(agentless_gw_extended_node_dict.values(), dsf_hub_extended_node_dict.values()):
+        if upgrade_status_service.should_run_preflight_validations(extended_node.get('dsf_node_id')):
+            node_successful = run_preflight_validations_for_node(args, extended_node, upgrade_status_service)
             successful = successful and node_successful
 
     return successful
 
 
-def run_preflight_validations_for_node(args, node, upgrade_status_service):
+def run_preflight_validations_for_node(args, extended_node, upgrade_status_service):
     error_message = None
     try:
         upgrade_status_service.update_upgrade_status(
-            node.get('dsf_node_id'), UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS,
+            extended_node.get('dsf_node_id'), UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS,
         )
         preflight_validations_result = run_preflight_validations_script(
-            args, node.get('dsf_node'), node.get('dsf_node_name'), node.get('python_location'),
+            args, extended_node.get('dsf_node'), extended_node.get('dsf_node_name'), extended_node.get('python_location'),
         )
 
         if are_preflight_validations_passed(preflight_validations_result):
-            print(f"### Preflight validations passed for {node.get('dsf_node_name')}")
+            print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
             upgrade_status_service.update_upgrade_status(
-                node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
+                extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
             )
         else:
-            print(f"### Preflight validations didn't pass for {node.get('dsf_node_name')}")
+            print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
             error_message = preflight_validations_result
     except Exception as ex:
-        print(f"### Preflight validations for {node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
         error_message = str(ex)
 
     if error_message is not None:
         upgrade_status_service.update_upgrade_status(
-            node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED,
+            extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED,
             error_message,
         )
         if args.stop_on_failure:
-            raise UpgradeException(f"Preflight validations didn't pass for {node.get('dsf_node_id')}")
+            raise UpgradeException(f"Preflight validations didn't pass for {extended_node.get('dsf_node_id')}")
         else:
             return False
     return True
