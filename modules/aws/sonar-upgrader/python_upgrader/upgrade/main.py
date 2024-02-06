@@ -418,13 +418,14 @@ def collect_python_location(extended_node, stop_on_failure, upgrade_status_servi
 
 
 def run_preflight_validations(args, agentless_gw_extended_node_dict,
-                                  dsf_hub_extended_node_dict, upgrade_status_service):
+                              dsf_hub_extended_node_dict, upgrade_status_service):
     print("----- Preflight validations")
 
     successful = True
     for node in chain(agentless_gw_extended_node_dict.values(), dsf_hub_extended_node_dict.values()):
         if upgrade_status_service.should_run_preflight_validations(node.get('dsf_node_id')):
-            successful = successful and run_preflight_validations_for_node(args, node, upgrade_status_service)
+            node_successful = run_preflight_validations_for_node(args, node, upgrade_status_service)
+            successful = successful and node_successful
 
     return successful
 
