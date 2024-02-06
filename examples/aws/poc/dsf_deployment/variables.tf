@@ -198,6 +198,16 @@ variable "agent_source_os" {
   description = "Agent OS type"
 }
 
+variable "dam_agent_installation_location" {
+  type = object({
+    s3_bucket = string
+    s3_region = string
+    s3_prefix = string
+    s3_object = string
+  })
+  default = null
+}
+
 ##############################
 ####    Sonar variables   ####
 ##############################
@@ -211,6 +221,7 @@ variable "sonar_version" {
     error_message = "The sonar_version value must be 4.11 or higher"
   }
 }
+
 variable "tarball_location" {
   type = object({
     s3_bucket = string
