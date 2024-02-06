@@ -57,7 +57,8 @@ resource "azurerm_linux_virtual_machine" "agent" {
   }
   tags = merge(var.tags, { Name = join("-", [var.friendly_name]) })
   depends_on = [
-    azurerm_role_assignment.agent_storage_role_assignment
+    azurerm_role_assignment.agent_storage_role_assignment,
+    azurerm_network_interface_security_group_association.nic_ip_association
   ]
 }
 

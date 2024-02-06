@@ -89,7 +89,8 @@ resource "azurerm_linux_virtual_machine" "dsf_base_instance" {
     ]
   }
   depends_on = [
-    azurerm_role_assignment.dsf_base_storage_role_assignment
+    azurerm_role_assignment.dsf_base_storage_role_assignment,
+    azurerm_network_interface_security_group_association.nic_ip_association
   ]
 }
 
