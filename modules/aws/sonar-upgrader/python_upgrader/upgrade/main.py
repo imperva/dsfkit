@@ -898,7 +898,7 @@ def verify_successful_run_by_configuration_options(args, upgrade_status_service)
 # Preparation functions
 
 
-def argument_parser():
+def get_argument_parser():
     parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
     parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
     parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
@@ -937,7 +937,7 @@ def set_global_variables(connection_timeout):
 
 
 if __name__ == "__main__":
-    args = argument_parser().parse_args()
+    args = get_argument_parser().parse_args()
     set_global_variables(args.connection_timeout)
 
     main(args)

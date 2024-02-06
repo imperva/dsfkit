@@ -3,7 +3,7 @@
 import pytest
 import argparse
 import json
-from upgrade.main import main, set_global_variables, argument_parser
+from upgrade.main import main, set_global_variables, get_argument_parser
 from upgrade.upgrade_status_service import OverallUpgradeStatus
 from upgrade.upgrade_exception import UpgradeException
 
@@ -51,7 +51,7 @@ hub3 = {
 
 @pytest.fixture
 def setup_for_each_test(mocker):
-    args = argument_parser().parse_args([
+    args = get_argument_parser().parse_args([
         '--agentless_gws', '',
         '--dsf_hubs', '',
         '--target_version', '4.13',
