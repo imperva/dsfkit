@@ -2,11 +2,11 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "rdsOptionGroupPermissions",
+            "Sid": "CreateDBParameterGroup",
             "Effect": "Allow",
             "Action": [
                 "rds:CreateDBInstance",
-                "rds:CreateOptionGroup",
+                "rds:CreateDBParameterGroup",
                 "rds:CreateDBSubnetGroup"
             ],
             "Resource": "*",
@@ -33,7 +33,7 @@
             "Sid": "rdsDeleteOGPermissions",
             "Effect": "Allow",
             "Action": [
-                "rds:DeleteOptionGroup"
+                "rds:DeleteDBParameterGroup"
             ],
             "Resource": "*",
             "Condition": {
@@ -63,7 +63,7 @@
                 "rds:DescribeDBSubnetGroups",
                 "rds:ListTagsForResource",
                 "rds:DescribeDBInstances",
-                "rds:DescribeOptionGroups",
+                "rds:DescribeDBParameterGroup",
                 "rds:ModifyOptionGroup"
             ],
             "Resource": "*"
@@ -92,6 +92,5 @@
                     "aws:ResourceTag/deployment_name": "imperva-dsf-*"
                 }
             }
-        }
-    ]
+        }    ]
 }

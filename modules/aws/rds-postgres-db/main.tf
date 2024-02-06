@@ -67,6 +67,8 @@ resource "aws_db_parameter_group" "postgres15_audit" {
     value        = "all"
     apply_method = "pending-reboot"
   }
+
+  tags = var.tags
 }
 
 
