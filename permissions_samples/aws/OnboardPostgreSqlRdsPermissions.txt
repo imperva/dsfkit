@@ -63,7 +63,6 @@
                 "rds:DescribeDBSubnetGroups",
                 "rds:ListTagsForResource",
                 "rds:DescribeDBInstances",
-                "rds:DescribeDBParameterGroup",
                 "rds:DescribeDBParameterGroups",
                 "rds:DescribeDBParameters",
                 "rds:ModifyDBParameterGroup"
