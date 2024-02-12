@@ -4,8 +4,8 @@ from contextlib import contextmanager
 import paramiko
 
 
-def run_remote_script(extended_node, script_contents, script_run_command, connection_timeout):
-    with remote_client_context(extended_node, connection_timeout) as client:
+def run_remote_script(dsf_node, script_contents, script_run_command, connection_timeout):
+    with remote_client_context(dsf_node, connection_timeout) as client:
         print(f"Executing script (first 20 lines): {script_contents.strip().splitlines()[:20]}")
         stdin, stdout, stderr = client.exec_command(script_run_command)
 
@@ -16,11 +16,11 @@ def run_remote_script(extended_node, script_contents, script_run_command, connec
         return script_output
 
 
-def get_proxy_client_channel(extended_node, connection_timeout):
-    host = extended_node.get('host')
-    proxy_host = extended_node.get("proxy").get('host')
-    proxy_ssh_user = extended_node.get("proxy").get('ssh_user')
-    proxy_ssh_private_key_file_path = extended_node.get("proxy").get("ssh_private_key_file_path")
+def get_proxy_client_channel(dsf_node, connection_timeout):
+    host = dsf_node.get('host')
+    proxy_host = dsf_node.get("proxy").get('host')
+    proxy_ssh_user = dsf_node.get("proxy").get('ssh_user')
+    proxy_ssh_private_key_file_path = dsf_node.get("proxy").get("ssh_private_key_file_path")
 
     proxy_client = paramiko.SSHClient()
     try:
@@ -39,18 +39,18 @@ def get_proxy_client_channel(extended_node, connection_timeout):
 
 
 @contextmanager
-def remote_client_context(extended_node, connection_timeout):
+def remote_client_context(dsf_node, connection_timeout):
     proxy_client = None
 
-    host = extended_node.get('host')
-    ssh_user = extended_node.get('ssh_user')
-    ssh_private_key_file_path = extended_node.get('ssh_private_key_file_path')
+    host = dsf_node.get('host')
+    ssh_user = dsf_node.get('ssh_user')
+    ssh_private_key_file_path = dsf_node.get('ssh_private_key_file_path')
     client = paramiko.SSHClient()
 
     try:
         proxy_channel = None
-        if extended_node.get('proxy'):
-            proxy_client, proxy_channel = get_proxy_client_channel(extended_node, connection_timeout)
+        if dsf_node.get('proxy'):
+            proxy_client, proxy_channel = get_proxy_client_channel(dsf_node, connection_timeout)
 
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(host, port=22, username=ssh_user, key_filename=ssh_private_key_file_path,

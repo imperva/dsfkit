@@ -8,7 +8,7 @@ import os
 from itertools import chain
 
 from .utils.file_utils import join_paths, read_file_contents
-from .remote_executor import remote_client_context, run_remote_script
+from .remote_executor import remote_client_context, run_remote_script as run_remote_script_timeout
 from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from .upgrade_exception import UpgradeException
 
@@ -162,8 +162,8 @@ def build_python_script_run_command(script_contents, args, python_location):
     return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
-def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command):
-    return run_remote_script(dsf_node, script_contents, script_run_command, _connection_timeout)
+def run_remote_script(dsf_node, script_contents, script_run_command):
+    return run_remote_script_timeout(dsf_node, script_contents, script_run_command, _connection_timeout)
 
 
 def test_connection(dsf_node):
@@ -442,7 +442,7 @@ def run_preflight_validations_script(target_version, dsf_node, dsf_node_name, py
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
     print(f"'Run preflight validations' python script output:\n{script_output}")
 
     preflight_validations_result = json.loads(extract_preflight_validations_result(script_output))
@@ -456,7 +456,7 @@ def run_get_python_location_script(dsf_node):
     script_run_command = build_bash_script_run_command(script_contents)
 
     print(f"Getting python location for DSF node: {dsf_node}")
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
     return extract_python_location(script_output)
@@ -664,7 +664,7 @@ def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_scrip
     script_run_command = build_bash_script_run_command(script_contents, args)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"Upgrade bash script output: {script_output}")
     # This relies on the fact that Sonar outputs the string "Upgrade completed"
@@ -740,7 +740,7 @@ def run_postflight_validations_script(dsf_node, target_version, python_location,
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
     print(f"'Run postflight validations' python script output: {script_output}")
     return extract_postflight_validations_result(script_output)
 
@@ -764,7 +764,7 @@ def run_clean_old_deployments_script(dsf_node, script_file_name):
     script_run_command = build_bash_script_run_command(script_contents)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"Cleaning old deployments bash script output: {script_output}")
     # TODO need to determine how to recognize that the clean command succeeded after implementing it
