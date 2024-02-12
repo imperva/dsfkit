@@ -166,7 +166,7 @@ def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_com
     return run_remote_script(dsf_node, script_contents, script_run_command, _connection_timeout)
 
 
-def test_connection_maybe_with_proxy(dsf_node):
+def test_connection(dsf_node):
     with remote_client_context(dsf_node, _connection_timeout) as client:
         client.exec_command('echo yes')
 
@@ -338,7 +338,7 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
         print(f"Running test connection to {extended_node.get('dsf_node_name')}")
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.RUNNING_TEST_CONNECTION)
-        test_connection_maybe_with_proxy(extended_node.get('dsf_node'))
+        test_connection(extended_node.get('dsf_node'))
         print(f"Test connection to {extended_node.get('dsf_node_name')} succeeded")
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_SUCCEEDED)
