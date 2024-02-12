@@ -1,76 +1,64 @@
 # remote_executor.py
+from contextlib import contextmanager
 
 import paramiko
 
 
-def run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command,
-                      connection_timeout):
-    return _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command, None,
-                              connection_timeout)
+def run_remote_script(extended_node, script_contents, script_run_command, connection_timeout):
+    with remote_client_context(extended_node, connection_timeout) as client:
+        print(f"Executing script (first 20 lines): {script_contents.strip().splitlines()[:20]}")
+        stdin, stdout, stderr = client.exec_command(script_run_command)
+
+        script_output = stdout.read().decode('utf-8')
+        # print(f"Script output: {script_output}")
+        print(f"Script stderr: {stderr.read().decode('utf-8')}")
+
+        return script_output
 
 
-def run_remote_script_via_proxy(remote_host, remote_user, remote_key_filename, script_contents, script_run_command,
-                                proxy_host, proxy_user, proxy_key_filename, connection_timeout):
-    proxy_channel, proxy_client = _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host,
-                                                    connection_timeout)
-    script_output = _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents,
-                                       script_run_command, proxy_channel, connection_timeout)
-    proxy_client.close()
-    return script_output
+def get_proxy_client_channel(extended_node, connection_timeout):
+    host = extended_node.get('host')
+    proxy_host = extended_node.get("proxy").get('host')
+    proxy_ssh_user = extended_node.get("proxy").get('ssh_user')
+    proxy_ssh_private_key_file_path = extended_node.get("proxy").get("ssh_private_key_file_path")
 
-
-def test_connection(remote_host, remote_user, remote_key_filename, connection_timeout):
-    remote_client = paramiko.SSHClient()
-    _connect_to_remote(remote_client, remote_host, remote_user, remote_key_filename, None, connection_timeout)
-
-
-def test_connection_via_proxy(remote_host, remote_user, remote_key_filename, proxy_host, proxy_user,
-                              proxy_key_filename, connection_timeout):
-    proxy_channel, proxy_client = _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host,
-                                                    connection_timeout)
-    remote_client = paramiko.SSHClient()
-    _connect_to_remote(remote_client, remote_host, remote_user, remote_key_filename, proxy_channel, connection_timeout)
-    remote_client.close()
-    proxy_client.close()
-
-
-def _connect_to_proxy(proxy_host, proxy_key_filename, proxy_user, remote_host, connection_timeout):
     proxy_client = paramiko.SSHClient()
-    # Automatically add the remote host's public key to the 'known_hosts' file of the proxy, if not there already,
-    # the first time the proxy connects to the remote host connects
-    proxy_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    # Connect to the proxy server
-    proxy_client.connect(proxy_host, port=22, username=proxy_user, key_filename=proxy_key_filename,
-                         timeout=connection_timeout, banner_timeout=connection_timeout, auth_timeout=connection_timeout)
-    # Create a transport over the SSH connection to the remote server via the proxy
-    transport = proxy_client.get_transport()
-    proxy_channel_type = "direct-tcpip"
-    dest_addr = (remote_host, 22)
-    local_addr = ('localhost', 0)  # Local address on the proxy server
-    proxy_channel = transport.open_channel(proxy_channel_type, dest_addr, local_addr)
-    return proxy_channel, proxy_client
+    try:
+        proxy_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        proxy_client.connect(proxy_host, port=22, username=proxy_ssh_user, key_filename=proxy_ssh_private_key_file_path,
+                             timeout=connection_timeout, banner_timeout=connection_timeout, auth_timeout=connection_timeout)
+        # Create a transport over the SSH connection to the remote server via the proxy
+        transport = proxy_client.get_transport()
+        proxy_channel = transport.open_channel("direct-tcpip", (host, 22), ('localhost', 0))
+    except Exception:
+        # close client on exception
+        proxy_client.close()
+        raise
+
+    return proxy_client, proxy_channel
 
 
-def _run_remote_script(remote_host, remote_user, remote_key_filename, script_contents, script_run_command,
-                       proxy_channel, connection_timeout):
+@contextmanager
+def remote_client_context(extended_node, connection_timeout):
+    proxy_client = None
 
-    remote_client = paramiko.SSHClient()
-    _connect_to_remote(remote_client, remote_host, remote_user, remote_key_filename, proxy_channel, connection_timeout)
+    host = extended_node.get('host')
+    ssh_user = extended_node.get('ssh_user')
+    ssh_private_key_file_path = extended_node.get('ssh_private_key_file_path')
+    client = paramiko.SSHClient()
 
-    print(f"Executing script (first 20 lines): {script_contents.strip().splitlines()[:20]}")
-    stdin, stdout, stderr = remote_client.exec_command(script_run_command)
+    try:
+        proxy_channel = None
+        if extended_node.get('proxy'):
+            proxy_client, proxy_channel = get_proxy_client_channel(extended_node, connection_timeout)
 
-    script_output = stdout.read().decode('utf-8')
-    # print(f"Script output: {script_output}")
-    print(f"Script stderr: {stderr.read().decode('utf-8')}")
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(host, port=22, username=ssh_user, key_filename=ssh_private_key_file_path,
+                       sock=proxy_channel, timeout=connection_timeout, banner_timeout=connection_timeout,
+                       auth_timeout=connection_timeout)
 
-    remote_client.close()
-
-    return script_output
-
-
-def _connect_to_remote(remote_client, remote_host, remote_user, remote_key_filename, proxy_channel, connection_timeout):
-    remote_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    remote_client.connect(remote_host, port=22, username=remote_user, key_filename=remote_key_filename,
-                          sock=proxy_channel, timeout=connection_timeout, banner_timeout=connection_timeout,
-                          auth_timeout=connection_timeout)
+        yield client
+    finally:
+        client.close()
+        if proxy_client:
+            proxy_client.close()

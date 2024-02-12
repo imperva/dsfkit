@@ -8,10 +8,9 @@ import os
 from itertools import chain
 
 from .utils.file_utils import join_paths, read_file_contents
-from .remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
+from .remote_executor import remote_client_context, run_remote_script
 from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from .upgrade_exception import UpgradeException
-
 
 # Constants
 PREFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_preflight_validations.py"
@@ -164,40 +163,12 @@ def build_python_script_run_command(script_contents, args, python_location):
 
 
 def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command):
-    if dsf_node.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(dsf_node.get('host'),
-                                                    dsf_node.get("ssh_user"),
-                                                    dsf_node.get("ssh_private_key_file_path"),
-                                                    script_contents,
-                                                    script_run_command,
-                                                    dsf_node.get("proxy").get('host'),
-                                                    dsf_node.get("proxy").get("ssh_user"),
-                                                    dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                                    _connection_timeout)
-    else:
-        script_output = run_remote_script(dsf_node.get('host'),
-                                          dsf_node.get("ssh_user"),
-                                          dsf_node.get("ssh_private_key_file_path"),
-                                          script_contents,
-                                          script_run_command,
-                                          _connection_timeout)
-    return script_output
+    return run_remote_script(dsf_node, script_contents, script_run_command, _connection_timeout)
 
 
 def test_connection_maybe_with_proxy(dsf_node):
-    if dsf_node.get("proxy") is not None:
-        test_connection_via_proxy(dsf_node.get('host'),
-                                  dsf_node.get("ssh_user"),
-                                  dsf_node.get("ssh_private_key_file_path"),
-                                  dsf_node.get("proxy").get('host'),
-                                  dsf_node.get("proxy").get("ssh_user"),
-                                  dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                  _connection_timeout)
-    else:
-        test_connection(dsf_node.get('host'),
-                        dsf_node.get("ssh_user"),
-                        dsf_node.get("ssh_private_key_file_path"),
-                        _connection_timeout)
+    with remote_client_context(dsf_node, _connection_timeout) as client:
+        client.exec_command('echo yes')
 
 
 def print_summary(upgrade_status_service, overall_upgrade_status=None):
@@ -376,7 +347,7 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_FAILED, str(ex))
         if stop_on_failure:
-            raise UpgradeException(f"Test connection to {extended_node.get('dsf_node_name')} failed)")
+            raise UpgradeException(f"Test connection to {extended_node.get('dsf_node_name')} failed)") from ex
         else:
             return False
     return True
@@ -413,7 +384,7 @@ def collect_python_location(extended_node, stop_on_failure, upgrade_status_servi
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED, str(ex))
         if stop_on_failure:
-            raise UpgradeException(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed")
+            raise UpgradeException(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed") from ex
         return None
 
 
