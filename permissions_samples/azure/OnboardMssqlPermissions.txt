@@ -3,7 +3,7 @@
         "roleName": "dsf_role",
         "description": "Azure role for DSF Kit",
         "assignableScopes": [
-           # Fill subscription scope here
+           "# Fill subscription scope here"
         ],
         "permissions": [
             {
@@ -12,7 +12,7 @@
                     "Microsoft.Insights/diagnosticSettings/*",
                     "Microsoft.Sql/locations/connectionPoliciesAzureAsyncOperation/*",
                     "Microsoft.Sql/servers/*",
-                    "Microsoft.Storage/storageAccounts/*",
+                    "Microsoft.Storage/storageAccounts/*"
                 ],
                 "notActions": [],
                 "dataActions": [],
