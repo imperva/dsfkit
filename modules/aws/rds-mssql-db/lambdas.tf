@@ -4,7 +4,7 @@ data "aws_iam_role" "lambda_mssql_assignee_role" {
 }
 
 resource "aws_lambda_function" "lambda_mssql_infra" {
-  function_name     = join("-", ["dsf-mssql-infra", local.lambda_salt])
+  function_name     = join("-", [var.name_prefix, "infra", local.lambda_salt])
   s3_bucket         = data.aws_s3_object.mssql_lambda_package.bucket
   s3_key            = data.aws_s3_object.mssql_lambda_package.key
   s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
@@ -42,7 +42,7 @@ resource "aws_lambda_invocation" "mssql_infra_invocation" {
 }
 
 resource "aws_lambda_function" "lambda_mssql_scheduled" {
-  function_name     = join("-", ["dsf-mssql-traffic-and-suspicious-activity", local.lambda_salt])
+  function_name     = join("-", [var.name_prefix, "traffic-and-suspicious-activity", local.lambda_salt])
   s3_bucket         = data.aws_s3_object.mssql_lambda_package.bucket
   s3_key            = data.aws_s3_object.mssql_lambda_package.key
   s3_object_version = data.aws_s3_object.mssql_lambda_package.version_id
@@ -75,7 +75,7 @@ resource "aws_lambda_function" "lambda_mssql_scheduled" {
 
 # add scheduled events each 1 minute for the traffic queries
 resource "aws_cloudwatch_event_rule" "trafficEachMinute" {
-  name                = join("-", ["dsf-mssql-lambda-traffic-every-minute", local.lambda_salt])
+  name                = join("-", [var.name_prefix, "lambda-traffic-every-minute", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run traffic each 1 minute"
   schedule_expression = "rate(1 minute)"
   tags                = var.tags
@@ -97,7 +97,7 @@ resource "aws_lambda_permission" "allow_cloudwatchTraffic" {
 
 # add scheduled events each 10 minutes for the suspicious activity queries
 resource "aws_cloudwatch_event_rule" "suspiciousActivityEach10Minutes" {
-  name                = join("-", ["dsf-mssql-lambda-suspicious-activity-every-10-minutes", local.lambda_salt])
+  name                = join("-", [var.name_prefix, "lambda-suspicious-act-each-10-minutes", local.lambda_salt])
   description         = "Schedule a lambda for DSF SQL Server that run suspicious activity each 10 minutes"
   schedule_expression = "rate(10 minutes)"
   tags                = var.tags

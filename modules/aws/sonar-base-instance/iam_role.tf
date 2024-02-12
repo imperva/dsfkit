@@ -59,22 +59,22 @@ locals {
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
   count       = var.instance_profile_name == null ? 1 : 0
-  name_prefix = "${var.name}-${var.resource_type}-instance-iam-profile"
+  name_prefix = join("-", [var.name, var.resource_type, "instance-iam-profile"])
   role        = local.role_name
   tags        = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
   count               = var.instance_profile_name == null ? 1 : 0
-  name                = "${var.name}-role"
+  name                = join("-", [var.name, "role"])
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
-    name   = "${var.name}-s3-access"
+    name   = join("-", [var.name, "s3-access"])
     policy = local.inline_policy_s3
   }
   inline_policy {
-    name   = "${var.name}-secret-access"
+    name   = join("-", [var.name, "secret-access"])
     policy = local.inline_policy_secret
   }
   tags = var.tags

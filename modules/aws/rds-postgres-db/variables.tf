@@ -28,6 +28,12 @@ variable "identifier" {
   }
 }
 
+variable "name_prefix" {
+  type        = string
+  description = "Prefix to the name to identify all resources"
+  default     = "imperva-dsf-postgres"
+}
+
 variable "name" {
   type        = string
   description = "Name of your rds instance"
