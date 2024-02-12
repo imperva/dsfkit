@@ -106,7 +106,7 @@ class UpgradeStatusService:
             UpgradeStatus.SUCCEEDED_WITH_WARNINGS
         )
 
-    def should_collect_python_location(self, dsf_node_id):
+    def should_gather_facts(self, dsf_node_id):
         status = self.get_upgrade_status(dsf_node_id)
         return status not in (
             UpgradeStatus.SUCCEEDED,
@@ -121,7 +121,7 @@ class UpgradeStatusService:
             UpgradeStatus.SUCCEEDED_WITH_WARNINGS,
             UpgradeStatus.UPGRADE_SUCCEEDED,
             UpgradeStatus.TEST_CONNECTION_FAILED,
-            UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED
+            UpgradeStatus.COLLECT_FACTS_FAILED
         )
 
     def should_run_upgrade(self, dsf_node_id):
@@ -132,7 +132,7 @@ class UpgradeStatusService:
             UpgradeStatus.SUCCEEDED_WITH_WARNINGS,
             UpgradeStatus.UPGRADE_SUCCEEDED,
             UpgradeStatus.TEST_CONNECTION_FAILED,
-            UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED,
+            UpgradeStatus.COLLECT_FACTS_FAILED,
             UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED
         )
 
@@ -143,7 +143,7 @@ class UpgradeStatusService:
             UpgradeStatus.SUCCEEDED,
             UpgradeStatus.SUCCEEDED_WITH_WARNINGS,
             UpgradeStatus.TEST_CONNECTION_FAILED,
-            UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED,
+            UpgradeStatus.COLLECT_FACTS_FAILED,
             UpgradeStatus.PREFLIGHT_VALIDATIONS_FAILED,
             UpgradeStatus.UPGRADE_FAILED
         )
@@ -238,8 +238,8 @@ class UpgradeStatusService:
         not_started_count = statuses.count(UpgradeStatus.NOT_STARTED)
         running_count = statuses.count(UpgradeStatus.RUNNING_TEST_CONNECTION) \
             + statuses.count(UpgradeStatus.TEST_CONNECTION_SUCCEEDED) \
-            + statuses.count(UpgradeStatus.RUNNING_COLLECT_PYTHON_LOCATION) \
-            + statuses.count(UpgradeStatus.COLLECT_PYTHON_LOCATION_SUCCEEDED) \
+            + statuses.count(UpgradeStatus.RUNNING_COLLECT_FACTS) \
+            + statuses.count(UpgradeStatus.COLLECT_FACTS_SUCCEEDED) \
             + statuses.count(UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS) \
             + statuses.count(UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED) \
             + statuses.count(UpgradeStatus.RUNNING_UPGRADE) \
@@ -346,9 +346,9 @@ class UpgradeStatus(Enum):
     RUNNING_TEST_CONNECTION = "Running test connection"
     TEST_CONNECTION_FAILED = "Test connection failed"
     TEST_CONNECTION_SUCCEEDED = "Test connection succeeded"
-    RUNNING_COLLECT_PYTHON_LOCATION = "Running collect Python location"
-    COLLECT_PYTHON_LOCATION_SUCCEEDED = "Collect Python location succeeded"
-    COLLECT_PYTHON_LOCATION_FAILED = "Collect Python location failed"
+    RUNNING_COLLECT_FACTS = "Running collect facts"
+    COLLECT_FACTS_SUCCEEDED = "Collect facts succeeded"
+    COLLECT_FACTS_FAILED = "Collect facts failed"
     RUNNING_PREFLIGHT_VALIDATIONS = "Running preflight validations"
     PREFLIGHT_VALIDATIONS_SUCCEEDED = "Preflight validations succeeded"
     PREFLIGHT_VALIDATIONS_FAILED = "Preflight validations failed"
