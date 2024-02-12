@@ -207,7 +207,6 @@ def main(args):
     except UpgradeException as e:
         print(f"### Error message: {e}")
         print(f"### An error occurred, aborting upgrade...")
-        raise e
 
     # Flush upgrade status to status file (in case of an error on the first file write, this line is the manual retry)
     upgrade_status_service.flush()
@@ -272,7 +271,7 @@ def run_test_connection_stage(args, extended_node_dict, upgrade_status_service):
 def run_collect_facts_step(args, extended_node_dict, upgrade_status_service):
 
     for extended_node in extended_node_dict.values():
-        if upgrade_status_service.should_gather_facts(extended_node.get('dsf_node_id')):
+        if upgrade_status_service.should_collect_facts(extended_node.get('dsf_node_id')):
             upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                          UpgradeStatus.RUNNING_COLLECT_FACTS)
             try:

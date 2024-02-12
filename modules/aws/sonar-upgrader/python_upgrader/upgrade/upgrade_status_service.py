@@ -106,7 +106,7 @@ class UpgradeStatusService:
             UpgradeStatus.SUCCEEDED_WITH_WARNINGS
         )
 
-    def should_gather_facts(self, dsf_node_id):
+    def should_collect_facts(self, dsf_node_id):
         status = self.get_upgrade_status(dsf_node_id)
         return status not in (
             UpgradeStatus.SUCCEEDED,
