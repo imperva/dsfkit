@@ -874,51 +874,37 @@ def verify_successful_run_by_configuration_options(args, upgrade_status_service)
 # Preparation functions
 
 
-def parse_args():
+def get_argument_parser():
     parser = argparse.ArgumentParser(description="Upgrade script for DSF Hub and Agentless Gateway")
     parser.add_argument("--agentless_gws", required=True, help="JSON-encoded Agentless Gateway list")
     parser.add_argument("--dsf_hubs", required=True, help="JSON-encoded DSF Hub list")
     parser.add_argument("--target_version", required=True, help="Target version to upgrade")
     parser.add_argument("--connection_timeout",
+                        default=90,
                         help="Client connection timeout in seconds used for the SSH connections between the "
                              "installer machine and the DSF nodes being upgraded. Its purpose is to ensure a "
                              "uniform behavior across different platforms. Note that the SSH server in the DSF nodes "
                              "may have its own timeout configurations which may override this setting.")
     parser.add_argument("--test_connection", type=str_to_bool,
+                        default=True,
                         help="Whether to test the SSH connection to all DSF nodes being upgraded "
                              "before starting the upgrade")
     parser.add_argument("--run_preflight_validations", type=str_to_bool,
+                        default=True,
                         help="Whether to run preflight validations")
-    parser.add_argument("--run_upgrade", type=str_to_bool, help="Whether to run the upgrade")
+    parser.add_argument("--run_upgrade", type=str_to_bool, default=True, help="Whether to run the upgrade")
     parser.add_argument("--run_postflight_validations", type=str_to_bool,
+                        default=True,
                         help="Whether to run postflight validations")
-    # parser.add_argument("--clean_old_deployments", type=str_to_bool, help="Whether to clean old deployments")
+    parser.add_argument("--clean_old_deployments", type=str_to_bool, default=False, help="Whether to clean old deployments")
     parser.add_argument("--stop_on_failure", type=str_to_bool,
+                        default=True,
                         help="Whether to stop or continue to upgrade the next DSF nodes in case of failure "
                              "on a DSF node")
     parser.add_argument("--tarball_location",
+                        default='{"s3_bucket": "1ef8de27-ed95-40ff-8c08-7969fc1b7901", "s3_region": "us-east-1"}',
                         help="JSON-encoded S3 bucket location of the DSF installation software")
-    args = parser.parse_args()
-    return args
-
-
-def fill_args_defaults(args):
-    if args.connection_timeout is None:
-        args.connection_timeout = 90
-    if args.test_connection is None:
-        args.test_connection = True
-    if args.run_preflight_validations is None:
-        args.run_preflight_validations = True
-    if args.run_upgrade is None:
-        args.run_upgrade = True
-    if args.run_postflight_validations is None:
-        args.run_postflight_validations = True
-    if args.stop_on_failure is None:
-        args.stop_on_failure = True
-    if args.tarball_location is None:
-        args.tarball_location = '{"s3_bucket": "1ef8de27-ed95-40ff-8c08-7969fc1b7901", "s3_region": "us-east-1"}'
-
-    args.clean_old_deployments = False
+    return parser
 
 
 def set_global_variables(connection_timeout):
@@ -927,8 +913,7 @@ def set_global_variables(connection_timeout):
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    fill_args_defaults(args)
+    args = get_argument_parser().parse_args()
     set_global_variables(args.connection_timeout)
 
     main(args)

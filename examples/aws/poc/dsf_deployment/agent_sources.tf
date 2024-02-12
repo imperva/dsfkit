@@ -9,7 +9,7 @@ module "db_with_agent" {
 
   friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
 
-  binaries_location = module.globals.dam_agent_installation_location
+  binaries_location = var.dam_agent_installation_location != null ? var.dam_agent_installation_location : module.globals.dam_agent_installation_location
   os_type = var.agent_source_os
   db_type = local.db_types_for_agent[count.index]
 

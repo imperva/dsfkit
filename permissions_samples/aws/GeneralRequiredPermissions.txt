@@ -259,12 +259,19 @@
                 "iam:ListInstanceProfilesForRole",
                 "iam:ListPolicyVersions",
                 "iam:ListRolePolicies",
-                "iam:PassRole",
                 "iam:PutRolePolicy",
                 "iam:RemoveRoleFromInstanceProfile",
                 "iam:CreateServiceLinkedRole"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "iamConditions",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:aws:iam::*:role/imperva-dsf-*"
         },
         {
             "Sid": "iamRequestTagCondition",
