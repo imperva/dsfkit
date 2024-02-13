@@ -138,7 +138,7 @@ def test_flush(setup_for_each_test, mocker):
 
 @pytest.mark.parametrize("should_method", [
     UpgradeStatusService.should_test_connection,
-    UpgradeStatusService.should_collect_python_location,
+    UpgradeStatusService.should_collect_facts,
     UpgradeStatusService.should_run_preflight_validations,
     UpgradeStatusService.should_run_upgrade,
     UpgradeStatusService.should_run_postflight_validations,
