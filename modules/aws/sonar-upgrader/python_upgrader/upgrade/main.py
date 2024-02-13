@@ -8,10 +8,9 @@ import os
 from itertools import chain
 
 from .utils.file_utils import join_paths, read_file_contents
-from .remote_executor import run_remote_script, run_remote_script_via_proxy, test_connection, test_connection_via_proxy
+from .remote_executor import remote_client_context, run_remote_script as run_remote_script_timeout
 from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from .upgrade_exception import UpgradeException
-
 
 # Constants
 PREFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_preflight_validations.py"
@@ -163,41 +162,13 @@ def build_python_script_run_command(script_contents, args, python_location):
     return f"sudo {python_location} -c '{script_contents}' {args}"
 
 
-def run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command):
-    if dsf_node.get("proxy") is not None:
-        script_output = run_remote_script_via_proxy(dsf_node.get('host'),
-                                                    dsf_node.get("ssh_user"),
-                                                    dsf_node.get("ssh_private_key_file_path"),
-                                                    script_contents,
-                                                    script_run_command,
-                                                    dsf_node.get("proxy").get('host'),
-                                                    dsf_node.get("proxy").get("ssh_user"),
-                                                    dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                                    _connection_timeout)
-    else:
-        script_output = run_remote_script(dsf_node.get('host'),
-                                          dsf_node.get("ssh_user"),
-                                          dsf_node.get("ssh_private_key_file_path"),
-                                          script_contents,
-                                          script_run_command,
-                                          _connection_timeout)
-    return script_output
+def run_remote_script(dsf_node, script_contents, script_run_command):
+    return run_remote_script_timeout(dsf_node, script_contents, script_run_command, _connection_timeout)
 
 
-def test_connection_maybe_with_proxy(dsf_node):
-    if dsf_node.get("proxy") is not None:
-        test_connection_via_proxy(dsf_node.get('host'),
-                                  dsf_node.get("ssh_user"),
-                                  dsf_node.get("ssh_private_key_file_path"),
-                                  dsf_node.get("proxy").get('host'),
-                                  dsf_node.get("proxy").get("ssh_user"),
-                                  dsf_node.get("proxy").get("ssh_private_key_file_path"),
-                                  _connection_timeout)
-    else:
-        test_connection(dsf_node.get('host'),
-                        dsf_node.get("ssh_user"),
-                        dsf_node.get("ssh_private_key_file_path"),
-                        _connection_timeout)
+def test_connection(dsf_node):
+    with remote_client_context(dsf_node, _connection_timeout) as client:
+        client.exec_command('echo yes')
 
 
 def print_summary(upgrade_status_service, overall_upgrade_status=None):
@@ -367,7 +338,7 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
         print(f"Running test connection to {extended_node.get('dsf_node_name')}")
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.RUNNING_TEST_CONNECTION)
-        test_connection_maybe_with_proxy(extended_node.get('dsf_node'))
+        test_connection(extended_node.get('dsf_node'))
         print(f"Test connection to {extended_node.get('dsf_node_name')} succeeded")
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_SUCCEEDED)
@@ -376,7 +347,7 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_FAILED, str(ex))
         if stop_on_failure:
-            raise UpgradeException(f"Test connection to {extended_node.get('dsf_node_name')} failed)")
+            raise UpgradeException(f"Test connection to {extended_node.get('dsf_node_name')} failed)") from ex
         else:
             return False
     return True
@@ -413,7 +384,7 @@ def collect_python_location(extended_node, stop_on_failure, upgrade_status_servi
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED, str(ex))
         if stop_on_failure:
-            raise UpgradeException(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed")
+            raise UpgradeException(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed") from ex
         return None
 
 
@@ -471,7 +442,7 @@ def run_preflight_validations_script(target_version, dsf_node, dsf_node_name, py
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
     print(f"'Run preflight validations' python script output:\n{script_output}")
 
     preflight_validations_result = json.loads(extract_preflight_validations_result(script_output))
@@ -485,7 +456,7 @@ def run_get_python_location_script(dsf_node):
     script_run_command = build_bash_script_run_command(script_contents)
 
     print(f"Getting python location for DSF node: {dsf_node}")
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"'Get python location' bash script output: {script_output}")
     return extract_python_location(script_output)
@@ -693,7 +664,7 @@ def run_upgrade_script(dsf_node, target_version, tarball_location, upgrade_scrip
     script_run_command = build_bash_script_run_command(script_contents, args)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"Upgrade bash script output: {script_output}")
     # This relies on the fact that Sonar outputs the string "Upgrade completed"
@@ -769,7 +740,7 @@ def run_postflight_validations_script(dsf_node, target_version, python_location,
     script_run_command = build_python_script_run_command(script_contents, target_version, python_location)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
     print(f"'Run postflight validations' python script output: {script_output}")
     return extract_postflight_validations_result(script_output)
 
@@ -793,7 +764,7 @@ def run_clean_old_deployments_script(dsf_node, script_file_name):
     script_run_command = build_bash_script_run_command(script_contents)
     # print(f"script_run_command: {script_run_command}")
 
-    script_output = run_remote_script_maybe_with_proxy(dsf_node, script_contents, script_run_command)
+    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
 
     print(f"Cleaning old deployments bash script output: {script_output}")
     # TODO need to determine how to recognize that the clean command succeeded after implementing it
