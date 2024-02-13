@@ -36,6 +36,12 @@ variable "identifier" {
   }
 }
 
+variable "name_prefix" {
+  type        = string
+  description = "Prefix to the name to identify all resources"
+  default     = "imperva-dsf-mssql"
+}
+
 variable "security_group_ingress_cidrs" {
   type        = list(string)
   description = "List of allowed ingress cidr ranges for access to the database"

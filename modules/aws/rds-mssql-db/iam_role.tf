@@ -114,12 +114,11 @@ locals {
 }
 
 resource "aws_iam_role" "rds_db_og_role" {
-  name_prefix         = replace("${local.db_identifier}-og-role", "_", "-")
-  description         = replace("${local.db_identifier}-og-role", "_", "-")
+  name                = join("-", [local.db_identifier, "og-role"])
   managed_policy_arns = null
   assume_role_policy  = local.rds_db_og_role_assume_role_policy
   inline_policy {
-    name   = "imperva-dsf-s3-access"
+    name   = join("-", [local.db_identifier, "s3-access"])
     policy = local.rds_db_og_role_inline_policy_s3
   }
   tags = var.tags
@@ -127,31 +126,31 @@ resource "aws_iam_role" "rds_db_og_role" {
 
 resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
   count       = var.instance_profile_name == null ? 1 : 0
-  name_prefix = "lambda-mssql-infra-instance-iam-profile"
+  name_prefix = join("-", [local.db_identifier, "infra", "instance-iam-profile"])
   role        = local.role_name
   tags        = var.tags
 }
 
 resource "aws_iam_role" "lambda_mssql_infra_role" {
   count               = var.instance_profile_name == null ? 1 : 0
-  name_prefix         = "imperva-mssql-infra-role"
-  description         = "imperva-mssql-infra-role"
+  name                = join("-", [local.db_identifier, "infra-role"])
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
-    name   = "imperva-dsf-mssql-log-group"
+    name   = join("-", [local.db_identifier, "log-group"])
     policy = local.inline_policy_log_group
   }
   inline_policy {
-    name   = "imperva-dsf-mssql-s3-access"
+    name   = join("-", [local.db_identifier, "s3-access"])
     policy = local.inline_policy_s3
   }
   inline_policy {
-    name   = "imperva-dsf-mssql-ec2-access"
+    name   = join("-", [local.db_identifier, "ec2-access"])
     policy = local.inline_policy_ec2
   }
   tags = var.tags
 }
+
 data "aws_iam_instance_profile" "profile" {
   count = var.instance_profile_name != null ? 1 : 0
   name  = var.instance_profile_name

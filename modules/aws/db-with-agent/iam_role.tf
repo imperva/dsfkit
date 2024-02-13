@@ -37,18 +37,17 @@ locals {
 }
 
 resource "aws_iam_instance_profile" "dsf_node_instance_iam_profile" {
-  name_prefix = join("-", [var.friendly_name, "agent", "instance-iam-profile"])
+  name_prefix = join("-", [var.friendly_name, "instance-iam-profile"])
   role        = local.role_name
   tags        = var.tags
 }
 
 resource "aws_iam_role" "dsf_node_role" {
-  # name_prefix         = join("-", [var.friendly_name, "agent", "role"])
-  description         = join("-", [var.friendly_name, "agent", "role"])
+  name                = join("-", [var.friendly_name, "role"])
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
-    name   = "${var.friendly_name}-s3-access"
+    name   = join("-", [var.friendly_name, "s3-access"])
     policy = local.inline_policy_s3
   }
   tags = var.tags

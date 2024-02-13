@@ -14,7 +14,7 @@ data "aws_region" "current" {}
 locals {
   db_username           = var.username
   db_password           = length(var.password) > 0 ? var.password : random_password.db_password.result
-  db_identifier         = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
+  db_identifier         = length(var.identifier) > 0 ? var.identifier : join("-", [var.name_prefix, random_pet.db_id.id])
   db_name               = "master"
   mssql_connect_db_name = "rdsadmin"
   lambda_salt           = random_id.salt.hex
@@ -140,7 +140,7 @@ data "aws_s3_object" "source" {
 }
 
 resource "aws_s3_bucket" "mssql_lambda_bucket" {
-  bucket        = join("-", ["dsf-sql-scripts-bucket", local.lambda_salt])
+  bucket        = join("-", [var.name_prefix, "sql-scripts-bucket", local.lambda_salt])
   force_destroy = true
 }
 

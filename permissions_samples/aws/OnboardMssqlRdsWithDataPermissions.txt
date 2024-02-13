@@ -240,10 +240,8 @@
                 "s3:PutAccountPublicAccessBlock"
             ],
             "Resource": [
-                "arn:aws:s3:::dsf-sql-scripts-bucket*",
-                "arn:aws:s3:::dsf-sql-scripts-bucket*/*",
-                "arn:aws:s3:::edsf-db-demo*",
-                "arn:aws:s3:::edsf-db-demo*/*"
+                "arn:aws:s3:::imperva-dsf-*",
+                "arn:aws:s3:::imperva-dsf-*/*"
             ]
         }
     ]

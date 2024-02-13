@@ -8,7 +8,7 @@ resource "random_pet" "db_id" {}
 locals {
   db_username      = var.username
   db_password      = length(var.password) > 0 ? var.password : random_password.db_password.result
-  db_identifier    = length(var.identifier) > 0 ? var.identifier : "edsf-db-demo-${random_pet.db_id.id}"
+  db_identifier    = length(var.identifier) > 0 ? var.identifier : join("-", [var.name_prefix, random_pet.db_id.id])
   db_address       = "${local.db_identifier}.database.windows.net"
   server_name      = local.db_identifier
   database_name    = local.db_identifier
