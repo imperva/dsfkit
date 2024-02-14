@@ -1229,8 +1229,28 @@ Information about additional topics can be found in specific examples, when rele
 For example:  <a href="https://github.com/imperva/dsfkit/tree/1.7.9/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
 
 These topics include:
-- Storing Terraform state in S3 bucket
+- Customizing Variables
 - Working with DSF Hub and Agentless Gateway without outbound internet access
+
+## Storing the Terraform State in a Secure Backend Storage
+
+The Terraform state file contains sensitive information and should be stored in a secure backend storage.
+
+For example, an AWS S3 bucket with a DynamoDB table for state locking to prevent concurrent state operations.
+
+To configure your Terraform state file to be stored in an AWS S3 bucket with state locking, add, for example, the following `backend.tf` file to your Terraform configuration:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "dsfkit-terraform-state-bucket"
+    key            = "states/terraform.tfstate"
+    dynamodb_table = "terraform-state-lock"
+    region         = "us-east-1"
+  }
+}
+```
+
 
 # Troubleshooting 
 
