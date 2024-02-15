@@ -87,12 +87,13 @@ def run_remote_script_mock(mocker):
 
 
 @pytest.fixture
-def collect_facts_mock(mocker):
-    yield mocker.patch('upgrade.main.collect_facts')
+def collect_node_info_mock(mocker):
+    yield mocker.patch('upgrade.main.collect_node_info')
 
 
 @pytest.fixture(autouse=True)
-def setup_for_each_test(mocker, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def setup_for_each_test(mocker, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock,
+                        collect_node_info_mock):
     set_global_variables(100)
 
     mocker.patch('upgrade.main.join_paths', side_effect=lambda arg1, arg2, arg3: arg3)
@@ -112,7 +113,7 @@ def test_main_all_flags_disabled(args, run_remote_script_mock):
     run_remote_script_mock.assert_not_called()
 
 
-def test_main_all_flags_enabled(args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def test_main_all_flags_enabled(args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], True, True, True, True, True)
 
@@ -123,7 +124,7 @@ def test_main_all_flags_enabled(args, test_connection_mock, run_remote_script_mo
     assert test_connection_mock.call_count == 2
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 6
-    assert collect_facts_mock.call_count == 2
+    assert collect_node_info_mock.call_count == 2
     for host in ["host1", "host100"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
         assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
@@ -142,7 +143,7 @@ def test_main_only_test_connection_enabled(args, test_connection_mock, run_remot
     run_remote_script_mock.assert_not_called()
 
 
-def test_main_only_preflight_enabled(args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def test_main_only_preflight_enabled(args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, True, False, False, True)
 
@@ -153,7 +154,7 @@ def test_main_only_preflight_enabled(args, test_connection_mock, run_remote_scri
     test_connection_mock.assert_not_called()
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 2
-    assert collect_facts_mock.call_count == 2
+    assert collect_node_info_mock.call_count == 2
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_preflight_validations.py") == 1
 
@@ -173,7 +174,7 @@ def test_main_only_upgrade_enabled(args, test_connection_mock, run_remote_script
     assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
 
 
-def test_main_only_postflight_enabled(args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def test_main_only_postflight_enabled(args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1}], [{"main": hub1}], False, False, False, True, True)
 
@@ -184,12 +185,12 @@ def test_main_only_postflight_enabled(args, test_connection_mock, run_remote_scr
     test_connection_mock.assert_not_called()
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 2
-    assert collect_facts_mock.call_count == 2
+    assert collect_node_info_mock.call_count == 2
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
 
 
-def test_main_custom_tarball(args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def test_main_custom_tarball(args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     tarball_location = '{"s3_bucket": "my_custom_bucket", "s3_region": "my_custom_region"}'
     setup_custom_args(args, [{"main": gw1}], [], True, True, True, True, True, tarball_location=tarball_location)
@@ -201,7 +202,7 @@ def test_main_custom_tarball(args, test_connection_mock, run_remote_script_mock,
     assert test_connection_mock.call_count == 1
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 3
-    assert collect_facts_mock.call_count == 1
+    assert collect_node_info_mock.call_count == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_postflight_validations.py") == 1
@@ -209,7 +210,7 @@ def test_main_custom_tarball(args, test_connection_mock, run_remote_script_mock,
     assert "my_custom_region" in call_args_list[1].args[2]
 
 
-def test_main_host_with_proxy(args, run_remote_script_mock, test_connection_mock, collect_facts_mock):
+def test_main_host_with_proxy(args, run_remote_script_mock, test_connection_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw3}], [], True, True, True, True, True)
 
@@ -220,7 +221,7 @@ def test_main_host_with_proxy(args, run_remote_script_mock, test_connection_mock
     assert test_connection_mock.call_count == 1
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 3
-    assert collect_facts_mock.call_count == 1
+    assert collect_node_info_mock.call_count == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host3", "upgrade_v4_10.sh") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host3", "run_postflight_validations.py") == 1
@@ -228,11 +229,11 @@ def test_main_host_with_proxy(args, run_remote_script_mock, test_connection_mock
 
 def test_main_skip_successful_host(
         args, upgrade_status_service_mock, test_connection_mock,
-        run_remote_script_mock, collect_facts_mock, mocker):
+        run_remote_script_mock, collect_node_info_mock, mocker):
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [], True, True, True, True, True)
     mocker.patch.object(upgrade_status_service_mock, 'should_test_connection', side_effect=lambda host: host == "host2")
-    mocker.patch.object(upgrade_status_service_mock, 'should_collect_python_location', side_effect=lambda host: host == "host2")
+    mocker.patch.object(upgrade_status_service_mock, 'should_collect_node_info', side_effect=lambda host: host == "host2")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host == "host2")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host == "host2")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host == "host2")
@@ -244,7 +245,7 @@ def test_main_skip_successful_host(
     assert test_connection_mock.call_count == 1
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 3
-    assert collect_facts_mock.call_count == 2
+    assert collect_node_info_mock.call_count == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_preflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "run_postflight_validations.py") == 1
@@ -255,7 +256,7 @@ def test_main_skip_successful_host(
     ([], ["host1"]),
 ])
 def test_main_preflight_failure_with_stop_on_failure_true(
-        args, test_connection_mock, run_remote_script_mock, collect_facts_mock,
+        args, test_connection_mock, run_remote_script_mock, collect_node_info_mock,
         preflight_not_pass_hosts, preflight_error_hosts):
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
@@ -271,12 +272,12 @@ def test_main_preflight_failure_with_stop_on_failure_true(
     assert test_connection_mock.call_count == 3
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 1
-    assert collect_facts_mock.call_count == 3
+    assert collect_node_info_mock.call_count == 3
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "run_preflight_validations.py") == 1
 
 
 def test_main_upgrade_failure_with_stop_on_failure_true(
-        args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+        args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, True)
     run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(upgrade_error_hosts=["host1"])
@@ -288,17 +289,18 @@ def test_main_upgrade_failure_with_stop_on_failure_true(
     assert test_connection_mock.call_count == 3
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 4
-    assert collect_facts_mock.call_count == 3
+    assert collect_node_info_mock.call_count == 3
     for host in ["host1", "host2", "host100"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host1", "upgrade_v4_10.sh") == 1
 
 
-def test_main_python_location_failure_with_stop_on_failure_false(
-        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_facts_mock, mocker):
+def test_main_node_info_failure_with_stop_on_failure_false(
+        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_node_info_mock, mocker):
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
-    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(python_location_error_hosts=["host1"])
+    # fail if host is host1
+    collect_node_info_mock.side_effect = (lambda en: not en.get('dsf_node').get('host') == 'host1')
     mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
@@ -310,7 +312,7 @@ def test_main_python_location_failure_with_stop_on_failure_false(
     assert test_connection_mock.call_count == 3
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 6
-    assert collect_facts_mock.call_count == 3
+    assert collect_node_info_mock.call_count == 3
     for host in ["host2", "host100"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
         assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
@@ -322,7 +324,7 @@ def test_main_python_location_failure_with_stop_on_failure_false(
     ([], ["host1"]),
 ])
 def test_main_preflight_failure_with_stop_on_failure_false(
-        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_facts_mock,
+        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_node_info_mock,
         mocker, preflight_not_pass_hosts, preflight_error_hosts):
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
@@ -340,7 +342,7 @@ def test_main_preflight_failure_with_stop_on_failure_false(
     assert test_connection_mock.call_count == 3
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 7
-    assert collect_facts_mock.call_count == 3
+    assert collect_node_info_mock.call_count == 3
     for host in ["host1", "host2", "host100"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
     for host in ["host2", "host100"]:
@@ -348,7 +350,7 @@ def test_main_preflight_failure_with_stop_on_failure_false(
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
-def test_main_hadr_set_successful(args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+def test_main_hadr_set_successful(args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, True)
 
@@ -359,7 +361,7 @@ def test_main_hadr_set_successful(args, test_connection_mock, run_remote_script_
     assert test_connection_mock.call_count == 5
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 15
-    assert collect_facts_mock.call_count == 5
+    assert collect_node_info_mock.call_count == 5
     for host in ["host1", "host2", "host100", "host101", "host102"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
         assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
@@ -367,7 +369,7 @@ def test_main_hadr_set_successful(args, test_connection_mock, run_remote_script_
 
 
 def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_false(
-        args, test_connection_mock, run_remote_script_mock, collect_facts_mock):
+        args, test_connection_mock, run_remote_script_mock, collect_node_info_mock):
     # given
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
     run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(upgrade_error_hosts=["host2", "host102"])
@@ -379,7 +381,7 @@ def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_fals
     assert test_connection_mock.call_count == 5
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 7
-    assert collect_facts_mock.call_count == 5
+    assert collect_node_info_mock.call_count == 5
     for host in ["host1", "host2", "host100", "host101", "host102"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
@@ -391,7 +393,7 @@ def test_main_hadr_set_skip_node_after_hadr_upgrade_failure_stop_on_failure_fals
     ([], ["host2", "host102"]),
 ])
 def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_false(
-        args, test_connection_mock, run_remote_script_mock, collect_facts_mock,
+        args, test_connection_mock, run_remote_script_mock, collect_node_info_mock,
         postflight_not_pass_hosts, postflight_error_hosts):
     # given
     setup_custom_args(args, [{"main": gw1, "dr": gw2}], [{"main": hub1, "dr": hub2, "minor": hub3}], True, True, True, True, False)
@@ -407,7 +409,7 @@ def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_f
     assert test_connection_mock.call_count == 5
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 9
-    assert collect_facts_mock.call_count == 5
+    assert collect_node_info_mock.call_count == 5
     for host in ["host1", "host2", "host100", "host101", "host102"]:
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_preflight_validations.py") == 1
     assert count_remote_calls_with_host_and_script(call_args_list, "host2", "upgrade_v4_10.sh") == 1
@@ -418,10 +420,10 @@ def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_f
 
 @pytest.mark.xfail(raises=UpgradeException)
 def test_main_raise_exception_on_overall_status_failed(
-        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_facts_mock, mocker):
+        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_node_info_mock, mocker):
     # given
     setup_custom_args(args, [{"main": gw1}], [], True, True, True, True, True)
-    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(python_location_error_hosts=["host1"])
+    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects()
     mocker.patch.object(upgrade_status_service_mock, 'get_overall_upgrade_status', return_value=OverallUpgradeStatus.FAILED)
 
     # when
@@ -431,7 +433,7 @@ def test_main_raise_exception_on_overall_status_failed(
     assert test_connection_mock.call_count == 1
     call_args_list = run_remote_script_mock.call_args_list
     assert len(call_args_list) == 0
-    assert collect_facts_mock.call_count == 1
+    assert collect_node_info_mock.call_count == 1
 
 
 def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
@@ -447,20 +449,14 @@ def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_prefli
         args.tarball_location = tarball_location
 
 
-def create_mocked_run_remote_script_side_effects(python_location_error_hosts=None,
-                                                 preflight_validations_not_pass_hosts=None,
+def create_mocked_run_remote_script_side_effects(preflight_validations_not_pass_hosts=None,
                                                  preflight_validations_error_hosts=None,
                                                  upgrade_error_hosts=None,
                                                  postflight_validations_not_pass_hosts=None,
                                                  postflight_validations_error_hosts=None):
     def mocked_run_remote_script(dsf_node, script_contents, script_run_command):
         host = dsf_node.get('host')
-        if "get_python_location.sh" in script_contents:
-            if python_location_error_hosts is not None and host in python_location_error_hosts:
-                return "get_python_location error"
-            else:
-                return "Python location: test_python_location"
-        elif "run_preflight_validations.py" in script_contents:
+        if "run_preflight_validations.py" in script_contents:
             if preflight_validations_error_hosts is not None and host in preflight_validations_error_hosts:
                 return "run_preflight_validations error"
             elif preflight_validations_not_pass_hosts is not None and host in preflight_validations_not_pass_hosts:
