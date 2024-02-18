@@ -1,22 +1,45 @@
-name: 'Run Test'
+name: 'DSF POC CLI - AWS'
 
 on:
+
   workflow_dispatch:
     inputs:
       use_modules_from_terraform_registry:
         type: boolean
         required: false
 
+
+
 env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
   contents: read
 
 jobs:
-  test_1:
+  terraform:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: DSF POC - SONAR
+            workspace: dsf_cli-sonar-
+            enable_sonar: true
+            enable_dam: false
+            enable_dra: false
+
+    name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
+    env:
+      EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
+      AWS_REGION: eu-west-2
+      TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
+      TF_VAR_enable_dam: ${{ matrix.enable_dam }}
+      TF_VAR_enable_dra: ${{ matrix.enable_dra }}
+      TF_VAR_allowed_ssh_cidrs: "[\"82.0.0.0/8\", \"62.0.0.0/8\", \"94.0.0.0/8\"]"
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -25,18 +48,117 @@ jobs:
         shell: bash
     steps:
 
-      - name: Print GitHub Actions Context
-        run: | 
-          echo "${{ toJson(github) }}"
+      - name: Pick ref
+        run: |
+          if [ -z "${{ inputs.explicit_ref }}" ]; then
+            echo REF=${{ github.ref }} >> $GITHUB_ENV;
+          else
+            echo REF=${{ inputs.explicit_ref }} >> $GITHUB_ENV;
+          fi
 
-      - name: Print GitHub Job
-        run: | 
-          echo "${{ toJson(job) }}"
+      - name: Set Workspace Name
+        run: |
+          echo TF_WORKSPACE=dsf_cli-sonar-schedule-master >> $GITHUB_ENV
 
-      - name: Print GitHub runner
-        run: | 
-          echo "${{ toJson(runner) }}"
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.REF }}
 
-      - name: Print GitHub link
-        run: | 
-          echo "Job Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs/${{ github.job }}"
+      - name: Change the modules source to local
+        if: ${{ inputs.use_modules_from_terraform_registry == false }}
+        run: |
+          find ./examples/ -type f -exec sed -i -f sed.expr {} \;
+
+      - name: Create terraform backend file
+        run: |
+          cat << EOF > $EXAMPLE_DIR/backend.tf
+          terraform {
+            backend "s3" {
+              bucket         = "terraform-state-bucket-dsfkit-github-tests"
+              key            = "states/terraform.tfstate"
+              dynamodb_table = "terraform-state-lock"
+              region         = "us-east-1"
+            }
+          }
+          EOF
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+          terraform_version: ~1.7.0
+
+      - name: Setup jq
+        uses: sergeysova/jq-action@v2
+
+      - name: Create License File
+        env:
+          MY_SECRET: ${{ secrets.DAM_LICENSE }}
+        run: |
+          echo "${{ secrets.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
+          cat $EXAMPLE_DIR/license.mprv
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform -chdir=$EXAMPLE_DIR init
+        env:
+          TF_WORKSPACE: default
+
+      - name: Cleaning environment
+        run: |
+          mv $EXAMPLE_DIR/main.tf{,_}
+          mv $EXAMPLE_DIR/outputs.tf{,_}
+          mv $EXAMPLE_DIR/dam.tf{,_}
+          mv $EXAMPLE_DIR/dra.tf{,_}
+          mv $EXAMPLE_DIR/sonar.tf{,_}
+          mv $EXAMPLE_DIR/networking.tf{,_}
+          mv $EXAMPLE_DIR/agentless_sources.tf{,_}
+          mv $EXAMPLE_DIR/agent_sources.tf{,_}
+          terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+          mv $EXAMPLE_DIR/main.tf{_,}
+          mv $EXAMPLE_DIR/outputs.tf{_,}
+          mv $EXAMPLE_DIR/dam.tf{_,}
+          mv $EXAMPLE_DIR/dra.tf{_,}
+          mv $EXAMPLE_DIR/sonar.tf{_,}
+          mv $EXAMPLE_DIR/networking.tf{_,}
+          mv $EXAMPLE_DIR/agentless_sources.tf{_,}
+          mv $EXAMPLE_DIR/agent_sources.tf{_,}
+
+      - name: Terraform Validate
+        run: terraform -chdir=$EXAMPLE_DIR validate
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        run: |
+          terraform -chdir=$EXAMPLE_DIR workspace list
+          terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
+
+        # On push to "main", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      - name: Terraform Apply
+        id: apply
+        # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve
+
+      - name: Terraform Output
+        if: always()
+        run: terraform -chdir=$EXAMPLE_DIR output -json
+
+      - name: Collect Artifacts
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: collected-keys
+          path: |
+            ${{ env.EXAMPLE_DIR }}/ssh_keys
+
+      - name: Terraform Destroy
+        id: destroy
+        if: always()
+        run: |
+          terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+
+
