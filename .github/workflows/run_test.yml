@@ -107,42 +107,6 @@ jobs:
         env:
           TF_WORKSPACE: default
 
-      - name: Cleaning environment
-        run: |
-          mv $EXAMPLE_DIR/main.tf{,_}
-          mv $EXAMPLE_DIR/outputs.tf{,_}
-          mv $EXAMPLE_DIR/dam.tf{,_}
-          mv $EXAMPLE_DIR/dra.tf{,_}
-          mv $EXAMPLE_DIR/sonar.tf{,_}
-          mv $EXAMPLE_DIR/networking.tf{,_}
-          mv $EXAMPLE_DIR/agentless_sources.tf{,_}
-          mv $EXAMPLE_DIR/agent_sources.tf{,_}
-          terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
-          mv $EXAMPLE_DIR/main.tf{_,}
-          mv $EXAMPLE_DIR/outputs.tf{_,}
-          mv $EXAMPLE_DIR/dam.tf{_,}
-          mv $EXAMPLE_DIR/dra.tf{_,}
-          mv $EXAMPLE_DIR/sonar.tf{_,}
-          mv $EXAMPLE_DIR/networking.tf{_,}
-          mv $EXAMPLE_DIR/agentless_sources.tf{_,}
-          mv $EXAMPLE_DIR/agent_sources.tf{_,}
-
-      - name: Terraform Validate
-        run: terraform -chdir=$EXAMPLE_DIR validate
-
-      # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        run: |
-          terraform -chdir=$EXAMPLE_DIR workspace list
-          terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
-
-        # On push to "main", build or change infrastructure according to Terraform configuration files
-        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-      - name: Terraform Apply
-        id: apply
-        # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve
-
       - name: Terraform Output
         if: always()
         run: terraform -chdir=$EXAMPLE_DIR output -json
@@ -160,5 +124,3 @@ jobs:
         if: always()
         run: |
           terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
-
-
