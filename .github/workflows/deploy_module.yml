@@ -197,7 +197,7 @@ jobs:
           removed_tags=()
           # Loop through each tag and filter if less than begin_tag
           for tag in ${all_tags}; do
-              if [[ "$tag" < "${begin_tag}" ]]; then
+              if (( tag < begin_tag )); then
                   removed_tags+=("$tag")
               fi
           done
