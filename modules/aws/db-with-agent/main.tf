@@ -2,8 +2,8 @@ locals {
   db_types = ["PostgreSql", "MySql", "MariaDB"]
   os_types = keys(local.os_params)
 
-  db_type           = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
-  os_type           = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
+  db_type = var.db_type != null ? var.db_type : random_shuffle.db.result[0]
+  os_type = var.os_type != null ? var.os_type : random_shuffle.os.result[0]
 
   installation_s3_object            = var.binaries_location.s3_object != null ? var.binaries_location.s3_object : local.os_params[local.os_type].installation_filename
   installation_s3_key               = var.binaries_location.s3_prefix != null ? join("/", [var.binaries_location.s3_prefix, local.installation_s3_object]) : local.installation_s3_object

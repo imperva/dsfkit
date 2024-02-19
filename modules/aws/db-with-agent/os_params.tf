@@ -5,8 +5,8 @@ locals {
       ami_name               = "RHEL-8.6.0_HVM-2022*-x86_64-2-Hourly2-GP2"
       ami_ssh_user           = "ec2-user"
       agent_installation_dir = "/opt/imperva",
-      installation_filename = "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
-      package_install = <<-EOF
+      installation_filename  = "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
+      package_install        = <<-EOF
         yum update -y
         yum install unzip -y
       EOF
@@ -37,8 +37,8 @@ locals {
       ami_name               = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
       ami_ssh_user           = "ubuntu"
       agent_installation_dir = "/usr/imperva",
-      installation_filename = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
-      package_install = <<-EOF
+      installation_filename  = "Imperva-ragent-UBN-px86_64-b14.6.0.60.0.636085.bsx"
+      package_install        = <<-EOF
         apt update -y
         apt install unzip
       EOF
