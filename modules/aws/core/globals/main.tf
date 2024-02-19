@@ -51,7 +51,7 @@ locals {
 }
 
 locals {
-  sonar_installation_s3_prefix = "sonar"
+  sonar_installation_s3_prefix     = "sonar"
   dam_agent_installation_s3_prefix = "dam-agent"
 }
 
