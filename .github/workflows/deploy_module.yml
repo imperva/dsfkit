@@ -193,11 +193,30 @@ jobs:
           fi
           latest_tag=$(git tag -l | sort -V | tail -n 1)
 
+          version_compare() {
+              local v1=(${1//./ })
+              local v2=(${2//./ })
+              local i
+
+              # Compare each component of the version strings
+              for ((i=0; i<${#v1[@]} && i<${#v2[@]}; i++)); do
+                  if (( ${v1[i]} < ${v2[i]} )); then
+                      return 0   # v1 is less than v2
+                  elif (( ${v1[i]} > ${v2[i]} )); then
+                      return 1   # v1 is greater than v2
+                  fi
+              done
+
+              # v1 is equal to v2
+              return 2
+          }
+
           all_tags=$(git tag)
           removed_tags=()
           # Loop through each tag and filter if less than begin_tag
           for tag in ${all_tags}; do
-              if (( tag < begin_tag )); then
+              if version_compare "$tag" "$begin_tag"; then
+                  echo "$tag is less than $begin_tag"
                   removed_tags+=("$tag")
               fi
           done
