@@ -314,7 +314,7 @@ variable "dra_admin_vhd_details" {
     container_name       = string
   })
   default     = null
-  description = "VHD details for creating the Admin server image. Keep empty if you provide an image for the Admin server instead."
+  description = "VHD details for creating the Admin server image. 'path_to_vhd' is the name of the VHD within the container, for example 'DRA-x.x.x.x.x.x_x86_64-Admin.vhd'. Keep empty if you provide an image for the Admin server instead."
   validation {
     condition     = var.dra_admin_vhd_details == null || try(var.dra_admin_vhd_details.path_to_vhd != null && var.dra_admin_vhd_details.storage_account_name != null && var.dra_admin_vhd_details.container_name != null, false)
     error_message = "Value must either be null or specified for all"
@@ -361,7 +361,7 @@ variable "dra_analytics_vhd_details" {
     container_name       = string
   })
   default     = null
-  description = "VHD details for creating the Analytics server image. Keep empty if you provide an image for the Analytics server instead."
+  description = "VHD details for creating the Analytics server image. 'path_to_vhd' is the name of the VHD within the container, for example 'DRA-x.x.x.x.x.x_x86_64-Analytics.vhd'. Keep empty if you provide an image for the Analytics server instead."
   validation {
     condition     = var.dra_analytics_vhd_details == null || try(var.dra_analytics_vhd_details.path_to_vhd != null && var.dra_analytics_vhd_details.storage_account_name != null && var.dra_analytics_vhd_details.container_name != null, false)
     error_message = "Value must either be null or specified for all"
