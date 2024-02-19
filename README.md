@@ -440,12 +440,13 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
   </tr>
   <tr>
-    <td>Coming soon
+    <td>19 Feb 2024
     </td>
-    <td>
+    <td>1.7.10
     </td>
     <td>
       1. Moved AWS and Azure access request google forms to eDSF Kit open source code.
+      <br/>2. Improvements and bug fixes.
     </td>
   </tr>
 </table>
