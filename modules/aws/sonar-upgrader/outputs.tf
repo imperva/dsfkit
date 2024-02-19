@@ -37,3 +37,11 @@ output "stop_on_failure" {
 output "tarball_location" {
   value = var.tarball_location
 }
+
+output "script_exited_successfully" {
+  value = "exited successfully"
+  description = "Indicates when the upgrade script has exited successfully, whether the upgrade itself was successful or not."
+  depends_on = [
+    null_resource.upgrade_cmd
+  ]
+}

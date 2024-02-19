@@ -40,4 +40,7 @@ output "tarball_location" {
 
 output "summary" {
   value = try(jsondecode(file("upgrade_status.json")), null)
+  depends_on = [
+    module.sonar_upgrader.script_exited_successfully
+  ]
 }
