@@ -252,7 +252,7 @@ def run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict
     """
     run_test_connection_stage(args, extended_node_dict, upgrade_status_service)
 
-    run_collect_facts_step(args, extended_node_dict, upgrade_status_service)
+    run_collect_node_info_step(args, extended_node_dict, upgrade_status_service)
 
     run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
                                     upgrade_status_service)
@@ -268,26 +268,25 @@ def run_test_connection_stage(args, extended_node_dict, upgrade_status_service):
             print(f"### Test connection to all DSF nodes succeeded")
 
 
-def run_collect_facts_step(args, extended_node_dict, upgrade_status_service):
+def run_collect_node_info_step(args, extended_node_dict, upgrade_status_service):
 
     for extended_node in extended_node_dict.values():
-        if upgrade_status_service.should_collect_facts(extended_node.get('dsf_node_id')):
+        if upgrade_status_service.should_collect_node_info(extended_node.get('dsf_node_id')):
             upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                         UpgradeStatus.RUNNING_COLLECT_FACTS)
+                                                         UpgradeStatus.RUNNING_COLLECT_NODE_INFO)
             try:
-                collect_facts(extended_node)
+                collect_node_info(extended_node)
                 upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                             UpgradeStatus.COLLECT_FACTS_SUCCEEDED)
+                                                             UpgradeStatus.COLLECT_NODE_INFO_SUCCEEDED)
             except Exception as e:
                 upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                             UpgradeStatus.COLLECT_FACTS_FAILED)
+                                                             UpgradeStatus.COLLECT_NODE_INFO_FAILED)
                 if args.stop_on_failure:
                     raise UpgradeException(
                         f"Collecting Python location in {extended_node.get('dsf_node_name')} failed") from e
-                return None
 
 
-def collect_facts(extended_node):
+def collect_node_info(extended_node):
 
     with remote_client_context(extended_node.get('dsf_node'), _connection_timeout) as client:
         collect_sysconfig(extended_node, client)
