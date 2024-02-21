@@ -3,11 +3,11 @@ locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   hub_main_public_ip     = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
-  hub_dr_public_ip       = var.enable_sonar ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
+  hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
   hub_cidr_list          = compact([data.aws_subnet.hub_main.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_main_public_ip, local.hub_dr_public_ip])
-  agentless_gw_cidr_list = [data.aws_subnet.agentless_gw_main.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
+  agentless_gw_cidr_list = var.enable_sonar && var.agentless_gw_hadr ? [data.aws_subnet.agentless_gw_main.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block] : var.enable_sonar ? [data.aws_subnet.agentless_gw_main.cidr_block] : []
   hub_main_ip            = var.enable_sonar ? (length(module.hub_main[0].public_dns) > 0 ? module.hub_main[0].public_dns : module.hub_main[0].private_dns) : null
-  hub_dr_ip              = var.enable_sonar ? (length(module.hub_dr[0].public_dns) > 0 ? module.hub_dr[0].public_dns : module.hub_dr[0].private_dns) : null
+  hub_dr_ip              = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_dns) > 0 ? module.hub_dr[0].public_dns : module.hub_dr[0].private_dns) : null
 }
 
 module "hub_main" {
