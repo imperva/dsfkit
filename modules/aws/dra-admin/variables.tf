@@ -31,7 +31,7 @@ variable "key_pair" {
 
 variable "dra_version" {
   type        = string
-  default     = "4.14"
+  default     = "4.15"
   description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Full version format is supported, for example, 4.11.0.10.0.7."
   nullable    = false
   validation {
