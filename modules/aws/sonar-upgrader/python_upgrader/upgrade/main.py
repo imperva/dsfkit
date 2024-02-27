@@ -310,9 +310,12 @@ def collect_python_location(extended_node):
 def run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
                                     upgrade_status_service):
     if args.run_preflight_validations:
-        preflight_validations_passed = run_preflight_validations(args.stop_on_failure, args.target_version,
-                                                                 agentless_gw_extended_node_dict,
-                                                                 dsf_hub_extended_node_dict, upgrade_status_service)
+        preflight_validations_passed = run_preflight_validations(
+            args.stop_on_failure, args.target_version,
+            args.ignore_healthcheck_warnings,
+            args.ignore_healthcheck_check,
+            agentless_gw_extended_node_dict,
+            dsf_hub_extended_node_dict, upgrade_status_service)
         if preflight_validations_passed:
             print(f"### Preflight validations passed for all DSF nodes")
 
@@ -383,37 +386,53 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
     return True
 
 
-def run_preflight_validations(stop_on_failure, target_version, agentless_gw_extended_node_dict,
-                              dsf_hub_extended_node_dict, upgrade_status_service):
+def run_preflight_validations(
+        stop_on_failure, target_version, ignore_healthcheck_warning,
+        ignore_healthcheck_checks, agentless_gw_extended_node_dict,
+        dsf_hub_extended_node_dict, upgrade_status_service):
     print("----- Preflight validations")
 
     successful = True
     for extended_node in chain(agentless_gw_extended_node_dict.values(), dsf_hub_extended_node_dict.values()):
         if upgrade_status_service.should_run_preflight_validations(extended_node.get('dsf_node_id')):
-            node_successful = run_preflight_validations_for_node(stop_on_failure, target_version, extended_node, upgrade_status_service)
+            node_successful = run_preflight_validations_for_node(
+                stop_on_failure, target_version,
+                ignore_healthcheck_warning, ignore_healthcheck_checks,
+                extended_node, upgrade_status_service)
             successful = successful and node_successful
 
     return successful
 
 
-def run_preflight_validations_for_node(stop_on_failure, target_version, extended_node, upgrade_status_service):
+def run_preflight_validations_for_node(
+        stop_on_failure, target_version,
+        ignore_healthcheck_warning, ignore_healthcheck_checks,
+        extended_node, upgrade_status_service):
     error_message = None
     try:
         upgrade_status_service.update_upgrade_status(
             extended_node.get('dsf_node_id'), UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS,
         )
-        preflight_validations_result = run_preflight_validations_script(
-            target_version, extended_node.get('dsf_node'), extended_node.get('dsf_node_name'), extended_node.get('python_location'),
-        )
-
-        if are_preflight_validations_passed(preflight_validations_result):
-            print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
-            upgrade_status_service.update_upgrade_status(
-                extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
-            )
+        version_list = extended_node['sysconfig']['JSONAR_VERSION'].split('-')[0].split('.')
+        version_tuple = tuple(map(int, version_list))
+        if version_tuple >= (4, 15):
+            script_output = run_remote_script(extended_node['dsf_node'], "", f"sudo {extended_node['sysconfig']['JSONAR_BASEDIR']}/bin/health-checker --quiet --output JSON --target-version {target_version}")
+            results = list(chain.from_iterable(machine['results'] for machine in json.loads(script_output)['machines']))
+            results = [result for result in results if result['status'] in ['WARNING', 'FAILURE']]
+            if ignore_healthcheck_warning:
+                results = [result for result in results if result['status'] != 'WARNING']
+            results = [result for result in results if result['name'] not in ignore_healthcheck_checks]
+            if results:
+                error_message = f'Healthchecks failed: {results}'
         else:
-            print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
-            error_message = preflight_validations_result
+            preflight_validations_result = run_preflight_validations_script(
+                target_version, extended_node.get('dsf_node'), extended_node.get('dsf_node_name'), extended_node.get('python_location'),
+            )
+
+            if not are_preflight_validations_passed(preflight_validations_result):
+                print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+                error_message = preflight_validations_result
+
     except Exception as ex:
         print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
         error_message = str(ex)
@@ -427,6 +446,11 @@ def run_preflight_validations_for_node(stop_on_failure, target_version, extended
             raise UpgradeException(f"Preflight validations didn't pass for {extended_node.get('dsf_node_id')}")
         else:
             return False
+    else:
+        print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
+        upgrade_status_service.update_upgrade_status(
+            extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
+        )
     return True
 
 
@@ -836,6 +860,12 @@ def get_argument_parser():
     parser.add_argument("--run_preflight_validations", type=str_to_bool,
                         default=True,
                         help="Whether to run preflight validations")
+    parser.add_argument("--ignore-healthcheck-warnings",
+                        default=False, action='store_true',
+                        help="If we should ignore warnings from the healthchecker")
+    parser.add_argument("--ignore-healthcheck-check",
+                        default=[], action="append",
+                        help="A check that should be ignored, can be added multiple times to ignore multiple checks")
     parser.add_argument("--run_upgrade", type=str_to_bool, default=True, help="Whether to run the upgrade")
     parser.add_argument("--run_postflight_validations", type=str_to_bool,
                         default=True,
