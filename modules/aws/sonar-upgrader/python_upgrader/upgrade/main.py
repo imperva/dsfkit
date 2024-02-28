@@ -21,6 +21,7 @@ CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 SONAR_INSTALLATION_S3_PREFIX = "sonar"
 
 UNDEFINED_PYTHON_LOCATION = "UNDEFINED_PYTHON_LOCATION"
+UNDEFINED_SYSCONFIG = "UNDEFINED_SYSCONFIG"
 
 # Globals
 _connection_timeout = None
@@ -149,7 +150,14 @@ def create_extended_node(dsf_node, dsf_node_id, dsf_node_name):
         "dsf_node": dsf_node,
         "dsf_node_id": dsf_node_id,
         "dsf_node_name": dsf_node_name,
-        "python_location": UNDEFINED_PYTHON_LOCATION  # Will be filled later
+        "python_location": UNDEFINED_PYTHON_LOCATION,  # Will be filled later
+        "sysconfig": {
+            "JSONAR_BASEDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_DATADIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_LOGDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_LOCALDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_VERSION": UNDEFINED_SYSCONFIG,
+        },
     }
 
 

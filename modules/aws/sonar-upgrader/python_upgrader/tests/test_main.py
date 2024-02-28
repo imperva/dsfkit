@@ -65,7 +65,7 @@ def upgrade_status_service_mock(mocker):
     upgrade_status_service_mock = mocker.Mock()
     mocker.patch('upgrade.main.UpgradeStatusService', return_value=upgrade_status_service_mock)
     mocker.patch.object(upgrade_status_service_mock, 'should_test_connection', return_value=True)
-    mocker.patch.object(upgrade_status_service_mock, 'should_collect_python_location', return_value=True)
+    mocker.patch.object(upgrade_status_service_mock, 'should_collect_node_info', return_value=True)
     mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', return_value=True)
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', return_value=True)
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', return_value=True)
@@ -88,7 +88,10 @@ def run_remote_script_mock(mocker):
 
 @pytest.fixture
 def collect_node_info_mock(mocker):
-    yield mocker.patch('upgrade.main.collect_node_info')
+    def set_python_version(extended_node):
+        extended_node['sysconfig']['JSONAR_VERSION'] = '4.14.0.10.0'
+
+    return mocker.patch('upgrade.main.collect_node_info', side_effect=set_python_version)
 
 
 @pytest.fixture(autouse=True)
@@ -300,7 +303,13 @@ def test_main_node_info_failure_with_stop_on_failure_false(
     # given
     setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
     # fail if host is host1
-    collect_node_info_mock.side_effect = (lambda en: not en.get('dsf_node').get('host') == 'host1')
+    def collect_node_info(en):
+        if en.get('dsf_node').get('host') == 'host1':
+            raise Exception()
+        else:
+            en['sysconfig']['JSONAR_VERSION'] = '4.14.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
     mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
     mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
