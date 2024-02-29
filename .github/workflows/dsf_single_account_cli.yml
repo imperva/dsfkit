@@ -221,7 +221,7 @@ jobs:
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Terraform Destroy
-#       if: always()
+      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Delete Security Group
