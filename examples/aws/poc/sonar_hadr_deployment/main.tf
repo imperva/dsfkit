@@ -1,6 +1,9 @@
 provider "aws" {
 }
 
+# This provider is used to get MSSQL script files located in eDSF Kit's S3 bucket in the specified region in order to
+# generate dummy queries for POC purposes.
+# The specified region does not have to be the same as the region where the deployment is taking place.
 provider "aws" {
   region = "us-east-1"
   alias  = "poc_scripts_s3_region"
