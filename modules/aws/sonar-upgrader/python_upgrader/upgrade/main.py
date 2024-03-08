@@ -424,12 +424,7 @@ def run_preflight_validations_for_node(
         version_list = extended_node['sysconfig']['JSONAR_VERSION'].split('-')[0].split('.')
         version_tuple = tuple(map(int, version_list))
         if version_tuple >= (4, 15):
-            script_output = run_remote_script(extended_node['dsf_node'], "", f"sudo {extended_node['sysconfig']['JSONAR_BASEDIR']}/bin/health-checker --quiet --output JSON --target-version {target_version}")
-            results = list(chain.from_iterable(machine['results'] for machine in json.loads(script_output)['machines']))
-            results = [result for result in results if result['status'] in ['WARNING', 'FAILURE']]
-            if ignore_healthcheck_warning:
-                results = [result for result in results if result['status'] != 'WARNING']
-            results = [result for result in results if result['name'] not in ignore_healthcheck_checks]
+            results = get_healthchecker_results(extended_node, ignore_healthcheck_warning, ignore_healthcheck_checks, target_version)
             if results:
                 error_message = f'Healthchecks failed: {results}'
         else:
@@ -460,6 +455,17 @@ def run_preflight_validations_for_node(
             extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
         )
     return True
+
+
+def get_healthchecker_results(extended_node, ignore_healthcheck_warning, ignore_healthcheck_checks, target_version):
+    healthcheck_script = f"sudo {extended_node['sysconfig']['JSONAR_BASEDIR']}/bin/health-checker --quiet --output JSON --target-version {target_version}"
+    script_output = run_remote_script(extended_node['dsf_node'], healthcheck_script, healthcheck_script)
+    results = list(chain.from_iterable(machine['results'] for machine in json.loads(script_output)['machines']))
+    results = [result for result in results if result['status'] in ['WARNING', 'FAILURE']]
+    if ignore_healthcheck_warning:
+        results = [result for result in results if result['status'] != 'WARNING']
+    results = [result for result in results if result['name'] not in ignore_healthcheck_checks]
+    return results
 
 
 def run_preflight_validations_script(target_version, dsf_node, dsf_node_name, python_location):

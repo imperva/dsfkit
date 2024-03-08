@@ -328,6 +328,36 @@ def test_main_node_info_failure_with_stop_on_failure_false(
         assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
 
 
+def test_main_node_info_failure_with_stop_on_failure_false_4_15(
+        args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_node_info_mock, mocker):
+    # given
+    setup_custom_args(args, [{"main": gw1}, {"main": gw2}], [{"main": hub1}], True, True, True, True, False)
+    # fail if host is host1
+    def collect_node_info(en):
+        if en.get('dsf_node').get('host') == 'host1':
+            raise Exception()
+        else:
+            en['sysconfig']['JSONAR_VERSION'] = '4.15.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_preflight_validations', side_effect=lambda host: host != "host1")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_upgrade', side_effect=lambda host: host != "host1")
+    mocker.patch.object(upgrade_status_service_mock, 'should_run_postflight_validations', side_effect=lambda host: host != "host1")
+
+    # when
+    main(args)
+
+    # then
+    assert test_connection_mock.call_count == 3
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 6
+    assert collect_node_info_mock.call_count == 3
+    for host in ["host2", "host100"]:
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "health-checker") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "upgrade_v4_10.sh") == 1
+        assert count_remote_calls_with_host_and_script(call_args_list, host, "run_postflight_validations.py") == 1
+
+
 @pytest.mark.parametrize("preflight_not_pass_hosts, preflight_error_hosts", [
     (["host1"], []),
     ([], ["host1"]),
@@ -427,6 +457,106 @@ def test_main_hadr_set_skip_node_after_hadr_postflight_failure_stop_on_failure_f
     assert count_remote_calls_with_host_and_script(call_args_list, "host102", "run_preflight_validations.py") == 1
 
 
+@pytest.mark.parametrize("warning_hosts", [
+    (["host100"]),
+    ([]),
+])
+def test_healthcheck_ignore_warnings(
+        args, run_remote_script_mock, warning_hosts, test_connection_mock,
+        collect_node_info_mock):
+    setup_custom_args(args, [], [{"main": hub1}], ignore_healthcheck_warnings=True)
+    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(
+        preflight_validations_not_pass_hosts=warning_hosts,
+    )
+    def collect_node_info(en):
+        en['sysconfig']['JSONAR_VERSION'] = '4.15.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
+
+    main(args)
+
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 3
+    assert collect_node_info_mock.call_count == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "health-checker") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+
+
+def test_healthcheck_fail_warnings(
+        args, run_remote_script_mock, test_connection_mock,
+        collect_node_info_mock):
+    setup_custom_args(args, [], [{"main": hub1}])
+    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(
+        preflight_validations_not_pass_hosts=["host100"],
+    )
+    def collect_node_info(en):
+        en['sysconfig']['JSONAR_VERSION'] = '4.15.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
+
+    main(args)
+
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 1
+    assert collect_node_info_mock.call_count == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "health-checker") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 0
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 0
+
+
+@pytest.mark.parametrize("error_hosts", [
+    (["host100"]),
+    ([]),
+])
+def test_healthcheck_ignore_failed_check(
+        args, run_remote_script_mock, error_hosts, test_connection_mock,
+        collect_node_info_mock):
+    setup_custom_args(args, [], [{"main": hub1}], ignore_healthcheck_checks=["failed_check"])
+    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(
+        preflight_validations_error_hosts=error_hosts,
+    )
+    def collect_node_info(en):
+        en['sysconfig']['JSONAR_VERSION'] = '4.15.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
+
+    main(args)
+
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 3
+    assert collect_node_info_mock.call_count == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "health-checker") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 1
+
+
+def test_healthcheck_fail_failed_check(
+        args, run_remote_script_mock, test_connection_mock,
+        collect_node_info_mock):
+    setup_custom_args(args, [], [{"main": hub1}])
+    run_remote_script_mock.side_effect = create_mocked_run_remote_script_side_effects(
+        preflight_validations_error_hosts=["host100"],
+    )
+    def collect_node_info(en):
+        en['sysconfig']['JSONAR_VERSION'] = '4.15.0.10.0'
+
+    collect_node_info_mock.side_effect = collect_node_info
+
+    main(args)
+
+    assert test_connection_mock.call_count == 1
+    call_args_list = run_remote_script_mock.call_args_list
+    assert len(call_args_list) == 1
+    assert collect_node_info_mock.call_count == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "health-checker") == 1
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "upgrade_v4_10.sh") == 0
+    assert count_remote_calls_with_host_and_script(call_args_list, "host100", "run_postflight_validations.py") == 0
+
+
 @pytest.mark.xfail(raises=UpgradeException)
 def test_main_raise_exception_on_overall_status_failed(
         args, upgrade_status_service_mock, test_connection_mock, run_remote_script_mock, collect_node_info_mock, mocker):
@@ -445,17 +575,30 @@ def test_main_raise_exception_on_overall_status_failed(
     assert collect_node_info_mock.call_count == 1
 
 
-def setup_custom_args(args, agentless_gws, dsf_hubs, test_connection, run_preflight_validations, run_upgrade,
-                      run_postflight_validations, stop_on_failure, tarball_location=None):
-    args.agentless_gws = json.dumps(agentless_gws)
-    args.dsf_hubs = json.dumps(dsf_hubs)
-    args.test_connection = test_connection
-    args.run_preflight_validations = run_preflight_validations
-    args.run_upgrade = run_upgrade
-    args.run_postflight_validations = run_postflight_validations
-    args.stop_on_failure = stop_on_failure
+def setup_custom_args(args, agentless_gws=None, dsf_hubs=None, test_connection=None,
+                      run_preflight_validations=None, run_upgrade=None,
+                      run_postflight_validations=None, stop_on_failure=None, tarball_location=None,
+                      ignore_healthcheck_warnings=None, ignore_healthcheck_checks=None):
+    if agentless_gws is not None:
+        args.agentless_gws = json.dumps(agentless_gws)
+    if dsf_hubs is not None:
+        args.dsf_hubs = json.dumps(dsf_hubs)
+    if test_connection is not None:
+        args.test_connection = test_connection
+    if run_preflight_validations is not None:
+        args.run_preflight_validations = run_preflight_validations
+    if run_upgrade is not None:
+        args.run_upgrade = run_upgrade
+    if run_postflight_validations is not None:
+        args.run_postflight_validations = run_postflight_validations
+    if stop_on_failure is not None:
+        args.stop_on_failure = stop_on_failure
     if tarball_location is not None:
         args.tarball_location = tarball_location
+    if ignore_healthcheck_warnings is not None:
+        args.ignore_healthcheck_warnings = ignore_healthcheck_warnings
+    if ignore_healthcheck_checks is not None:
+        args.ignore_healthcheck_check = ignore_healthcheck_checks
 
 
 def create_mocked_run_remote_script_side_effects(preflight_validations_not_pass_hosts=None,
@@ -474,6 +617,14 @@ def create_mocked_run_remote_script_side_effects(preflight_validations_not_pass_
             else:
                 return 'Preflight validations result: {"higher_target_version": true, "min_version": true, ' \
                        '"max_version_hop": true, "enough_free_disk_space": true}'
+        elif "health-checker" in script_run_command:
+            if preflight_validations_error_hosts is not None and host in preflight_validations_error_hosts:
+                return json.dumps({'machines': [{'results': [{'status': 'FAILURE', 'name': 'failed_check'}]}]})
+            elif preflight_validations_not_pass_hosts is not None and host in preflight_validations_not_pass_hosts:
+                return json.dumps({'machines': [{'results': [{'status': 'WARNING', 'name': 'failed_check'}]}]})
+            else:
+                return json.dumps({'machines': [{'results': []}]})
+
         elif "upgrade_v4_10.sh" in script_contents:
             if upgrade_error_hosts is not None and host in upgrade_error_hosts:
                 return "upgrade error"

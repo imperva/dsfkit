@@ -111,13 +111,15 @@ variable "run_postflight_validations" {
 }
 
 variable "ignore_healthcheck_warnings" {
-  type = bool
-  default = false
+  type        = bool
+  default     = false
+  description = "If true, we ignore any warnings from the healthchecker"
 }
 
 variable "ignore_healthcheck_checks" {
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
+  description = "We will ignore any failed healthchecks listed here when running the preflight check"
 }
 
 #variable "clean_old_deployments" {
