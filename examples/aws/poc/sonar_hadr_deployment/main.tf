@@ -1,6 +1,9 @@
 provider "aws" {
 }
 
+# This provider is used to get MSSQL script files located in eDSF Kit's S3 bucket in the specified region in order to
+# generate dummy queries for POC purposes.
+# The specified region does not have to be the same as the region where the deployment is taking place.
 provider "aws" {
   region = "us-east-1"
   alias  = "poc_scripts_s3_region"
@@ -8,13 +11,13 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.7.9" # latest release tag
+  version       = "1.7.11" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.9" # latest release tag
+  version              = "1.7.11" # latest release tag
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   tags                 = local.tags
@@ -86,7 +89,7 @@ module "vpc" {
 ##############################
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
   instance_type               = var.hub_instance_type
@@ -114,7 +117,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   instance_type                = var.hub_instance_type
@@ -144,7 +147,7 @@ module "hub_dr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = var.gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
@@ -175,7 +178,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = var.gw_count
 
   friendly_name                = join("-", [local.deployment_name_salted, "gw", count.index, "DR"])
@@ -209,7 +212,7 @@ module "agentless_gw_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
 
   sonar_version       = module.globals.tarball_location.version
   dsf_main_ip         = module.hub_main.public_ip
@@ -226,7 +229,7 @@ module "hub_hadr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = var.gw_count
 
   sonar_version       = module.globals.tarball_location.version
@@ -259,7 +262,7 @@ locals {
 
 module "federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = length(local.hub_gw_combinations)
 
   hub_info = {
@@ -287,7 +290,7 @@ module "federation" {
 
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = contains(var.simulation_db_types_for_agentless, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -298,7 +301,7 @@ module "rds_mysql" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = contains(var.simulation_db_types_for_agentless, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -313,7 +316,7 @@ module "rds_mssql" {
 
 module "rds_postgres" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-postgres-db"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = contains(var.simulation_db_types_for_agentless, "RDS PostgreSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -323,7 +326,7 @@ module "rds_postgres" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.7.9" # latest release tag
+  version  = "1.7.11" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql, module.rds_postgres) : idx => val }
 
   usc_access_token = module.hub_main.access_tokens.usc.token

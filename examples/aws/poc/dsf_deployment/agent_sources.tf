@@ -4,14 +4,14 @@ locals {
 
 module "db_with_agent" {
   source  = "imperva/dsf-db-with-agent/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
   count   = length(local.db_types_for_agent)
 
   friendly_name = join("-", [local.deployment_name_salted, "db", "with", "agent", count.index])
 
   binaries_location = var.dam_agent_installation_location != null ? var.dam_agent_installation_location : module.globals.dam_agent_installation_location
-  os_type = var.agent_source_os
-  db_type = local.db_types_for_agent[count.index]
+  os_type           = var.agent_source_os
+  db_type           = local.db_types_for_agent[count.index]
 
   subnet_id         = local.agent_gw_subnet_id
   key_pair          = module.key_pair.key_pair.key_pair_name

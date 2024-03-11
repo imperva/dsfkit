@@ -149,7 +149,7 @@ jobs:
           az_resource_group = "dsf-rg"
           az_storage_account = "dsfinstallation"
           az_container = "sonar"
-          az_blob = "jsonar-4.14.0.10.0.tar.gz"
+          az_blob = "jsonar-4.15.0.10.0.tar.gz"
         }
         dam_agent_installation_location = {
           az_resource_group = "dsf-rg"
@@ -161,12 +161,12 @@ jobs:
         dra_admin_vhd_details = {
           storage_account_name = "dsfinstallation"
           container_name       = "dra"
-          path_to_vhd          = "DRA-4.14.0.10.0.12_30442_x86_64-Admin.vhd"
+          path_to_vhd          = "DRA-4.15.0.10.0.7_30555_x86_64-Admin.vhd"
         }
         dra_analytics_vhd_details = {
           storage_account_name = "dsfinstallation"
           container_name       = "dra"
-          path_to_vhd          = "DRA-4.14.0.10.0.12_30442_x86_64-Analytics.vhd"
+          path_to_vhd          = "DRA-4.15.0.10.0.7_30555_x86_64-Analytics.vhd"
         }
         EOF
 

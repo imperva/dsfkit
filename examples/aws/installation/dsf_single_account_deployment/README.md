@@ -152,11 +152,6 @@ Then run the deployment as usual with the following command:
    ```
 For a full list of this example's customization options which don't require code changes, refer to the [variables.tf](./variables.tf) file.
 
-## Storing the Terraform State in an S3 Bucket
-
-To store the Terraform state in an S3 bucket instead of locally, uncomment the '[backend.tf](./backend.tf)' file and fill in the necessary details.
-Make sure that the user running the deployment has read and write access to this bucket. You can find the required permissions [here](https://developer.hashicorp.com/terraform/language/settings/backends/s3#s3-bucket-permissions).
-
 ## Deploying DSF Nodes without Outbound Internet Access
 
 Follow these steps to deploy a DSF node (Hub, Agentless Gateway, DAR Admin or DRA Analytics) in an environment without outbound internet access.

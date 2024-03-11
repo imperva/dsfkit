@@ -1,6 +1,9 @@
 provider "aws" {
 }
 
+# This provider is used to get MSSQL script files located in eDSF Kit's S3 bucket in the specified region in order to
+# generate dummy queries for POC purposes.
+# The specified region does not have to be the same as the region where the deployment is taking place.
 provider "aws" {
   region = "us-east-1"
   alias  = "poc_scripts_s3_region"
@@ -8,7 +11,7 @@ provider "aws" {
 
 module "globals" {
   source  = "imperva/dsf-globals/aws"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
 
   sonar_version = var.sonar_version
   dra_version   = var.dra_version
@@ -16,7 +19,7 @@ module "globals" {
 
 module "key_pair" {
   source  = "imperva/dsf-globals/aws//modules/key_pair"
-  version = "1.7.9" # latest release tag
+  version = "1.7.11" # latest release tag
 
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"

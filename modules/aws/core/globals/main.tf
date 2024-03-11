@@ -1,9 +1,13 @@
 locals {
   sonar_tarball_s3_key_map = {
+    "4.15"      = "jsonar-4.15.0.10.0.tar.gz"
+    "4.15.0.10" = "jsonar-4.15.0.10.0.tar.gz"
+
     "4.14"      = "jsonar-4.14.0.10.0.tar.gz"
     "4.14.0.10" = "jsonar-4.14.0.10.0.tar.gz"
 
-    "4.13"      = "jsonar-4.13.0.20.0.tar.gz"
+    "4.13"      = "jsonar-4.13.0.30.0.tar.gz"
+    "4.13.0.30" = "jsonar-4.13.0.30.0.tar.gz"
     "4.13.0.20" = "jsonar-4.13.0.20.0.tar.gz"
     "4.13.0.10" = "jsonar-4.13.0.10.0.tar.gz"
 
@@ -31,6 +35,9 @@ locals {
 
 locals {
   dra_version_map = {
+    "4.15"      = "4.15.0.10.0.7",
+    "4.15.0.10" = "4.15.0.10.0.7",
+
     "4.14"      = "4.14.0.10.0.12"
     "4.14.0.10" = "4.14.0.10.0.12"
 
@@ -51,7 +58,7 @@ locals {
 }
 
 locals {
-  sonar_installation_s3_prefix = "sonar"
+  sonar_installation_s3_prefix     = "sonar"
   dam_agent_installation_s3_prefix = "dam-agent"
 }
 

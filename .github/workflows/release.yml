@@ -192,7 +192,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   release:
-    needs: deploy_modules
+    needs: test_plan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
