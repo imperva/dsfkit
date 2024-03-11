@@ -19,6 +19,7 @@ on:
     paths:
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/aws/sonar_upgrade/*'
+      - '.github/sonar_upgrade*.yml'
       - '!**/README.md'
 
   pull_request:
@@ -30,6 +31,7 @@ on:
     paths:
       - 'modules/aws/sonar-upgrader/**'
       - 'examples/aws/sonar_upgrade/*'
+      - '.github/sonar_upgrade*.yml'
       - '!**/README.md'
 
 permissions:
