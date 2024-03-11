@@ -426,6 +426,7 @@ def run_preflight_validations_for_node(
         if version_tuple >= (4, 15):
             results = get_healthchecker_results(extended_node, ignore_healthcheck_warning, ignore_healthcheck_checks, target_version)
             if results:
+                print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
                 error_message = f'Healthchecks failed: {results}'
         else:
             preflight_validations_result = run_preflight_validations_script(
