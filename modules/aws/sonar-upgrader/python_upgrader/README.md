@@ -65,7 +65,9 @@ instructions to accomplish this task:
            "dr": {
                "host": "10.2.1.2", 
                "ssh_user": "ec2-user", 
-               "ssh_private_key_file_path": "/home/ssh_key2.pem"
+               "ssh_private_key_file_path": "/home/ssh_key2.pem".
+               "ignore_healthcheck_warnings": true,
+               "ingore_healthcheck_checks": ["cpu-count"]
            }
        }
    ]
@@ -76,7 +78,7 @@ instructions to accomplish this task:
    For example:
 
    ```
-   [{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]
+   [{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]
    ```
    
 3. Wrap the JSON one-liner with single quotes (to avoid collision with the double quotes within the JSON structure) and use it
@@ -87,7 +89,7 @@ instructions to accomplish this task:
 
    ```
    python3 -u -m upgrade.main 
-       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
+       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]' 
        --dsf_hubs '[{"main":{"host":"52.52.52.177","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
        --target_version "4.12.0.10.0"
    ```
@@ -100,7 +102,7 @@ instructions to accomplish this task:
 
    ```
    python3 -u -m upgrade.main 
-       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
+       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]' 
        --dsf_hubs '[{"main":{"host":"52.52.52.177","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
        --target_version "4.12.0.10.0"
        --test_connection "true"
