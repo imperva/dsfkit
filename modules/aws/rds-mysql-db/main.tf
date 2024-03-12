@@ -31,7 +31,7 @@ resource "aws_db_option_group" "impv_rds_db_og" {
   name                     = replace("${local.db_identifier}-pg", "_", "-")
   option_group_description = "RDS DB option group"
   engine_name              = "mysql"
-  major_engine_version     = "5.7"
+  major_engine_version     = "8.0"
 
   option {
     option_name = "MARIADB_AUDIT_PLUGIN"
@@ -48,11 +48,11 @@ resource "aws_db_option_group" "impv_rds_db_og" {
 }
 
 resource "aws_db_instance" "rds_db" {
-  allocated_storage       = 10
+  allocated_storage       = 100
   db_name                 = local.db_name
   engine                  = "mysql"
-  engine_version          = "5.7"
-  instance_class          = "db.t3.micro"
+  engine_version          = "8.0"
+  instance_class          = "db.m6gd.large"
   username                = local.db_username
   password                = local.db_password
   option_group_name       = aws_db_option_group.impv_rds_db_og.name
