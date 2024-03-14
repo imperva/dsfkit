@@ -47,18 +47,18 @@ jobs:
         with:
           ref: ${{ env.src_repo_branch }}
 
-#      - name: Create a New Repo
-#        run: |
-#          echo "Creating new microservice"
-#          echo "Microservice Name: ${{ inputs.microservice_name }}"
-#          echo "Boilerplate Type: ${{ inputs.boilerplate_type }}"
-#          curl -X POST \
-#          -H "Authorization: token $PAT" \
-#          -H "Accept: application/vnd.github.v3+json" \
-#          "https://api.github.com/orgs/$ORG_NAME/repos" \
-#          -d "{\"name\": \"$MICROSERVICE_NAME\", \"private\": true}"
-#
-#          echo "Repository $MICROSERVICE_NAME created under organization $ORG_NAME"
+      - name: Create a New Repo
+        run: |
+          echo "Creating new microservice"
+          echo "Microservice Name: ${{ inputs.microservice_name }}"
+          echo "Boilerplate Type: ${{ inputs.boilerplate_type }}"
+          curl -X POST \
+          -H "Authorization: token $PAT" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/orgs/$ORG_NAME/repos" \
+          -d "{\"name\": \"$MICROSERVICE_NAME\", \"private\": true, \"default_branch\": \"main\"}"
+
+          echo "Repository $MICROSERVICE_NAME created under organization $ORG_NAME"
 
 #      - name: Git add config
 #        run: |
