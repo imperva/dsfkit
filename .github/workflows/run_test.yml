@@ -72,7 +72,7 @@ jobs:
         with:
           source-directory: "."
           destination-github-username: ${{ env.ORG_NAME }}
-          destination-repository-name: ${{ env.microservice_name }}
+          destination-repository-name: ${{ env.MICROSERVICE_NAME }}
           target-branch: main
 
 #      - name: Set remote URL
