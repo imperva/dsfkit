@@ -28,7 +28,7 @@ jobs:
     # Use Ubuntu Sonar runners which IPs are allow-listed
     #    runs-on: [self-hosted, ubuntu]
     runs-on: ubuntu-latest
-    container: pandoc/latex
+#    container: pandoc/latex
 
     defaults:
       run:
