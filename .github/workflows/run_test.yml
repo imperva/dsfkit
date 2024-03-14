@@ -28,7 +28,7 @@ jobs:
     # Use Ubuntu Sonar runners which IPs are allow-listed
     #    runs-on: [self-hosted, ubuntu]
     runs-on: ubuntu-latest
-    container: pandoc/latex
+#    container: pandoc/latex
 
     defaults:
       run:
@@ -65,15 +65,15 @@ jobs:
 #          set -x
 #          cat ./.git/config
 #          git config --unset-all http.https://github.com/.extraheader
-      - name: Deploy template
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.PAT }}
-        with:
-          source-directory: "."
-          destination-github-username: ${{ env.ORG_NAME }}
-          destination-repository-name: ${{ env.MICROSERVICE_NAME }}
-          target-branch: main
+#      - name: Deploy template
+#        uses: cpina/github-action-push-to-another-repository@main
+#        env:
+#          API_TOKEN_GITHUB: ${{ secrets.PAT }}
+#        with:
+#          source-directory: "."
+#          destination-github-username: ${{ env.ORG_NAME }}
+#          destination-repository-name: ${{ env.MICROSERVICE_NAME }}
+#          target-branch: main
 
 #      - name: Set remote URL
 #        run: |
