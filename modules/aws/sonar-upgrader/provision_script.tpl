@@ -15,6 +15,12 @@ PYTHONPATH=${path}/python_upgrader python3 -u -m upgrade.main \
   --connection_timeout "${connection_timeout}" \
   --test_connection "${test_connection}" \
   --run_preflight_validations "${run_preflight_validations}" \
+  %{ if ignore_healthcheck_warning ~}
+  --ignore-healthcheck-warnings \
+  %{ endif ~}
+  %{ for check in ignore_healthcheck_checks ~}
+  --ignore-healthcheck-check "${check}" \
+  %{ endfor ~}
   --run_upgrade "${run_upgrade}" \
   --run_postflight_validations "${run_postflight_validations}" \
   --stop_on_failure "${stop_on_failure}" \

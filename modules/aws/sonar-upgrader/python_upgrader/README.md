@@ -9,7 +9,7 @@ If you do not wish to use Terraform to run the upgrade, it is possible to bypass
 
 Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
 
-1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.9/REQUEST_ACCESS_AWS.md).
+1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.11/REQUEST_ACCESS_AWS.md).
 2. Install [Python 3](https://www.python.org).
 3. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
 
@@ -65,7 +65,9 @@ instructions to accomplish this task:
            "dr": {
                "host": "10.2.1.2", 
                "ssh_user": "ec2-user", 
-               "ssh_private_key_file_path": "/home/ssh_key2.pem"
+               "ssh_private_key_file_path": "/home/ssh_key2.pem".
+               "ignore_healthcheck_warnings": true,
+               "ingore_healthcheck_checks": ["cpu-count"]
            }
        }
    ]
@@ -76,7 +78,7 @@ instructions to accomplish this task:
    For example:
 
    ```
-   [{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]
+   [{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]
    ```
    
 3. Wrap the JSON one-liner with single quotes (to avoid collision with the double quotes within the JSON structure) and use it
@@ -87,7 +89,7 @@ instructions to accomplish this task:
 
    ```
    python3 -u -m upgrade.main 
-       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
+       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]' 
        --dsf_hubs '[{"main":{"host":"52.52.52.177","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
        --target_version "4.12.0.10.0"
    ```
@@ -100,7 +102,7 @@ instructions to accomplish this task:
 
    ```
    python3 -u -m upgrade.main 
-       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
+       --agentless_gws '[{"main":{"host":"10.0.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.1","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}},{"main":{"host":"10.0.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"},"dr":{"host":"10.2.1.2","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem","ignore_healthcheck_warnings":true,"ingore_healthcheck_checks":["cpu-count"]}}]' 
        --dsf_hubs '[{"main":{"host":"52.52.52.177","ssh_user":"ec2-user","ssh_private_key_file_path":"/home/ssh_key2.pem"}}]' 
        --target_version "4.12.0.10.0"
        --test_connection "true"

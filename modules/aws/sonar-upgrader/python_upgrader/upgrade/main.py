@@ -2,19 +2,18 @@
 
 import argparse
 import json
+import os
 import re
 import socket
-import os
 from itertools import chain
 
-from .utils.file_utils import join_paths, read_file_contents
 from .remote_executor import remote_client_context, run_remote_script as run_remote_script_timeout
-from .upgrade_status_service import UpgradeStatusService, UpgradeStatus, OverallUpgradeStatus
 from .upgrade_exception import UpgradeException
+from .upgrade_status_service import OverallUpgradeStatus, UpgradeStatus, UpgradeStatusService
+from .utils.file_utils import join_paths, read_file_contents
 
 # Constants
 PREFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_preflight_validations.py"
-GET_PYTHON_LOCATION_SCRIPT_NAME = "get_python_location.sh"
 UPGRADE_SCRIPT_NAME = "upgrade_v4_10.sh"
 POSTFLIGHT_VALIDATIONS_SCRIPT_NAME = "run_postflight_validations.py"
 CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
@@ -22,6 +21,7 @@ CLEAN_OLD_DEPLOYMENTS_SCRIPT_NAME = "clean_old_deployments.sh"
 SONAR_INSTALLATION_S3_PREFIX = "sonar"
 
 UNDEFINED_PYTHON_LOCATION = "UNDEFINED_PYTHON_LOCATION"
+UNDEFINED_SYSCONFIG = "UNDEFINED_SYSCONFIG"
 
 # Globals
 _connection_timeout = None
@@ -150,7 +150,14 @@ def create_extended_node(dsf_node, dsf_node_id, dsf_node_name):
         "dsf_node": dsf_node,
         "dsf_node_id": dsf_node_id,
         "dsf_node_name": dsf_node_name,
-        "python_location": UNDEFINED_PYTHON_LOCATION # Will be filled later
+        "python_location": UNDEFINED_PYTHON_LOCATION,  # Will be filled later
+        "sysconfig": {
+            "JSONAR_BASEDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_DATADIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_LOGDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_LOCALDIR": UNDEFINED_SYSCONFIG,
+            "JSONAR_VERSION": UNDEFINED_SYSCONFIG,
+        },
     }
 
 
@@ -253,7 +260,7 @@ def run_upgrade_stages(args, extended_node_dict, agentless_gw_extended_node_dict
     """
     run_test_connection_stage(args, extended_node_dict, upgrade_status_service)
 
-    run_collect_python_location_step(args, extended_node_dict, upgrade_status_service)
+    run_collect_node_info_step(args, extended_node_dict, upgrade_status_service)
 
     run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
                                     upgrade_status_service)
@@ -269,20 +276,54 @@ def run_test_connection_stage(args, extended_node_dict, upgrade_status_service):
             print(f"### Test connection to all DSF nodes succeeded")
 
 
-def run_collect_python_location_step(args, extended_node_dict, upgrade_status_service):
-    """
-    Collects the Python location in the DSF nodes and fills it in the extended_node_dict
-    """
-    if should_run_python(args):
-        collect_python_locations(extended_node_dict, args.stop_on_failure, upgrade_status_service)
+def run_collect_node_info_step(args, extended_node_dict, upgrade_status_service):
+
+    for extended_node in extended_node_dict.values():
+        if upgrade_status_service.should_collect_node_info(extended_node.get('dsf_node_id')):
+            upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                         UpgradeStatus.RUNNING_COLLECT_NODE_INFO)
+            try:
+                collect_node_info(extended_node)
+                upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                             UpgradeStatus.COLLECT_NODE_INFO_SUCCEEDED)
+            except Exception as e:
+                upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
+                                                             UpgradeStatus.COLLECT_NODE_INFO_FAILED)
+                if args.stop_on_failure:
+                    raise UpgradeException(
+                        f"Collecting Python location in {extended_node.get('dsf_node_name')} failed") from e
+
+
+def collect_node_info(extended_node):
+
+    with remote_client_context(extended_node.get('dsf_node'), _connection_timeout) as client:
+        collect_sysconfig(extended_node, client)
+        collect_python_location(extended_node)
+
+
+def collect_sysconfig(extended_node, client):
+    sftp_client = client.open_sftp()
+    remote_file = sftp_client.open('/etc/sysconfig/jsonar')
+    extended_node['sysconfig'] = {}
+    for line in remote_file:
+        if line.strip():
+            key, value = line.split("=")
+            extended_node['sysconfig'][key.strip()] = value.strip()
+
+
+def collect_python_location(extended_node):
+    extended_node['python_location'] = f"{extended_node['sysconfig']['JSONAR_BASEDIR']}/bin/python3"
 
 
 def run_preflight_validations_stage(args, agentless_gw_extended_node_dict, dsf_hub_extended_node_dict,
                                     upgrade_status_service):
     if args.run_preflight_validations:
-        preflight_validations_passed = run_preflight_validations(args.stop_on_failure, args.target_version,
-                                                                 agentless_gw_extended_node_dict,
-                                                                 dsf_hub_extended_node_dict, upgrade_status_service)
+        preflight_validations_passed = run_preflight_validations(
+            args.stop_on_failure, args.target_version,
+            args.ignore_healthcheck_warnings,
+            args.ignore_healthcheck_check,
+            agentless_gw_extended_node_dict,
+            dsf_hub_extended_node_dict, upgrade_status_service)
         if preflight_validations_passed:
             print(f"### Preflight validations passed for all DSF nodes")
 
@@ -353,72 +394,49 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
     return True
 
 
-def should_run_python(args):
-    return args.run_preflight_validations or args.run_postflight_validations
-
-
-def collect_python_locations(extended_node_dict, stop_on_failure, upgrade_status_service):
-    print("----- Collect Python location")
-    for extended_node in extended_node_dict.values():
-        python_location = maybe_collect_python_location(extended_node, stop_on_failure, upgrade_status_service)
-        extended_node['python_location'] = python_location
-
-
-def maybe_collect_python_location(extended_node, stop_on_failure, upgrade_status_service):
-    if upgrade_status_service.should_collect_python_location(extended_node.get('dsf_node_id')):
-        return collect_python_location(extended_node, stop_on_failure, upgrade_status_service)
-    return None
-
-
-def collect_python_location(extended_node, stop_on_failure, upgrade_status_service):
-    try:
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.RUNNING_COLLECT_PYTHON_LOCATION)
-        python_location = run_get_python_location_script(extended_node.get('dsf_node'))
-        print(f"Python location in {extended_node.get('dsf_node_name')} is {python_location}")
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.COLLECT_PYTHON_LOCATION_SUCCEEDED)
-        return python_location
-    except Exception as ex:
-        print(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
-        upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
-                                                     UpgradeStatus.COLLECT_PYTHON_LOCATION_FAILED, str(ex))
-        if stop_on_failure:
-            raise UpgradeException(f"Collecting Python location in {extended_node.get('dsf_node_name')} failed") from ex
-        return None
-
-
-def run_preflight_validations(stop_on_failure, target_version, agentless_gw_extended_node_dict,
-                              dsf_hub_extended_node_dict, upgrade_status_service):
+def run_preflight_validations(
+        stop_on_failure, target_version, ignore_healthcheck_warning,
+        ignore_healthcheck_checks, agentless_gw_extended_node_dict,
+        dsf_hub_extended_node_dict, upgrade_status_service):
     print("----- Preflight validations")
 
     successful = True
     for extended_node in chain(agentless_gw_extended_node_dict.values(), dsf_hub_extended_node_dict.values()):
         if upgrade_status_service.should_run_preflight_validations(extended_node.get('dsf_node_id')):
-            node_successful = run_preflight_validations_for_node(stop_on_failure, target_version, extended_node, upgrade_status_service)
+            node_successful = run_preflight_validations_for_node(
+                stop_on_failure, target_version,
+                ignore_healthcheck_warning, ignore_healthcheck_checks,
+                extended_node, upgrade_status_service)
             successful = successful and node_successful
 
     return successful
 
 
-def run_preflight_validations_for_node(stop_on_failure, target_version, extended_node, upgrade_status_service):
+def run_preflight_validations_for_node(
+        stop_on_failure, target_version,
+        ignore_healthcheck_warning, ignore_healthcheck_checks,
+        extended_node, upgrade_status_service):
     error_message = None
     try:
         upgrade_status_service.update_upgrade_status(
             extended_node.get('dsf_node_id'), UpgradeStatus.RUNNING_PREFLIGHT_VALIDATIONS,
         )
-        preflight_validations_result = run_preflight_validations_script(
-            target_version, extended_node.get('dsf_node'), extended_node.get('dsf_node_name'), extended_node.get('python_location'),
-        )
-
-        if are_preflight_validations_passed(preflight_validations_result):
-            print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
-            upgrade_status_service.update_upgrade_status(
-                extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
-            )
+        version_list = extended_node['sysconfig']['JSONAR_VERSION'].split('-')[0].split('.')
+        version_tuple = tuple(map(int, version_list))
+        if version_tuple >= (4, 15):
+            results = get_healthchecker_results(extended_node, ignore_healthcheck_warning, ignore_healthcheck_checks, target_version)
+            if results:
+                print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+                error_message = f'Healthchecks failed: {results}'
         else:
-            print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
-            error_message = preflight_validations_result
+            preflight_validations_result = run_preflight_validations_script(
+                target_version, extended_node.get('dsf_node'), extended_node.get('dsf_node_name'), extended_node.get('python_location'),
+            )
+
+            if not are_preflight_validations_passed(preflight_validations_result):
+                print(f"### Preflight validations didn't pass for {extended_node.get('dsf_node_name')}")
+                error_message = preflight_validations_result
+
     except Exception as ex:
         print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
         error_message = str(ex)
@@ -432,7 +450,23 @@ def run_preflight_validations_for_node(stop_on_failure, target_version, extended
             raise UpgradeException(f"Preflight validations didn't pass for {extended_node.get('dsf_node_id')}")
         else:
             return False
+    else:
+        print(f"### Preflight validations passed for {extended_node.get('dsf_node_name')}")
+        upgrade_status_service.update_upgrade_status(
+            extended_node.get('dsf_node_id'), UpgradeStatus.PREFLIGHT_VALIDATIONS_SUCCEEDED,
+        )
     return True
+
+
+def get_healthchecker_results(extended_node, ignore_healthcheck_warning, ignore_healthcheck_checks, target_version):
+    healthcheck_script = f"sudo {extended_node['sysconfig']['JSONAR_BASEDIR']}/bin/health-checker --quiet --output JSON --target-version {target_version}"
+    script_output = run_remote_script(extended_node['dsf_node'], healthcheck_script, healthcheck_script)
+    results = list(chain.from_iterable(machine['results'] for machine in json.loads(script_output)['machines']))
+    results = [result for result in results if result['status'] in ['WARNING', 'FAILURE']]
+    if ignore_healthcheck_warning:
+        results = [result for result in results if result['status'] != 'WARNING']
+    results = [result for result in results if result['name'] not in ignore_healthcheck_checks]
+    return results
 
 
 def run_preflight_validations_script(target_version, dsf_node, dsf_node_name, python_location):
@@ -448,28 +482,6 @@ def run_preflight_validations_script(target_version, dsf_node, dsf_node_name, py
     preflight_validations_result = json.loads(extract_preflight_validations_result(script_output))
     print(f"Preflight validations result in {dsf_node_name} is {preflight_validations_result}")
     return preflight_validations_result
-
-
-def run_get_python_location_script(dsf_node):
-    script_file_path = build_script_file_path(GET_PYTHON_LOCATION_SCRIPT_NAME)
-    script_contents = read_file_contents(script_file_path)
-    script_run_command = build_bash_script_run_command(script_contents)
-
-    print(f"Getting python location for DSF node: {dsf_node}")
-    script_output = run_remote_script(dsf_node, script_contents, script_run_command)
-
-    print(f"'Get python location' bash script output: {script_output}")
-    return extract_python_location(script_output)
-
-
-def extract_python_location(script_output):
-    pattern = r'Python location: (\S+)'
-    match = re.search(pattern, script_output)
-
-    if match:
-        return match.group(1)
-    else:
-        raise Exception("Pattern 'Python location: ...' not found in 'Get python location' script output")
 
 
 def extract_preflight_validations_result(script_output):
@@ -863,6 +875,12 @@ def get_argument_parser():
     parser.add_argument("--run_preflight_validations", type=str_to_bool,
                         default=True,
                         help="Whether to run preflight validations")
+    parser.add_argument("--ignore-healthcheck-warnings",
+                        default=False, action='store_true',
+                        help="If we should ignore warnings from the healthchecker")
+    parser.add_argument("--ignore-healthcheck-check",
+                        default=[], action="append",
+                        help="A check that should be ignored, can be added multiple times to ignore multiple checks")
     parser.add_argument("--run_upgrade", type=str_to_bool, default=True, help="Whether to run the upgrade")
     parser.add_argument("--run_postflight_validations", type=str_to_bool,
                         default=True,

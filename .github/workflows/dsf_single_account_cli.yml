@@ -43,7 +43,7 @@ on:
       - '!modules/aws/rds-postgres-db/*'
       - '!modules/aws/sonar-upgrader/**'
       - 'modules/null/**'
-      - 'examples/aws/poc/dsf_single_account_deployment/*'
+      - 'examples/aws/installation/dsf_single_account_deployment/*'
 
   pull_request:
     types:
@@ -60,7 +60,7 @@ on:
       - '!modules/aws/rds-postgres-db/*'
       - '!modules/aws/sonar-upgrader/*'
       - 'modules/null/**'
-      - 'examples/aws/poc/dsf_single_account_deployment/*'
+      - 'examples/aws/installation/dsf_single_account_deployment/*'
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -221,7 +221,7 @@ jobs:
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Terraform Destroy
-#       if: always()
+      if: always()
       run: terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
 
     - name: Delete Security Group

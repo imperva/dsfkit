@@ -45,8 +45,8 @@ locals {
           "s3:ListBucket"
         ]
         "Resource" : [
-          "arn:aws:s3:::dsf-sql-scripts-bucket*",
-          "arn:aws:s3:::dsf-sql-scripts-bucket*/*",
+          "arn:aws:s3:::${aws_s3_bucket.mssql_lambda_bucket.id}*",
+          "arn:aws:s3:::${aws_s3_bucket.mssql_lambda_bucket.id}*/*",
         ]
       }
     ]
