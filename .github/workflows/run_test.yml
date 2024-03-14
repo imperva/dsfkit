@@ -28,7 +28,7 @@ jobs:
     # Use Ubuntu Sonar runners which IPs are allow-listed
     #    runs-on: [self-hosted, ubuntu]
     runs-on: ubuntu-latest
-#    container: pandoc/latex
+    container: pandoc/latex
 
     defaults:
       run:
@@ -47,44 +47,44 @@ jobs:
         with:
           ref: ${{ env.src_repo_branch }}
 
-      - name: Create a New Repo
-        run: |
-          echo "Creating new microservice"
-          echo "Microservice Name: ${{ inputs.microservice_name }}"
-          echo "Boilerplate Type: ${{ inputs.boilerplate_type }}"
-          curl -X POST \
-          -H "Authorization: token $PAT" \
-          -H "Accept: application/vnd.github.v3+json" \
-          "https://api.github.com/orgs/$ORG_NAME/repos" \
-          -d "{\"name\": \"$MICROSERVICE_NAME\", \"private\": true}"
+#      - name: Create a New Repo
+#        run: |
+#          echo "Creating new microservice"
+#          echo "Microservice Name: ${{ inputs.microservice_name }}"
+#          echo "Boilerplate Type: ${{ inputs.boilerplate_type }}"
+#          curl -X POST \
+#          -H "Authorization: token $PAT" \
+#          -H "Accept: application/vnd.github.v3+json" \
+#          "https://api.github.com/orgs/$ORG_NAME/repos" \
+#          -d "{\"name\": \"$MICROSERVICE_NAME\", \"private\": true}"
+#
+#          echo "Repository $MICROSERVICE_NAME created under organization $ORG_NAME"
 
-          echo "Repository $MICROSERVICE_NAME created under organization $ORG_NAME"
+#      - name: Git add config
+#        run: |
+#          set -x
+#          cat ./.git/config
+#          git config --unset-all http.https://github.com/.extraheader
+      - name: Deploy template
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.PAT }}
+        with:
+          source-directory: "."
+          destination-github-username: ${{ env.ORG_NAME }}
+          destination-repository-name: ${{ env.MICROSERVICE_NAME }}
+          target-branch: main
 
-      - name: Git add config
-        run: |
-          set -x
-          cat ./.git/config
-          git config --unset-all http.https://github.com/.extraheader
-#      - name: Deploy template
-#        uses: cpina/github-action-push-to-another-repository@main
-#        env:
-#          API_TOKEN_GITHUB: ${{ secrets.PAT }}
-#        with:
-#          source-directory: "."
-#          destination-github-username: ${{ env.ORG_NAME }}
-#          destination-repository-name: ${{ env.MICROSERVICE_NAME }}
-#          target-branch: main
+#      - name: Set remote URL
+#        run: |
+#          cat ./.git/config
+#          git remote -v
+#          git remote set-url origin https://$PAT@github.com/$ORG_NAME/$MICROSERVICE_NAME.git
 
-      - name: Set remote URL
-        run: |
-          cat ./.git/config
-          git remote -v
-          git remote set-url origin https://$PAT@github.com/$ORG_NAME/$MICROSERVICE_NAME.git
-
-      - name: Push to branch
-        run: |
-          cat ./.git/config
-          git remote -v
-          git branch -M main
-          git push -u origin main
+#      - name: Push to branch
+#        run: |
+#          cat ./.git/config
+#          git remote -v
+#          git branch -M main
+#          git push -u origin main
 
