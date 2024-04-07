@@ -449,7 +449,6 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>2. Improvements and bug fixes.
     </td>
   </tr>
-
  <tr>
     <td>6 Mar 2024
     </td>
@@ -459,6 +458,17 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       1. Added support for DSF version 4.15/14.15.
       <br/>2. Added support for Sonar version 4.13.0.30.
       <br/>3. Improvements and bug fixes.
+    </td>
+  </tr>
+  <tr>
+    <td>7 Apr 2024
+    </td>
+    <td>1.7.12
+    </td>
+    <td>
+      1. Added support for DRA version 4.15.0.11 (following 4.15.0.10 rollback).
+      <br/>2. Changed the default version and size of the MySQL RDS which is onbaorded to the DSF Hub in POC examples.
+      <br/>3. Used the Sonar health-checker tool to run upgrade preflight validations for versions 4.15 and up.
     </td>
   </tr>
 </table>
