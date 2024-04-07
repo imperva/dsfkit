@@ -9,7 +9,7 @@ locals {
 
 module "hub_main" {
   source  = "imperva/dsf-hub/azurerm"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
@@ -55,7 +55,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/azurerm"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -90,7 +90,7 @@ module "hub_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version       = var.sonar_version
@@ -108,7 +108,7 @@ module "hub_hadr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/azurerm"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
@@ -141,7 +141,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/azurerm"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
@@ -177,7 +177,7 @@ module "agentless_gw_dr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.11" # latest release tag
+  version = "1.7.12" # latest release tag
   count   = length(module.agentless_gw_dr)
 
   sonar_version       = var.sonar_version
@@ -221,7 +221,7 @@ locals {
 
 module "federation" {
   source   = "imperva/dsf-federation/null"
-  version  = "1.7.11" # latest release tag
+  version  = "1.7.12" # latest release tag
   for_each = local.hub_gw_combinations
 
   hub_info = {

@@ -10,10 +10,10 @@ locals {
     run_upgrade                = var.run_upgrade
     run_postflight_validations = var.run_postflight_validations
     #    clean_old_deployments      = var.clean_old_deployments
-    stop_on_failure  = var.stop_on_failure
-    tarball_location = jsonencode(var.tarball_location)
+    stop_on_failure            = var.stop_on_failure
+    tarball_location           = jsonencode(var.tarball_location)
     ignore_healthcheck_warning = var.ignore_healthcheck_warnings
-    ignore_healthcheck_checks = var.ignore_healthcheck_checks
+    ignore_healthcheck_checks  = var.ignore_healthcheck_checks
   })
 }
 
