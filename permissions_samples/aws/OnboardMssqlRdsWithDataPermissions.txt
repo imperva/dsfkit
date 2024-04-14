@@ -187,7 +187,6 @@
             "Effect": "Allow",
             "Action": [
                 "ec2:CreateVpcEndpoint",
-                "ec2:DeleteVpcEndpoint",
                 "ec2:ModifyVpcEndpoint",
                 "ec2:DeleteVpcEndpoints",
                 "ec2:DescribeVpcEndpoints",
