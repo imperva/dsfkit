@@ -466,11 +466,20 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     <td>1.7.12
     </td>
     <td>
-      1. Added support for DRA version 4.15.0.11 (following 4.15.0.10 rollback).
+      1. Added support for DRA version 4.15.0.11 (following 4.15.0.10 recall).
       <br/>2. Changed the default version and size of the MySQL RDS which is onbaorded to the DSF Hub in POC examples.
       <br/>3. Used the Sonar health-checker tool to run upgrade preflight validations for versions 4.15 and up.
     </td>
   </tr>
+    <tr>
+      <td>TBD
+      </td>
+      <td>TBD
+      </td>
+      <td>
+        1. Dropped support for DRA version 4.14.* in eDSF Kit due to a bug.
+      </td>
+    </tr>
 </table>
 
 # Getting Ready to Deploy
