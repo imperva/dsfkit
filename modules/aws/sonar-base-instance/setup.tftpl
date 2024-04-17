@@ -249,7 +249,7 @@ function install_access_tokens() {
         issuer="terraform"
         time=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
-        MONGO_URI="$($JSONAR_BASEDIR/bin/python3 -c "from python_commons.sonarw import admin_uri; print(admin_uri())")"
+        MONGO_URI="$(JSONAR_LOCALDIR="$JSONAR_LOCALDIR" "$JSONAR_BASEDIR/bin/python3" -c "from python_commons.sonarw import admin_uri; print(admin_uri())")"
         if [[ -f "$JSONAR_BASEDIR/bin/mongosh" ]]; then
             MONGO_BINARY="$JSONAR_BASEDIR/bin/mongosh"
         else
