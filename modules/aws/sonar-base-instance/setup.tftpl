@@ -249,9 +249,14 @@ function install_access_tokens() {
         issuer="terraform"
         time=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
-        CERT_AS_PASSWD=$(cat "$JSONAR_LOCALDIR"/ssl/client/admin/cert.pem | awk -vORS="\\\n" '1')
+        MONGO_URI="$($JSONAR_BASEDIR/bin/python3 -c "from python_commons.sonarw import admin_uri; print(admin_uri())")"
+        if [[ -f "$JSONAR_BASEDIR/bin/mongosh" ]]; then
+            MONGO_BINARY="$JSONAR_BASEDIR/bin/mongosh"
+        else
+            MONGO_BINARY="$JSONAR_BASEDIR/bin/mongo"
+        fi
 
-        $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
+        "$MONGO_BINARY" "$MONGO_URI" --quiet <<__EOF__
 use admin
 db.system.users.save({ "_id" : "admin.$client_id", "user" : "$client_id", "db" : "admin", "userId" : "$user_id", "roles" : [ { "db" : "admin", "role" : "root" } ] })
 __EOF__
@@ -265,7 +270,7 @@ __EOF__
             echo "access_token is empty"
             exit 1
         fi
-        $JSONAR_BASEDIR/bin/mongo --quiet --port 27117 --authenticationMechanism PLAIN --authenticationDatabase '$external' -u 'CN=admin' -p"$CERT_AS_PASSWD" <<__EOF__
+        "$MONGO_BINARY" "$MONGO_URI" --quiet <<__EOF__
 use admin
 db.studio_auth_token.save({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
 __EOF__
