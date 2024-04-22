@@ -258,7 +258,7 @@ function install_access_tokens() {
 
         "$MONGO_BINARY" "$MONGO_URI" --quiet <<__EOF__
 use admin
-db.system.users.updateOne({ "_id" : "admin.$client_id", "user" : "$client_id", "db" : "admin", "userId" : "$user_id", "roles" : [ { "db" : "admin", "role" : "root" } ] }, {upsert: true})
+db.system.users.insertOne({ "_id" : "admin.$client_id", "user" : "$client_id", "db" : "admin", "userId" : "$user_id", "roles" : [ { "db" : "admin", "role" : "root" } ] })
 __EOF__
 
         %{ for token_value in access_tokens_array }
@@ -272,7 +272,7 @@ __EOF__
         fi
         "$MONGO_BINARY" "$MONGO_URI" --quiet <<__EOF__
 use admin
-db.studio_auth_token.updateOne({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes }, {upsert: true})
+db.studio_auth_token.updateOne({ "tid" : "$access_token", "issuer" : "$issuer", "subject" : "$client_id", "issuedAt" : ISODate("$time"), "startDate" : ISODate("$time"), "revoked" : false, "reason" : "$reason", "grants" : $scopes })
 __EOF__
         %{ endfor ~}
     fi
