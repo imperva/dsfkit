@@ -242,11 +242,13 @@ jobs:
       run: |
         echo "delay_destroy: ${{ inputs.delay_destroy }}"
         if [ "${{ inputs.delay_destroy }}" == "true" ]; then
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ github.workflow }} ${TF_WORKSPACE} automation Failed*\nYou have ${{ env.DESTROY_DELAY_SECONDS }} seconds to investigate the environment before it is destroyed.\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ github.workflow }} ${{ TF_WORKSPACE }} automation Failed*\nYou have ${{ env.DESTROY_DELAY_SECONDS }} seconds to investigate the environment before it is destroyed.\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
           echo ""
           echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
           sleep $DESTROY_DELAY_SECONDS
         fi
+      env:
+        - TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
 
     - name: Terraform Destroy
       if: always()
