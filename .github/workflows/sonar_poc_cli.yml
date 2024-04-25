@@ -10,7 +10,7 @@ on:
         required: true
         type: string
       delay_destroy:
-        description: 'Whether to delay the destroy step and subsequent steps to allow investigation'
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
         type: boolean
         default: false
         required: true
