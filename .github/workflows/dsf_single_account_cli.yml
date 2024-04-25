@@ -248,7 +248,7 @@ jobs:
           sleep $DESTROY_DELAY_SECONDS
         fi
       env:
-        - TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+        TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
 
     - name: Terraform Destroy
       if: always()
