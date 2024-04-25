@@ -105,6 +105,7 @@ jobs:
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
     - name: Set Workspace
+      if: always()
       run: |
         if [ ${{ inputs.branch }} == 'master' ] ||  [ ${{ inputs.branch }} == 'dev' ]; then
           echo "TF_WORKSPACE=dsf_single_account_${{ inputs.branch }}" >> $GITHUB_ENV
