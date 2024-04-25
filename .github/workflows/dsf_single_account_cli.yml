@@ -79,7 +79,7 @@ env:
   AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
-  DESTROY_DELAY_SECONDS: 30
+  DESTROY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
