@@ -249,8 +249,6 @@ jobs:
           echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
           sleep $DESTROY_DELAY_SECONDS
         fi
-      env:
-        TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
 
     - name: Terraform Destroy
       if: always()
