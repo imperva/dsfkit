@@ -163,8 +163,9 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Collect Artifacts
+      id: collect-artifacts
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: collected-keys
         path: |
