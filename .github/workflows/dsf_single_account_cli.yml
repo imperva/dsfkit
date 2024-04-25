@@ -232,11 +232,12 @@ jobs:
       run: |
         echo "delay_destroy: ${{ inputs.delay_destroy }}"
         if [ "${{ inputs.delay_destroy }}" == "true" ]; then
-          destroy_delay_minutes=($DESTROY_DELAY_SECONDS / 60)
-          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*DSF Single Account ${{ inputs.workspace }} automation Failed*\nYou have ${destroy_delay_minutes} minutes to investigate the environment before it is destroyed.\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*DSF Single Account ${{ inputs.workspace }} automation Failed*\nYou have $destroy_delay_minutes minutes to investigate the environment before it is destroyed.\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
           echo "Sleeping for $destroy_delay_minutes seconds before destroying the environment"
           sleep $DESTROY_DELAY_SECONDS
         fi
+      env:
+        - destroy_delay_minutes: $DESTROY_DELAY_SECONDS / 60
 
     - name: Terraform Destroy
       if: always()
