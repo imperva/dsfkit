@@ -228,6 +228,7 @@ jobs:
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Output artifact URL
+      if: always()
       run: echo "Artifact URL is ${{ steps.collect-artifacts.outputs.artifact-url }} and ID is ${{ steps.collect-artifacts.outputs.artifact-id }}"
 
     - name: Check how was the workflow run
