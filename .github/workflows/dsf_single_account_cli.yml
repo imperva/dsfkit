@@ -79,7 +79,7 @@ env:
   AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
-  DESTORY_DELAY_SECONDS: 1800
+  DESTROY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -229,7 +229,10 @@ jobs:
     # This step allows time for investigation of the failed resources before destroying them
     - name: Conditional Delay
       if: ${{ failure() && github.event.inputs.delay_destory == 'true' }}
-      run: sleep $DESTORY_DELAY_SECONDS
+      run: |
+        destroy_delay_minutes = $DESTROY_DELAY_SECONDS / 60
+        curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*DSF Single Account ${{ inputs.workspace }} automation Failed*\nYou have $destroy_delay_minutes minutes to investigate the environment before it is destroyed.\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+        sleep $DESTROY_DELAY_SECONDS
 
     - name: Terraform Destroy
       if: always()
