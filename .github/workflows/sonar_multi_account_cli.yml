@@ -44,7 +44,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_WORKSPACE: "multi_account"
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-  AWS_KEY_PATH: "aws_key.cer"
+  AWS_KEY_PATH: "jump_server_key.cer"
   DESTROY_DELAY_SECONDS: 1800
 
 permissions:
