@@ -228,7 +228,7 @@ jobs:
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Output artifact URL
-        run: echo 'Artifact URL is ${{ steps.collect-artifacts.outputs.artifact-url }} and ID is ${{ steps.collect-artifacts.outputs.artifact-id }}'
+      run: echo 'Artifact URL is ${{ steps.collect-artifacts.outputs.artifact-url }} and ID is ${{ steps.collect-artifacts.outputs.artifact-id }}'
 
     - name: Check how was the workflow run
       id: check-trigger
