@@ -226,6 +226,16 @@ jobs:
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
+    - name: Check how was the workflow run
+      id: check-trigger
+      if: ${{ failure() }}
+      run: |
+        if [ "${{ github.event_name }}" == "schedule" ]; then
+          echo "run-by=Automation" >> $GITHUB_OUTPUT
+        else
+          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+        fi
+
     # This step allows time for investigation of the failed resources before destroying them
     - name: Conditional Delay
       if: ${{ failure() }}
@@ -260,16 +270,6 @@ jobs:
       if: always()
       run: |
         aws ec2 revoke-security-group-ingress --group-id ${{ vars.SYDNEY_SG_ID }} --security-group-rule-ids ${{ env.sg_id_for_sydney }}
-
-    - name: Check how was the workflow run
-      id: check-trigger
-      if: ${{ failure() }}
-      run: |
-        if [ "${{ github.event_name }}" == "schedule" ]; then
-          echo "run-by=Automation" >> $GITHUB_OUTPUT
-        else
-          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-        fi
 
     # Send job failure to Slack
     - name: Send Slack When Failure
