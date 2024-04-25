@@ -9,6 +9,11 @@ on:
       explicit_ref:
         required: true
         type: string
+      delay_destroy:
+        description: 'Whether to delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: true
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -55,6 +60,7 @@ env:
   TF_INPUT: 0
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DESTORY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -217,6 +223,11 @@ jobs:
         name: collected-keys
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
+
+    # This step allows time for investigation of the failed resources before destroying them
+    - name: Conditional Delay
+      if: ${{ failure() && github.event.inputs.delay_destory == 'true' }}
+      run: sleep $DESTORY_DELAY_SECONDS
 
     - name: Terraform Destroy
       id: destroy

@@ -9,6 +9,11 @@ on:
       branch:
         required: true
         type: string
+      delay_destroy:
+        description: 'Whether to delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: true
 
   workflow_call:
     inputs:
@@ -34,6 +39,7 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
   TF_WORKSPACE: single_account
+  DESTORY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -226,6 +232,11 @@ jobs:
           command_timeout: "2h"
           envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
+
+      # This step allows time for investigation of the failed resources before destroying them
+      - name: Conditional Delay
+        if: ${{ failure() && github.event.inputs.delay_destory == 'true' }}
+        run: sleep $DESTORY_DELAY_SECONDS
 
       - name: Terraform Destroy
         #   if: always()

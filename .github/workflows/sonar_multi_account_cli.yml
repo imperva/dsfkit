@@ -9,6 +9,11 @@ on:
       branch:
         required: true
         type: string
+      delay_destroy:
+        description: 'Whether to delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: true
 
   workflow_call:
     inputs:
@@ -40,6 +45,7 @@ env:
   TF_WORKSPACE: "multi_account"
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
+  DESTORY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -153,6 +159,11 @@ jobs:
         name: collected-keys
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
+
+    # This step allows time for investigation of the failed resources before destroying them
+    - name: Conditional Delay
+      if: ${{ failure() && github.event.inputs.delay_destory == 'true' }}
+      run: sleep $DESTORY_DELAY_SECONDS
 
     - name: Terraform Destroy
       if: always()

@@ -79,7 +79,7 @@ env:
   AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "aws_key.cer"
-  DESTORY_DELAY_SECONDS: 3600
+  DESTORY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -226,7 +226,7 @@ jobs:
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
-    # This step makes time for investigating the failed resources before destroying them
+    # This step allows time for investigation of the failed resources before destroying them
     - name: Conditional Delay
       if: ${{ failure() && github.event.inputs.delay_destory == 'true' }}
       run: sleep $DESTORY_DELAY_SECONDS
