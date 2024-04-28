@@ -38,7 +38,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
-  TF_WORKSPACE: single_account
+  TF_WORKSPACE: sonar_single_account_cli
   DESTROY_DELAY_SECONDS: 1800
 
 permissions:
@@ -238,7 +238,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: collected-keys
+          name: collected-keys-${{ env.TF_WORKSPACE }}
           path: |
             ${{ env.EXAMPLE_DIR }}/ssh_keys
 

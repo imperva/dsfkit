@@ -223,7 +223,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: collected-keys
+        name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
