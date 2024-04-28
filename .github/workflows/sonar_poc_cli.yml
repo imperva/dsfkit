@@ -66,12 +66,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - test_name: Sonar Basic CLI
+            workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_basic_deployment
             aws_region: eu-west-2
             hub_output: '.dsf_hub.value.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
-          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - name: Sonar HADR CLI
+            workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_hadr_deployment
             aws_region: eu-west-1
             hub_output: '.dsf_hubs.value.main.public_dns'
@@ -80,6 +82,7 @@ jobs:
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
     env:
+      TEST_NAME_SAFE: ${{ matrix.test_name | replace(' ', '_') | lower }}
       EXAMPLE_DIR: ${{ matrix.example_dir }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
@@ -167,9 +170,9 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: collected-keys
+        name: collected-keys-$TEST_NAME_SAFE
         path: |
-          ${{ env.EXAMPLE_DIR }}/ssh_keys
+          $EXAMPLE_DIR/ssh_keys
 
     - name: Set Environment Variables
       run: |
