@@ -67,12 +67,14 @@ jobs:
       matrix:
         include:
           - test_name: Sonar Basic CLI
+            test_name_safe: sonar_basic_cli
             workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_basic_deployment
             aws_region: eu-west-2
             hub_output: '.dsf_hub.value.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
           - name: Sonar HADR CLI
+            test_name_safe: sonar_hadr_cli
             workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_hadr_deployment
             aws_region: eu-west-1
@@ -82,7 +84,7 @@ jobs:
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
     env:
-      TEST_NAME_SAFE: ${{ replace(replace(matrix.test_name, ' ', '_'), ' ', '') | lower }}
+      TEST_NAME_SAFE: ${{ matrix.test_name_safe }}
       EXAMPLE_DIR: ${{ matrix.example_dir }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
