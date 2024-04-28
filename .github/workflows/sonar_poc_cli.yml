@@ -172,9 +172,9 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: collected-keys-$TEST_NAME_SAFE
+        name: collected-keys-${{ TEST_NAME_SAFE }}
         path: |
-          ${{ env.EXAMPLE_DIR }}/main.tf
+          ${{ EXAMPLE_DIR }}/main.tf
 
     - name: Set Environment Variables
       run: |
@@ -235,11 +235,11 @@ jobs:
         TF_WORKSPACE: default
 
     # Send job failure to Slack
-    - name: Send Slack by action-slack
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        fields: author,action,eventName,ref,workflow,pullRequest
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      if: ${{ failure() }} 
+#    - name: Send Slack by action-slack
+#      uses: 8398a7/action-slack@v3
+#      with:
+#        status: ${{ job.status }}
+#        fields: author,action,eventName,ref,workflow,pullRequest
+#      env:
+#        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#      if: ${{ failure() }}
