@@ -82,7 +82,7 @@ jobs:
     name: 'Terraform ${{ matrix.workspace }}'
     runs-on: ubuntu-latest
     env:
-      TEST_NAME_SAFE: ${{ matrix.test_name | replace(' ', '_') | lower }}
+      TEST_NAME_SAFE: ${{ replace(replace(matrix.test_name, ' ', '_'), ' ', '') | lower }}
       EXAMPLE_DIR: ${{ matrix.example_dir }}
       TF_WORKSPACE: ${{ matrix.workspace }}
       AWS_REGION: ${{ matrix.aws_region }}
