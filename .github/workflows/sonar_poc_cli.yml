@@ -154,15 +154,15 @@ jobs:
         terraform -chdir=$EXAMPLE_DIR workspace list
         terraform -chdir=$EXAMPLE_DIR plan
 
-#      # On push to "main", build or change infrastructure according to Terraform configuration files
-#      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-#    - name: Terraform Apply
-#      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-#      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
-#    - name: Terraform Output
-#      if: always()
-#      run: terraform -chdir=$EXAMPLE_DIR output -json
+    - name: Terraform Output
+      if: always()
+      run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Collect Artifacts
       id: collect-artifacts
@@ -171,7 +171,7 @@ jobs:
       with:
         name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
-          ${{ env.EXAMPLE_DIR }}/main.tf
+          ${{ env.EXAMPLE_DIR }}/ssh_keys
 
     - name: Set Environment Variables
       run: |
@@ -232,11 +232,11 @@ jobs:
         TF_WORKSPACE: default
 
     # Send job failure to Slack
-#    - name: Send Slack by action-slack
-#      uses: 8398a7/action-slack@v3
-#      with:
-#        status: ${{ job.status }}
-#        fields: author,action,eventName,ref,workflow,pullRequest
-#      env:
-#        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#      if: ${{ failure() }}
+    - name: Send Slack by action-slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        fields: author,action,eventName,ref,workflow,pullRequest
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      if: ${{ failure() }}
