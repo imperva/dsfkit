@@ -174,7 +174,7 @@ jobs:
       with:
         name: collected-keys-$TEST_NAME_SAFE
         path: |
-          $EXAMPLE_DIR/main.tf
+          ${{ env.EXAMPLE_DIR }}/main.tf
 
     - name: Set Environment Variables
       run: |
