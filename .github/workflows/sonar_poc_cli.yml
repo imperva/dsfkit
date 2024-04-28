@@ -171,7 +171,7 @@ jobs:
       with:
         name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
-          ${{ env.EXAMPLE_DIR }}/ssh_keys
+          ${{ env.EXAMPLE_DIR }}/main.tf
 
     - name: Set Environment Variables
       run: |
