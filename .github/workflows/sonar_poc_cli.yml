@@ -9,6 +9,12 @@ on:
       explicit_ref:
         required: true
         type: string
+      delay_destroy:
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: true
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -49,6 +55,7 @@ env:
   TF_VAR_allowed_ssh_cidrs: "[\"82.0.0.0/8\", \"62.0.0.0/8\", \"94.0.0.0/8\"]"
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  DESTROY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -59,12 +66,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - workspace: basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - name: Sonar Basic CLI
+            workspace: sonar_basic_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_basic_deployment
             aws_region: eu-west-2
             hub_output: '.dsf_hub.value.public_dns'
             gw_output: '.dsf_agentless_gw.value."agentless-gw-0".private_ip'
-          - workspace: hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
+          - name: Sonar HADR CLI
+            workspace: sonar_hadr_cli-${{ github.run_number }}-${{ github.run_attempt }}
             example_dir: ./examples/aws/poc/sonar_hadr_deployment
             aws_region: eu-west-1
             hub_output: '.dsf_hubs.value.main.public_dns'
@@ -156,10 +165,11 @@ jobs:
       run: terraform -chdir=$EXAMPLE_DIR output -json
 
     - name: Collect Artifacts
+      id: collect-artifacts
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        name: collected-keys
+        name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
@@ -182,6 +192,29 @@ jobs:
         key_path: ${{ env.dsf_ssh_key_file_name }}
         port: 22
         script: ip addr | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'
+
+    - name: Check how was the workflow run
+      id: check-trigger
+      if: ${{ failure() }}
+      run: |
+        if [ "${{ github.event_name }}" == "schedule" ]; then
+          echo "run-by=Automation" >> $GITHUB_OUTPUT
+        else
+          echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+        fi
+
+    # This step allows time for investigation of the failed resources before destroying them
+    - name: Conditional Delay
+      if: ${{ failure() }}
+      run: |
+        echo "delay_destroy: ${{ inputs.delay_destroy }}"
+        if [ "${{ inputs.delay_destroy }}" == "true" ]; then
+          echo "Terraform workspace: $TF_WORKSPACE"
+          curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ github.workflow }} ${{ env.TF_WORKSPACE }} automation Failed*\n You have ${{ env.DESTROY_DELAY_SECONDS }} seconds to investigate the environment before it is destroyed :alarm_clock:\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          echo ""
+          echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
+          sleep $DESTROY_DELAY_SECONDS
+        fi
 
     - name: Terraform Destroy
       id: destroy
@@ -206,4 +239,4 @@ jobs:
         fields: author,action,eventName,ref,workflow,pullRequest
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      if: ${{ failure() }} 
+      if: ${{ failure() }}

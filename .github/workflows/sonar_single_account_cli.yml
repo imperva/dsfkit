@@ -9,6 +9,11 @@ on:
       branch:
         required: true
         type: string
+      delay_destroy:
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: true
 
   workflow_call:
     inputs:
@@ -33,7 +38,8 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
-  TF_WORKSPACE: single_account
+  TF_WORKSPACE: sonar_single_account_cli
+  DESTROY_DELAY_SECONDS: 1800
 
 permissions:
   contents: read
@@ -227,6 +233,38 @@ jobs:
           envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 
+      - name: Collect Artifacts
+        id: collect-artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: collected-keys-${{ env.TF_WORKSPACE }}
+          path: |
+            ${{ env.EXAMPLE_DIR }}/ssh_keys
+
+      - name: Check how was the workflow run
+        if: ${{ failure() }}
+        id: check-trigger
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "run-by=Automation" >> $GITHUB_OUTPUT
+          else
+            echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
+          fi
+
+      # This step allows time for investigation of the failed resources before destroying them
+      - name: Conditional Delay
+        if: ${{ failure() }}
+        run: |
+          echo "delay_destroy: ${{ inputs.delay_destroy }}"
+          if [ "${{ inputs.delay_destroy }}" == "true" ]; then
+            echo "Terraform workspace: $TF_WORKSPACE"
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ github.workflow }} ${{ env.TF_WORKSPACE }} automation Failed*\n You have ${{ env.DESTROY_DELAY_SECONDS }} seconds to investigate the environment before it is destroyed :alarm_clock:\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+            echo ""
+            echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
+            sleep $DESTROY_DELAY_SECONDS
+          fi
+
       - name: Terraform Destroy
         #   if: always()
         uses: appleboy/ssh-action@v1.0.0
@@ -243,16 +281,6 @@ jobs:
       - name: Delete Security Group
         if: always()
         run: aws ec2 revoke-security-group-ingress --group-id ${{ vars.JUMP_SERVER_SG_ID }} --security-group-rule-ids ${{ env.sg_id }}
-
-      - name: Check how was the workflow run
-        if: ${{ failure() }}
-        id: check-trigger
-        run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
-            echo "run-by=Automation" >> $GITHUB_OUTPUT
-          else
-            echo "run-by=${{ github.actor }}" >> $GITHUB_OUTPUT
-          fi
 
         # Send job failure to Slack
       - name: Send Slack When Failure

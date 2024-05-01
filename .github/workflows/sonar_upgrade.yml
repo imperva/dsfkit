@@ -200,11 +200,12 @@ jobs:
           echo agentless_gw_0_ip=$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.sonar.value.agentless_gw_main[0].private_ip') >> $GITHUB_ENV
           echo dsf_ssh_key_file_name=../../../$DEPLOYMENT_EXAMPLE_DIR/$(terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR output -json | jq -r '.dsf_private_ssh_key_file_path.value') >> $GITHUB_ENV
 
-      - name: Collect Artifacts for deployment
+      - name: Collect Artifacts of deployment
+        id: collect-artifacts
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: collected-keys
+          name: collected-keys-${{ env.TF_WORKSPACE }}
           path: |
             ${{ env.DEPLOYMENT_EXAMPLE_DIR }}/ssh_keys
 
