@@ -3,7 +3,7 @@ locals {
     id               = null
     owner_account_id = "309956199498"
     username         = "ec2-user"
-    name             = "RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2"
+    name             = "RHEL-8.6.0_HVM-20240419-x86_64-63-Hourly2-GP3"
   }
 
   ami = var.ami != null ? var.ami : local.ami_default

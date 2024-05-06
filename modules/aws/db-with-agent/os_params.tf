@@ -2,7 +2,7 @@ locals {
   os_params = {
     "Red Hat" : {
       ami_owner              = "309956199498"
-      ami_name               = "RHEL-8.6.0_HVM-2022*-x86_64-2-Hourly2-GP2"
+      ami_name               = "RHEL-8.6.0_HVM-20240419-x86_64-63-Hourly2-GP3"
       ami_ssh_user           = "ec2-user"
       agent_installation_dir = "/opt/imperva",
       installation_filename  = "Imperva-ragent-RHEL-v8-kSMP-px86_64-b14.6.0.60.0.637577.bsx"
