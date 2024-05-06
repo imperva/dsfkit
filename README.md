@@ -804,7 +804,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to deploy, and preferably be in proximity to it.
 
 
-2. **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar.
+2. **Launch an Instance:** Use the _RHEL-8.8.0_HVM-20240312-x86_64-84-Hourly2-GP3_ community AMI or similar.
 
 
 3. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
@@ -1211,7 +1211,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to upgrade, and preferably be in proximity to it.
 
 
-2. **Launch an Instance:** Use the _RHEL-8.6.0_HVM-20220503-x86_64-2-Hourly2-GP2_ community AMI or similar.
+2. **Launch an Instance:** Use the _RHEL-8.8.0_HVM-20240312-x86_64-84-Hourly2-GP3_ community AMI or similar.
 
 
 3. Select t2.medium 'Instance type', or t3.medium if T2 is not available in the region.
