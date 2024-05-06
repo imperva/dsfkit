@@ -4,17 +4,6 @@ concurrency:
   group: dsf_single_account
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        required: true
-        type: string
-      delay_destroy:
-        description: 'Delay the destroy step and subsequent steps to allow investigation'
-        type: boolean
-        default: false
-        required: true
-
   workflow_call:
     inputs:
       branch:
@@ -35,6 +24,17 @@ on:
         required: true
       DAM_LICENSE:
         required: true
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      delay_destroy:
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: false
 
   push:
     branches:

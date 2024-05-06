@@ -4,17 +4,6 @@ concurrency:
   group: single_account
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        required: true
-        type: string
-      delay_destroy:
-        description: 'Delay the destroy step and subsequent steps to allow investigation'
-        type: boolean
-        default: false
-        required: true
-
   workflow_call:
     inputs:
       branch:
@@ -29,6 +18,17 @@ on:
         required: true
       JUMP_SERVER_KEY:
         required: true
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      delay_destroy:
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
+        required: false
 
 env:
   TF_CLI_ARGS: "-no-color"

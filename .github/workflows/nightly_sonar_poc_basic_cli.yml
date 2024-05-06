@@ -1,18 +1,6 @@
 name: 'Nightly Sonar POC Basic CLI'
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        required: true
-        type: string
-      workspace:
-        required: true
-        type: choice
-        options:
-          - simple_cli_dev_nightly
-          - simple_cli_master_nightly
-
   workflow_call:
     inputs:
       branch:
@@ -30,6 +18,18 @@ on:
         required: true
       JUMP_SERVER_KEY:
         required: false
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      workspace:
+        required: true
+        type: choice
+        options:
+          - simple_cli_dev_nightly
+          - simple_cli_master_nightly
 
 env:
   TF_CLI_ARGS: "-no-color"

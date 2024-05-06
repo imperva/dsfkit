@@ -9,12 +9,6 @@ on:
       explicit_ref:
         required: true
         type: string
-      delay_destroy:
-        description: 'Delay the destroy step and subsequent steps to allow investigation'
-        type: boolean
-        default: false
-        required: true
-
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -31,6 +25,11 @@ on:
     inputs:
       use_modules_from_terraform_registry:
         type: boolean
+        required: false
+      delay_destroy:
+        description: 'Delay the destroy step and subsequent steps to allow investigation'
+        type: boolean
+        default: false
         required: false
 
   push:
