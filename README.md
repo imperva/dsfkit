@@ -478,7 +478,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       </td>
       <td>
         1. Dropped support for DRA version 4.14.* in eDSF Kit due to a bug.
-        2. Update sonar base ami to latest rhel 8.6.
+        <br/>2. Updated Sonar base AMI to latest RedHat 8.6.
       </td>
     </tr>
 </table>
