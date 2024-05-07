@@ -481,14 +481,6 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
         2. Update sonar base ami to latest rhel 8.6.
       </td>
     </tr>
-    <tr>
-      <td>TBD
-      </td>
-      <td>TBD
-      </td>
-      <td>
-      </td>
-    </tr>
 </table>
 
 # Getting Ready to Deploy
