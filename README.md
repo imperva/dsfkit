@@ -472,12 +472,21 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
   </tr>
     <tr>
+      <td>7 May 2024
+      </td>
+      <td>1.7.13
+      </td>
+      <td>
+        1. Dropped support for DRA version 4.14.* in eDSF Kit due to a bug.
+        2. Update sonar base ami to latest rhel 8.6.
+      </td>
+    </tr>
+    <tr>
       <td>TBD
       </td>
       <td>TBD
       </td>
       <td>
-        1. Dropped support for DRA version 4.14.* in eDSF Kit due to a bug.
       </td>
     </tr>
 </table>
