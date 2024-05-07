@@ -61,6 +61,9 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
+  # dev waits for master since they use the same constant resources - NAT, VPC, etc.
+  # In addition, dev can't run if master fails since master resources may still be up if the failure happened after
+  # apply, otherwise we could have added 'if: always()'.
   dev_multi_account:
     needs: master_multi_account
     uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
