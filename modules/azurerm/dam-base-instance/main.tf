@@ -1,5 +1,5 @@
 locals {
-  public_ip  = azurerm_linux_virtual_machine.dsf_base_instance.public_ip_address
+  public_ip  = azurerm_linux_virtual_machine.dsf_base_instance.public_ip_address == "" ? null : azurerm_linux_virtual_machine.dsf_base_instance.public_ip_address
   private_ip = azurerm_linux_virtual_machine.dsf_base_instance.private_ip_address
 
   # root volume details
