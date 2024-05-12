@@ -552,6 +552,26 @@ For more details about each example, click on the example name.
       <td><strong>Download</strong>
       </td>
    </tr>
+     <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/dsf_deployment/README.md">DSF Deployment</a>
+      </td>
+      <td>Lab/POC
+      </td>
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
+      </td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
+      </td>
+      <td>PS/Customer
+      </td>
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
+      </td>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment_1_7_13.zip</a>
+      </td>
+   </tr>
    <tr>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
       </td>
@@ -590,26 +610,6 @@ For more details about each example, click on the example name.
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_13.zip">sonar_multi_account_deployment_1_7_13.zip</a>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/dsf_deployment/README.md">DSF Deployment</a>
-      </td>
-      <td>Lab/POC
-      </td>
-      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
-      </td>
-   </tr>
-   <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
-      </td>
-      <td>PS/Customer
-      </td>
-      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
-      </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
