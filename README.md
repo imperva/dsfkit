@@ -559,7 +559,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_13.zip">sonar_basic_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_13.zip">sonar_basic_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -569,7 +569,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_13.zip">sonar_hadr_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_13.zip">sonar_hadr_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -579,7 +579,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_13.zip">sonar_single_account_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_13.zip">sonar_single_account_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -589,7 +589,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_13.zip">sonar_multi_account_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_13.zip">sonar_multi_account_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -599,7 +599,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -609,7 +609,7 @@ For more details about each example, click on the example name.
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment_1_7_13.zip</a>
       </td>
    </tr>
    <tr>
@@ -619,7 +619,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Upgrade of DSF Hub and Agentless Gateway (formerly Sonar).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/aws/sonar_upgrade/sonar_upgrade_1_7_13.zip">sonar_upgrade_1_7_13.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/sonar_upgrade/sonar_upgrade_1_7_13.zip">sonar_upgrade_1_7_13.zip</a>
       </td>
    </tr>
 </table>
@@ -644,7 +644,7 @@ For more details about each example, click on the example name.
      </td>
      <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking, DAM (MX and Agent Gateways), and Agent audit sources.
      </td>
-     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.13/examples/azure/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
+     <td><a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/azure/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment_1_7_13.zip</a>
      </td>
   </tr>
 </table> 
