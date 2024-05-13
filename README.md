@@ -719,12 +719,12 @@ After you have [chosen the deployment mode](#choosing-the-deployment-mode), foll
 This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.13">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_single_account_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.13">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
    ```bash
-   unzip dsf_single_account_deployment_1_7_13.zip
+   unzip dsf_deployment_1_7_13.zip
    
    >>>> Change this command depending on the example you chose
    ```
@@ -732,7 +732,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 3. In CLI, navigate to the directory which contains the Terraform files.
    For example:
    ```bash
-   cd dsf_single_account_deployment_1_7_13
+   cd dsf_deployment_1_7_13
    
    >>>> Change this command depending on the example you chose
    ```
@@ -836,7 +836,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
     For example: `chmode 400 a_key_pair.pem`
 
 
-9. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.13">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_single_account_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip">dsf_single_account_deployment.zip</a>.
+9. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.13">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_13.zip">dsf_deployment.zip</a>.
     Run:
     ```bash
     wget https://github.com/imperva/dsfkit/raw/1.7.13/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_13.zip
@@ -900,7 +900,7 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
     * Click on the Advanced options button.<br>![Advanced options](https://user-images.githubusercontent.com/52969528/212977394-60f79882-008b-44ef-bb05-9af629b1a88a.png)
 
-    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/aws/installation/dsf_single_account_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://github-production-user-asset-6210df.s3.amazonaws.com/87799317/252918341-edfcf6a6-c782-4863-9c55-100f25e680ed.png)
+    * Enter the path to the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section), e.g., “examples/aws/poc/sonar_basic_deployment”, into the Terraform working directory input field.![Terraform Working Directory](https://github-production-user-asset-6210df.s3.amazonaws.com/87799317/252918341-edfcf6a6-c782-4863-9c55-100f25e680ed.png)
       ```
       >>>> Change the directory in the above screenshot depending on the example you chose  
       ```
@@ -1044,7 +1044,7 @@ In case of failure, the Terraform may have deployed some resources before failin
 1. Navigate to the directory which contains the Terraform files.
    For example:
    ```bash
-   cd dsf_single_account_deployment_1_7_13
+   cd dsf_deployment_1_7_13
    
    >>>> Change this command depending on the example you chose
    ```
