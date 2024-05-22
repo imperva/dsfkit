@@ -487,9 +487,9 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <td>1.7.14
       </td>
       <td>
-        1. Fixed a bug in Azure mx module when using private IP.
-        <br/>2. Add DRA readiness timeout.
-        <br/>3. Small documentation Improvements.
+        1. Fixed a bug in Azure mx module when using a private IP.
+        <br/>2. Added a DRA readiness timeout.
+        <br/>3. Small documentation improvements.
       </td>
     </tr>
 </table>
