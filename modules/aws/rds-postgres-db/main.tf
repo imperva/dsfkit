@@ -27,9 +27,9 @@ resource "aws_db_subnet_group" "rds_db_sg" {
   tags       = var.tags
 }
 
-resource "aws_db_parameter_group" "postgres15_audit" {
-  name        = "${local.db_identifier}-postgres15-audit-pg"
-  family      = "postgres15"
+resource "aws_db_parameter_group" "postgres14_audit" {
+  name        = "${local.db_identifier}-postgres14-audit-pg"
+  family      = "postgres14"
   description = "Custom parameter group for Postgres"
 
   parameter {
@@ -76,11 +76,11 @@ resource "aws_db_instance" "rds_db" {
   allocated_storage       = 10
   db_name                 = local.db_name
   engine                  = "postgres"
-  engine_version          = "15.4"
+  engine_version          = "14.12"
   instance_class          = "db.m5.large"
   username                = local.db_username
   password                = local.db_password
-  parameter_group_name    = aws_db_parameter_group.postgres15_audit.name
+  parameter_group_name    = aws_db_parameter_group.postgres14_audit.name
   skip_final_snapshot     = true
   vpc_security_group_ids  = [aws_security_group.rds_postgres_access.id]
   db_subnet_group_name    = aws_db_subnet_group.rds_db_sg.name
