@@ -182,4 +182,3 @@ data "aws_s3_object" "mssql_lambda_package" {
     aws_s3_object_copy.s3_object_copy
   ]
 }
-
