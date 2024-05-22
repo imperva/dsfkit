@@ -481,6 +481,16 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
         <br/>2. Updated Sonar base AMI to latest RedHat 8.6.
       </td>
     </tr>
+    <tr>
+      <td>23 May 2024
+      </td>
+      <td>1.7.14
+      </td>
+      <td>
+        1. Fixed a bug in Azure mx module when using private IP.
+        <br/>2. Small documentation Improvements.
+      </td>
+    </tr>
 </table>
 
 # Getting Ready to Deploy
