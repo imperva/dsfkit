@@ -162,7 +162,7 @@ function install_tarball() {
 
     echo Installing tarball..
     # Installing tarball
-    sudo tar -xf $TARBALL_FILE -gz -C $APPS_DIR
+    sudo tar -xf $TARBALL_FILE -gz -C $APPS_DIR --strip-components=2
     rm $TARBALL_FILE
     sudo chown -R sonarw:sonar $APPS_DIR
 }
