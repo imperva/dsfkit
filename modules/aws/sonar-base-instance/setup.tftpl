@@ -184,7 +184,7 @@ verlt() {
 
 function setup() {
     set_instance_fqdn
-    VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
+    VERSION=$(ls $APPS_DIR -Art | tail -1)
     echo Setup sonar $VERSION
 
     password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
@@ -195,7 +195,7 @@ function setup() {
         PRODUCT="data-security-fabric"
     fi
 
-    sudo $APPS_DIR/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
+    sudo "$APPS_DIR/$VERSION/bin/sonarg-setup" --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \

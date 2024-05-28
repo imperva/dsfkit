@@ -185,7 +185,7 @@ verlt() {
 
 function setup() {
     set_instance_fqdn
-    VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
+    VERSION=$(ls "$APPS_DIR" -Art | tail -1)
     echo Setup sonar $VERSION
 
     password=$(az keyvault secret show --vault-name ${vault_name} --name ${password_secret} --query 'value' --output tsv)
@@ -196,7 +196,7 @@ function setup() {
         PRODUCT="data-security-fabric"
     fi
 
-    sudo $APPS_DIR/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
+    sudo "$APPS_DIR/$VERSION/bin/sonarg-setup" --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \
