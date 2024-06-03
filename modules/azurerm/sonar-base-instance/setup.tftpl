@@ -284,7 +284,13 @@ function firewall_open_ports() {
 DATA_DIR="${base_directory}/data"
 LOGS_DIR="${base_directory}/logs"
 LOCAL_DIR="${base_directory}/local"
-APPS_DIR="${base_directory}/apps"
+
+APPS_DIR="${base_directory}"
+if ! [[ $APPS_DIR =~ ^.*/jsonar/?$ ]]; then
+    # if does not end with jsonar folder, add jsonar to the end
+    APPS_DIR="$APPS_DIR/jsonar"
+fi
+APPS_DIR="$APPS_DIR/apps"
 
 install_deps
 firewall_open_ports || true
