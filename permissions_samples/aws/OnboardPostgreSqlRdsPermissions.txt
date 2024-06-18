@@ -75,6 +75,7 @@
             "Action": [
                 "logs:DescribeLogGroups",
                 "logs:ListTagsLogGroup",
+                "logs:ListTagsForResource",
                 "logs:PutRetentionPolicy"
             ],
             "Resource": "*"
