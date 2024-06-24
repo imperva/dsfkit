@@ -104,6 +104,7 @@ resource "azurerm_user_assigned_identity" "dsf_base" {
 data "azurerm_subscription" "current" {}
 
 resource "azurerm_role_assignment" "dsf_base_storage_role_assignment" {
+  count                = var.binaries_location.az_resource_group != "" ? 1 : 0
   scope                = "${data.azurerm_subscription.current.id}/resourceGroups/${var.binaries_location.az_resource_group}/providers/Microsoft.Storage/storageAccounts/${var.binaries_location.az_storage_account}/blobServices/default/containers/${var.binaries_location.az_container}"
   role_definition_name = "Storage Blob Data Reader"
   principal_id         = azurerm_user_assigned_identity.dsf_base.principal_id
