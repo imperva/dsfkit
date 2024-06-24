@@ -161,7 +161,7 @@ function install_tarball() {
 
     echo Installing tarball..
     # Installing tarball
-    sudo tar -xf $TARBALL_FILE -gz -C $APPS_DIR
+    sudo tar -xf $TARBALL_FILE -gz -C $APPS_DIR --strip-components=2
     rm $TARBALL_FILE
     sudo chown -R sonarw:sonar $APPS_DIR
 }
@@ -184,7 +184,7 @@ verlt() {
 
 function setup() {
     set_instance_fqdn
-    VERSION=$(ls $APPS_DIR/jsonar/apps -Art | tail -1)
+    VERSION=$(ls $APPS_DIR -Art | tail -1)
     echo Setup sonar $VERSION
 
     password=$(/usr/local/bin/aws secretsmanager get-secret-value --secret-id ${password_secret} --query SecretString --output text)
@@ -195,7 +195,7 @@ function setup() {
         PRODUCT="data-security-fabric"
     fi
 
-    sudo $APPS_DIR/jsonar/apps/"$VERSION"/bin/sonarg-setup --no-interactive \
+    sudo "$APPS_DIR/$VERSION/bin/sonarg-setup" --no-interactive \
         --accept-eula \
         --jsonar-uid-display-name "${display_name}" \
         --product "$PRODUCT" \
@@ -281,7 +281,13 @@ __EOF__
 DATA_DIR="${base_directory}/data"
 LOGS_DIR="${base_directory}/logs"
 LOCAL_DIR="${base_directory}/local"
-APPS_DIR="${base_directory}/apps"
+
+APPS_DIR="${base_directory}"
+if ! [[ $APPS_DIR =~ ^.*/jsonar/?$ ]]; then
+    # if does not end with jsonar folder, add jsonar to the end
+    APPS_DIR="$APPS_DIR/jsonar"
+fi
+APPS_DIR="$APPS_DIR/apps"
 
 install_deps
 create_users_and_groups
