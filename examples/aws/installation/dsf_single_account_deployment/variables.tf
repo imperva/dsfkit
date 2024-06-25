@@ -233,7 +233,7 @@ variable "dra_analytics_key_pair" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.15"
+  default     = "4.16"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
