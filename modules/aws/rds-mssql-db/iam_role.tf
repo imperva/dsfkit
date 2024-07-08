@@ -114,7 +114,7 @@ locals {
 }
 
 resource "aws_iam_role" "rds_db_og_role" {
-  name                = "${substr(local.db_identifier, 0, 64-length("-og-role"))}-og-role"
+  name                = "${substr(local.db_identifier, 0, 64 - length("-og-role"))}-og-role"
   managed_policy_arns = null
   assume_role_policy  = local.rds_db_og_role_assume_role_policy
   inline_policy {
@@ -133,7 +133,7 @@ resource "aws_iam_instance_profile" "lambda_mssql_infra_instance_iam_profile" {
 
 resource "aws_iam_role" "lambda_mssql_infra_role" {
   count               = var.instance_profile_name == null ? 1 : 0
-  name                = "${substr(local.db_identifier, 0, 64-length("-infra-role"))}-infra-role"
+  name                = "${substr(local.db_identifier, 0, 64 - length("-infra-role"))}-infra-role"
   managed_policy_arns = null
   assume_role_policy  = local.role_assume_role_policy
   inline_policy {
