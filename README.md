@@ -501,6 +501,16 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
         Improvements and bug fixes. 
       </td>
     </tr>
+ <tr>
+    <td>8 Jul 2024
+    </td>
+    <td>1.7.16
+    </td>
+    <td>
+      1. Added support for Sonar versions: 4.13.0.50, 4.14.0.20, 4.15.0.20.
+      <br/>2. Improvements and bug fixes.
+    </td>
+  </tr>
 </table>
 
 # Getting Ready to Deploy
