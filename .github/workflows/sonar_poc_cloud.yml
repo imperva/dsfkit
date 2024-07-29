@@ -1,7 +1,9 @@
 name: 'Sonar POC Terraform Cloud'
 
+#### This action is disabled ####
+
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: false
   schedule:
     - cron: '0 1 * * *'
   pull_request:
