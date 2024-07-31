@@ -124,6 +124,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
 
   master_dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
