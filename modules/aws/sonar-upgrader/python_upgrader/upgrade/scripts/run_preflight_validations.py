@@ -107,9 +107,13 @@ def validate_min_version(source_version):
 
 def validate_max_version_hop(source_version, target_version):
     # TODO handle when 5.x will be released (probably this validation will be removed before then)
-    source_minor_version = Version(source_version).minor
-    target_minor_version = Version(target_version).minor
-    hop = target_minor_version - source_minor_version
+    source_version = Version(source_version)
+    target_version = Version(target_version)
+
+    if source_version.major == 4 and source_version.minor == 13:
+        return True
+
+    hop = target_version.minor - source_version.minor
     print(f"Version hop: {hop}")
     return hop <= 2
 
