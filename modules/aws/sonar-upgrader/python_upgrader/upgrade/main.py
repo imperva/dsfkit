@@ -5,6 +5,7 @@ import json
 import os
 import re
 import socket
+import traceback
 from itertools import chain
 
 from .remote_executor import remote_client_context, run_remote_script as run_remote_script_timeout
@@ -384,7 +385,7 @@ def test_connection_to_extended_node(extended_node, stop_on_failure, upgrade_sta
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_SUCCEEDED)
     except Exception as ex:
-        print(f"Test connection to {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        print(f"Test connection to {extended_node.get('dsf_node_name')} failed with exception: {traceback.format_exc()}")
         upgrade_status_service.update_upgrade_status(extended_node.get('dsf_node_id'),
                                                      UpgradeStatus.TEST_CONNECTION_FAILED, str(ex))
         if stop_on_failure:
@@ -438,7 +439,7 @@ def run_preflight_validations_for_node(
                 error_message = preflight_validations_result
 
     except Exception as ex:
-        print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        print(f"### Preflight validations for {extended_node.get('dsf_node_name')} failed with exception: {traceback.format_exc()}")
         error_message = str(ex)
 
     if error_message is not None:
@@ -649,7 +650,7 @@ def upgrade_dsf_node(extended_node, target_version, upgrade_script_file_name, st
             print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### ")
             error_message = script_output
     except Exception as ex:
-        print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### with exception: {str(ex)}")
+        print(f"Upgrading {extended_node.get('dsf_node_name')} ### failed ### with exception: {traceback.format_exc()}")
         error_message = str(ex)
 
     if error_message is not None:
@@ -731,7 +732,7 @@ def run_postflight_validations(extended_node, target_version, script_file_name, 
             print(f"### Postflight validations didn't pass for {extended_node.get('dsf_node_name')}")
             error_message = postflight_validations_result
     except Exception as ex:
-        print(f"### Postflight validations for {extended_node.get('dsf_node_name')} failed with exception: {str(ex)}")
+        print(f"### Postflight validations for {extended_node.get('dsf_node_name')} failed with exception: {traceback.format_exc()}")
         error_message = str(ex)
 
     if error_message is not None:
