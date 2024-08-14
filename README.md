@@ -110,7 +110,7 @@ This guide references the following information and links, some of which are ava
    </tr>
   <tr>
    <td>
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/0006d074.html">Sonar v4.14</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/0006d074.html">Sonar v4.16</a>
 
    <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/7c2caf7d.html">DAM v14.15</a>
 
@@ -701,7 +701,7 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.14.0.10</td><td>4.9 and up 
+    <td>Sonar</td><td>4.16.0.10</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
