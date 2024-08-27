@@ -33,7 +33,6 @@ resource "aws_instance" "dsf_base_instance" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     delete_on_termination = true
-    tags                  = merge(var.tags, { Name = var.name })
   }
   iam_instance_profile = local.instance_profile
   network_interface {
@@ -47,6 +46,7 @@ resource "aws_instance" "dsf_base_instance" {
     http_tokens   = "required"
   }
   tags = merge(var.tags, { Name = var.name })
+  volume_tags = merge(var.tags, { Name = var.name })
 }
 
 resource "aws_network_interface" "eni" {
