@@ -1,7 +1,7 @@
 variable "additional_tags" {
-  type        = map(string)
-  default     = []
   description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "deployment_name" {
