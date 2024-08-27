@@ -11,7 +11,7 @@ locals {
   deployment_name_salted = join("-", [var.deployment_name, module.globals.salt])
   password               = var.password != null ? var.password : module.globals.random_password
   workstation_cidr       = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
-  tags                   = merge(module.globals.tags, , var.additional_tags, { "deployment_name" = local.deployment_name_salted })
+  tags                   = merge(module.globals.tags, var.additional_tags, { "deployment_name" = local.deployment_name_salted })
 
   hub_main_private_key_file_path          = var.hub_main_key_pair != null ? var.hub_main_key_pair.private_key_file_path : module.key_pair_hub_main[0].private_key_file_path
   hub_main_public_key_name                = var.hub_main_key_pair != null ? var.hub_main_key_pair.public_key_name : module.key_pair_hub_main[0].key_pair.key_pair_name
