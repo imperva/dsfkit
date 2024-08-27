@@ -1,3 +1,9 @@
+variable "additional_tags" {
+  type        = map(string)
+  default     = []
+  description = "A map of tags to add to all resources"
+}
+
 variable "deployment_name" {
   type        = string
   default     = "imperva-dsf"
@@ -21,18 +27,6 @@ variable "sonar_version" {
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
     error_message = "The sonar_version value must be 4.11 or higher"
-  }
-}
-
-variable "additional_tags" {
-  type        = list(string)
-  default     = []
-  description = "Additional tags to add to the DSFKit resources. Put tags in the following format - Key: Name. For example - [\"Key1=Name1\", \"Key2=Name2\"]"
-  validation {
-    condition = alltrue([
-      for tag_pair in var.additional_tags : can(regex("^([a-zA-Z0-9+\\-_.:/@]+)=([a-zA-Z0-9+\\-_.:/]+)$", tag_pair))
-    ])
-    error_message = "Invalid tag format. All values must be in the format of 'key=value', where 'key' is a valid AWS tag name and 'value' is a valid AWS tag value. Note that the '=' character is not allowed in either the key or the value."
   }
 }
 

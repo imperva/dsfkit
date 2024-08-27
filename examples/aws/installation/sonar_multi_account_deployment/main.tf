@@ -10,8 +10,7 @@ locals {
   password                        = var.password != null ? var.password : module.globals.random_password
   workstation_cidr                = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tarball_location                = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
-  additional_tags                 = var.additional_tags != null ? { for item in var.additional_tags : split("=", item)[0] => split("=", item)[1] } : {}
-  tags                            = merge(module.globals.tags, { "deployment_name" = local.deployment_name_salted }, local.additional_tags)
+  tags                            = merge(module.globals.tags, var.additional_tags{ "deployment_name" = local.deployment_name_salted }, local.additional_tags)
   should_create_hub_main_key_pair = var.hub_main_key_pair == null ? true : false
   should_create_hub_dr_key_pair   = var.hub_dr_key_pair == null ? true : false
   should_create_gw_main_key_pair  = var.gw_main_key_pair == null ? true : false
