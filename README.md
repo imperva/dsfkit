@@ -501,7 +501,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
         Improvements and bug fixes. 
       </td>
     </tr>
- <tr>
+  <tr>
     <td>8 Jul 2024
     </td>
     <td>1.7.16
@@ -511,6 +511,18 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <br/>2. Improvements and bug fixes.
     </td>
   </tr>
+    <tr>
+    <td>3 Sep 2024
+    </td>
+    <td>1.7.17
+    </td>
+    <td>
+      1. Allowed upgrading Sonar from 4.13 to any version. For the other versions the two-hop limitation remains. 
+      <br/>2. Unified the 'additional_tags' variable across all examples and added it where it was missing.
+      <br/>3. Improvements and bug fixes.
+    </td>
+  </tr>
+  
 </table>
 
 # Getting Ready to Deploy
