@@ -16,6 +16,8 @@ on:
         required: true
       SLACK_WEBHOOK_URL:
         required: true
+      ALLOWED_SSH_CIDRS:
+        required: true
 
   workflow_dispatch:
     inputs:
