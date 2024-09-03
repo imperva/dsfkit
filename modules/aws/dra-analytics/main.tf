@@ -45,7 +45,7 @@ resource "aws_instance" "dsf_base_instance" {
     http_endpoint = "enabled"
     http_tokens   = "required"
   }
-  tags = merge(var.tags, { Name = var.name })
+  tags        = merge(var.tags, { Name = var.name })
   volume_tags = merge(var.tags, { Name = var.name })
 }
 

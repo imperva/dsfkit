@@ -38,6 +38,6 @@ resource "aws_instance" "agent" {
     http_endpoint = "enabled"
     http_tokens   = "required"
   }
-  tags = merge(var.tags, { Name = join("-", [var.friendly_name]) })
+  tags        = merge(var.tags, { Name = join("-", [var.friendly_name]) })
   volume_tags = merge(var.tags, { Name = var.friendly_name })
 }
