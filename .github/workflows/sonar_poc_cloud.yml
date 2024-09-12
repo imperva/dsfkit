@@ -1,15 +1,18 @@
 name: 'Sonar POC Terraform Cloud'
 
+#### This action is disabled ####
+
 on:
-  workflow_dispatch: {}
-  schedule:
-    - cron: '0 1 * * *'
-  pull_request:
-    types:
-      - 'opened'
-      - 'reopened'
-    branches:
-      - 'master'
+  workflow_call:
+#  workflow_dispatch: {}
+#  schedule:
+#    - cron: '0 1 * * *'
+#  pull_request:
+#    types:
+#      - 'opened'
+#      - 'reopened'
+#    branches:
+#      - 'master'
 
 env:
   TF_CLI_ARGS: "-no-color"
