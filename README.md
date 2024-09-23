@@ -701,7 +701,7 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.16.0.10</td><td>4.9 and up 
+    <td>Sonar</td><td>4.16.0.20</td><td>4.9 and up 
 
 Restrictions on modules may apply</td>
   </tr>
