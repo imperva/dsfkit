@@ -52,7 +52,7 @@ resource "aws_db_instance" "rds_db" {
   db_name                 = local.db_name
   engine                  = "mysql"
   engine_version          = "8.0"
-  instance_class          = "db.m6gd.large"
+  instance_class          = "db.m5.large"
   username                = local.db_username
   password                = local.db_password
   option_group_name       = aws_db_option_group.impv_rds_db_og.name
