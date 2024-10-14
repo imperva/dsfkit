@@ -12,7 +12,7 @@ on:
       additional_tags:
         required: true
         type: string
-        default: '{"OwnerEmail": "ex1", "ManagerEmail": "ex2", "TeamEmail": "ex3", "Description": "ex4", "Environment": "ex5", "DataClassification": "ex6"}'
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -38,7 +38,7 @@ on:
       additional_tags:
         required: true
         type: string
-        default: '{"OwnerEmail": "ex1", "ManagerEmail": "ex2", "TeamEmail": "ex3", "Description": "ex4", "Environment": "ex5", "DataClassification": "ex6"}'
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
 
 
   push:
