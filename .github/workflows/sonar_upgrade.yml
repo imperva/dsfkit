@@ -9,6 +9,11 @@ on:
       explicit_ref:
         required: true
         type: string
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+  
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -24,6 +29,11 @@ on:
       use_modules_from_terraform_registry:
         type: boolean
         required: false
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+  
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -31,6 +41,8 @@ env:
   TF_VAR_agentless_gw_count: 1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+
 
 permissions:
   contents: read
@@ -64,6 +76,7 @@ jobs:
       TF_VAR_hub_hadr: ${{ matrix.hub_hadr }}
       TF_VAR_agentless_gw_hadr: ${{ matrix.agentless_gw_hadr }}
       TF_VAR_simulation_db_types_for_agentless: ${{ matrix.simulation_db_types_for_agentless }}
+
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -281,11 +294,11 @@ jobs:
       - name: Terraform Plan for upgrade
         run: |
           terraform -chdir=$UPGRADE_EXAMPLE_DIR workspace list
-          terraform -chdir=$UPGRADE_EXAMPLE_DIR plan
+          terraform -chdir=$UPGRADE_EXAMPLE_DIR plan -var additional_tags='${{ env.TF_VAR_additional_tags }}'
 
       - name: Terraform Apply for upgrade
         id: apply_upgrade
-        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR apply -auto-approve
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
 
       - name: Terraform Output for upgrade
         if: always()

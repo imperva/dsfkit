@@ -9,6 +9,11 @@ on:
       branch:
         required: true
         type: string
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+  
     secrets:
       AWS_ACCESS_KEY_ID_STAGE:
         required: true
@@ -29,6 +34,11 @@ on:
         type: boolean
         default: false
         required: false
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+  
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -40,6 +50,7 @@ env:
   AWS_REGION: ap-southeast-1
   TF_WORKSPACE: sonar_single_account_cli
   DESTROY_DELAY_SECONDS: 1800
+  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
 
 permissions:
   contents: read
@@ -208,7 +219,7 @@ jobs:
           envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
           script: |
             printenv
-            terraform -chdir=$REMOTE_EXAMPLE_DIR plan
+            terraform -chdir=$REMOTE_EXAMPLE_DIR -var additional_tags='${{ env.TF_VAR_additional_tags }}' plan
 
       - name: Terraform Apply
         uses: appleboy/ssh-action@v1.0.0
@@ -219,7 +230,7 @@ jobs:
           port: 22
           command_timeout: "2h"
           envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
-          script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
 
       - name: Terraform Output
         if: always()
