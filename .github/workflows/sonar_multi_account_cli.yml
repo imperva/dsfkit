@@ -9,6 +9,11 @@ on:
       branch:
         required: true
         type: string
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+          
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -33,6 +38,11 @@ on:
         type: boolean
         default: false
         required: false
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+          
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -144,10 +154,10 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
+      run: terraform -chdir=$EXAMPLE_DIR plan -var additional_tags='${{ env.TF_VAR_additional_tags }}'
 
     - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+      run: terraform -chdir=$EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
 
     - name: Terraform Output
       if: always()
