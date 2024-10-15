@@ -25,6 +25,8 @@ on:
         required: true
       ALLOWED_SSH_CIDRS:
         required: true
+      DEPLOYMENT_TAGS:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -72,7 +74,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
