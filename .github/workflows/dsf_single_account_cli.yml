@@ -9,10 +9,7 @@ on:
       branch:
         required: true
         type: string
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -28,6 +25,8 @@ on:
         required: true
       DAM_LICENSE:
         required: true
+      DEPLOYMENT_TAGS :
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -39,11 +38,6 @@ on:
         type: boolean
         default: false
         required: false
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-
 
   push:
     branches:
@@ -89,7 +83,7 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "jump_server_key.cer"
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read

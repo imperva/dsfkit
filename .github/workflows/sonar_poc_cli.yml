@@ -9,11 +9,7 @@ on:
       explicit_ref:
         required: true
         type: string
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -22,6 +18,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
       ALLOWED_SSH_CIDRS:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -34,11 +32,7 @@ on:
         type: boolean
         default: false
         required: false
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
+
 
   push:
     branches:
@@ -67,7 +61,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.TF_VAR_additional_tags }}
 
 permissions:
   contents: read

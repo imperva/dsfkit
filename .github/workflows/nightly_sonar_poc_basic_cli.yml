@@ -9,11 +9,7 @@ on:
       workspace:
         required: true
         type: string
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-    
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -23,6 +19,8 @@ on:
         required: true
       JUMP_SERVER_KEY:
         required: false
+      DEPLOYMENT_TAGS:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -35,10 +33,6 @@ on:
         options:
           - simple_cli_dev_nightly
           - simple_cli_master_nightly
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -49,7 +43,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_WORKSPACE: ${{ inputs.workspace }}
-  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read

@@ -9,11 +9,7 @@ on:
       branch:
         required: true
         type: string
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
+
     secrets:
       AWS_ACCESS_KEY_ID_STAGE:
         required: true
@@ -22,6 +18,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
       JUMP_SERVER_KEY:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -34,11 +32,6 @@ on:
         type: boolean
         default: false
         required: false
-      additional_tags:
-        required: true
-        type: string
-        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -50,7 +43,7 @@ env:
   AWS_REGION: ap-southeast-1
   TF_WORKSPACE: sonar_single_account_cli
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ inputs.additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.TF_VAR_additional_tags }}
 
 permissions:
   contents: read
