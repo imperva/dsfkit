@@ -23,7 +23,7 @@ on:
         required: true
       JUMP_SERVER_KEY:
         required: true
-       DEPLOYMENT_TAGS:
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
