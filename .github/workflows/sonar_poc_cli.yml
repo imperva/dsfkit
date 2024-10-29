@@ -61,7 +61,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ secrets.TF_VAR_additional_tags }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
