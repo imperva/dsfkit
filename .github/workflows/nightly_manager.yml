@@ -10,9 +10,10 @@ permissions:
 
 jobs:
   master_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@adding-additional-tags-to-workflows
+    #master
     with:
-      branch: master
+      branch: adding-additional-tags-to-workflows
       workspace: simple_cli_master_nightly
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -20,9 +21,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@adding-additional-tags-to-workflows
+    #dev
     with:
-      branch: dev
+      branch: adding-additional-tags-to-workflows
       workspace: simple_cli_dev_nightly
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -30,9 +32,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_single_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@adding-additional-tags-to-workflows
+    #master
     with:
-      branch: master
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
@@ -40,9 +43,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_single_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@adding-additional-tags-to-workflows
+    #dev
     with:
-      branch: dev
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
@@ -50,9 +54,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_multi_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@adding-additional-tags-to-workflows
+    #master
     with:
-      branch: master
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -66,9 +71,10 @@ jobs:
   # apply, otherwise we could have added 'if: always()'.
   dev_multi_account:
     needs: master_multi_account
-    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@adding-additional-tags-to-workflows
+    #dev
     with:
-      branch: dev
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -78,9 +84,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   master_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@adding-additional-tags-to-workflows
+    #master
     with:
-      branch: master
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -91,9 +98,10 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@adding-additional-tags-to-workflows
+    #dev
     with:
-      branch: dev
+      branch: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -104,10 +112,11 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   master_dsf_poc:
-      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@adding-additional-tags-to-workflows
+      #master
       with:
         use_modules_from_terraform_registry: true
-        explicit_ref: master
+        explicit_ref: adding-additional-tags-to-workflows
       secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -116,10 +125,11 @@ jobs:
         ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
 
   dev_dsf_poc:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@adding-additional-tags-to-workflows
+    #dev
     with:
       use_modules_from_terraform_registry: false
-      explicit_ref: dev
+      explicit_ref: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -128,10 +138,11 @@ jobs:
       ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
 
   master_dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@adding-additional-tags-to-workflows
+    #master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -140,10 +151,11 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   dev_dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@adding-additional-tags-to-workflows
+    #dev
     with:
       use_modules_from_terraform_registry: false
-      explicit_ref: dev
+      explicit_ref: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -152,10 +164,11 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
 
   master_sonar_upgrade:
-    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@master
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@adding-additional-tags-to-workflows
+    #master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -163,10 +176,11 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   dev_sonar_upgrade:
-    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@dev
+    uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@adding-additional-tags-to-workflows
+    #dev
     with:
       use_modules_from_terraform_registry: false
-      explicit_ref: dev
+      explicit_ref: adding-additional-tags-to-workflows
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
