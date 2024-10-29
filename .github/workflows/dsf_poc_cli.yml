@@ -9,7 +9,11 @@ on:
       explicit_ref:
         required: true
         type: string
-      
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -34,6 +38,10 @@ on:
         type: boolean
         default: false
         required: false
+      additional_tags:
+        required: true
+        type: string
+        default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
 
   push:
     branches:
