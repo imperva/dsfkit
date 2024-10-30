@@ -9,11 +9,7 @@ on:
       explicit_ref:
         required: true
         type: string
-      #additional_tags:
-        #required: true
-        #type: string
-        #default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -31,11 +27,6 @@ on:
       use_modules_from_terraform_registry:
         type: boolean
         required: false
-      #additional_tags:
-        #required: true
-        #type: string
-        #default: '{"OwnerEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "ManagerEmail": "gabi.beyo@thalesgroup.com", "TeamEmail": "ww.dis.imperva.pd_datasec_technology_office@thalesgroup.com", "Description": "DSFKit_Tests", "Environment": "Test", "DataClassification": "Internal"}'
-  
 
 env:
   TF_CLI_ARGS: "-no-color"
@@ -296,11 +287,11 @@ jobs:
       - name: Terraform Plan for upgrade
         run: |
           terraform -chdir=$UPGRADE_EXAMPLE_DIR workspace list
-          terraform -chdir=$UPGRADE_EXAMPLE_DIR plan -var additional_tags='${{ env.TF_VAR_additional_tags }}'
+          terraform -chdir=$UPGRADE_EXAMPLE_DIR plan
 
       - name: Terraform Apply for upgrade
         id: apply_upgrade
-        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
+        run: terraform -chdir=$UPGRADE_EXAMPLE_DIR apply -auto-approve
 
       - name: Terraform Output for upgrade
         if: always()

@@ -117,10 +117,10 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan -var additional_tags='${{ env.TF_VAR_additional_tags }}'
+      run: terraform -chdir=$EXAMPLE_DIR plan
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       if: always()

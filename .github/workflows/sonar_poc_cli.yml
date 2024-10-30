@@ -158,13 +158,13 @@ jobs:
     - name: Terraform Plan
       run: |
         terraform -chdir=$EXAMPLE_DIR workspace list
-        terraform -chdir=$EXAMPLE_DIR plan -var additional_tags='${{ env.TF_VAR_additional_tags }}'
+        terraform -chdir=$EXAMPLE_DIR plan
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      run: terraform -chdir=$EXAMPLE_DIR apply -var additional_tags='${{ env.TF_VAR_additional_tags }}' -auto-approve
+      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
 
     - name: Terraform Output
       if: always()
