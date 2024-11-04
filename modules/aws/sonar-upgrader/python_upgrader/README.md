@@ -9,7 +9,7 @@ If you do not wish to use Terraform to run the upgrade, it is possible to bypass
 
 Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
 
-1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.17/REQUEST_ACCESS_AWS.md).
+1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.18/REQUEST_ACCESS_AWS.md).
 2. Install [Python 3](https://www.python.org).
 3. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
 
