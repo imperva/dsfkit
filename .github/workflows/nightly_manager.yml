@@ -171,6 +171,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_sonar_upgrade:
     uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@dev
@@ -182,3 +183,4 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
