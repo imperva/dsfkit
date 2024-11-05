@@ -18,6 +18,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_basic_poc:
     uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
@@ -28,6 +29,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   master_single_account:
     uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
@@ -38,6 +40,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_single_account:
     uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
@@ -48,6 +51,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   master_multi_account:
     uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@master
@@ -60,6 +64,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   # dev waits for master since they use the same constant resources - NAT, VPC, etc.
   # In addition, dev can't run if master fails since master resources may still be up if the failure happened after
@@ -76,6 +81,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   master_dsf_single_account:
     uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
@@ -89,6 +95,7 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_dsf_single_account:
     uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
@@ -102,18 +109,20 @@ jobs:
       JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   master_dsf_poc:
-      uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
-      with:
-        use_modules_from_terraform_registry: true
-        explicit_ref: master
-      secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-        ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: master
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_dsf_poc:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
@@ -126,6 +135,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   master_dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
@@ -161,6 +171,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dev_sonar_upgrade:
     uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@dev
@@ -172,3 +183,4 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
