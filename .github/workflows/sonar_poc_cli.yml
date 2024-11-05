@@ -9,6 +9,7 @@ on:
       explicit_ref:
         required: true
         type: string
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -17,6 +18,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
       ALLOWED_SSH_CIDRS:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -29,6 +32,7 @@ on:
         type: boolean
         default: false
         required: false
+
 
   push:
     branches:
@@ -57,6 +61,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read

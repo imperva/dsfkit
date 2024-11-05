@@ -9,6 +9,7 @@ on:
       workspace:
         required: true
         type: string
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -18,6 +19,8 @@ on:
         required: true
       JUMP_SERVER_KEY:
         required: false
+      DEPLOYMENT_TAGS:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -40,6 +43,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_WORKSPACE: ${{ inputs.workspace }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
@@ -124,7 +128,7 @@ jobs:
 
     - name: Collect Artifacts
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: collected-keys
         path: |

@@ -9,6 +9,7 @@ on:
       explicit_ref:
         required: true
         type: string
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -19,6 +20,8 @@ on:
       DAM_LICENSE:
         required: true
       ALLOWED_SSH_CIDRS:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -31,7 +34,6 @@ on:
         type: boolean
         default: false
         required: false
-
   push:
     branches:
       - 'dev'
@@ -63,6 +65,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
@@ -205,7 +208,7 @@ jobs:
     - name: Terraform Plan
       run: |
         terraform -chdir=$EXAMPLE_DIR workspace list
-        terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
+        terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv 
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
