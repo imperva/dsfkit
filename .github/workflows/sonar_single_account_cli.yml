@@ -179,21 +179,58 @@ jobs:
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
+        env:
+          REMOTE_EXAMPLE_DIR: ${{ matrix.target_dir }}/dsfkit/${{ matrix.example_dir }}
+          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
         run: terraform -chdir=$REMOTE_EXAMPLE_DIR init
 
       - name: Terraform Validate
-        run: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR validate
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        run: terraform -chdir=$REMOTE_EXAMPLE_DIR plan
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE, TF_VAR_additional_tags
+          script: |
+            printenv
+            terraform -chdir=$REMOTE_EXAMPLE_DIR plan
 
       - name: Terraform Apply
-        run: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE, TF_VAR_additional_tags
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR apply -auto-approve
 
       - name: Terraform Output
         if: always()
-        run: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR output -json
 
       - name: Collect Artifacts
         id: collect-artifacts
@@ -228,8 +265,17 @@ jobs:
           fi
 
       - name: Terraform Destroy
-        if: always()
-        run: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
+        #   if: always()
+        uses: appleboy/ssh-action@v1.0.0
+        id: test_audit
+        with:
+          host: 54.179.25.83
+          username: ec2-user
+          key: ${{ env.JUMP_SERVER_KEY }}
+          port: 22
+          command_timeout: "2h"
+          envs: REMOTE_EXAMPLE_DIR,TF_WORKSPACE, TF_VAR_additional_tags
+          script: terraform -chdir=$REMOTE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Delete Security Group
         if: always()
