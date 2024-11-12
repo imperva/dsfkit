@@ -9,6 +9,7 @@ on:
       explicit_ref:
         required: true
         type: string
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -17,6 +18,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
       DAM_LICENSE:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -31,6 +34,8 @@ env:
   TF_VAR_agentless_gw_count: 1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
+
 
 permissions:
   contents: read
@@ -56,14 +61,15 @@ jobs:
       DEPLOYMENT_EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
       UPGRADE_EXAMPLE_DIR: ./examples/aws/sonar_upgrade
       AWS_REGION: eu-west-2
-      SONAR_TARGET_VERSION: 4.15.0.10.0
+      SONAR_TARGET_VERSION: 4.16.0.20.0
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
-      TF_VAR_sonar_version: 4.13.0.10
+      TF_VAR_sonar_version: 4.14.0.20
       TF_VAR_hub_hadr: ${{ matrix.hub_hadr }}
       TF_VAR_agentless_gw_hadr: ${{ matrix.agentless_gw_hadr }}
       TF_VAR_simulation_db_types_for_agentless: ${{ matrix.simulation_db_types_for_agentless }}
+
     environment: test
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
