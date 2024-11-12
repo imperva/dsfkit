@@ -531,6 +531,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       Improvements and bug fixes.
     </td>
   </tr>
+    <tr>
+    <td>TBD
+    </td>
+    <td>1.7.20
+    </td>
+    <td>
+      Added support for DSF version 4.16/14.16
+    </td>
+  </tr>
   
 </table>
 
