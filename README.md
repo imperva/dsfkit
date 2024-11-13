@@ -112,9 +112,9 @@ This guide references the following information and links, some of which are ava
    <td>
    <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/0006d074.html">Sonar v4.16</a>
 
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/7c2caf7d.html">DAM v14.15</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/7dc4b166.html">DAM v14.16</a>
 
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/92a5dbc3.html">DRA v4.15</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/02e3d1fc.html">DRA v4.16</a>
    </td>
    <td>DSF Components Overview
    </td>
@@ -531,6 +531,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       Improvements and bug fixes.
     </td>
   </tr>
+    <tr>
+    <td>TBD
+    </td>
+    <td>1.7.20
+    </td>
+    <td>
+      Added support for DSF version 4.16/14.16
+    </td>
+  </tr>
   
 </table>
 
@@ -727,13 +736,13 @@ This includes the following version of the DSF sub-products:
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.15.1.10</td><td>14.11.1.10 and up
+    <td>DAM</td><td>14.16.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.15.0.10</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.16.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
