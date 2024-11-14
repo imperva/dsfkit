@@ -532,7 +532,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     </td>
   </tr>
     <tr>
-    <td>TBD
+    <td>14 Nov 2024
     </td>
     <td>1.7.20
     </td>
