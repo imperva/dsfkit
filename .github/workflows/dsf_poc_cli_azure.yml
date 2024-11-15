@@ -155,7 +155,7 @@ jobs:
           az_resource_group = "dsf-rg"
           az_storage_account = "dsfinstallation"
           az_container = "sonar"
-          az_blob = "jsonar-4.16.0.20.0.tar.gz"
+          az_blob = "jsonar-4.17.0.20.0.tar.gz"
         }
         dam_agent_installation_location = {
           az_resource_group = "dsf-rg"
