@@ -9,6 +9,7 @@ on:
       branch:
         required: true
         type: string
+
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -21,6 +22,8 @@ on:
       SLACK_WEBHOOK_URL:
         required: true
       JUMP_SERVER_KEY:
+        required: true
+      DEPLOYMENT_TAGS:
         required: true
 
   workflow_dispatch:
@@ -46,6 +49,7 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "jump_server_key.cer"
   DESTROY_DELAY_SECONDS: 1800
+  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
@@ -156,7 +160,7 @@ jobs:
     - name: Collect Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: collected-keys
+        name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
 
