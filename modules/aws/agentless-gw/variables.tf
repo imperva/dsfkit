@@ -97,7 +97,7 @@ variable "use_public_ip" {
 
 variable "instance_type" { # https://docs.imperva.com/bundle/z-kb-articles-km/page/a6defd0e.html
   type        = string
-  default     = "r6i.xlarge" # 4 cores & 32GB ram
+  default     = "r6i.2xlarge" # 8 cores & 64GB ram
   description = "Ec2 instance type for the Agentless Gateway"
 }
 
