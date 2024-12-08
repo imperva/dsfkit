@@ -42,7 +42,7 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
   TF_WORKSPACE: sonar_single_account_cli
-  DESTROY_DELAY_SECONDS: 1800
+  DESTROY_DELAY_SECONDS: 10
 
 permissions:
   contents: read
@@ -137,9 +137,9 @@ jobs:
         run: |
           cat << EOF > $EXAMPLE_DIR/terraform.tfvars
           ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
-          additional_tags = ${{ secrets.DEPLOYMENT_TAGS }}
+          ${{ secrets.DEPLOYMENT_TAGS }}
           EOF
-
+          
 
       - name: View The Vars
         run: cat $EXAMPLE_DIR/terraform.tfvars
