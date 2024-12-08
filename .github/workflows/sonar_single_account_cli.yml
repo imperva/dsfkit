@@ -145,9 +145,6 @@ jobs:
          echo "Content of terraform.tfvars:"
          cat $EXAMPLE_DIR/terraform.tfvars
 
-      - name: View The Vars
-        run: cat $EXAMPLE_DIR/terraform.tfvars
-
       - name: Create a ZIP File
         run: zip -r dsfkit.zip ../dsfkit
 
