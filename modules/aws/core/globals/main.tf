@@ -1,5 +1,8 @@
 locals {
   sonar_tarball_s3_key_map = {
+    "4.17"      = "jsonar-4.17.0.20.0.tar.gz"
+    "4.17.0.20" = "jsonar-4.17.0.20.0.tar.gz"
+
     "4.16"      = "jsonar-4.16.0.20.0.tar.gz"
     "4.16.0.20" = "jsonar-4.16.0.20.0.tar.gz"
 
