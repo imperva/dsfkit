@@ -86,7 +86,7 @@ variable "archiver_user" {
 
 variable "dra_version" {
   type        = string
-  default     = "4.16"
+  default     = "4.17"
   description = "The DRA version to install. Supported versions are 4.11.0.10.0.7 and up. Full version format is supported, for example, 4.11.0.10.0.7."
   nullable    = false
   validation {
