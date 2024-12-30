@@ -3,7 +3,7 @@ locals {
 
   dra_admin_cidr_list = concat([data.aws_subnet.dra_admin.cidr_block], var.enable_dra ? [format("%s/32", module.dra_admin[0].public_ip)] : [])
 }
-##
+
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/aws"
   version = "1.7.20" # latest release tag
