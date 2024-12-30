@@ -540,15 +540,6 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Added support for DSF version 4.16/14.16
     </td>
   </tr>
-    <tr>
-    <td>1 Jan 2025
-    </td>
-    <td>1.7.21
-    </td>
-    <td>
-      Improvements and bug fixes.
-    </td>
-  </tr>
   
 </table>
 
@@ -722,7 +713,7 @@ For more details about each example, click on the example name.
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
 The examples make use of the building blocks of the DSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSF Kit modules' names have a 'dsf' prefix.
 
-Fill out the [DSF Kit pre-deployment questionnaire](https://forms.office.com/r/KZHQMkwsDZ) Microsoft form if you need help choosing or customizing an example to fit your use case. 
+Fill out the [DSF Kit pre-deployment questionnaire](https://forms.gle/CNMhdTuymYi4n7zB9) google form if you need help choosing or customizing an example to fit your use case. 
 
 ## Installation Software Location and Versioning
 
@@ -779,7 +770,7 @@ Make sure that the version you are using is supported by all the modules which a
 To see which versions are supported by each module, refer to the specific module. 
 (For example, [DSF Hub module](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
-# Deployment
+# Deployment 
 
 After you have [chosen the deployment mode](#choosing-the-deployment-mode), follow the step-by-step instructions below to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
@@ -1071,7 +1062,7 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
 ## IAM Permissions for Running DSF Kit
 
-### IAM Permissions for AWS
+### IAM Permissions for AWS 
 
 To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
@@ -1088,8 +1079,8 @@ The permissions are separated to different policies. Use the relevant policies a
 To be able to create Azure resources inside any Azure Account, you need to provide an Azure user or application registration service principal with the required permissions in order to run DSF Kit Terraform.
 Use the relevant permissions according to your needs:
 
-1. For general required permissions such as create a virtual machine, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/azure/GeneralRequiredPermissions.json).
-2. In order to create network resources such as VNET, NAT Gateway etc., add the permissions specified here - [create network resources permissions](/permissions_samples/azure/CreateNetworkResourcesPermissions.json).
+1. For general required permissions such as create a virtual machine, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/azure/GeneralRequiredPermissions.txt).
+2. In order to create network resources such as VNET, NAT Gateway etc., add the permissions specified here - [create network resources permissions](/permissions_samples/azure/CreateNetworkResourcesPermissions.txt).
 
 ## IAM Permissions for the DSF Instances on AWS
 
@@ -1524,7 +1515,7 @@ Below is a list of possible issues and troubleshooting remediations.
   <tr>
    <td>Cores quota exceeded
    </td>
-   <td>Error: creating Linux Virtual Machine ...: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=0 -- Original Error: autorest/azure: Service returned an error. Status= Code="OperationNotAllowed" Message="Operation could not be completed as it results in exceeding approved *** Cores quota.
+   <td>Error: creating Linux Virtual Machine ...: compute.VirtualMachinesClient#CreateOrUpdate: Failure sending request: StatusCode=0 -- Original Error: autorest/azure: Service returned an error. Status=<nil> Code="OperationNotAllowed" Message="Operation could not be completed as it results in exceeding approved *** Cores quota.
    </td>
    <td>
    Increase the quota using the link provided in your own error message.
