@@ -14,7 +14,7 @@ When deploying to multiple AWS accounts, use multiple forms.
 
 **Clarification**: After getting the requested access, you don’t have to “download” the software, just run eDSF Kit.
 
-1. [DSF Kit - Request access to DSF installation software in S3 bucket](https://forms.office.com/r/MDaPUiqEES) (Microsoft form)
+1. [DSF Kit - Request access to DSF installation software in S3 bucket](https://forms.office.com/r/MDaPUiqEES) (Google form)
    1. **Open only to Imperva employees**
    2. Includes:
       1. DSF Hub and Agentless Gateway (formerly Sonar)
@@ -30,7 +30,7 @@ When deploying to multiple AWS accounts, use multiple forms.
    
       **Note**: If you are already subscribed, you won’t see step (iv). You can manage your subscriptions [here](https://us-east-1.console.aws.amazon.com/marketplace/home#/subscriptions).
 
-3. [DSF Kit - Request access to DRA AMI](https://forms.office.com/r/s2CUijLRK8) (Microsoft form)
+3. [DSF Kit - Request access to DRA AMI](https://forms.office.com/r/s2CUijLRK8) (Google form)
    1. **Open only to Imperva employees**
    2. Requesting access is for a specific version and specific regions
 
