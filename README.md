@@ -540,6 +540,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Added support for DSF version 4.16/14.16
     </td>
   </tr>
+    <tr>
+    <td>1 Jan 2025
+    </td>
+    <td>1.7.21
+    </td>
+    <td>
+      Improvements and bug fixes.
+    </td>
+  </tr>
   
 </table>
 
