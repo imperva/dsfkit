@@ -140,6 +140,10 @@ jobs:
           additional_tags = ${{ secrets.DEPLOYMENT_TAGS }}
           EOF
 
+
+      - name: View the vars
+        run: $EXAMPLE_DIR/terraform.tfvars
+
       - name: Create a ZIP File
         run: zip -r dsfkit.zip ../dsfkit
 
