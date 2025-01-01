@@ -141,8 +141,8 @@ jobs:
           EOF
 
 
-      - name: View the vars
-        run: $EXAMPLE_DIR/terraform.tfvars
+      - name: View The Vars
+        run: cat $EXAMPLE_DIR/terraform.tfvars
 
       - name: Create a ZIP File
         run: zip -r dsfkit.zip ../dsfkit
