@@ -42,7 +42,6 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_REGION: ap-southeast-1
   TF_WORKSPACE: sonar_single_account_cli
-  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
   DESTROY_DELAY_SECONDS: 1800
 
 permissions:
