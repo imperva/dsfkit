@@ -10,16 +10,16 @@ The following links allow you to request access to the installation software of 
 
 Following your request, you are automatically granted access after a period of time specified in each link.
 
-**Clarification**: After the DSF installation files are copied, configure the relevant terraform variables and run eDSF Kit.
+**Clarification**: After the DSF installation files are copied, configure the relevant terraform variables and run DSF Kit.
 
-1. [eDSF Kit - Copy DSF installation to Azure storage account](https://docs.google.com/forms/d/e/1FAIpQLSfCBUGHN04u2gK8IoxuHl4TLooBWUl7cK7ihS9Q5ZHwafNBHA/viewform) (Google form)
+1. [DSF Kit - Copy DSF installation to Azure storage account](https://forms.office.com/r/xVgzA9d5nz) (Microsoft Form)
    1. **Open only to Imperva employees**
    2. Includes:
       1. DSF Hub and Agentless Gateway (formerly Sonar)
       2. DRA Admin and Analytics 
       3. DAM Agent audit source for POC purposes
 
-2. _eDSF Kit - Configure programmatic deployment for DAM image and DAM Agent operating system machine_ (In Azure Marketplace)
+2. _DSF Kit - Configure programmatic deployment for DAM image and DAM Agent operating system machine_ (In Azure Marketplace)
    1. Make sure you are logged in the Azure account and the Azure subscription 
    2. Configure programmatic deployment for the desired version of Imperva DAM by enabling it on the relevant DAM image from the Azure Marketplace:
       1. For DAM image - click [here](https://portal.azure.com/#view/Microsoft_Azure_Marketplace/LegalTermsSkuProgrammaticAccessBlade/legalTermsSkuProgrammaticAccessData~/%7B%22product%22%3A%7B%22publisherId%22%3A%22imperva%22%2C%22offerId%22%3A%22imperva-dam-v14%22%2C%22planId%22%3A%22securesphere-imperva-dam-14%22%2C%22standardContractAmendmentsRevisionId%22%3Anull%2C%22isCspEnabled%22%3Atrue%7D%7D)
