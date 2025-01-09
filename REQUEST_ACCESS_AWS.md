@@ -12,16 +12,16 @@ Following your request, you are automatically granted access after a period of t
 
 When deploying to multiple AWS accounts, use multiple forms.
 
-**Clarification**: After getting the requested access, you don’t have to “download” the software, just run eDSF Kit.
+**Clarification**: After getting the requested access, you don’t have to “download” the software, just run DSF Kit.
 
-1. [eDSF Kit - Request access to DSF installation software in S3 bucket](https://forms.gle/6DY6vgEgm91XAA7PA) (Google form)
+1. [DSF Kit - Request access to DSF installation software in S3 bucket](https://forms.office.com/r/MDaPUiqEES) (Microsoft form)
    1. **Open only to Imperva employees**
    2. Includes:
       1. DSF Hub and Agentless Gateway (formerly Sonar)
       2. DAM Agent audit source for POC purposes 
    3. Requesting access is for all versions and all regions
 
-2. [eDSF Kit - Request access to DAM AMI](https://aws.amazon.com/marketplace/pp/prodview-3wa5bmj5ol4g4) (In AWS Marketplace)
+2. [DSF Kit - Request access to DAM AMI](https://aws.amazon.com/marketplace/pp/prodview-3wa5bmj5ol4g4) (In AWS Marketplace)
    1. Make sure you are logged in the AWS account 
    2. Open DAM marketplace link 
    3. Click “Continue to subscribe” 
@@ -30,7 +30,7 @@ When deploying to multiple AWS accounts, use multiple forms.
    
       **Note**: If you are already subscribed, you won’t see step (iv). You can manage your subscriptions [here](https://us-east-1.console.aws.amazon.com/marketplace/home#/subscriptions).
 
-3. [eDSF Kit - Request access to DRA AMI](https://forms.gle/4pinYVzGt39bU74d8) (Google form)
+3. [DSF Kit - Request access to DRA AMI](https://forms.office.com/r/s2CUijLRK8) (Microsoft form)
    1. **Open only to Imperva employees**
    2. Requesting access is for a specific version and specific regions
 

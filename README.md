@@ -1,23 +1,23 @@
 # Data Security Fabric (DSF) Kit Deployment and Upgrade Guide
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-# eDSF Kit
+# DSF Kit
 
-Imperva eDSF Kit is a Terraform toolkit designed to automate the deployment and upgrade of Imperva's Data Security Fabric.
+Imperva DSF Kit is a Terraform toolkit designed to automate the deployment and upgrade of Imperva's Data Security Fabric.
 
-## eDSF Kit Deployment
+## DSF Kit Deployment
 
-eDSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
+DSF Kit enables you to deploy the full suite of the DSF sub-products - DSF Hub & Agentless Gateway (formerly Sonar), 
 DAM (Data Activity Monitoring) MX and Agent Gateway and DRA (Data Risk Analytics) Admin and Analytics. 
 
-Currently, eDSF Kit supports deployments on AWS and Azure cloud providers. In the near future, it will support other major public clouds, 
+Currently, DSF Kit supports deployments on AWS and Azure cloud providers. In the near future, it will support other major public clouds, 
 on-premises (vSphere) and hybrid environments.
 
-## eDSF Kit Upgrade
+## DSF Kit Upgrade
 
-eDSF Kit enables you to upgrade DSF Hubs and Agentless Gateways (formerly Sonar) which are deployed on AWS.
+DSF Kit enables you to upgrade DSF Hubs and Agentless Gateways (formerly Sonar) which are deployed on AWS.
 
-In the future, eDSF Kit will enable you to upgrade the full suite of the DSF sub-products, including DAM and DRA, and 
+In the future, DSF Kit will enable you to upgrade the full suite of the DSF sub-products, including DAM and DRA, and 
 will support other major clouds, on-premises (vSphere) and hybrid environments.
 
 # About This Guide
@@ -33,7 +33,7 @@ It is also intended for Imperva Professional Services (PS) and customers for act
 This guide covers the following main topics. Additional guides are referenced throughout, as listed in the Quick Links section below.
 
 * How to deploy Imperva’s Data Security Fabric (DSF) with step-by-step instructions.
-* How to verify that the deployment was successful using the eDSF Kit output.
+* How to verify that the deployment was successful using the DSF Kit output.
 * How to undeploy DSF with step-by-step instructions.
 * How to upgrade Imperva’s Data Security Fabric (DSF) Hub and Agentless Gateway, with step-by-step instructions.
 
@@ -112,7 +112,7 @@ This guide references the following information and links, some of which are ava
    <td>
    <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/0006d074.html">Sonar v4.16</a>
 
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/7dc4b166.html">DAM v14.16</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/393216754.html">DAM v14.17</a>
 
    <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/02e3d1fc.html">DRA v4.16</a>
    </td>
@@ -126,7 +126,7 @@ This guide references the following information and links, some of which are ava
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20">eDSF Kit GitHub Repository</a> 
+   <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22">DSF Kit GitHub Repository</a> 
    </td>
    <td>
    </td>
@@ -143,13 +143,13 @@ Latest Supported Terraform Version: 1.7.x. Using a higher version may result in 
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.20/REQUEST_ACCESS_AWS.md">Request access to DSF installation software on AWS</a>
+   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.22/REQUEST_ACCESS_AWS.md">Request access to DSF installation software on AWS</a>
    </td>
    <td> Grants access for a specific AWS account to the DSF installation software.
    </td>
   </tr>
   <tr>
-   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.20/REQUEST_ACCESS_AZURE.md">Request access to DSF installation software on Azure</a>
+   <td><a href="https://github.com/imperva/dsfkit/blob/1.7.22/REQUEST_ACCESS_AZURE.md">Request access to DSF installation software on Azure</a>
    </td>
    <td> Copies DSF installation to Azure storage account and configures programmatic deployment for Azure images.
    </td>
@@ -158,9 +158,9 @@ Latest Supported Terraform Version: 1.7.x. Using a higher version may result in 
 
 #### Version History
 
-The following table lists the _latest_ eDSF Kit releases, their release date and a high-level summary of the release's content.
+The following table lists the _latest_ DSF Kit releases, their release date and a high-level summary of the release's content.
 
-[Previous releases](https://github.com/imperva/dsfkit/blob/1.7.20/PREVIOUS_RELEASES.md)
+[Previous releases](https://github.com/imperva/dsfkit/blob/1.7.22/PREVIOUS_RELEASES.md)
 
 <table>
   <tr>
@@ -445,7 +445,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
     <td>1.7.10
     </td>
     <td>
-      1. Moved AWS and Azure access request google forms to eDSF Kit open source code.
+      1. Moved AWS and Azure access request google forms to DSF Kit open source code.
       <br/>2. Improvements and bug fixes.
     </td>
   </tr>
@@ -477,7 +477,7 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       <td>1.7.13
       </td>
       <td>
-        1. Dropped support for DRA version 4.14.* in eDSF Kit due to a bug.
+        1. Dropped support for DRA version 4.14.* in DSF Kit due to a bug.
         <br/>2. Updated Sonar base AMI to latest RedHat 8.6.
       </td>
     </tr>
@@ -540,6 +540,15 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
       Added support for DSF version 4.16/14.16
     </td>
   </tr>
+    <tr>
+    <td>9 Jan 2025
+    </td>
+    <td>1.7.22
+    </td>
+    <td>
+      Improvements and bug fixes.
+    </td>
+  </tr>
   
 </table>
 
@@ -547,12 +556,12 @@ The following table lists the _latest_ eDSF Kit releases, their release date and
 
 ## Choosing the Deployment Mode
 
-eDSF Kit offers several deployment modes:
+DSF Kit offers several deployment modes:
 
 * **CLI Deployment Mode:** This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 
   For more details, refer to [CLI Deployment Mode](#cli-deployment-mode).
-* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or DSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
   For more details, refer to [Installer Machine Deployment Mode](#installer-machine-deployment-mode).
 * **Terraform Cloud Deployment Mode:** This mode makes use of Terraform Cloud, a service that exposes a dedicated UI to create and destroy resources via Terraform.
@@ -565,7 +574,7 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 ## Deployment Prerequisites
 
-Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
+Before using DSF Kit to deploy DSF, it is necessary to satisfy a set of prerequisites.
 
 ### General Prerequisites
 
@@ -577,14 +586,14 @@ Before using eDSF Kit to deploy DSF, it is necessary to satisfy a set of prerequ
 
 ### AWS Prerequisites
 
-1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-aws)).
-2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.20/REQUEST_ACCESS_AWS.md).
+1. Create an AWS User with secret and access keys which comply with the required IAM permissions (see [IAM Permissions for Running DSF Kit section](#iam-permissions-for-aws)).
+2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.22/REQUEST_ACCESS_AWS.md).
 
 ### Azure Prerequisites
 
 1. [Establish an Azure App Registration](https://learn.microsoft.com/en-us/azure/healthcare-apis/register-application) and [assign it a custom role](https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal?tabs=delegate-condition) (without role assignment conditions) 
-   under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running eDSF Kit section](#iam-permissions-for-azure)).
-2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.20/REQUEST_ACCESS_AZURE.md).
+   under the associated subscription, ensuring the custom role includes the required IAM permissions (see [IAM Permissions for Running DSF Kit section](#iam-permissions-for-azure)).
+2. The deployment requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.22/REQUEST_ACCESS_AZURE.md).
 
 ## Choosing the Example/Recipe that Fits Your Use Case
 
@@ -594,7 +603,7 @@ e.g., with or without DRA, the number of Agentless Gateways, with or without HAD
 We provide several of out-of-the-box Terraform recipes we call "examples" which are already configured to deploy common DSF environments.
 You can use the example as is, or customize it to accommodate your deployment requirements.
 
-These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.7.20">eDSF Kit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples">examples</a> directory.
+These examples can be found in the <a href="https://github.com/imperva/dsfkit/tree/1.7.22">DSF Kit GitHub Repository</a> under the <a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples">examples</a> directory.
 Some examples are intended for Lab or POC and others for actual DSF deployments by Professional Services and customers.
 
 For more details about each example, click on the example name.
@@ -613,73 +622,73 @@ For more details about each example, click on the example name.
       </td>
    </tr>
      <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/dsf_single_account_deployment/README.md">DSF Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways) and DRA (Admin and DRA Analytics).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_20.zip">dsf_single_account_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_22.zip">dsf_single_account_deployment_1_7_22.zip</a>
       </td>
    </tr>
      <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/dsf_deployment/README.md">DSF Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/dsf_deployment/README.md">DSF Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_20.zip">dsf_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_22.zip">dsf_deployment_1_7_22.zip</a>
       </td>
    </tr>
      <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub HADR, an Agentless Gateway and federation. The DSF nodes (Hubs and Agentless Gateway) are in the same AWS account and the same region. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on.  
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_20.zip">sonar_single_account_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_22.zip">sonar_single_account_deployment_1_7_22.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/sonar_multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/sonar_multi_account_deployment/README.md">Sonar Multi Account Deployment</a>
       </td>
       <td>PS/Customer
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway and federation. The DSF nodes (Hub and Agentless Gateway) are in different AWS accounts. It is mandatory to provide as input to this example the subnets to deploy the DSF nodes on. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_20.zip">sonar_multi_account_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_22.zip">sonar_multi_account_deployment_1_7_22.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/sonar_basic_deployment/README.md">Sonar Basic Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_20.zip">sonar_basic_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_22.zip">sonar_basic_deployment_1_7_22.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/sonar_hadr_deployment/README.md">Sonar HADR Deployment</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/sonar_hadr_deployment/README.md">Sonar HADR Deployment</a>
       </td>
       <td>Lab/POC
       </td>
       <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation, networking and onboarding of a MySQL DB. 
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_20.zip">sonar_hadr_deployment_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_22.zip">sonar_hadr_deployment_1_7_22.zip</a>
       </td>
    </tr>
    <tr>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/sonar_upgrade/README.md">Sonar Upgrade</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/sonar_upgrade/README.md">Sonar Upgrade</a>
       </td>
       <td>All
       </td>
       <td>Upgrade of DSF Hub and Agentless Gateway (formerly Sonar).
       </td>
-      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/sonar_upgrade/sonar_upgrade_1_7_20.zip">sonar_upgrade_1_7_20.zip</a>
+      <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/sonar_upgrade/sonar_upgrade_1_7_22.zip">sonar_upgrade_1_7_22.zip</a>
       </td>
    </tr>
 </table>
@@ -698,26 +707,26 @@ For more details about each example, click on the example name.
       </td>
    </tr>
   <tr>
-     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/azure/poc/dsf_deployment/README.md">DSF Deployment</a>
      </td>
      <td>Lab/POC
      </td>
      <td>A DSF deployment with a DSF Hub, an Agentless Gateway, DSF Hub and Agentless Gateway HADR, federation and networking, DAM (MX and Agent Gateways), and Agent audit sources.
      </td>
-     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/azure/poc/dsf_deployment/dsf_deployment_1_7_20.zip">dsf_deployment_1_7_20.zip</a>
+     <td><a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/azure/poc/dsf_deployment/dsf_deployment_1_7_22.zip">dsf_deployment_1_7_22.zip</a>
      </td>
   </tr>
 </table> 
    
 
 If you are familiar with Terraform, you can go over the example code and see what it consists of.
-The examples make use of the building blocks of the eDSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the eDSF Kit modules' names have a 'dsf' prefix.
+The examples make use of the building blocks of the DSF Kit - the modules, which can be found in the <a href="https://registry.terraform.io/search/modules?namespace=imperva&q=dsf-">Imperva Terraform Modules Registry</a>. As a convention, the DSF Kit modules' names have a 'dsf' prefix.
 
-Fill out the [eDSF Kit pre-deployment questionnaire](https://forms.gle/CNMhdTuymYi4n7zB9) google form if you need help choosing or customizing an example to fit your use case. 
+Fill out the [DSF Kit pre-deployment questionnaire](https://forms.gle/CNMhdTuymYi4n7zB9) google form if you need help choosing or customizing an example to fit your use case. 
 
 ## Installation Software Location and Versioning
 
-When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
+When using DSF Kit, there is no need to manually download the DSF installation software, DSF Kit will do that automatically based on the Sonar, DAM and DRA versions specified in the Terraform example.
 In order to be able to download the installation software during deployment, you must request access beforehand. See [Deployment Prerequisites](#deployment-prerequisites).
 
 This includes the following version of the DSF sub-products:
@@ -736,7 +745,7 @@ This includes the following version of the DSF sub-products:
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.16.1.10</td><td>14.11.1.10 and up
+    <td>DAM</td><td>14.17.1.10</td><td>14.11.1.10 and up
 
 14.7.x.y (LTS)
 
@@ -770,7 +779,7 @@ Make sure that the version you are using is supported by all the modules which a
 To see which versions are supported by each module, refer to the specific module. 
 (For example, [DSF Hub module](https://registry.terraform.io/modules/imperva/dsf-hub/aws/latest))
 
-# Deployment 
+# Deployment
 
 After you have [chosen the deployment mode](#choosing-the-deployment-mode), follow the step-by-step instructions below to ensure a successful deployment. If you have any questions or issues during the deployment process, please contact [Imperva Technical Support](https://support.imperva.com/s/).
 
@@ -779,7 +788,7 @@ After you have [chosen the deployment mode](#choosing-the-deployment-mode), foll
 This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 
-1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.20">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_20.zip">dsf_deployment.zip</a>.
+1. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.22">DSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_22.zip">dsf_deployment.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
@@ -858,7 +867,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 ## Installer Machine Deployment Mode
 
 This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer.
-This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+This mode can be used if a Linux/Unix machine is not available, or DSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
 **NOTE:** The steps provided below are specific to deployment in an AWS environment. For deployment in an Azure environment, it is necessary to [create an Azure virtual machine instance based on Linux/Unix](https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu).
 
@@ -877,7 +886,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 5. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
 
 
-6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.7.20/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
+6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.7.22/installer_machine/installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
 
 
 7. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
@@ -896,30 +905,30 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
     For example: `chmode 400 a_key_pair.pem`
 
 
-9. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.20">eDSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_20.zip">dsf_deployment.zip</a>.
+9. Download the zip file of the example you've chosen (See the [Choosing the Example/Recipe that Fits Your Use Case](#choosing-the-examplerecipe-that-fits-your-use-case) section) from the <a href="https://github.com/imperva/dsfkit/tree/1.7.22">DSF Kit GitHub Repository</a>, e.g., if you choose the "dsf_deployment" example, you should download <a href="https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_22.zip">dsf_deployment.zip</a>.
     Run:
     ```bash
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_20.zip
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/installation/dsf_single_account_deployment/dsf_single_account_deployment_1_7_22.zip
 
     or
 
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_20.zip
-
-    or
- 
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_20.zip
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_22.zip
 
     or
  
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_20.zip    
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/installation/sonar_single_account_deployment/sonar_single_account_deployment_1_7_22.zip
+
+    or
+ 
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/installation/sonar_multi_account_deployment/sonar_multi_account_deployment_1_7_22.zip    
 
     or
 
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_20.zip
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/poc/sonar_basic_deployment/sonar_basic_deployment_1_7_22.zip
 
     or
     
-    wget https://github.com/imperva/dsfkit/raw/1.7.20/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_20.zip        
+    wget https://github.com/imperva/dsfkit/raw/1.7.22/examples/aws/poc/sonar_hadr_deployment/sonar_hadr_deployment_1_7_22.zip        
     ```
 
 10. Continue by following the [CLI Deployment Mode](#cli-deployment-mode) beginning at step 2.
@@ -970,10 +979,10 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
     * To avoid automatic Terraform configuration changes when the GitHub repo updates, set the following values under “Run triggers”:<br>![Run Triggers](https://user-images.githubusercontent.com/52969528/212982564-e12f9b4a-ca3e-480b-9714-76ef69291ee4.png)
       <br>As displayed in the above screenshot, the Custom Regular Expression field value should be “23b82265”.
 
-    * Click “Create workspace” to finish and save the new eDSF Kit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/52969528/212977895-ad9cdc4c-bf44-4a83-b67e-57e7f7e6e6f7.png)
+    * Click “Create workspace” to finish and save the new DSF Kit workspace.<br>![Create workspace](https://user-images.githubusercontent.com/52969528/212977895-ad9cdc4c-bf44-4a83-b67e-57e7f7e6e6f7.png)
 
 3. **Add the AWS variables:** The next few steps will configure the required AWS variables.
-    * Once the eDSF Kit workspace is created, click the "Go to workspace overview" button.<br>![Go to Workspace Overview](https://user-images.githubusercontent.com/52969528/212978246-42ce66c1-ffbc-4932-8c0a-4d13188065eb.png)
+    * Once the DSF Kit workspace is created, click the "Go to workspace overview" button.<br>![Go to Workspace Overview](https://user-images.githubusercontent.com/52969528/212978246-42ce66c1-ffbc-4932-8c0a-4d13188065eb.png)
 
     * Click on the "Configure Variables" button.<br>![Configure Variables](https://user-images.githubusercontent.com/52969528/212978735-afcbfee8-d524-4b08-8e4f-42a12530f490.png)
 
@@ -1031,7 +1040,7 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
     **NOTE:** The workspace variables mentioned above are tailored for deployment in an AWS environment. For deployment in an Azure environment, it is necessary to include distinct workspace variables, and these will be addressed in a future release.
 
-4. **Run the Terraform:** The following steps complete setting up the eDSF Kit workspace and running the example's Terraform code. 
+4. **Run the Terraform:** The following steps complete setting up the DSF Kit workspace and running the example's Terraform code. 
     * Click on the **Actions** dropdown button from the top navigation bar, and select the "Start new run" option from the list.</br>![Start New Run](https://user-images.githubusercontent.com/52969528/212980571-9071c3e5-400a-42e7-a7d9-5848b8b9fad7.png)
 
     * Enter a unique, alphanumeric name for the run, and click on the "Start run" button.<br>![Start Run](https://user-images.githubusercontent.com/52969528/212982996-2010be16-79f7-497d-a9c9-13ebc29fa052.png)
@@ -1060,11 +1069,11 @@ If you want to use Imperva's Terraform Cloud account, contact Imperva's Technica
 
 # IAM Permissions
 
-## IAM Permissions for Running eDSF Kit
+## IAM Permissions for Running DSF Kit
 
-### IAM Permissions for AWS 
+### IAM Permissions for AWS
 
-To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run eDSF Kit Terraform.
+To be able to create AWS resources inside any AWS Account, you need to provide an AWS User or Role with the required permissions in order to run DSF Kit Terraform.
 The permissions are separated to different policies. Use the relevant policies according to your needs:
 
 1. For general required permissions such as create an EC2, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/aws/GeneralRequiredPermissions.txt).
@@ -1076,7 +1085,7 @@ The permissions are separated to different policies. Use the relevant policies a
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
 
 ### IAM Permissions for Azure
-To be able to create Azure resources inside any Azure Account, you need to provide an Azure user or application registration service principal with the required permissions in order to run eDSF Kit Terraform.
+To be able to create Azure resources inside any Azure Account, you need to provide an Azure user or application registration service principal with the required permissions in order to run DSF Kit Terraform.
 Use the relevant permissions according to your needs:
 
 1. For general required permissions such as create a virtual machine, security group, etc., use the permissions specified here -  [general required permissions](/permissions_samples/azure/GeneralRequiredPermissions.txt).
@@ -1164,12 +1173,12 @@ In case of failure, the Terraform may have deployed some resources before failin
 
 ## Choosing the Upgrade Mode
 
-eDSF Kit offers several upgrade modes:
+DSF Kit offers several upgrade modes:
 
 * **CLI Upgrade Mode:** This mode offers a straightforward upgrade option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 
   For more details, refer to [CLI Upgrade Mode](#cli-upgrade-mode).
-* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+* **Installer Machine Deployment Mode:** This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer. This mode can be used if a Linux/Unix machine is not available, or DSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
   For more details, refer to [Installer Machine Upgrade Mode](#installer-machine-upgrade-mode).
 
@@ -1178,9 +1187,9 @@ If you need more information to decide on your preferred mode, refer to the deta
 
 ## Upgrade Prerequisites
 
-Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
+Before using DSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary to satisfy a set of prerequisites.
 
-1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.20/REQUEST_ACCESS_AWS.md).
+1. The upgrade requires access to the DSF installation software. [Click here to request access](https://github.com/imperva/dsfkit/blob/1.7.22/REQUEST_ACCESS_AWS.md).
 2. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Git](https://git-scm.com).
 3. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 4. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Python 3](https://www.python.org).
@@ -1189,7 +1198,7 @@ Before using eDSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessar
 
 ### Additional Prerequisites
 
-If the DSF deployment has not been deployed using the eDSF Kit, it is also necessary to satisfy the following prerequisites:
+If the DSF deployment has not been deployed using the DSF Kit, it is also necessary to satisfy the following prerequisites:
 
 
 1. Grant the DSF Hubs and Agentless Gateways IAM roles access to the S3 bucket containing the DSF installation software, use the permissions specified here - [IAM Permissions for Granting Access to DSF Installation](/permissions_samples/aws/DSFIntallationAccessPermissions.txt).
@@ -1198,7 +1207,7 @@ If the DSF deployment has not been deployed using the eDSF Kit, it is also neces
 
 ## Upgrade Software Location and Versioning
 
-When using eDSF Kit, there is no need to manually download the DSF installation software, eDSF Kit will do that automatically based on the Sonar target version specified in the Terraform example.
+When using DSF Kit, there is no need to manually download the DSF installation software, DSF Kit will do that automatically based on the Sonar target version specified in the Terraform example.
 In order to be able to download the upgrade software during upgrade, you must request access beforehand. See [Upgrade Prerequisites](#upgrade-prerequisites).
 
 Sonar version constrains can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module.
@@ -1218,24 +1227,24 @@ After you have [chosen the upgrade mode](#choosing-the-upgrade-mode), follow the
 This mode offers a straightforward deployment option that relies on running a Terraform script on the user's computer which must be a Linux/Unix machine, e.g, Mac.
 This mode makes use of the Terraform Command Line Interface (CLI) to deploy and manage environments.
 
-1. Download the zip file of the Sonar upgrade example: <a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/sonar_upgrade/sonar_upgrade_1_7_20.zip">sonar_upgrade_1_7_20.zip</a>.
+1. Download the zip file of the Sonar upgrade example: <a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/sonar_upgrade/sonar_upgrade_1_7_22.zip">sonar_upgrade_1_7_22.zip</a>.
 
 2. Unzip the zip file in CLI or using your operating system's UI.
    For example, in CLI:
    ```bash
    unzip sonar_upgrade_<x_y_z>.zip
    
-   >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
+   >>>> Replace the x_y_z with the DSF Kit version in the zip file name
    ```
 
 3. In CLI, navigate to the directory which contains the Terraform files.
    ```bash
    cd sonar_upgrade_<x_y_z>
    
-   >>>> Replace the x_y_z with the eDSF Kit version in the zip file name
+   >>>> Replace the x_y_z with the DSF Kit version in the zip file name
    ```
 
-4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the <a href="https://github.com/imperva/dsfkit/blob/1.7.20/examples/aws/sonar_upgrade/main.tf">main.tf</a> file.
+4. Enter the details of DSF Hubs and Agentless Gateways which you want to upgrade, and the desired configuraiton options, in the <a href="https://github.com/imperva/dsfkit/blob/1.7.22/examples/aws/sonar_upgrade/main.tf">main.tf</a> file.
 
 
    More information can be found in the <a href="https://github.com/imperva/dsfkit/blob/master/modules/aws/sonar-upgrader/README.md#sonar-version-constraints">Sonar Upgrader</a> module.
@@ -1266,7 +1275,7 @@ This mode makes use of the Terraform Command Line Interface (CLI) to deploy and 
 ## Installer Machine Upgrade Mode
 
 This mode is similar to the CLI mode except that the Terraform is run on an EC2 machine that the user launches, instead of on their computer.
-This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
+This mode can be used if a Linux/Unix machine is not available, or DSF Kit cannot be run on the available Linux/Unix machine, e.g., since it does not have permission or network access to the deployment environment, or if the user doesn't want to install additional software on their computer.
 
 
 1. In AWS, choose a region for the installer machine while keeping in mind that the machine should have access to the DSF environment that you want to upgrade, and preferably be in proximity to it.
@@ -1284,7 +1293,7 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 5. In the Network settings panel - make your configurations while keeping in mind that the installer machine should have access to the DSF environment that you want to deploy, and that your computer should have access to the installer machine.
 
 
-6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.7.20/installer_machine/upgrade_installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
+6. In the “Advanced details” panel, copy and paste the contents of this [bash script](https://github.com/imperva/dsfkit/blob/1.7.22/installer_machine/upgrade_installer_machine_user_data.sh) into the [User data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) textbox.
 
 
 9. Click on **Launch Instance**. At this stage, the installer machine is initializing and downloading the necessary dependencies.
@@ -1313,13 +1322,13 @@ This mode can be used if a Linux/Unix machine is not available, or eDSF Kit cann
 
 If you do not wish to use Terraform to run the upgrade, it is possible to bypass it and run the Python utility directly.
 
-Use the <a href="https://github.com/imperva/dsfkit/tree/1.7.20/modules/aws/sonar-upgrader/python_upgrader/README.md">Python Upgrader</a> utility.
+Use the <a href="https://github.com/imperva/dsfkit/tree/1.7.22/modules/aws/sonar-upgrader/python_upgrader/README.md">Python Upgrader</a> utility.
 
 # More Information
 
 Information about additional topics can be found in specific examples, when relevant.
 
-For example:  <a href="https://github.com/imperva/dsfkit/tree/1.7.20/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
+For example:  <a href="https://github.com/imperva/dsfkit/tree/1.7.22/examples/aws/installation/sonar_single_account_deployment/README.md">Sonar Single Account Deployment</a>
 
 These topics include:
 - Customizing Variables

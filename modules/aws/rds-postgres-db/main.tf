@@ -76,7 +76,7 @@ resource "aws_db_instance" "rds_db" {
   allocated_storage       = 10
   db_name                 = local.db_name
   engine                  = "postgres"
-  engine_version          = "15.4"
+  engine_version          = "15.10"
   instance_class          = "db.m5.large"
   username                = local.db_username
   password                = local.db_password

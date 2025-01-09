@@ -253,7 +253,7 @@ variable "hub_instance_type" {
 
 variable "agentless_gw_instance_type" {
   type        = string
-  default     = "r6i.xlarge"
+  default     = "r6i.2xlarge"
   description = "Ec2 instance type for the Agentless Gateway"
 }
 
@@ -455,7 +455,7 @@ variable "sonar_machine_base_directory" {
 variable "dam_version" {
   type        = string
   description = "The DAM version to install"
-  default     = "14.16.1.10"
+  default     = "14.17.1.10"
   validation {
     condition     = can(regex("^(\\d{1,2}\\.){3}\\d{1,3}$", var.dam_version))
     error_message = "Version must be in the format dd.dd.dd.dd where each dd is a number between 1-99 (e.g 14.10.1.10)"
