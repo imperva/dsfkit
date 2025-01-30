@@ -511,7 +511,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>2. Improvements and bug fixes.
     </td>
   </tr>
-    <tr>
+  <tr>
     <td>3 Sep 2024
     </td>
     <td>1.7.17
@@ -522,7 +522,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>3. Improvements and bug fixes.
     </td>
   </tr>
-    <tr>
+  <tr>
     <td>3 Nov 2024
     </td>
     <td>1.7.19
@@ -531,7 +531,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Improvements and bug fixes.
     </td>
   </tr>
-    <tr>
+  <tr>
     <td>14 Nov 2024
     </td>
     <td>1.7.20
@@ -540,13 +540,22 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Added support for DSF version 4.16/14.16
     </td>
   </tr>
-    <tr>
+  <tr>
     <td>12 Jan 2025
     </td>
     <td>1.7.23
     </td>
     <td>
       Improvements and bug fixes.
+    </td>
+  </tr>
+  <tr>
+    <td>30 Jan 2025
+    </td>
+    <td>1.7.24
+    </td>
+    <td>
+      Added support for DSF version 4.17/14.17.
     </td>
   </tr>
   
