@@ -114,7 +114,7 @@ This guide references the following information and links, some of which are ava
 
    <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/393216754.html">DAM v14.17</a>
 
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-km/page/02e3d1fc.html">DRA v4.16</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/290722037.html">DRA v4.17</a>
    </td>
    <td>DSF Components Overview
    </td>
@@ -751,7 +751,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.16.0.10</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
