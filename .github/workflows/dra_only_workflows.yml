@@ -13,9 +13,19 @@ jobs:
   dummy_dam_trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Install GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+
       - name: Trigger DAM Only Workflows
         env:
           BRANCH_NAME: ${{ github.ref_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run dam_only_workflows.yml --ref $BRANCH_NAME
+          gh workflow run dam_only_workflows.yml \
+            --repo ${{ github.repository }} \  # Explicitly set repo
+            --ref $BRANCH_NAME
