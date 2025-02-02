@@ -2,16 +2,17 @@ name: DRA Only Workflows - Dummy Workflow
 
 on:
   workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub UI
+    inputs:
+      version:
+        description: "Version to pass"
+        required: true
+        default: "v1.0"
 
 jobs:
-  dummy_job:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Just a dummy step
-        run: echo "This is a dummy workflow doing nothing."
-
   dummy_dam_trigger:
     uses: imperva/dsfkit/.github/workflows/dam_only_workflows.yml@dra-workflow
+    with:
+      branch: ${{ github.ref_name }}
+      version: ${{ inputs.version }}
 
 
