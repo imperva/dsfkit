@@ -12,7 +12,6 @@ jobs:
   dummy_dam_trigger:
     uses: imperva/dsfkit/.github/workflows/dam_only_workflows.yml@dra-workflow
     with:
-      branch: ${{ github.ref_name }}
       version: ${{ inputs.version }}
 
 
