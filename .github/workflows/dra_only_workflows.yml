@@ -10,3 +10,10 @@ jobs:
     steps:
       - name: Just a dummy step
         run: echo "This is a dummy workflow doing nothing."
+
+  dummy_dam_trigger:
+    uses: imperva/dsfkit/.github/workflows/dam_only_workflows.yml@${{ github.ref_name }}
+    with:
+      branch: ${{ github.ref_name }}  # Passes the branch dynamically
+
+
