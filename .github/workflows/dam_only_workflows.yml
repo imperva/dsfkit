@@ -13,4 +13,4 @@ jobs:
         run: echo "This is a dummy workflow doing nothing."
 
       - name: Print Branch
-        run: echo "Triggered on branch ${{ github.ref_name }}"
+        run: echo "Triggered on branch"

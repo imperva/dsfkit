@@ -13,7 +13,5 @@ jobs:
 
   dummy_dam_trigger:
     uses: imperva/dsfkit/.github/workflows/dam_only_workflows.yml
-    with:
-      branch: ${{ github.ref_name }}  # Passes the branch dynamically
 
 
