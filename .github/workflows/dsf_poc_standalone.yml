@@ -1,0 +1,50 @@
+name: DSF POC Standalone
+
+on:
+  workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub UI
+    inputs:
+      deployment_type:
+        description: "Deployment type to pass, choose: dra, dam, sonar or all. If you chose 'all' as deployment type, leave the next 2 version fields empty."
+        required: true
+        default: "dra"
+      version:
+        description: "Version to pass, e.g. 4.17."
+        required: false
+        default: 'latest'
+      version_build_nr:
+        description: "Version patch to pass for Azure deployment (e.g. 4.17.0.10.0.6_31077)"
+        required: false
+        default: 'latest'
+
+jobs:
+  dsf_poc_cli:
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dra-workflow
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: dra-workflow
+      deployment_type: ${{ github.event.inputs.deployment_type }}
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
+
+  dsf_poc_azure:
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dra-workflow
+    with:
+      use_modules_from_terraform_registry: true
+      explicit_ref: dra-workflow
+      deployment_type: "dra"
+      product_full_version: ${{ github.event.inputs.version }}
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+
+
+
