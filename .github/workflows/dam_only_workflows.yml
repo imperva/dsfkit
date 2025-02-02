@@ -3,6 +3,12 @@ name: DAM Only Workflows - Dummy Workflow
 on:
   workflow_dispatch:  # Manual trigger from GitHub UI
   workflow_call:  # Called by other workflows
+    inputs:
+      version:
+        description: "Version parameter"
+        required: false
+        type: string
+        default: "latest"  # Default if not provided
 
 jobs:
   dummy_job:
