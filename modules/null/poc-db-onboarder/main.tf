@@ -71,8 +71,8 @@ resource "null_resource" "onboard_db_to_dsf" {
         account_id          = urlencode(local.cloud_account_data.data.id)
         database_asset_data = jsonencode(local.database_data)
         database_id         = urlencode(local.database_data.data.id)
-        usc_access_token    = var.usc_access_token
-        enable_audit        = var.enable_audit
+        usc_access_token    = nonsensitive(var.usc_access_token)
+        enable_audit        = nonsensitive(var.enable_audit)
       })
     ]
   }
