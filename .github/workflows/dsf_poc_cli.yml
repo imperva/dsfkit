@@ -99,7 +99,7 @@ jobs:
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
-    if: ${{ matrix.name == 'DSF POC - SONAR' }}
+    if: contains(matrix.name, 'DSF POC - SONAR')
     env:
       EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
       AWS_REGION: eu-west-2
