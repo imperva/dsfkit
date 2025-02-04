@@ -81,25 +81,32 @@ jobs:
             enable_sonar: true
             enable_dam: true
             enable_dra: true
+            enabled: false
+
           - name: DSF POC - SONAR
             workspace: dsf_cli-sonar-
             enable_sonar: true
             enable_dam: false
             enable_dra: false
+            enabled: false
+
           - name: DSF POC - DAM
             workspace: dsf_cli-dam-
             enable_sonar: false
             enable_dam: true
             enable_dra: false
+            enabled: true
+
           - name: DSF POC - DRA
             workspace: dsf_cli-dra-
             enable_sonar: false
             enable_dam: false
             enable_dra: true
+            enabled: true
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
-    if: contains(matrix.name, 'DSF POC - SONAR')
+    if: ${{ matrix.enabled == 'true' }}
     env:
       EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
       AWS_REGION: eu-west-2
