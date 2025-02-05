@@ -64,7 +64,7 @@ env:
   TF_INPUT: 0
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  DESTROY_DELAY_SECONDS: 1800
+  DESTROY_DELAY_SECONDS: 7200
   TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
 
 permissions:
@@ -121,7 +121,6 @@ jobs:
         shell: bash
     steps:
       - name: Pick ref
-        if: ${{ matrix.enabled == 'true' }}
         run: |
           if [ -z "${{ inputs.explicit_ref }}" ]; then
             echo REF=${{ github.ref }} >> $GITHUB_ENV;
@@ -130,7 +129,6 @@ jobs:
           fi
 
       - name: Set Workspace Name
-        if: ${{ matrix.enabled == 'true' }}
         run: |
           echo "Event Name: ${{ github.event_name }}"
           if [ ${{ github.event_name }} == 'schedule' ]; then
@@ -142,7 +140,6 @@ jobs:
 
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
-        if: ${{ matrix.enabled == 'true' }}
         uses: actions/checkout@v3
         with:
           ref: ${{ env.REF }}
@@ -153,7 +150,6 @@ jobs:
           find ./examples/ -type f -exec sed -i -f sed.expr {} \;
 
       - name: Create terraform backend file
-        if: ${{ matrix.enabled == 'true' }}
         run: |
           cat << EOF > $EXAMPLE_DIR/backend.tf
           terraform {
@@ -168,14 +164,12 @@ jobs:
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
-        if: ${{ matrix.enabled == 'true' }}
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
           terraform_version: ~1.7.0
 
       - name: Setup jq
-        if: ${{ matrix.enabled == 'true' }}
         uses: sergeysova/jq-action@v2
 
       - name: Create License File
@@ -187,14 +181,11 @@ jobs:
 
       # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
-        if: ${{ matrix.enabled == 'true' }}
-
         run: terraform -chdir=$EXAMPLE_DIR init
         env:
           TF_WORKSPACE: default
 
       - name: Cleaning environment
-        if: ${{ matrix.enabled == 'true' }}
         run: |
           if [ ${{ github.event_name }} == 'schedule' ]; then
             mv $EXAMPLE_DIR/main.tf{,_}
@@ -217,14 +208,10 @@ jobs:
           fi
 
       - name: Terraform Validate
-        if: ${{ matrix.enabled == 'true' }}
-
         run: terraform -chdir=$EXAMPLE_DIR validate
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        if: ${{ matrix.enabled == 'true' }}
-
         run: |
           terraform -chdir=$EXAMPLE_DIR workspace list
           terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv 
@@ -239,4 +226,18 @@ jobs:
           else
             curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ matrix.name }} private branch ${{ inputs.workspace }} automation Failed*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
           fi
-        if: ${{ failure() && matrix.enabled == 'true'}}
+        if: ${{ failure() }}
+          
+      # This step allows time for investigation of the failed resources before destroying them
+      - name: Conditional Delay
+        run: |
+          echo "delay_destroy: ${{ inputs.delay_destroy }}"
+          if [ "${{ inputs.delay_destroy }}" == "true" ]; then
+            echo "Terraform workspace: $TF_WORKSPACE"
+            curl -X POST -H 'Content-type: application/json' --data '{"text":":exclamation: :exclamation: :exclamation:\n*${{ github.workflow }} ${{ env.TF_WORKSPACE }} automation Failed*\n You have ${{ env.DESTROY_DELAY_SECONDS }} seconds to investigate the environment before it is destroyed :alarm_clock:\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Please check the job!>\nRun by: ${{ steps.check-trigger.outputs.run-by }}", "channel": "#edsf_automation"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+            echo ""
+            echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
+            sleep $DESTROY_DELAY_SECONDS
+          fi
+
+
