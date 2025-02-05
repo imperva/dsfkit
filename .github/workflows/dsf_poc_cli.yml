@@ -242,7 +242,7 @@ jobs:
 
     # This step allows time for investigation of the failed resources before destroying them
     - name: Conditional Delay
-      if: ${{ failure() }}
+      if: failure()
       run: |
         echo "delay_destroy: ${{ inputs.delay_destroy }}"
         if [ "${{ inputs.delay_destroy }}" == "true" ]; then
