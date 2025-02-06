@@ -89,6 +89,7 @@ jobs:
           }')
 
           echo "matrix=$MATRIX" >> "$GITHUB_ENV"
+          sleep 5
 
   terraform:
     needs: prepare-matrix
