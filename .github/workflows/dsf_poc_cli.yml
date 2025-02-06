@@ -94,7 +94,7 @@ jobs:
     needs: prepare-matrix
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(env.MATRIX) }}
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
