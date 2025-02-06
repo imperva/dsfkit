@@ -87,7 +87,13 @@ jobs:
               {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true}
             ]
           }')
-          echo "matrix=$MATRIX" >> $GITHUB_ENV
+
+          echo "Generated Matrix JSON: $MATRIX"  # Debugging log
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+
+      - name: Debug Outputs
+        run: |
+          echo "Matrix output: ${{ steps.set-matrix.outputs.matrix }}"
 
 
   terraform:
