@@ -70,7 +70,6 @@ env:
 permissions:
   contents: read
 
-
 jobs:
   prepare-matrix:
     runs-on: ubuntu-latest
