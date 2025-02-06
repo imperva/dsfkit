@@ -82,10 +82,10 @@ jobs:
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              (if (3+2) == ($var | tonumber) then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false} else empty end),
-              (if (3+2) == ($var | tonumber) then {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false} else empty end),
-              (if (3+2) == ($var | tonumber) then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false,"enabled":true} else empty end),
-              (if (3+2) == ($var | tonumber) then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true} else empty end)
+              (if (3+2) == (5) then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false} else empty end),
+              (if (3+2) == (5) then {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false} else empty end),
+              (if (3+2) == (5) then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false,"enabled":true} else empty end),
+              (if (3+2) == (6) then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true} else empty end)
             ]
           }')
 
