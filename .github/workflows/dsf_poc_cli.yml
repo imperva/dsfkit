@@ -90,9 +90,6 @@ jobs:
 
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
-      - name: Debug Outputs
-        run: |
-          echo "Matrix output: ${{ steps.set-matrix.outputs.matrix }}"
 
 
   terraform:
