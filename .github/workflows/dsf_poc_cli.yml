@@ -78,7 +78,7 @@ jobs:
     steps:
       - name: Set Matrix
         run: |
-          MATRIX=$(jq -n '{
+          MATRIX=$(jq -n --compact-output '{
             "include": [
               {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false},
               {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false},
