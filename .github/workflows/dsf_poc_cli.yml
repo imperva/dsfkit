@@ -70,39 +70,31 @@ env:
 permissions:
   contents: read
 
+
 jobs:
+  prepare-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Write Matrix to Temp File
+        run: |
+          echo 'MATRIX={"include":[
+            {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false},
+            {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false},
+            {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false,"enabled":true},
+            {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true}
+          ]}' >> $GITHUB_ENV
+
+      - name: Set Matrix Output
+        id: set-matrix
+        run: echo "matrix=$MATRIX" >> $GITHUB_ENV
+
   terraform:
+    needs: prepare-matrix
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - name: DSF POC
-            workspace: dsf_cli-all-
-            enable_sonar: true
-            enable_dam: true
-            enable_dra: true
-            enabled: false
-
-          - name: DSF POC - SONAR
-            workspace: dsf_cli-sonar-
-            enable_sonar: true
-            enable_dam: false
-            enable_dra: false
-            enabled: false
-
-          - name: DSF POC - DAM
-            workspace: dsf_cli-dam-
-            enable_sonar: false
-            enable_dam: true
-            enable_dra: false
-            enabled: true
-
-          - name: DSF POC - DRA
-            workspace: dsf_cli-dra-
-            enable_sonar: false
-            enable_dam: false
-            enable_dra: true
-            enabled: true
+      matrix: ${{ fromJson(env.MATRIX) }}
 
     name: '${{ matrix.name }}'
     runs-on: ubuntu-latest
