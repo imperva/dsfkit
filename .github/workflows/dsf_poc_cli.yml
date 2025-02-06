@@ -90,8 +90,6 @@ jobs:
 
           echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
-
-
   terraform:
     needs: prepare-matrix
     strategy:
