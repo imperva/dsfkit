@@ -73,22 +73,22 @@ permissions:
 jobs:
   prepare-matrix:
     runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Set Matrix
         id: set-matrix
+        env:
+          VAR: 5  # Define the variable here
         run: |
-          MATRIX=$(jq -n --compact-output '{
+          MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false},
-              {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false},
-              {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false,"enabled":true},
-              {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true}
+              (if (3+2) == ($var | tonumber) then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true,"enabled":false} else empty end),
+              (if (3+3) == ($var | tonumber) then {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false,"enabled":false} else empty end),
+              (if (3+2) == ($var | tonumber) then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false,"enabled":true} else empty end),
+              (if (3+2) == ($var | tonumber) then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true,"enabled":true} else empty end)
             ]
           }')
 
-          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
+          echo "matrix=$MATRIX" >> "$GITHUB_ENV"
 
   terraform:
     needs: prepare-matrix
