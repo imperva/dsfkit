@@ -184,7 +184,7 @@ jobs:
 
     - name: Set parameters in azure storage account
       run: |
-        if [ "${{ github.event.inputs.deployment_type }}" == "dra" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ]; then
+        if [ "${{ github.event.inputs.deployment_type }}" == "dra" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && ${{ github.event.inputs.product_full_version }} != $'\n' ]; then
         PATH_TO_DRA_ANALYTICS_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Analytics.vhd"
         PATH_TO_DRA_ADMIN_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Admin.vhd"
         else
@@ -192,7 +192,7 @@ jobs:
         PATH_TO_DRA_ADMIN_VHD="DRA-4.17.0.10.0.6_31077_x86_64-Admin.vhd"
         fi
         
-        if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ]; then  
+        if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && ${{ github.event.inputs.product_full_version }} != $'\n' ]; then  
         AZ_BLOB_SONAR="jsonar-${{ github.event.inputs.product_full_version }}.tar.gaz"
         else
         AZ_BLOB_SONAR="jsonar-4.17.0.10.0.tar.gz"
