@@ -4,16 +4,16 @@ on:
   workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub UI
     inputs:
       deployment_type:
-        description: "Deployment type to pass, choose: dra, dam, sonar or all. If you chose 'all' as deployment type, leave the next 2 version fields empty."
+        description: "Deployment type to pass, choose: dra, dam or sonar."
         required: true
         default: "dra"
       version:
         description: "Version to pass, e.g. 4.17."
-        required: false
+        required: true
         default: 'latest'
       version_build_nr:
         description: "Version patch to pass for Azure deployment (e.g. 4.17.0.10.0.6_31077)"
-        required: false
+        required: true
         default: 'latest'
 
 jobs:
