@@ -1,6 +1,6 @@
 module "globals" {
   source  = "imperva/dsf-globals/azurerm"
-  version = "1.7.25" # latest release tag
+  version = "1.7.26" # latest release tag
 }
 
 resource "azurerm_resource_group" "rg" {
