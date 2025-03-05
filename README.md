@@ -561,7 +561,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
   <tr>
     <td>4 March 2025
     </td>
-    <td>1.7.26
+    <td>1.7.27
     </td>
     <td>
       Improvements and bug fixes
