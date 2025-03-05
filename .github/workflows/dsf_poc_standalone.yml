@@ -18,10 +18,10 @@ on:
 
 jobs:
   dsf_poc_cli:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@fix-matrix-generation
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: dra-workflow
+      explicit_ref: fix-matrix-generation
       deployment_type: ${{ github.event.inputs.deployment_type }}
       version: ${{ github.event.inputs.version }}
     secrets:
@@ -33,11 +33,11 @@ jobs:
       DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
 
   dsf_poc_azure:
-    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
+    uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@fix-matrix-generation
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: dra-workflow
-      deployment_type: "dra"
+      explicit_ref: fix-matrix-generation
+      deployment_type: ${{ github.event.inputs.deployment_type }}
       product_full_version: ${{ github.event.inputs.version }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
