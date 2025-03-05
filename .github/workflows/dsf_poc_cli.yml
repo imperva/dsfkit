@@ -99,7 +99,7 @@ jobs:
       - name: Set Matrix
         id: set-matrix
         env:
-          VAR: ${{ github.event.inputs.deployment_type }}
+          VAR: ${{ github.event.inputs.deployment_type || 'all' }}
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
