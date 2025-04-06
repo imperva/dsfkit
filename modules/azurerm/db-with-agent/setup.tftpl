@@ -4,6 +4,11 @@ set -u
 set -x
 cd /root || exit 1
 
+# Clean and update the apt cache to avoid missing package list errors
+sudo rm -rf /var/lib/apt/lists/*
+sudo apt-get clean
+sudo apt-get update
+
 function install_azcli_from_internet() {
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     az login --identity >/dev/null
