@@ -71,6 +71,15 @@ jobs:
       with:
         ref: ${{ inputs.branch }}
 
+
+    - name: Set Workspace
+      run: |
+        if [ ${{ inputs.branch }} == 'master' ] ||  [ ${{ inputs.branch }} == 'dev' ]; then
+          echo "TF_WORKSPACE=${{ env.TF_WORKSPACE }}_${{ inputs.branch }}" >> $GITHUB_ENV
+        else
+          echo "TF_WORKSPACE=${{ env.TF_WORKSPACE }}" >> $GITHUB_ENV
+        fi    
+
     - name: Change the modules source to local
       run: |
         find ./examples/ -type f -exec sed -i -f sed.expr {} \;

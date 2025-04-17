@@ -53,8 +53,14 @@ function install_azcli_from_internet() {
         exit 1
     fi
     rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
-    dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+    if [ "$RHEL_MAJOR_VERSION" -eq 8 ]; then
+        dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+    elif [ "$RHEL_MAJOR_VERSION" -eq 9 ]; then
+        dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+    else
+        echo "Unsupported RHEL version: $RHEL_MAJOR_VERSION"
+        exit 1
+    fi
     dnf install azure-cli -y
     az login --identity --allow-no-subscriptions
 }
