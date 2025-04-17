@@ -195,7 +195,7 @@ jobs:
         if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && [ -n "${{ github.event.inputs.product_full_version }}" ]; then  
         AZ_BLOB_SONAR="jsonar-${{ github.event.inputs.product_full_version }}.tar.gaz"
         else
-        AZ_BLOB_SONAR="jsonar-4.17.0.10.0.tar.gz"
+        AZ_BLOB_SONAR="jsonar-4.19.0.10.0.tar.gz"
         fi
         
         echo "PATH_TO_DRA_ANALYTICS_VHD=$PATH_TO_DRA_ANALYTICS_VHD" >> $GITHUB_ENV

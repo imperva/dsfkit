@@ -61,11 +61,11 @@ jobs:
       DEPLOYMENT_EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
       UPGRADE_EXAMPLE_DIR: ./examples/aws/sonar_upgrade
       AWS_REGION: eu-west-2
-      SONAR_TARGET_VERSION: 4.17.0.10.0
+      SONAR_TARGET_VERSION: 4.19.0.10.0
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
-      TF_VAR_sonar_version: 4.15.0.20
+      TF_VAR_sonar_version: 4.17.0.10
       TF_VAR_hub_hadr: ${{ matrix.hub_hadr }}
       TF_VAR_agentless_gw_hadr: ${{ matrix.agentless_gw_hadr }}
       TF_VAR_simulation_db_types_for_agentless: ${{ matrix.simulation_db_types_for_agentless }}
