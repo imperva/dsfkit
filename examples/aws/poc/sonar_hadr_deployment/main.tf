@@ -292,7 +292,6 @@ module "gw_main_federation" {
   ]
 }
 
-
 resource "null_resource" "force_gw_replication" {
   # for_each = module.agentless_gw_dr
   for_each = {for idx, val in module.agentless_gw_dr : idx => val}
