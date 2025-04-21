@@ -250,17 +250,6 @@ module "agentless_gw_hadr" {
   ]
 }
 
-locals {
-  hub_gw_main_combinations = setproduct(
-    [module.hub_main, module.hub_dr],
-    [for idx, val in module.agentless_gw_main : val],
-  )
-  hub_gw_dr_combinations = setproduct(
-    [module.hub_main, module.hub_dr],
-    [for idx, val in module.agentless_gw_dr : val],
-  )
-}
-
 module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
   version = "1.7.28" # latest release tag
