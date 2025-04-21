@@ -251,31 +251,32 @@ module "agentless_gw_hadr" {
 }
 
 locals {
-  hub_gw_combinations = setproduct(
+  hub_gw_main_combinations = setproduct(
     [module.hub_main, module.hub_dr],
-    concat(
-      [for idx, val in module.agentless_gw_main : val],
-      [for idx, val in module.agentless_gw_dr : val]
-    )
+    [for idx, val in module.agentless_gw_main : val],
+  )
+  hub_gw_dr_combinations = setproduct(
+    [module.hub_main, module.hub_dr],
+    [for idx, val in module.agentless_gw_dr : val],
   )
 }
 
-module "federation" {
+module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
   version = "1.7.28" # latest release tag
-  count   = length(local.hub_gw_combinations)
+  count   = length(local.hub_gw_main_combinations)
 
   hub_info = {
-    hub_ip_address            = local.hub_gw_combinations[count.index][0].public_ip
-    hub_federation_ip_address = local.hub_gw_combinations[count.index][0].public_ip
+    hub_ip_address            = local.hub_gw_main_combinations[count.index][0].public_ip
+    hub_federation_ip_address = local.hub_gw_main_combinations[count.index][0].public_ip
     hub_private_ssh_key_path  = module.key_pair.private_key_file_path
-    hub_ssh_user              = local.hub_gw_combinations[count.index][0].ssh_user
+    hub_ssh_user              = local.hub_gw_main_combinations[count.index][0].ssh_user
   }
   gw_info = {
-    gw_ip_address            = local.hub_gw_combinations[count.index][1].private_ip
-    gw_federation_ip_address = local.hub_gw_combinations[count.index][1].private_ip
+    gw_ip_address            = local.hub_gw_main_combinations[count.index][1].private_ip
+    gw_federation_ip_address = local.hub_gw_main_combinations[count.index][1].private_ip
     gw_private_ssh_key_path  = module.key_pair.private_key_file_path
-    gw_ssh_user              = local.hub_gw_combinations[count.index][1].ssh_user
+    gw_ssh_user              = local.hub_gw_main_combinations[count.index][1].ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_main.public_ip
@@ -285,6 +286,54 @@ module "federation" {
   depends_on = [
     module.hub_hadr,
     module.agentless_gw_hadr
+  ]
+}
+
+
+resource "null_resource" "force_gw_replication" {
+  # for_each = module.agentless_gw_dr
+  for_each = {for idx, val in module.agentless_gw_dr : idx => val}
+
+  provisioner "local-exec" {
+    command = <<-EOT
+    #!/bin/bash
+    set -x -e
+
+    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}'
+
+    ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} -C 'sudo $JSONAR_BASEDIR/bin/federated remote'
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    module.gw_main_federation,
+  ]
+}
+
+module "gw_dr_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.28" # latest release tag
+  count   = length(local.hub_gw_dr_combinations)
+
+  hub_info = {
+    hub_ip_address            = local.hub_gw_dr_combinations[count.index][0].public_ip
+    hub_federation_ip_address = local.hub_gw_dr_combinations[count.index][0].public_ip
+    hub_private_ssh_key_path  = module.key_pair.private_key_file_path
+    hub_ssh_user              = local.hub_gw_dr_combinations[count.index][0].ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = local.hub_gw_dr_combinations[count.index][1].private_ip
+    gw_federation_ip_address = local.hub_gw_dr_combinations[count.index][1].private_ip
+    gw_private_ssh_key_path  = module.key_pair.private_key_file_path
+    gw_ssh_user              = local.hub_gw_dr_combinations[count.index][1].ssh_user
+  }
+  gw_proxy_info = {
+    proxy_address              = module.hub_main.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_main.ssh_user
+  }
+  depends_on = [
+    null_resource.force_gw_replication,
   ]
 }
 
