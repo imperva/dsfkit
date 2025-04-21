@@ -199,10 +199,10 @@ module "gw_main_federation" {
   }
 
   hub_info = {
-    hub_ip_address            = module.hub_main.public_ip
-    hub_federation_ip_address = module.hub_main.public_ip
+    hub_ip_address            = module.hub_main[0].public_ip
+    hub_federation_ip_address = module.hub_main[0].public_ip
     hub_private_ssh_key_path  = module.key_pair.private_key_file_path
-    hub_ssh_user              = module.hub_main.ssh_user
+    hub_ssh_user              = module.hub_main[0].ssh_user
   }
   gw_info = {
     gw_ip_address            = each.value.private_ip
@@ -211,9 +211,9 @@ module "gw_main_federation" {
     gw_ssh_user              = each.value.ssh_user
   }
   gw_proxy_info = {
-    proxy_address              = module.hub_main.public_ip
+    proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub_main.ssh_user
+    proxy_ssh_user             = module.hub_main[0].ssh_user
   }
   depends_on = [
     module.hub_hadr,
@@ -230,7 +230,7 @@ resource "null_resource" "force_gw_replication" {
     #!/bin/bash
     set -x -e
 
-    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}'
+    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}'
 
     ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} -C 'sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication'
     EOT
@@ -250,10 +250,10 @@ module "gw_dr_federation" {
   }
 
   hub_info = {
-    hub_ip_address            = module.hub_main.public_ip
-    hub_federation_ip_address = module.hub_main.public_ip
+    hub_ip_address            = module.hub_main[0].public_ip
+    hub_federation_ip_address = module.hub_main[0].public_ip
     hub_private_ssh_key_path  = module.key_pair.private_key_file_path
-    hub_ssh_user              = module.hub_main.ssh_user
+    hub_ssh_user              = module.hub_main[0].ssh_user
   }
   gw_info = {
     gw_ip_address            = each.value.private_ip
@@ -262,9 +262,9 @@ module "gw_dr_federation" {
     gw_ssh_user              = each.value.ssh_user
   }
   gw_proxy_info = {
-    proxy_address              = module.hub_main.public_ip
+    proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub_main.ssh_user
+    proxy_ssh_user             = module.hub_main[0].ssh_user
   }
   depends_on = [
     null_resource.force_gw_replication,
@@ -280,10 +280,10 @@ module "hub_dr_federation" {
   }
 
   hub_info = {
-    hub_ip_address            = module.hub_dr.public_ip
-    hub_federation_ip_address = module.hub_dr.public_ip
+    hub_ip_address            = module.hub_dr[0].public_ip
+    hub_federation_ip_address = module.hub_dr[0].public_ip
     hub_private_ssh_key_path  = module.key_pair.private_key_file_path
-    hub_ssh_user              = module.hub_dr.ssh_user
+    hub_ssh_user              = module.hub_dr[0].ssh_user
   }
   gw_info = {
     gw_ip_address            = each.value.private_ip
@@ -292,9 +292,9 @@ module "hub_dr_federation" {
     gw_ssh_user              = each.value.ssh_user
   }
   gw_proxy_info = {
-    proxy_address              = module.hub_main.public_ip
+    proxy_address              = module.hub_main[0].public_ip
     proxy_private_ssh_key_path = module.key_pair.private_key_file_path
-    proxy_ssh_user             = module.hub_main.ssh_user
+    proxy_ssh_user             = module.hub_main[0].ssh_user
   }
   depends_on = [
     module.gw_dr_federation
