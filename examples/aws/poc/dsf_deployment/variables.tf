@@ -246,7 +246,7 @@ variable "agentless_gw_hadr" {
 
 variable "hub_instance_type" {
   type        = string
-  default     = "r6i.2xlarge"
+  default     = "r6i.4xlarge"
   description = "Ec2 instance type for the DSF Hub"
 }
 
