@@ -209,7 +209,7 @@ variable "agentless_gw_hadr" {
 
 variable "hub_instance_size" {
   type        = string
-  default     = "Standard_E4s_v5"
+  default     = "Standard_E8s_v5"
   description = "Instance size for the DSF Hub"
 }
 
