@@ -4,6 +4,12 @@ set -u
 set -x
 cd /root || exit 1
 
+# turn off translations (skip Translation-en)
+sudo mkdir -p /etc/apt/apt.conf.d
+cat <<EOF | sudo tee /etc/apt/apt.conf.d/99translations
+Acquire::Languages "none";
+EOF
+
 # Clean and update the apt cache to avoid missing package list errors
 sudo rm -rf /var/lib/apt/lists/*
 sudo apt-get clean
