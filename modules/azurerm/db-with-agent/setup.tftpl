@@ -4,6 +4,10 @@ set -u
 set -x
 cd /root || exit 1
 
+# Turn off interactive prompts
+if [ -x "$(command -v apt-get)" ]; then
+  export DEBIAN_FRONTEND=noninteractive
+
 # turn off translations (skip Translation-en)
 sudo mkdir -p /etc/apt/apt.conf.d
 cat <<EOF | sudo tee /etc/apt/apt.conf.d/99translations
