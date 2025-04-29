@@ -307,6 +307,7 @@ LAST_INSTALLATION_SOURCE=$DATA_DIR/last_install_source.txt
 
 if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "blob://${az_storage_account}/${az_container}/${az_blob}" ]; then
     install_tarball
+    sleep 120
     setup
     echo "blob://${az_storage_account}/${az_container}/${az_blob}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi
