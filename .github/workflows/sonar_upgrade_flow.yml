@@ -2,6 +2,15 @@ name: 'Sonar Upgrade Flow'
 
 on:
   workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      DAM_LICENSE:
+        required: true
   workflow_dispatch:
 
   push:
