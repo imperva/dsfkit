@@ -2,6 +2,9 @@ name: 'Sonar Upgrade Unit Tests'
 
 on:
   workflow_call:
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: true
   workflow_dispatch:
 
 permissions:
