@@ -29,6 +29,8 @@ on:
         required: true
       DAM_LICENSE:
         required: true
+      ALLOWED_SSH_CIDRS:
+        required: true
 
   workflow_dispatch:
     inputs:

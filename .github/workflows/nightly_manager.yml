@@ -148,6 +148,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      ALLOWED_SSH_CIDRS: ${{ secrets.ALLOWED_SSH_CIDRS }}
 
   dev_dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@dev
@@ -160,6 +161,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
+      ALLOWED_SSH_CIDRS: ${{ secrets.ALLOWED_SSH_CIDRS }}
 
   master_sonar_upgrade:
     uses: imperva/dsfkit/.github/workflows/sonar_upgrade.yml@master
