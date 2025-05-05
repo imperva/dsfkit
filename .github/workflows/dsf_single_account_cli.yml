@@ -10,6 +10,25 @@ on:
         required: true
         type: string
 
+    # defining secrets here is required since this yml is referenced by nightly_manager.yml
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID_STAGE:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STAGE:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      JUMP_SERVER_KEY:
+        required: true
+      DAM_LICENSE:
+        required: true
+      DEPLOYMENT_TAGS :
+        required: true
+
   workflow_dispatch:
     inputs:
       branch:

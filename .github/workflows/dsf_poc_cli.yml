@@ -18,6 +18,21 @@ on:
         default: 'latest'
         required: false
 
+    # defining secrets here is required since this yml is referenced by nightly_manager.yml
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
+      DAM_LICENSE:
+        required: true
+      ALLOWED_SSH_CIDRS:
+        required: true
+      DEPLOYMENT_TAGS:
+        required: true
+
   workflow_dispatch:
     inputs:
       use_modules_from_terraform_registry:
