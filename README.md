@@ -114,7 +114,7 @@ This guide references the following information and links, some of which are ava
 
    <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/393216754.html">DAM v14.17</a>
 
-   <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/290722037.html">DRA v4.17</a>
+   <a href="https://docs.imperva.com/bundle/z-kb-articles-knowledgebase-dt/page/389415621.html">DRA v4.18</a>
    </td>
    <td>DSF Components Overview
    </td>
@@ -576,6 +576,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Improvements and bug fixes
     </td>
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.29
+    </td>
+    <td>
+      Added support for DRA version 4.18.0.10
+    </td>
+  </tr>
   
 </table>
 
@@ -778,7 +787,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 and up</td>
+    <td>DRA</td><td>4.18.0.10</td><td>4.11.0.10 and up</td>
   </tr>
 </table>
 
