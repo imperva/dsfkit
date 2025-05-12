@@ -238,15 +238,15 @@ resource "null_resource" "force_gw_replication" {
     #!/bin/bash
     set -x -e
 
-    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}'
+    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${local_sensitive_file.ssh_key.filename} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}'
 
     # wait for existing replication to finish
-    while [[ "$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup is-repl-running')" != *"No replication cycle is currently running"* ]]; do
+    while [[ "$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${local_sensitive_file.ssh_key.filename} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup is-repl-running')" != *"No replication cycle is currently running"* ]]; do
         sleep 10
     done
 
     # force replication to make sure we are up to date
-    ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication'
+    ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${local_sensitive_file.ssh_key.filename} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication'
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
