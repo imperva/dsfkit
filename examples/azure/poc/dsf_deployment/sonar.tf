@@ -289,9 +289,9 @@ module "hub_dr_federation" {
   source  = "imperva/dsf-federation/null"
   version = "1.7.28" # latest release tag
 
-  for_each = {
+  for_each = var.hub_hadr ? {
     for idx, val in concat(module.agentless_gw_main, module.agentless_gw_dr) : idx => val
-  }
+  } : {}
 
   hub_info = {
     hub_ip_address            = module.hub_dr[0].public_ip
