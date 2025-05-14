@@ -176,7 +176,7 @@ variable "simulation_db_types_for_agent" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.17"
+  default     = "4.19"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
@@ -209,7 +209,7 @@ variable "agentless_gw_hadr" {
 
 variable "hub_instance_size" {
   type        = string
-  default     = "Standard_E4s_v5"
+  default     = "Standard_E8s_v5"
   description = "Instance size for the DSF Hub"
 }
 
