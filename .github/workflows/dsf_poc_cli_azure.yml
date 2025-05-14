@@ -188,8 +188,8 @@ jobs:
         PATH_TO_DRA_ANALYTICS_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Analytics.vhd"
         PATH_TO_DRA_ADMIN_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Admin.vhd"
         else
-        PATH_TO_DRA_ANALYTICS_VHD="DRA-4.18.0.10.0.12_31582_x86_64-Analytics.vhd"
-        PATH_TO_DRA_ADMIN_VHD="DRA-4.18.0.10.0.12_31582_x86_64-Admin.vhd"
+        PATH_TO_DRA_ANALYTICS_VHD="DRA-4.17.0.10.0.6_31077_x86_64-Analytics.vhd"
+        PATH_TO_DRA_ADMIN_VHD="DRA-4.17.0.10.0.6_31077_x86_64-Admin.vhd"
         fi
         
         if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && [ -n "${{ github.event.inputs.product_full_version }}" ]; then  
