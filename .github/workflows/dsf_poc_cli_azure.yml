@@ -185,11 +185,11 @@ jobs:
     - name: Set parameters in azure storage account
       run: |
         if [ "${{ github.event.inputs.deployment_type }}" == "dra" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && [ -n "${{ github.event.inputs.product_full_version }}" ]; then
-        PATH_TO_DRA_ADMIN_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Admin.vhd"
         PATH_TO_DRA_ANALYTICS_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Analytics.vhd"
+        PATH_TO_DRA_ADMIN_VHD="DRA-${{ github.event.inputs.product_full_version }}_x86_64-Admin.vhd"
         else
-        PATH_TO_DRA_ADMIN_VHD="DRA-4.19.0.10.0.105_32225_x86_64-Admin.vhd"
-        PATH_TO_DRA_ANALYTICS_VHD="DRA-4.19.0.10.0.105_32225_x86_64-Analytics.vhd"
+        PATH_TO_DRA_ANALYTICS_VHD="DRA-4.17.0.10.0.6_31077_x86_64-Analytics.vhd"
+        PATH_TO_DRA_ADMIN_VHD="DRA-4.17.0.10.0.6_31077_x86_64-Admin.vhd"
         fi
         
         if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && [ -n "${{ github.event.inputs.product_full_version }}" ]; then  
@@ -198,8 +198,8 @@ jobs:
         AZ_BLOB_SONAR="jsonar-4.17.0.10.0.tar.gz"
         fi
         
-        echo "PATH_TO_DRA_ADMIN_VHD=$PATH_TO_DRA_ADMIN_VHD" >> $GITHUB_ENV
         echo "PATH_TO_DRA_ANALYTICS_VHD=$PATH_TO_DRA_ANALYTICS_VHD" >> $GITHUB_ENV
+        echo "PATH_TO_DRA_ADMIN_VHD=$PATH_TO_DRA_ADMIN_VHD" >> $GITHUB_ENV
         echo "AZ_BLOB_SONAR=$AZ_BLOB_SONAR" >> $GITHUB_ENV
 
     - name: Create terraform.tfvars file
