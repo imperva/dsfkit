@@ -63,7 +63,7 @@ module "db_onboarding" {
   }
   tags = local.tags
   depends_on = [
-    module.federation,
+    module.hub_dr_federation,
     module.rds_mysql,
     module.rds_postgres,
     module.rds_mssql

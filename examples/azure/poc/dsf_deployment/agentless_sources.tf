@@ -38,7 +38,7 @@ module "db_onboarding" {
   }
   tags = local.tags
   depends_on = [
-    module.federation,
+    module.hub_dr_federation,
     module.mssql
   ]
 }
