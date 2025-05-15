@@ -9,7 +9,19 @@ on:
       explicit_ref:
         required: true
         type: string
-
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      AWS_ACCESS_KEY_ID_STAGE:
+        required: true
+      AWS_SECRET_ACCESS_KEY_STAGE:
+        required: true
+      ARM_CLIENT_SECRET:
+        required: true
+      DAM_LICENSE:
+        required: true
   workflow_dispatch:
     inputs:
       use_modules_from_terraform_registry:
