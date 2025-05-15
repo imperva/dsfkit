@@ -585,6 +585,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Added internal support for DRA versions 4.18 and 4.19. Set the variable ‘dra_version’ to 4.18 or 4.19 to use it.
     </td>
   </tr>
+  <tr>
+    <td>Coming soon
+    </td>
+    <td>?
+    </td>
+    <td>
+      Added support for Terraform version 1.12.x.
+    </td>
+  </tr>
   
 </table>
 
@@ -616,7 +625,7 @@ Before using DSF Kit to deploy DSF, it is necessary to satisfy a set of prerequi
 
 1. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Git](https://git-scm.com).
 2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
-3. Latest Supported Terraform Version: 1.7.x. Using a higher version may result in unexpected behavior or errors.
+3. Latest Supported Terraform Version: 1.12.x. Using a higher version may result in unexpected behavior or errors.
 4. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
 5. [curl](https://curl.se/) - Command-line tool for transferring data.
 
@@ -1229,7 +1238,7 @@ Before using DSF Kit to upgrade DSF Hubs and Agentless Gateways, it is necessary
 2. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Git](https://git-scm.com).
 3. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 4. Only if you chose the [CLI Upgrade Mode](#cli-upgrade-mode), install [Python 3](https://www.python.org).
-5. Latest Supported Terraform Version: 1.7.x. Using a higher version may result in unexpected behavior or errors.
+5. Latest Supported Terraform Version: 1.12.x. Using a higher version may result in unexpected behavior or errors.
 6. The upgrade requires permission and network access (SSH) from your computer or the installer machine (depending on your choice of upgrade mode) to the deployed environment on AWS.
 
 ### Additional Prerequisites
