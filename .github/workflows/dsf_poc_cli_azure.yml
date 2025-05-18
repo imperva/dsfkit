@@ -116,6 +116,9 @@ jobs:
             elif [[ "${{ github.event.inputs.deployment_type }}" == "sonar" ]]; then
               DEPLOYMENT_VERSION="sonar_version=${{ github.event.inputs.product_full_version }}"
             fi
+            elif [[ "${{ github.event.inputs.deployment_type }}" == "dra" ]]; then
+              DEPLOYMENT_VERSION="dra_version=${{ github.event.inputs.product_full_version }}"
+            fi
           fi
           echo "deployment_version=$DEPLOYMENT_VERSION" >> $GITHUB_OUTPUT
 

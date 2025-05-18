@@ -22,7 +22,6 @@ on:
         required: true
       DAM_LICENSE:
         required: true
-
   workflow_dispatch:
     inputs:
       use_modules_from_terraform_registry:
