@@ -314,3 +314,20 @@ module "hub_dr_federation" {
     module.gw_dr_federation
   ]
 }
+
+
+resource "null_resource" "sonar_setup_completed" {
+  depends_on = [
+    module.hub_main,
+    module.hub_dr,
+    module.hub_hadr,
+
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+    module.agentless_gw_hadr,
+
+    module.gw_main_federation,
+    module.hub_dr_federation,
+    module.gw_dr_federation,
+  ]
+}

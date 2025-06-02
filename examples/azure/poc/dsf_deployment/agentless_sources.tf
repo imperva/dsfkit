@@ -38,7 +38,6 @@ module "db_onboarding" {
   }
   tags = local.tags
   depends_on = [
-    module.hub_dr_federation,
-    module.mssql
+    null_resource.sonar_setup_completed,
   ]
 }
