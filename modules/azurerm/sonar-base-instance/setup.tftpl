@@ -38,8 +38,6 @@ function install_yum_dep_from_internet() {
     local package="$1"
     local package_name="$${2:-$1}"
 
-    cat /etc/yum.repos.d/rh-cloud-base.repo
-
     if ! yum list installed "$${package_name}"; then
         yum install "$${package}" -y \
           || yum install "$${package}" -y \
@@ -65,6 +63,16 @@ function install_azcli_from_internet() {
     fi
     dnf install azure-cli -y
     az login --identity --allow-no-subscriptions
+}
+
+function wait_for_systemd() {
+    for i in $(seq 1 10); do
+        is_running="$(systemctl is-system-running)"
+        if "${is_running}" == "running" || "${is_running}" == "degraded"; then
+            return 0
+        fi
+        sleep 10
+    done
 }
 
 function install_deps() {
@@ -300,6 +308,7 @@ if ! [[ $APPS_DIR =~ ^.*/jsonar/?$ ]]; then
 fi
 APPS_DIR="$APPS_DIR/apps"
 
+wait_for_systemd
 install_deps
 firewall_open_ports || true
 create_users_and_groups
