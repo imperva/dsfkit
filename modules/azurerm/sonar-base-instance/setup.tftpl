@@ -38,6 +38,8 @@ function install_yum_dep_from_internet() {
     local package="$1"
     local package_name="$${2:-$1}"
 
+    cat /etc/yum.repos.d/rh-cloud-base.repo
+
     if ! yum list installed "$${package_name}"; then
         yum install "$${package}" -y \
           || yum install "$${package}" -y \
