@@ -20,7 +20,7 @@ variable "tags" {
 
 variable "instance_type" {
   type        = string
-  default     = "m4.xlarge"
+  default     = "m5.xlarge"
   description = "EC2 instance type for the Admin Server"
 }
 

@@ -18,7 +18,7 @@ on:
         default: 'latest'
         required: false
 
-
+    # defining secrets here is required since this yml is referenced by nightly_manager.yml
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
