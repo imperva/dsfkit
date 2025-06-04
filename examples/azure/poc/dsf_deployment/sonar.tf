@@ -200,7 +200,7 @@ module "agentless_gw_hadr" {
 
 module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.28" # latest release tag
+  version = "1.7.29" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_main : idx => val
@@ -257,7 +257,7 @@ resource "null_resource" "force_gw_replication" {
 
 module "gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.28" # latest release tag
+  version = "1.7.29" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_dr : idx => val
@@ -287,7 +287,7 @@ module "gw_dr_federation" {
 
 module "hub_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.28" # latest release tag
+  version = "1.7.29" # latest release tag
 
   for_each = var.hub_hadr ? {
     for idx, val in concat(module.agentless_gw_main, module.agentless_gw_dr) : idx => val
