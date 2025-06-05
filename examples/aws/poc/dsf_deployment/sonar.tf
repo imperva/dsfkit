@@ -216,6 +216,9 @@ module "gw_main_federation" {
     proxy_ssh_user             = module.hub_main[0].ssh_user
   }
   depends_on = [
+    module.hub_main,
+    module.agentless_gw_main,
+
     module.hub_hadr,
     module.agentless_gw_hadr
   ]
@@ -243,6 +246,8 @@ resource "null_resource" "force_gw_replication" {
     interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
+    module.agentless_gw_dr,
+
     module.gw_main_federation,
   ]
 }
@@ -303,6 +308,27 @@ module "hub_dr_federation" {
     proxy_ssh_user             = module.hub_main[0].ssh_user
   }
   depends_on = [
+    module.hub_dr,
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+
     module.gw_dr_federation
+  ]
+}
+
+
+resource "null_resource" "sonar_setup_completed" {
+  depends_on = [
+    module.hub_main,
+    module.hub_dr,
+    module.hub_hadr,
+
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+    module.agentless_gw_hadr,
+
+    module.gw_main_federation,
+    module.hub_dr_federation,
+    module.gw_dr_federation,
   ]
 }
