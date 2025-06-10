@@ -121,6 +121,23 @@ output "dra" {
   } : null
 }
 
+output "ciphertrust" {
+  value = var.enable_ciphertrust ? {
+    ciphertrust_manager = [
+      for idx, val in module.ciphertrust_manager : {
+        private_ip       = try(val.private_ip, null)
+        private_dns      = try(val.private_dns, null)
+        public_ip        = try(val.public_ip, null)
+        public_dns       = try(val.public_dns, null)
+        public_url       = try(join("", ["https://", val.public_dns]), null)
+        private_url      = try(join("", ["https://", val.private_dns]), null)
+        display_name     = try(val.display_name, null)
+        ssh_command      = try("ssh -i ${local.private_key_file_path} ${val.ssh_user}@${val.public_dns}", null)
+      }
+    ]
+  } : null
+}
+
 output "audit_sources" {
   value = {
     agent_sources = [
@@ -163,5 +180,14 @@ output "web_console_dam" {
     private_url = join("", ["https://", module.mx[0].private_dns, ":8083/"])
     password    = nonsensitive(local.password)
     user        = module.mx[0].web_console_user
+  }, null)
+}
+
+output "web_console_ciphertrust" {
+  value = try({
+    public_url  = join("", ["https://", module.ciphertrust_manager[0].public_dns])
+    private_url = join("", ["https://", module.ciphertrust_manager[0].private_dns])
+    password    = nonsensitive(local.ciphertrust_password)
+    user        = local.ciphertrust_web_console_username
   }, null)
 }

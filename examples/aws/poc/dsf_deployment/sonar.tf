@@ -45,9 +45,23 @@ module "hub_main" {
     archiver_username = module.dra_analytics[0].archiver_user
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
+  cm_details = var.enable_ciphertrust ? {
+    name                     = "CipherTrust Manager"
+    is_load_balancer         = false
+    hostname                 = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
+    port                     = 443
+    ddc_enabled              = true
+    ddc_connection_hostname  = null
+    ddc_connection_port      = null
+    username                 = local.ciphertrust_web_console_username
+    password                 = local.ciphertrust_password
+    registration_method      = "password"
+    registration_token       = null
+  } : null
   tags = local.tags
   depends_on = [
-    module.vpc
+    module.vpc,
+    ciphertrust_trial_license.trial_license
   ]
 }
 
