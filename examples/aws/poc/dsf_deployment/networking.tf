@@ -8,6 +8,7 @@ locals {
   dra_admin_subnet_id       = var.subnet_ids != null ? var.subnet_ids.dra_admin_subnet_id : module.vpc[0].public_subnets[0]
   dra_analytics_subnet_id   = var.subnet_ids != null ? var.subnet_ids.dra_analytics_subnet_id : module.vpc[0].private_subnets[0]
   agent_gw_subnet_id        = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
+  ciphertrust_subnet_id     = var.subnet_ids != null ? var.subnet_ids.ciphertrust_subnet_id : module.vpc[0].public_subnets[0]
 }
 
 module "vpc" {
@@ -61,4 +62,8 @@ data "aws_subnet" "dra_admin" {
 
 data "aws_subnet" "dra_analytics" {
   id = local.dra_analytics_subnet_id
+}
+
+data "aws_subnet" "ciphertrust" {
+  id = local.ciphertrust_subnet_id
 }
