@@ -10,6 +10,10 @@ on:
         required: false
         type: string
         default: 'all'
+      product_version:
+        type: string
+        default: 'latest'
+        required: false
 
     # defining secrets here is required since this yml is referenced by nightly_manager.yml
     secrets:
@@ -29,6 +33,7 @@ on:
   workflow_dispatch:
     inputs:
       use_modules_from_terraform_registry:
+        description: 'Use modules from Terraform Registry'
         type: boolean
         required: false
       delay_destroy:
@@ -83,7 +88,6 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ (inputs.use_sonar_cloud && secrets.SONAR_AWS_SECRET_ACCESS_KEY) || secrets.AWS_ACCESS_KEY_ID }}
   AWS_REGION: eu-west-2
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
   WORKING_DIRECTORY: examples/aws/poc/dsf_deployment
   TERRAFORM_VERSION: "~1.7.0"
 
@@ -143,7 +147,7 @@ jobs:
 
       - name: Change the modules source to local
         if: ${{ inputs.use_modules_from_terraform_registry == false }}
-        run: find -type f -exec sed -i -f sed.expr {} \;
+        run: find -type f -exec sed -i -f "${GITHUB_WORKSPACE}/sed.expr" {} \;
 
       - name: Create terraform backend file
         run: |
