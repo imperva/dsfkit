@@ -214,7 +214,7 @@ variable "dam_agent_installation_location" {
 
 variable "sonar_version" {
   type        = string
-  default     = "4.17"
+  default     = "4.19"
   description = "The Sonar version to install. Supported versions are: 4.11 and up. Both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch."
   validation {
     condition     = !startswith(var.sonar_version, "4.9.") && !startswith(var.sonar_version, "4.10.")
@@ -234,19 +234,19 @@ variable "tarball_location" {
 
 variable "hub_hadr" {
   type        = bool
-  default     = true
+  default     = false
   description = "Provisions a High Availability and Disaster Recovery node for the DSF Hub"
 }
 
 variable "agentless_gw_hadr" {
   type        = bool
-  default     = true
+  default     = false
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
 variable "hub_instance_type" {
   type        = string
-  default     = "r6i.2xlarge"
+  default     = "r6i.4xlarge"
   description = "Ec2 instance type for the DSF Hub"
 }
 

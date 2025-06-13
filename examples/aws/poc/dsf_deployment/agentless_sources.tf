@@ -63,7 +63,8 @@ module "db_onboarding" {
   }
   tags = local.tags
   depends_on = [
-    module.federation,
+    null_resource.sonar_setup_completed,
+
     module.rds_mysql,
     module.rds_postgres,
     module.rds_mssql

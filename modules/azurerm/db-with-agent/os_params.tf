@@ -17,7 +17,7 @@ locals {
         sudo apt update -y
       EOF
       database_installation_commands = {
-        PostgreSql = <<-EOF
+        PostgreSql        = <<-EOF
           command -v psql || sudo apt install postgresql -y
           if ! sudo systemctl is-active --quiet postgresql; then
               sudo systemctl start postgresql.service
