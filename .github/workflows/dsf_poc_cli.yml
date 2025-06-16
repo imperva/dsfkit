@@ -85,7 +85,7 @@ env:
   TF_CLI_ARGS: "-no-color"
   TF_INPUT: 0
   AWS_ACCESS_KEY_ID: ${{ (inputs.use_sonar_cloud && secrets.SONAR_AWS_ACCESS_KEY_ID) || secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ (inputs.use_sonar_cloud && secrets.SONAR_AWS_SECRET_ACCESS_KEY) || secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ (inputs.use_sonar_cloud && secrets.SONAR_AWS_SECRET_ACCESS_KEY) || secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: eu-west-2
   DESTROY_DELAY_SECONDS: 1800
   WORKING_DIRECTORY: examples/aws/poc/dsf_deployment

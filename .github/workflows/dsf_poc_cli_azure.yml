@@ -277,7 +277,7 @@ jobs:
 
     - name: Terraform Output
       if: always()
-      run: terraform-json
+      run: terraform output -json
 
     - name: Collect Artifacts
       id: collect-artifacts
