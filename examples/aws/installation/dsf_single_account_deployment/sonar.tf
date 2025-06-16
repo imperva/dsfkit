@@ -243,27 +243,6 @@ module "agentless_gw_hadr" {
   ]
 }
 
-locals {
-  gws = merge(
-    { for idx, val in module.agentless_gw_main : "agentless-gw-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_main_private_key_file_path } },
-    { for idx, val in module.agentless_gw_dr : "agentless-gw-dr-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_dr_private_key_file_path } },
-  )
-  gws_set = values(local.gws)
-  hubs_set = concat(
-    var.enable_sonar ? [{ instance : module.hub_main[0], ip : local.hub_main_ip, private_key_file_path : local.hub_main_private_key_file_path }] : [],
-    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_dr[0], ip : local.hub_dr_ip, private_key_file_path : local.hub_dr_private_key_file_path }] : []
-  )
-  hubs_keys = compact([
-    var.enable_sonar ? "hub-main" : null,
-    var.enable_sonar && var.hub_hadr ? "hub-dr" : null,
-  ])
-
-  hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
-  hub_gw_combinations_keys   = [for v in setproduct(local.hubs_keys, keys(local.gws)) : "${v[0]}-${v[1]}"]
-
-  hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
-}
-
 module "gw_main_federation" {
   source = "imperva/dsf-federation/null"
   version = "1.7.29" # latest release tag
