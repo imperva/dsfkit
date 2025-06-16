@@ -252,8 +252,8 @@ module "gw_main_federation" {
   }
 
   hub_info = {
-    hub_ip_address            = module.hub_main[0].public_ip
-    hub_federation_ip_address = module.hub_main[0].public_ip
+    hub_ip_address            = local.hub_main_ip
+    hub_federation_ip_address = local.hub_main_ip
     hub_private_ssh_key_path  = local.hub_main_private_key_file_path
     hub_ssh_user              = module.hub_main[0].ssh_user
   }
@@ -322,8 +322,8 @@ module "gw_dr_federation" {
   }
 
   hub_info = {
-    hub_ip_address            = module.hub_main[0].public_ip
-    hub_federation_ip_address = module.hub_main[0].public_ip
+    hub_ip_address            = local.hub_main_ip
+    hub_federation_ip_address = local.hub_main_ip
     hub_private_ssh_key_path  = local.hub_main_private_key_file_path
     hub_ssh_user              = module.hub_main[0].ssh_user
   }
@@ -357,8 +357,8 @@ module "hub_dr_gw_main_federation" {
   } : {}
 
   hub_info = {
-    hub_ip_address            = module.hub_dr[0].public_ip
-    hub_federation_ip_address = module.hub_dr[0].public_ip
+    hub_ip_address            = local.hub_dr_ip
+    hub_federation_ip_address = local.hub_dr_ip
     hub_private_ssh_key_path  = local.hub_main_private_key_file_path
     hub_ssh_user              = module.hub_dr[0].ssh_user
   }
@@ -395,8 +395,8 @@ module "hub_dr_gw_dr_federation" {
   } : {}
 
   hub_info = {
-    hub_ip_address            = module.hub_dr[0].public_ip
-    hub_federation_ip_address = module.hub_dr[0].public_ip
+    hub_ip_address            = local.hub_dr_ip
+    hub_federation_ip_address = local.hub_dr_ip
     hub_private_ssh_key_path  = local.hub_main_private_key_file_path
     hub_ssh_user              = module.hub_dr[0].ssh_user
   }
