@@ -202,6 +202,10 @@ jobs:
           path_to_vhd          = "$PATH_TO_DRA_ANALYTICS_VHD"
         }
         EOF
+        
+        echo "enable_sonar=${{ matrix.enable_sonar }}" >> terraform.tfvars
+        echo "enable_dam=${{ matrix.enable_dam }}" >> terraform.tfvars
+        echo "enable_dra=${{ matrix.enable_dra }}" >> terraform.tfvars
 
         if [[ -n "${DEPLOYMENT_TAGS}" ]]; then
           echo "additional_tags=${DEPLOYMENT_TAGS}" >> terraform.tfvars
