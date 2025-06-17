@@ -66,9 +66,9 @@ function install_azcli_from_internet() {
 }
 
 function wait_for_systemd() {
-    for i in $(seq 1 10); do
+    for i in $(seq 1 30); do
         is_running="$(systemctl is-system-running; echo "")"
-        if "$is_running" == "running" || "$is_running" == "degraded"; then
+        if [[ "$is_running" == "running" || "$is_running" == "degraded" ]]; then
             return 0
         fi
         sleep 10
