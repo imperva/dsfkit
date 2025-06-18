@@ -131,7 +131,7 @@ module "hub_hadr" {
   } : null
   depends_on = [
     module.hub_main,
-    module.hub_dr
+    module.hub_dr,
   ]
 }
 
@@ -239,47 +239,29 @@ module "agentless_gw_hadr" {
   } : null
   depends_on = [
     module.agentless_gw_main,
-    module.agentless_gw_dr
+    module.agentless_gw_dr,
   ]
 }
 
-locals {
-  gws = merge(
-    { for idx, val in module.agentless_gw_main : "agentless-gw-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_main_private_key_file_path } },
-    { for idx, val in module.agentless_gw_dr : "agentless-gw-dr-${idx}" => { instance : val, private_key_file_path : local.agentless_gw_dr_private_key_file_path } },
-  )
-  gws_set = values(local.gws)
-  hubs_set = concat(
-    var.enable_sonar ? [{ instance : module.hub_main[0], ip : local.hub_main_ip, private_key_file_path : local.hub_main_private_key_file_path }] : [],
-    var.enable_sonar && var.hub_hadr ? [{ instance : module.hub_dr[0], ip : local.hub_dr_ip, private_key_file_path : local.hub_dr_private_key_file_path }] : []
-  )
-  hubs_keys = compact([
-    var.enable_sonar ? "hub-main" : null,
-    var.enable_sonar && var.hub_hadr ? "hub-dr" : null,
-  ])
+module "gw_main_federation" {
+  source = "imperva/dsf-federation/null"
+  version = "1.7.29" # latest release tag
 
-  hub_gw_combinations_values = setproduct(local.hubs_set, local.gws_set)
-  hub_gw_combinations_keys   = [for v in setproduct(local.hubs_keys, keys(local.gws)) : "${v[0]}-${v[1]}"]
-
-  hub_gw_combinations = zipmap(local.hub_gw_combinations_keys, local.hub_gw_combinations_values)
-}
-
-module "federation" {
-  source   = "imperva/dsf-federation/null"
-  version  = "1.7.29" # latest release tag
-  for_each = local.hub_gw_combinations
+  for_each = {
+    for idx, val in module.agentless_gw_main : idx => val
+  }
 
   hub_info = {
-    hub_ip_address            = each.value[0].ip
-    hub_federation_ip_address = each.value[0].ip
-    hub_private_ssh_key_path  = each.value[0].private_key_file_path
-    hub_ssh_user              = each.value[0].instance.ssh_user
+    hub_ip_address            = local.hub_main_ip
+    hub_federation_ip_address = local.hub_main_ip
+    hub_private_ssh_key_path  = local.hub_main_private_key_file_path
+    hub_ssh_user              = module.hub_main[0].ssh_user
   }
   gw_info = {
-    gw_ip_address            = each.value[1].instance.private_ip
-    gw_federation_ip_address = each.value[1].instance.private_ip
-    gw_private_ssh_key_path  = each.value[1].private_key_file_path
-    gw_ssh_user              = each.value[1].instance.ssh_user
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = local.agentless_gw_main_private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
   }
   hub_proxy_info = var.proxy_address != null ? {
     proxy_address              = var.proxy_address
@@ -292,7 +274,170 @@ module "federation" {
     proxy_ssh_user             = var.proxy_ssh_user
   } : null
   depends_on = [
+    module.hub_main,
+    module.agentless_gw_main,
+
     module.hub_hadr,
     module.agentless_gw_hadr
+  ]
+}
+
+resource "null_resource" "force_gw_replication" {
+  # for_each = module.agentless_gw_dr
+  for_each = {for idx, val in module.agentless_gw_dr : idx => val}
+
+  provisioner "local-exec" {
+    command = <<-EOT
+    #!/bin/bash
+    set -x -e
+
+    PROXY_CMD=""
+    if [ -n "${coalesce(var.proxy_address, "")}" ]; then
+        PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${var.proxy_ssh_key_path} -W %h:%p ${var.proxy_ssh_user}@${var.proxy_address}'
+    fi
+
+    # wait for existing replication to finish
+    while [[ "$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${local.agentless_gw_dr_private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup is-repl-running')" != *"No replication cycle is currently running"* ]]; do
+        sleep 10
+    done
+
+    # force replication to make sure we are up to date
+    ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${local.agentless_gw_dr_private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication'
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    module.agentless_gw_dr,
+
+    module.gw_main_federation,
+  ]
+}
+
+module "gw_dr_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.29" # latest release tag
+
+  for_each = {
+    for idx, val in module.agentless_gw_dr : idx => val
+  }
+
+  hub_info = {
+    hub_ip_address            = local.hub_main_ip
+    hub_federation_ip_address = local.hub_main_ip
+    hub_private_ssh_key_path  = local.hub_main_private_key_file_path
+    hub_ssh_user              = module.hub_main[0].ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = local.agentless_gw_dr_private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
+  }
+  hub_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  gw_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  depends_on = [
+    null_resource.force_gw_replication,
+  ]
+}
+
+module "hub_dr_gw_main_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.29" # latest release tag
+
+  for_each = var.hub_hadr ? {
+    for idx, val in module.agentless_gw_main : idx => val
+  } : {}
+
+  hub_info = {
+    hub_ip_address            = local.hub_dr_ip
+    hub_federation_ip_address = local.hub_dr_ip
+    hub_private_ssh_key_path  = local.hub_dr_private_key_file_path
+    hub_ssh_user              = module.hub_dr[0].ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = local.agentless_gw_main_private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
+  }
+  hub_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  gw_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  depends_on = [
+    module.hub_dr,
+    module.agentless_gw_main,
+
+    module.gw_dr_federation
+  ]
+}
+
+module "hub_dr_gw_dr_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.29" # latest release tag
+
+  for_each = var.hub_hadr ? {
+    for idx, val in module.agentless_gw_dr : idx => val
+  } : {}
+
+  hub_info = {
+    hub_ip_address            = local.hub_dr_ip
+    hub_federation_ip_address = local.hub_dr_ip
+    hub_private_ssh_key_path  = local.hub_dr_private_key_file_path
+    hub_ssh_user              = module.hub_dr[0].ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = local.agentless_gw_dr_private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
+  }
+  hub_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  gw_proxy_info = var.proxy_address != null ? {
+    proxy_address              = var.proxy_address
+    proxy_private_ssh_key_path = var.proxy_ssh_key_path
+    proxy_ssh_user             = var.proxy_ssh_user
+  } : null
+  depends_on = [
+    module.hub_dr,
+    module.agentless_gw_dr,
+
+    module.gw_dr_federation
+  ]
+}
+
+
+resource "null_resource" "sonar_setup_completed" {
+  depends_on = [
+    module.hub_main,
+    module.hub_dr,
+    module.hub_hadr,
+
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+    module.agentless_gw_hadr,
+
+    module.gw_main_federation,
+    module.gw_dr_federation,
+    module.hub_dr_gw_main_federation,
+    module.hub_dr_gw_dr_federation,
   ]
 }
