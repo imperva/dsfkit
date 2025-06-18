@@ -247,6 +247,10 @@ jobs:
         if: always()
         run: terraform output -json
 
+      - name: Terraform State
+        if: always()
+        run: terraform show -json
+
       - name: Collect Artifacts
         id: collect-artifacts
         if: always()
