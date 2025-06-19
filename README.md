@@ -585,6 +585,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       Added internal support for DRA versions 4.18 and 4.19. Set the variable ‘dra_version’ to 4.18 or 4.19 to use it.
     </td>
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.30
+    </td>
+    <td>
+      Added internal support for DRA version 15.0. Set the variable ‘dra_version’ to 15.0 to use it.
+    </td>
+  </tr>
   
 </table>
 
@@ -787,7 +796,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 4.19.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.0.0.10</td>
   </tr>
 </table>
 
