@@ -16,6 +16,7 @@ module "hub_main" {
   resource_group              = local.resource_group
   subnet_id                   = module.network[0].vnet_subnets[0]
   binaries_location           = var.tarball_location
+  tarball_url                 = var.tarball_url
   password                    = local.password
   storage_details             = var.hub_storage_details
   instance_size               = var.hub_instance_size
@@ -62,6 +63,7 @@ module "hub_dr" {
   resource_group               = local.resource_group
   subnet_id                    = module.network[0].vnet_subnets[1]
   binaries_location            = var.tarball_location
+  tarball_url                  = var.tarball_url
   password                     = local.password
   storage_details              = var.hub_storage_details
   instance_size                = var.hub_instance_size
@@ -116,6 +118,7 @@ module "agentless_gw_main" {
   subnet_id             = module.network[0].vnet_subnets[0]
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = var.tarball_location
+  tarball_url           = var.tarball_url
   instance_size         = var.agentless_gw_instance_size
   base_directory        = var.sonar_machine_base_directory
   password              = local.password
@@ -149,6 +152,7 @@ module "agentless_gw_dr" {
   subnet_id                    = module.network[0].vnet_subnets[1]
   storage_details              = var.agentless_gw_storage_details
   binaries_location            = var.tarball_location
+  tarball_url                  = var.tarball_url
   instance_size                = var.agentless_gw_instance_size
   base_directory               = var.sonar_machine_base_directory
   password                     = local.password
