@@ -7,7 +7,7 @@ locals {
   agentless_gw_subnet_id = coalesce(try(var.subnet_ids.agentless_gw_subnet_id, null), var.subnet_id, module.network[0].vnet_subnets[0])
   agentless_gw_dr_subnet_id = coalesce(try(var.subnet_ids.agentless_gw_dr_subnet_id, null), var.subnet_id, module.network[0].vnet_subnets[1])
 
-  db_subnet_ids = coalescelist(try(var.subnet_ids.db_subnet_ids, null), compact([var.subnet_id]), module.network[0].vnet_subnets)
+  db_subnet_ids = coalescelist(try(var.subnet_ids.db_subnet_ids, []), compact([var.subnet_id]), module.network[0].vnet_subnets)
 
   mx_subnet_id = coalesce(try(var.subnet_ids.mx_subnet_id, null), var.subnet_id, module.network[0].vnet_subnets[0])
   agent_gw_subnet_id = coalesce(try(var.subnet_ids.agent_gw_subnet_id, null), var.subnet_id, module.network[0].vnet_subnets[0])
