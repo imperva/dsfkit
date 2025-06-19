@@ -14,7 +14,7 @@ module "hub_main" {
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub"])
   resource_group              = local.resource_group
-  subnet_id                   = module.network[0].vnet_subnets[0]
+  subnet_id                   = local.hub_subnet_id
   binaries_location           = var.tarball_location
   tarball_url                 = var.tarball_url
   password                    = local.password
@@ -61,7 +61,7 @@ module "hub_dr" {
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   resource_group               = local.resource_group
-  subnet_id                    = module.network[0].vnet_subnets[1]
+  subnet_id                    = local.hub_dr_subnet_id
   binaries_location            = var.tarball_location
   tarball_url                  = var.tarball_url
   password                     = local.password
@@ -115,7 +115,7 @@ module "agentless_gw_main" {
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index])
   resource_group        = local.resource_group
-  subnet_id             = module.network[0].vnet_subnets[0]
+  subnet_id             = local.agentless_gw_subnet_id
   storage_details       = var.agentless_gw_storage_details
   binaries_location     = var.tarball_location
   tarball_url           = var.tarball_url
@@ -149,7 +149,7 @@ module "agentless_gw_dr" {
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
   resource_group               = local.resource_group
-  subnet_id                    = module.network[0].vnet_subnets[1]
+  subnet_id                    = local.agentless_gw_dr_subnet_id
   storage_details              = var.agentless_gw_storage_details
   binaries_location            = var.tarball_location
   tarball_url                  = var.tarball_url

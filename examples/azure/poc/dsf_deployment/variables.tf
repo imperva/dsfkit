@@ -92,6 +92,12 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
+variable "subnet_id" {
+  type        = string
+  default     = null
+  description = "The ID of an existing subnet to put all resources in"
+}
+
 variable "subnet_ids" {
   type = object({
     hub_subnet_id             = string
@@ -99,6 +105,7 @@ variable "subnet_ids" {
     agentless_gw_subnet_id    = string
     agentless_gw_dr_subnet_id = string
     mx_subnet_id              = string
+    db_subnet_ids             = list(string)
     agent_gw_subnet_id        = string
     dra_admin_subnet_id       = string
     dra_analytics_subnet_id   = string

@@ -12,7 +12,7 @@ module "mx" {
   friendly_name  = join("-", [local.deployment_name_salted, "mx"])
   resource_group = local.resource_group
   dam_version    = var.dam_version
-  subnet_id      = module.network[0].vnet_subnets[0]
+  subnet_id      = local.mx_subnet_id
   license        = var.dam_license
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
@@ -47,7 +47,7 @@ module "agent_gw" {
   friendly_name  = join("-", [local.deployment_name_salted, "agent", "gw", count.index])
   resource_group = local.resource_group
   dam_version    = var.dam_version
-  subnet_id      = module.network[0].vnet_subnets[0]
+  subnet_id      = local.agent_gw_subnet_id
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename

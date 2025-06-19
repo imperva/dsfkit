@@ -16,7 +16,7 @@ module "dra_admin" {
   count   = var.enable_dra ? 1 : 0
 
   name                        = join("-", [local.deployment_name_salted, "dra", "admin"])
-  subnet_id                   = module.network[0].vnet_subnets[0]
+  subnet_id                   = local.dra_admin_subnet_id
   resource_group              = local.resource_group
   storage_details             = var.dra_admin_storage_details
   ssh_public_key              = tls_private_key.ssh_key.public_key_openssh
@@ -54,7 +54,7 @@ module "dra_analytics" {
   count   = local.dra_analytics_count
 
   name                        = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
-  subnet_id                   = module.network[0].vnet_subnets[1]
+  subnet_id                   = local.dra_analytics_subnet_id
   resource_group              = local.resource_group
   storage_details             = var.dra_analytics_storage_details
   ssh_public_key              = tls_private_key.ssh_key.public_key_openssh
