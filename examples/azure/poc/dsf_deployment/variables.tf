@@ -95,7 +95,7 @@ variable "vnet_ip_range" {
 variable "subnet_id" {
   type        = string
   default     = null
-  description = "The ID of an existing subnet to put all resources in"
+  description = "The ID of an existing subnet to put all resources in. Either 'subnet_id' or 'subnet_ids' should be provided but not both."
 }
 
 variable "subnet_ids" {
@@ -111,7 +111,7 @@ variable "subnet_ids" {
     dra_analytics_subnet_id   = string
   })
   default     = null
-  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets, or if you are providing the subnet_id variable. db_subnet_ids can be an empty list only if no databases should be provisioned."
   validation {
     condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null, false)
     error_message = "Value must either be null or specified for all."
