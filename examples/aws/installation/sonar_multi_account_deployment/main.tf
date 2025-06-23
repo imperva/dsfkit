@@ -419,9 +419,9 @@ module "hub_dr_gw_main_federation" {
   source  = "imperva/dsf-federation/null"
   version = "1.7.30" # latest release tag
 
-  for_each = var.hub_hadr ? {
+  for_each = {
     for idx, val in module.agentless_gw_main : idx => val
-  } : {}
+  }
 
   hub_info = {
     hub_ip_address            = module.hub_dr.private_ip
@@ -457,9 +457,9 @@ module "hub_dr_gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
   version = "1.7.30" # latest release tag
 
-  for_each = var.hub_hadr ? {
+  for_each = {
     for idx, val in module.agentless_gw_dr : idx => val
-  } : {}
+  }
 
   hub_info = {
     hub_ip_address            = module.hub_dr.private_ip
