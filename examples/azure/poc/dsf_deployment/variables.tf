@@ -92,6 +92,12 @@ variable "vnet_ip_range" {
   description = "Vnet ip range"
 }
 
+variable "subnet_id" {
+  type        = string
+  default     = null
+  description = "The ID of an existing subnet to put all resources in. Either 'subnet_id' or 'subnet_ids' should be provided but not both."
+}
+
 variable "subnet_ids" {
   type = object({
     hub_subnet_id             = string
@@ -99,12 +105,13 @@ variable "subnet_ids" {
     agentless_gw_subnet_id    = string
     agentless_gw_dr_subnet_id = string
     mx_subnet_id              = string
+    db_subnet_ids             = list(string)
     agent_gw_subnet_id        = string
     dra_admin_subnet_id       = string
     dra_analytics_subnet_id   = string
   })
   default     = null
-  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
+  description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets, or if you are providing the subnet_id variable. db_subnet_ids can be an empty list only if no databases should be provisioned."
   validation {
     condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null, false)
     error_message = "Value must either be null or specified for all."
@@ -192,7 +199,18 @@ variable "tarball_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF Sonar installation software. az_blob is the full path to the tarball file within the storage account container"
-  default     = null
+  default     = {
+    az_resource_group  = ""
+    az_storage_account = ""
+    az_container       = ""
+    az_blob            = ""
+  }
+}
+
+variable "tarball_url" {
+  type        = string
+  default     = ""
+  description = "HTTPS DSF installation location. If not set, binaries_location is used"
 }
 
 variable "hub_hadr" {
