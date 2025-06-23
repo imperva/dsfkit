@@ -1,0 +1,55 @@
+#!/bin/bash
+# set -x
+set -e
+
+if ! command -v jq; then
+  echo "jq utility is required to run this module. Refer to jq installation steps in your workstation platform."
+  exit 1
+fi
+
+TOKEN=""
+
+# Step 1: Get an auth token
+response=$(curl -k -s -w "\n%%{http_code}" -X POST "https://${cm_node_address}/api/v1/auth/tokens" \
+  --header "Content-Type: application/json" \
+  --data '{
+      "grant_type": "password",
+      "labels": [
+          "terraform"
+      ],
+      "username": "'$CM_USER'",
+      "password": "'$CM_PASSWORD'",
+      "refresh_token_lifetime": 1
+  }')
+
+BODY=$(echo "$response" | sed '$d')
+STATUS=$(echo "$response" | tail -n1)
+
+if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 300 ]; then
+  echo "Failed to retrieve token. HTTP $STATUS"
+  echo "$BODY"
+  exit 1
+fi
+
+TOKEN=$(echo "$BODY" | jq -r '.jwt')
+
+if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+  echo "Failed to extract token"
+  exit 1
+fi
+
+# Step 2: Activate the DDC active node
+echo "Activating DDC active node..."
+response=$(curl -k -s -w "\n%%{http_code}" -X POST "https://${cm_node_address}/api/v1/ddc/active-node/register" \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/json")
+
+BODY=$(echo "$response" | sed '$d')
+STATUS=$(echo "$response" | tail -n1)
+
+if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
+  echo "CipherTrust DDC active node setup completed successfully."
+else
+  echo "Failed to activate DDC active node. Status: $STATUS, Response: $BODY"
+  exit 1
+fi

@@ -10,8 +10,5 @@ terraform {
       source  = "ThalesGroup/ciphertrust"
       version = "~> 0.11.1"
     }
-    local = {
-      version = "~> 2.1"
-    }
   }
 }
