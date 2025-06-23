@@ -586,7 +586,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     </td>
   </tr>
   <tr>
-    <td>TBD
+    <td>23 June 2025
     </td>
     <td>1.7.30
     </td>
