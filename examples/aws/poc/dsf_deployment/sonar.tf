@@ -10,7 +10,7 @@ locals {
 
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
@@ -53,7 +53,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -86,7 +86,7 @@ module "hub_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version       = module.globals.tarball_location.version
@@ -104,7 +104,7 @@ module "hub_hadr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
@@ -135,7 +135,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
@@ -169,7 +169,7 @@ module "agentless_gw_dr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = length(module.agentless_gw_dr)
 
   sonar_version       = module.globals.tarball_location.version
@@ -192,7 +192,7 @@ module "agentless_gw_hadr" {
 
 module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_main : idx => val
@@ -226,10 +226,10 @@ module "gw_main_federation" {
 
 resource "null_resource" "force_gw_replication" {
   # for_each = module.agentless_gw_dr
-  for_each = {for idx, val in module.agentless_gw_dr : idx => val}
+  for_each = { for idx, val in module.agentless_gw_dr : idx => val }
 
   provisioner "local-exec" {
-    command = <<-EOT
+    command     = <<-EOT
     #!/bin/bash
     set -x -e
 
@@ -254,7 +254,7 @@ resource "null_resource" "force_gw_replication" {
 
 module "gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_dr : idx => val
@@ -284,7 +284,7 @@ module "gw_dr_federation" {
 
 module "hub_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   for_each = var.hub_hadr ? {
     for idx, val in concat(module.agentless_gw_main, module.agentless_gw_dr) : idx => val
