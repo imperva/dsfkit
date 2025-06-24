@@ -11,12 +11,12 @@ module "db_with_agent" {
   resource_group    = local.resource_group
   binaries_location = var.dam_agent_installation_location
   db_type           = local.db_types_for_agent[count.index]
-  subnet_id         = local.db_subnet_ids[count.index % length(local.db_subnet_ids)]
+  subnet_id         = local.db_subnet_id
   ssh_key = {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  allowed_ssh_cidrs = concat([format("%s/32", module.mx[0].private_ip)], module.network[0].vnet_address_space)
+  allowed_ssh_cidrs = concat([format("%s/32", module.mx[0].private_ip)], local.all_subnet_address_spaces)
 
   registration_params = {
     agent_gateway_host = module.agent_gw[0].private_ip

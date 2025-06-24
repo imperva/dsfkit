@@ -105,7 +105,7 @@ variable "subnet_ids" {
     agentless_gw_subnet_id    = string
     agentless_gw_dr_subnet_id = string
     mx_subnet_id              = string
-    db_subnet_ids             = list(string)
+    db_subnet_id              = string
     agent_gw_subnet_id        = string
     dra_admin_subnet_id       = string
     dra_analytics_subnet_id   = string
