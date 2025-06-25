@@ -16,7 +16,7 @@ module "db_with_agent" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  allowed_ssh_cidrs = concat([format("%s/32", module.mx[0].private_ip)], local.all_subnet_address_spaces)
+  allowed_ssh_cidrs = concat([format("%s/32", module.mx[0].private_ip)], local.subnet_address_spaces)
 
   registration_params = {
     agent_gateway_host = module.agent_gw[0].private_ip
