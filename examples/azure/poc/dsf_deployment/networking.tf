@@ -20,7 +20,7 @@ locals {
   _subnet_address_spaces = var.subnet_id == null ? module.network[0].vnet_address_space : data.azurerm_subnet.provided_subnet[0].address_prefixes
   # we can't currently use ipv6 IPs
   subnet_address_spaces = [
-    for cidr in local._all_subnet_address_spaces: cidr
+    for cidr in local._subnet_address_spaces: cidr
     if can(regex(local.ipv4_regex, cidr))
   ]
 }
