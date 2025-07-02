@@ -234,19 +234,19 @@ variable "tarball_location" {
 
 variable "hub_hadr" {
   type        = bool
-  default     = true
+  default     = false
   description = "Provisions a High Availability and Disaster Recovery node for the DSF Hub"
 }
 
 variable "agentless_gw_hadr" {
   type        = bool
-  default     = true
+  default     = false
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
 variable "hub_instance_type" {
   type        = string
-  default     = "r6i.2xlarge"
+  default     = "r6i.4xlarge"
   description = "Ec2 instance type for the DSF Hub"
 }
 

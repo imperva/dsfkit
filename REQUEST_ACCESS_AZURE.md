@@ -12,7 +12,7 @@ Following your request, you are automatically granted access after a period of t
 
 **Clarification**: After the DSF installation files are copied, configure the relevant terraform variables and run DSF Kit.
 
-1. [DSF Kit - Copy DSF installation to Azure storage account](https://forms.office.com/r/xVgzA9d5nz) (Microsoft Form)
+1. [DSF Kit - Copy DSF installation to Azure storage account](https://forms.office.com/e/x7BbjawLtf) (Microsoft Form)
    1. **Open only to Imperva employees**
    2. Includes:
       1. DSF Hub and Agentless Gateway (formerly Sonar)

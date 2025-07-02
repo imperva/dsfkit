@@ -65,6 +65,16 @@ function install_azcli_from_internet() {
     az login --identity --allow-no-subscriptions
 }
 
+function wait_for_systemd() {
+    for i in $(seq 1 10); do
+        is_running="$(systemctl is-system-running; echo "")"
+        if "$is_running" == "running" || "$is_running" == "degraded"; then
+            return 0
+        fi
+        sleep 10
+    done
+}
+
 function install_deps() {
     install_yum_dep_from_internet unzip
     install_yum_dep_from_internet lvm2
@@ -298,6 +308,7 @@ if ! [[ $APPS_DIR =~ ^.*/jsonar/?$ ]]; then
 fi
 APPS_DIR="$APPS_DIR/apps"
 
+wait_for_systemd
 install_deps
 firewall_open_ports || true
 create_users_and_groups
@@ -307,6 +318,7 @@ LAST_INSTALLATION_SOURCE=$DATA_DIR/last_install_source.txt
 
 if [ ! -f $LAST_INSTALLATION_SOURCE ] || [ "$(cat $LAST_INSTALLATION_SOURCE)" != "blob://${az_storage_account}/${az_container}/${az_blob}" ]; then
     install_tarball
+    sleep 120
     setup
     echo "blob://${az_storage_account}/${az_container}/${az_blob}" | sudo tee $LAST_INSTALLATION_SOURCE > /dev/null
 fi

@@ -11,13 +11,13 @@ provider "aws" {
 
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.7.29" # latest release tag
+  version       = "1.7.30" # latest release tag
   sonar_version = var.sonar_version
 }
 
 module "key_pair" {
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.29" # latest release tag
+  version              = "1.7.30" # latest release tag
   key_name_prefix      = "imperva-dsf-"
   private_key_filename = "ssh_keys/dsf_ssh_key-${terraform.workspace}"
   tags                 = local.tags
@@ -89,7 +89,7 @@ module "vpc" {
 ##############################
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
   instance_type               = var.hub_instance_type
@@ -117,7 +117,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   instance_type                = var.hub_instance_type
@@ -147,7 +147,7 @@ module "hub_dr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
@@ -178,7 +178,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.gw_count
 
   friendly_name                = join("-", [local.deployment_name_salted, "gw", count.index, "DR"])
@@ -212,7 +212,7 @@ module "agentless_gw_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
 
   sonar_version       = module.globals.tarball_location.version
   dsf_main_ip         = module.hub_main.public_ip
@@ -229,7 +229,7 @@ module "hub_hadr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = var.gw_count
 
   sonar_version       = module.globals.tarball_location.version
@@ -246,36 +246,29 @@ module "agentless_gw_hadr" {
   }
   depends_on = [
     module.agentless_gw_main,
-    module.agentless_gw_dr
+    module.agentless_gw_dr,
   ]
 }
 
-locals {
-  hub_gw_combinations = setproduct(
-    [module.hub_main, module.hub_dr],
-    concat(
-      [for idx, val in module.agentless_gw_main : val],
-      [for idx, val in module.agentless_gw_dr : val]
-    )
-  )
-}
-
-module "federation" {
+module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.29" # latest release tag
-  count   = length(local.hub_gw_combinations)
+  version = "1.7.30" # latest release tag
+
+  for_each = {
+    for idx, val in module.agentless_gw_main : idx => val
+  }
 
   hub_info = {
-    hub_ip_address            = local.hub_gw_combinations[count.index][0].public_ip
-    hub_federation_ip_address = local.hub_gw_combinations[count.index][0].public_ip
+    hub_ip_address            = module.hub_main.public_ip
+    hub_federation_ip_address = module.hub_main.public_ip
     hub_private_ssh_key_path  = module.key_pair.private_key_file_path
-    hub_ssh_user              = local.hub_gw_combinations[count.index][0].ssh_user
+    hub_ssh_user              = module.hub_main.ssh_user
   }
   gw_info = {
-    gw_ip_address            = local.hub_gw_combinations[count.index][1].private_ip
-    gw_federation_ip_address = local.hub_gw_combinations[count.index][1].private_ip
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
     gw_private_ssh_key_path  = module.key_pair.private_key_file_path
-    gw_ssh_user              = local.hub_gw_combinations[count.index][1].ssh_user
+    gw_ssh_user              = each.value.ssh_user
   }
   gw_proxy_info = {
     proxy_address              = module.hub_main.public_ip
@@ -283,15 +276,129 @@ module "federation" {
     proxy_ssh_user             = module.hub_main.ssh_user
   }
   depends_on = [
+    module.hub_main,
+    module.agentless_gw_main,
+
     module.hub_hadr,
     module.agentless_gw_hadr
   ]
 }
 
+resource "null_resource" "force_gw_replication" {
+  # for_each = module.agentless_gw_dr
+  for_each = { for idx, val in module.agentless_gw_dr : idx => val }
+
+  provisioner "local-exec" {
+    command     = <<-EOT
+    #!/bin/bash
+    set -x -e
+
+    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}'
+
+    # wait for existing replication to finish
+    while [[ "$(ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup is-repl-running')" != *"No replication cycle is currently running"* ]]; do
+        sleep 10
+    done
+
+    # force replication to make sure we are up to date
+    ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="$PROXY_CMD" -i ${module.key_pair.private_key_file_path} ${each.value.ssh_user}@${each.value.private_ip} 'sudo $JSONAR_BASEDIR/bin/arbiter-setup run-replication'
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [
+    module.agentless_gw_dr,
+
+    module.gw_main_federation,
+  ]
+}
+
+module "gw_dr_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.30" # latest release tag
+
+  for_each = {
+    for idx, val in module.agentless_gw_dr : idx => val
+  }
+
+  hub_info = {
+    hub_ip_address            = module.hub_main.public_ip
+    hub_federation_ip_address = module.hub_main.public_ip
+    hub_private_ssh_key_path  = module.key_pair.private_key_file_path
+    hub_ssh_user              = module.hub_main.ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = module.key_pair.private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
+  }
+  gw_proxy_info = {
+    proxy_address              = module.hub_main.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_main.ssh_user
+  }
+  depends_on = [
+    null_resource.force_gw_replication,
+  ]
+}
+
+module "hub_dr_federation" {
+  source  = "imperva/dsf-federation/null"
+  version = "1.7.30" # latest release tag
+
+  for_each = {
+    for idx, val in concat(module.agentless_gw_main, module.agentless_gw_dr) : idx => val
+  }
+
+  hub_info = {
+    hub_ip_address            = module.hub_dr.public_ip
+    hub_federation_ip_address = module.hub_dr.public_ip
+    hub_private_ssh_key_path  = module.key_pair.private_key_file_path
+    hub_ssh_user              = module.hub_dr.ssh_user
+  }
+  gw_info = {
+    gw_ip_address            = each.value.private_ip
+    gw_federation_ip_address = each.value.private_ip
+    gw_private_ssh_key_path  = module.key_pair.private_key_file_path
+    gw_ssh_user              = each.value.ssh_user
+  }
+  gw_proxy_info = {
+    proxy_address              = module.hub_main.public_ip
+    proxy_private_ssh_key_path = module.key_pair.private_key_file_path
+    proxy_ssh_user             = module.hub_main.ssh_user
+  }
+  depends_on = [
+    module.hub_dr,
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+
+    module.gw_dr_federation,
+  ]
+}
+
+
+resource "null_resource" "sonar_setup_completed" {
+  depends_on = [
+    module.hub_main,
+    module.hub_dr,
+    module.hub_hadr,
+
+    module.agentless_gw_main,
+    module.agentless_gw_dr,
+    module.agentless_gw_hadr,
+
+    module.gw_main_federation,
+    module.hub_dr_federation,
+    module.gw_dr_federation,
+  ]
+}
+
+
 module "rds_mysql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mysql-db"
-  version = "1.7.29" # latest release tag
-  count   = contains(var.simulation_db_types_for_agentless, "RDS MySQL") ? 1 : 0
+  version = "1.7.30" # latest release tag
+
+  count = contains(var.simulation_db_types_for_agentless, "RDS MySQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
   security_group_ingress_cidrs = local.workstation_cidr
@@ -301,7 +408,7 @@ module "rds_mysql" {
 # create a RDS SQL Server DB
 module "rds_mssql" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-mssql-db"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = contains(var.simulation_db_types_for_agentless, "RDS MsSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -316,7 +423,7 @@ module "rds_mssql" {
 
 module "rds_postgres" {
   source  = "imperva/dsf-poc-db-onboarder/aws//modules/rds-postgres-db"
-  version = "1.7.29" # latest release tag
+  version = "1.7.30" # latest release tag
   count   = contains(var.simulation_db_types_for_agentless, "RDS PostgreSQL") ? 1 : 0
 
   rds_subnet_ids               = local.db_subnet_ids
@@ -326,7 +433,7 @@ module "rds_postgres" {
 
 module "db_onboarding" {
   source   = "imperva/dsf-poc-db-onboarder/aws"
-  version  = "1.7.29" # latest release tag
+  version  = "1.7.30" # latest release tag
   for_each = { for idx, val in concat(module.rds_mysql, module.rds_mssql, module.rds_postgres) : idx => val }
 
   usc_access_token = module.hub_main.access_tokens.usc.token
@@ -349,7 +456,8 @@ module "db_onboarding" {
   }
   tags = local.tags
   depends_on = [
-    module.federation,
+    null_resource.sonar_setup_completed,
+
     module.rds_mysql,
     module.rds_mssql
   ]
