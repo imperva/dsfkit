@@ -432,7 +432,7 @@ module "hub_dr_gw_main_federation" {
   gw_info = {
     gw_ip_address            = each.value.private_ip
     gw_federation_ip_address = each.value.private_ip
-    gw_private_ssh_key_path  = local.gw_dr_private_key_file_path
+    gw_private_ssh_key_path  = local.gw_main_private_key_file_path
     gw_ssh_user              = each.value.ssh_user
   }
   hub_proxy_info = var.proxy_address != null ? {
