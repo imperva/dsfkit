@@ -1,13 +1,14 @@
 locals {
   ciphertrust_manager_count = var.enable_ciphertrust ? var.ciphertrust_manager_count : 0
+  ciphertrust_cidr_list = [data.aws_subnet.ciphertrust_manager.cidr_block]
   ciphertrust_manager_web_console_username = "admin"
 }
 
 module "ciphertrust_manager" {
   # TODO sivan - change module name to ciphertrust manager
   source  = "../../../../modules/aws/ciphertrust_manager"
-#   source  = "imperva/dsf-ciphertrust-manager/aws"
-#   version = "1.7.17" # latest release tag
+  #   source  = "imperva/dsf-ciphertrust-manager/aws"
+  #   version = "1.7.17" # latest release tag
   count   = local.ciphertrust_manager_count
   ami_id  = var.ciphertrust_manager_ami_id
   friendly_name               = join("-", [local.deployment_name_salted, "ciphertrust", "manager", count.index])
@@ -18,7 +19,7 @@ module "ciphertrust_manager" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   allowed_cluster_nodes_cidrs       = [data.aws_subnet.ciphertrust_manager.cidr_block]
-  allowed_ddc_agents_cidrs          = []
+  allowed_ddc_agents_cidrs          = [data.aws_subnet.cte_ddc_agent.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
   tags = local.tags
   depends_on = [
@@ -27,7 +28,7 @@ module "ciphertrust_manager" {
 }
 
 provider "ciphertrust" {
-  address  =  var.enable_ciphertrust ? "https://${module.ciphertrust_manager[0].public_ip}" : null
+  address  =  local.ciphertrust_manager_count > 0 ? "https://${module.ciphertrust_manager[0].public_ip}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.ciphertrust_manager_password
   // destroy cluster can take almost a minute so give us a bit of a buffer
@@ -35,7 +36,7 @@ provider "ciphertrust" {
 }
 
 resource "ciphertrust_trial_license" "trial_license" {
-  count = var.enable_ciphertrust ? 1 : 0
+  count = local.ciphertrust_manager_count > 0 ? 1 : 0
   flag = "activate"
 }
 

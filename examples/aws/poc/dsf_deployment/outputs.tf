@@ -138,6 +138,44 @@ output "ciphertrust" {
   } : null
 }
 
+output "cte_ddc_agents" {
+  value = var.enable_ciphertrust ? {
+    cte_agents = [
+      for val in concat(local.linux_cte_only_instances, local.windows_cte_only_instances) :
+      {
+        private_ip    = module.cte_ddc_agents[val.id].private_ip
+        private_dns   = module.cte_ddc_agents[val.id].private_dns
+        public_ip     = module.cte_ddc_agents[val.id].public_ip
+        public_dns    = module.cte_ddc_agents[val.id].public_dns
+        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+      }
+    ]
+    ddc_agents = [
+      for val in concat(local.linux_ddc_only_instances, local.windows_ddc_only_instances) :
+      {
+        private_ip    = module.cte_ddc_agents[val.id].private_ip
+        private_dns   = module.cte_ddc_agents[val.id].private_dns
+        public_ip     = module.cte_ddc_agents[val.id].public_ip
+        public_dns    = module.cte_ddc_agents[val.id].public_dns
+        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+      }
+    ]
+    cte_ddc_windows_agents = [
+      for val in concat(local.linux_cte_ddc_instances, local.windows_cte_ddc_instances) :
+      {
+        private_ip    = module.cte_ddc_agents[val.id].private_ip
+        private_dns   = module.cte_ddc_agents[val.id].private_dns
+        public_ip     = module.cte_ddc_agents[val.id].public_ip
+        public_dns    = module.cte_ddc_agents[val.id].public_dns
+        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+      }
+    ]
+  } : null
+}
+
 output "audit_sources" {
   value = {
     agent_sources = [

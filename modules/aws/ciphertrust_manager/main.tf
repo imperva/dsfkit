@@ -42,6 +42,10 @@ resource "aws_instance" "cipthertrust_manager_instance" {
   }
   tags                        = merge(var.tags, { Name : var.friendly_name })
   volume_tags                 = merge(var.tags, { Name : var.friendly_name })
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
 
 resource "aws_network_interface" "eni" {

@@ -6,6 +6,7 @@ locals {
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
   hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
+  cte_agents_cidr_list   = var.enable_ciphertrust ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
 }
 
 module "hub_main" {
@@ -67,8 +68,9 @@ module "hub_main" {
 }
 
 module "hub_dr" {
-  source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  source = "../../../../modules/aws/hub"
+#   source  = "imperva/dsf-hub/aws"
+#   version = "1.7.29" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -118,8 +120,9 @@ module "hub_hadr" {
 }
 
 module "agentless_gw_main" {
-  source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  source = "../../../../modules/aws/agentless-gw"
+#   source  = "imperva/dsf-agentless-gw/aws"
+#   version = "1.7.29" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
@@ -135,6 +138,7 @@ module "agentless_gw_main" {
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_dr.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
+  allowed_cte_agents_cidrs   = local.cte_agents_cidr_list
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
@@ -149,8 +153,9 @@ module "agentless_gw_main" {
 }
 
 module "agentless_gw_dr" {
-  source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.29" # latest release tag
+  source = "../../../../modules/aws/agentless-gw"
+#   source  = "imperva/dsf-agentless-gw/aws"
+#   version = "1.7.29" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
@@ -169,6 +174,7 @@ module "agentless_gw_dr" {
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
+  allowed_cte_agents_cidrs   = local.cte_agents_cidr_list
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {

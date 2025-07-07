@@ -115,12 +115,13 @@ variable "subnet_ids" {
     dra_admin_subnet_id           = string
     dra_analytics_subnet_id       = string
     ciphertrust_manager_subnet_id = string
-    db_subnet_ids             = list(string)
+    cte_ddc_agent_subnet_id       = string
+    db_subnet_ids                 = list(string)
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null && var.subnet_ids.ciphertrust_manager_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null && var.subnet_ids.ciphertrust_manager_subnet_id != null && var.subnet_ids.cte_ddc_agent_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
   validation {
@@ -403,4 +404,64 @@ variable "ciphertrust_manager_ami_id" {
   type        = string
   description = "Ciphertrust Manager AMI id. If set to null, the latest AMI will be taken from AWS marketplace"
   default     = null
+}
+
+variable "cte_agent_linux_installation_file" {
+  type        = string
+  description = "Path to the CTE agent linux installation file"
+  default     = null
+}
+
+variable "ddc_agent_linux_installation_file" {
+  type        = string
+  description = "Path to the DDC agent linux installation file"
+  default     = null
+}
+
+variable "cte_agent_windows_installation_file" {
+  type        = string
+  description = "Path to the CTE agent windows installation file"
+  default     = null
+}
+
+variable "ddc_agent_windows_installation_file" {
+  type        = string
+  description = "Path to the DDC agent windows installation file"
+  default     = null
+}
+
+variable "cte_ddc_agents_linux_count" {
+  type        = number
+  default     = 1
+  description = "Number of CTE-DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_agents_linux_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "ddc_agents_linux_count" {
+  type        = number
+  default     = 0
+  description = "Number of DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_ddc_agents_windows_count" {
+  type        = number
+  default     = 1
+  description = "Number of CTE-DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_agents_windows_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "ddc_agents_windows_count" {
+  type        = number
+  default     = 0
+  description = "Number of DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
