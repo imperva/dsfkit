@@ -9,8 +9,9 @@ locals {
 }
 
 module "hub_main" {
-  source  = "imperva/dsf-hub/aws"
-  version = "1.7.29" # latest release tag
+  source  = "../../../../modules/aws/hub"
+#   source  = "imperva/dsf-hub/aws"
+#   version = "1.7.29" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
@@ -53,8 +54,8 @@ module "hub_main" {
     ddc_enabled              = true
     ddc_connection_hostname  = null
     ddc_connection_port      = null
-    username                 = local.ciphertrust_web_console_username
-    password                 = local.ciphertrust_password
+    username                 = local.ciphertrust_manager_web_console_username
+    password                 = local.ciphertrust_manager_password
     registration_method      = "password"
     registration_token       = null
   } : null

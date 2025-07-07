@@ -18,7 +18,7 @@ locals {
       cidrs           = concat(var.allowed_ssh_cidrs, var.allowed_all_cidrs)
     },
     {
-      name            = ["cluster", "nodes", "communication"]
+      name            = ["cluster", "nodes"]
       internet_access = false
       udp             = []
       tcp             = [5432]

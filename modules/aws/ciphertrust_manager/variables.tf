@@ -39,7 +39,7 @@ variable "security_group_ids" {
 
 variable "allowed_web_console_and_api_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing web console access"
+  description = "List of ingress CIDR patterns allowing web console and api access"
   validation {
     condition     = alltrue([for item in var.allowed_web_console_and_api_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
@@ -69,7 +69,7 @@ variable "allowed_cluster_nodes_cidrs" {
 
 variable "allowed_ddc_agents_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing DDC agents access"
+  description = "List of ingress CIDR patterns allowing DDC agents to access the CipherTrust Manager instance"
   validation {
     condition     = alltrue([for item in var.allowed_ddc_agents_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
@@ -79,7 +79,7 @@ variable "allowed_ddc_agents_cidrs" {
 
 variable "allowed_all_cidrs" {
   type        = list(string)
-  description = "List of ingress CIDR patterns allowing access to all relevant protocols (E.g vpc cidr range)"
+  description = "List of ingress CIDR patterns allowing all types of access: ssh, API, web console, etc."
   validation {
     condition     = alltrue([for item in var.allowed_all_cidrs : can(cidrnetmask(item))])
     error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"

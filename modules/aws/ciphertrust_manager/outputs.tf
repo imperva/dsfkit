@@ -19,11 +19,11 @@ output "private_dns" {
 }
 
 output "instance_id" {
-  value = aws_instance.dsf_base_instance.id
+  value = aws_instance.cipthertrust_manager_instance.id
 }
 
 output "display_name" {
-  value = aws_instance.dsf_base_instance.tags.Name
+  value = aws_instance.cipthertrust_manager_instance.tags.Name
 }
 
 output "ssh_user" {

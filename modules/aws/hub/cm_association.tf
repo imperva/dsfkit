@@ -25,7 +25,7 @@ locals {
     BODY=$(echo "$response" | sed '$d')
     STATUS=$(echo "$response" | tail -n1)
     if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
-      echo "CipherTrust Manager associated with the DSF Hub successfully."
+      echo "CipherTrust Manager successfully associated with the DSF Hub."
     else
       echo "Request failed with HTTP status $STATUS"
       echo "$BODY"
