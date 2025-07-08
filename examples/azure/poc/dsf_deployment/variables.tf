@@ -215,13 +215,13 @@ variable "tarball_url" {
 
 variable "hub_hadr" {
   type        = bool
-  default     = false
+  default     = true
   description = "Provisions a High Availability and Disaster Recovery node for the DSF Hub"
 }
 
 variable "agentless_gw_hadr" {
   type        = bool
-  default     = false
+  default     = true
   description = "Provisions a High Availability and Disaster Recovery node for the Agentless Gateway"
 }
 
