@@ -3,8 +3,8 @@ locals {
 
   hub_public_ip    = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
-  #  WA since the following doesn't work: hub_cidr_list = concat(module.network[0].vnet_address_space, compact([local.hub_public_ip, local.hub_dr_public_ip]))
-  hub_cidr_list = var.enable_sonar ? (var.hub_hadr ? concat(module.network[0].vnet_address_space, [local.hub_public_ip, local.hub_dr_public_ip]) : concat(module.network[0].vnet_address_space, [local.hub_public_ip])) : module.network[0].vnet_address_space
+  #  WA since the following doesn't work: hub_cidr_list = concat(local.subnet_address_spaces, compact([local.hub_public_ip, local.hub_dr_public_ip]))
+  hub_cidr_list = var.enable_sonar ? (var.hub_hadr ? concat(local.subnet_address_spaces, [local.hub_public_ip, local.hub_dr_public_ip]) : concat(local.subnet_address_spaces, [local.hub_public_ip])) : local.subnet_address_spaces
 }
 
 module "hub_main" {
@@ -29,8 +29,8 @@ module "hub_main" {
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = module.network[0].vnet_address_space
-  allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+  allowed_hub_cidrs                 = local.subnet_address_spaces
+  allowed_agentless_gw_cidrs        = local.subnet_address_spaces
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
@@ -79,8 +79,8 @@ module "hub_dr" {
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
   allowed_web_console_and_api_cidrs = var.web_console_cidr
-  allowed_hub_cidrs                 = module.network[0].vnet_address_space
-  allowed_agentless_gw_cidrs        = module.network[0].vnet_address_space
+  allowed_hub_cidrs                 = local.subnet_address_spaces
+  allowed_agentless_gw_cidrs        = local.subnet_address_spaces
   allowed_dra_admin_cidrs           = local.dra_admin_cidr_list
   allowed_all_cidrs                 = local.workstation_cidr
   allowed_ssh_cidrs                 = var.allowed_ssh_cidrs
@@ -127,8 +127,8 @@ module "agentless_gw_main" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
-  allowed_hub_cidrs          = module.network[0].vnet_address_space
+  allowed_agentless_gw_cidrs = local.subnet_address_spaces
+  allowed_hub_cidrs          = local.subnet_address_spaces
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
@@ -164,8 +164,8 @@ module "agentless_gw_dr" {
     ssh_public_key            = tls_private_key.ssh_key.public_key_openssh
     ssh_private_key_file_path = local_sensitive_file.ssh_key.filename
   }
-  allowed_agentless_gw_cidrs = module.network[0].vnet_address_space
-  allowed_hub_cidrs          = module.network[0].vnet_address_space
+  allowed_agentless_gw_cidrs = local.subnet_address_spaces
+  allowed_hub_cidrs          = local.subnet_address_spaces
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
