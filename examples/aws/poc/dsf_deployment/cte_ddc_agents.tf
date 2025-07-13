@@ -5,7 +5,6 @@ locals {
   cte_ddc_windows_count = local.ciphertrust_manager_count > 0 ? var.cte_ddc_agents_windows_count : 0
   cte_windows_count = local.ciphertrust_manager_count > 0 ? var.cte_agents_windows_count : 0
   ddc_windows_count = local.ciphertrust_manager_count > 0 ? var.ddc_agents_windows_count : 0
-  total_agents_count = local.cte_ddc_linux_count + local.cte_ddc_windows_count
 
   installation_map = {
     "Red Hat" = {
@@ -25,13 +24,13 @@ locals {
     install_cte       = true
     install_ddc       = true
   }]
-  linux_cte_only_instances = [for i in range(var.cte_agents_linux_count) : {
+  linux_cte_only_instances = [for i in range(local.cte_linux_count) : {
     id                = "cte-agent-linux-${i}"
     os_type           = "Red Hat"
     install_cte       = true
     install_ddc       = false
   }]
-  linux_ddc_only_instances = [for i in range(var.ddc_agents_linux_count) : {
+  linux_ddc_only_instances = [for i in range(local.ddc_linux_count) : {
     id                = "ddc-agent-linux-${i}"
     os_type           = "Red Hat"
     install_cte       = false
@@ -44,13 +43,13 @@ locals {
     install_cte       = true
     install_ddc       = true
   }]
-  windows_cte_only_instances = [for i in range(var.cte_agents_windows_count) : {
+  windows_cte_only_instances = [for i in range(local.cte_windows_count) : {
     id                = "cte-agent-windows-${i}"
     os_type           = "Windows"
     install_cte       = true
     install_ddc       = false
   }]
-  windows_ddc_only_instances = [for i in range(var.ddc_agents_windows_count) : {
+  windows_ddc_only_instances = [for i in range(local.ddc_windows_count) : {
     id                = "ddc-agent-windows-${i}"
     os_type           = "Windows"
     install_cte       = false
@@ -58,7 +57,7 @@ locals {
   }]
 
 
-  # Concatenate all ahent lists and convert to a map for for_each
+  # Concatenate all agent lists and convert to a map for for_each
   all_agent_instances_map = {
     for instance in concat(
       local.linux_cte_ddc_instances,

@@ -1,5 +1,5 @@
 locals {
-  ciphertrust_manager_count = var.enable_ciphertrust ? var.ciphertrust_manager_count : 0
+  ciphertrust_manager_count = local.enable_ciphertrust ? var.ciphertrust_manager_count : 0
   ciphertrust_cidr_list = [data.aws_subnet.ciphertrust_manager.cidr_block]
   ciphertrust_manager_web_console_username = "admin"
 }
@@ -10,7 +10,12 @@ module "ciphertrust_manager" {
   #   source  = "imperva/dsf-ciphertrust-manager/aws"
   #   version = "1.7.17" # latest release tag
   count   = local.ciphertrust_manager_count
-  ami_id  = var.ciphertrust_manager_ami_id
+  ami  = var.ciphertrust_manager_ami_id == null ? null : {
+    id               = var.ciphertrust_manager_ami_id
+    name_regex       = null
+    product_code     = null
+    owner_account_id = null
+  }
   friendly_name               = join("-", [local.deployment_name_salted, "ciphertrust", "manager", count.index])
   ebs                         = var.ciphertrust_manager_ebs_details
   subnet_id                   = local.ciphertrust_manager_subnet_id
@@ -28,7 +33,7 @@ module "ciphertrust_manager" {
 }
 
 provider "ciphertrust" {
-  address  =  local.ciphertrust_manager_count > 0 ? "https://${module.ciphertrust_manager[0].public_ip}" : null
+  address  = local.ciphertrust_manager_count > 0 ? "https://${module.ciphertrust_manager[0].public_ip}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.ciphertrust_manager_password
   // destroy cluster can take almost a minute so give us a bit of a buffer

@@ -6,7 +6,7 @@ locals {
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
   hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
-  cte_agents_cidr_list   = var.enable_ciphertrust ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
+  cte_agents_cidr_list   = local.enable_ciphertrust ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
 }
 
 module "hub_main" {
@@ -47,7 +47,7 @@ module "hub_main" {
     archiver_username = module.dra_analytics[0].archiver_user
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
-  cm_details = var.enable_ciphertrust ? {
+  cm_details = local.enable_ciphertrust ? {
     name                     = "CipherTrust Manager"
     is_load_balancer         = false
     hostname                 = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)

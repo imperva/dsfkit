@@ -122,7 +122,7 @@ output "dra" {
 }
 
 output "ciphertrust" {
-  value = var.enable_ciphertrust ? {
+  value = local.enable_ciphertrust ? {
     ciphertrust_manager = [
       for idx, val in module.ciphertrust_manager : {
         private_ip       = try(val.private_ip, null)
@@ -139,7 +139,7 @@ output "ciphertrust" {
 }
 
 output "cte_ddc_agents" {
-  value = var.enable_ciphertrust ? {
+  value = local.enable_ciphertrust ? {
     cte_agents = [
       for val in concat(local.linux_cte_only_instances, local.windows_cte_only_instances) :
       {

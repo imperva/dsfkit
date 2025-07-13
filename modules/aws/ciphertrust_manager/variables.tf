@@ -117,29 +117,24 @@ variable "ssh_user" {
   default = "ksadmin"
 }
 
-variable "ami_id" {
-  type        = string
-  description = "Ciphertrust AMI id. If set to null, the AMI will be selected based on the 'ami' variable if provided, or fall back to the recommended image. If 'ami_id' is set, it takes precedence and 'ami' will be ignored."
-  default     = null
-}
-
 variable "ami" {
   type = object({
+    id               = string
     name_regex       = string
     product_code     = string
     owner_account_id = string
   })
   description = <<EOF
-This variable is used for selecting an AWS machine image based on various filters. Relevant only if ami_id is set to null.
-If both 'ami_id' and 'ami' are null, the recommended image will be used.
-It is an object type variable that includes the following fields: name regex, product_code, and owner_account_id.
+This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name_regex, product_code, and owner_account_id.
+If set to null, the recommended image will be used.
+The "id" and "name_regex" fields are used to filter the machine image by ID or name regex, respectively.
 The "name_regex" field is used to filter the machine name regex. To select all available images for a given filter, set the relevant field to "*" (name_regex should be set to ".*").
 The "owner_account_id" field is used to filter images based on the account ID of the owner. If this field is set to null, the current account ID will be used. The latest image that matches the specified filter will be chosen.
 EOF
   default     = null
 
   validation {
-    condition     =  var.ami == null || try(var.ami.name_regex != null, false)
-    error_message = "name_regex mustn't be null"
+    condition     = var.ami == null || try(var.ami.id != null || var.ami.name_regex != null, false)
+    error_message = "ami id or name_regex mustn't be null"
   }
 }

@@ -1,5 +1,5 @@
 locals {
-  cm_association_log_path = "/tmp/dsfkit_cm_association.log"
+  cm_association_log_path_in_hub = "/tmp/dsfkit_cm_association.log"
 
   cm_payload = var.cm_details == null ? null : jsonencode({
     data = {
@@ -19,7 +19,7 @@ locals {
 
   cm_association_commands = var.cm_details == null ? "" : <<-EOF
     #!/bin/bash
-    exec > ${local.cm_association_log_path} 2>&1
+    exec > ${local.cm_association_log_path_in_hub} 2>&1
     set -e
     response=$(curl -k -s -w "\n%%{http_code}" -X POST 'https://127.0.0.1:8443/integrations/api/v1/ciphertrust' --header "Content-Type: application/json" --header "Authorization: Bearer ${module.hub_instance.access_tokens.usc.token}" --data '${replace(local.cm_payload, "'", "'\\''")}')
     BODY=$(echo "$response" | sed '$d')
@@ -50,7 +50,7 @@ resource "null_resource" "cm_association" {
   }
 
   provisioner "local-exec" {
-    command = "echo 'Starting association of CipherTrust Manager with the DSF Hub. Logs will be written on the DSF Hub machine at ${local.cm_association_log_path}'"
+    command = "echo 'Starting association of CipherTrust Manager with the DSF Hub. Logs will be written on the DSF Hub machine at ${local.cm_association_log_path_in_hub}'"
   }
   provisioner "remote-exec" {
     inline = concat([local.cm_association_commands])

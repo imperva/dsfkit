@@ -313,7 +313,7 @@ variable "dra_details" {
 
 variable "cm_details" {
   sensitive = true
-  description = "DSF CipherTrust Manager to onboard to Sonar Hub"
+  description = "DSF CipherTrust Manager to onboard with the Sonar Hub. Supported in Sonar Hub version 4.18 and above. If null, no CipherTrust Manager will be onboarded."
   type = object({
     name                     = string
     is_load_balancer         = bool

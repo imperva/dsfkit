@@ -21,6 +21,7 @@ resource "null_resource" "ddc_active_node_setup" {
   provisioner "local-exec" {
     interpreter = ["bash", "-c"]
     command     = local.ddc_active_node_commands
+    # Using env vars for credentials instead of template vars for security reasons
     environment = {
       CM_USER = nonsensitive(var.credentials.user)
       CM_PASSWORD = nonsensitive(var.credentials.password)
