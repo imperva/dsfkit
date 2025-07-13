@@ -74,7 +74,7 @@ resource "ciphertrust_cte_registration_token" "reg_token" {
   count = length(local.all_agent_instances_map) > 0 ? 1 : 0
   lifetime = "24h"
   max_clients = 100
-  name_prefix = "cte-agent"
+  name_prefix = "dsf-agent"
 }
 
 module "cte_ddc_agents" {

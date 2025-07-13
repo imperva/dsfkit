@@ -5,7 +5,6 @@ locals {
 }
 
 module "ciphertrust_manager" {
-  # TODO sivan - change module name to ciphertrust manager
   source  = "../../../../modules/aws/ciphertrust-manager"
   #   source  = "imperva/dsf-ciphertrust-manager/aws"
   #   version = "1.7.17" # latest release tag

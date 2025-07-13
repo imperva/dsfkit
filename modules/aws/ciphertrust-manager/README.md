@@ -14,8 +14,7 @@ This Terraform module provisions a CipherTrust Manager on AWS as an EC2 instance
 **NOTE:** For CipherTrust licensing or access questions, contact your Thales representative.
 
 ## Resources Provisioned
-This Terraform module provisions the following resources on AWS:
-
+This Terraform module provisions several resources on AWS to create the CipherTrust Manager instance. These resources include:
 * An EC2 instance running the CipherTrust Manager software.
 * An EBS volume for storage.
 * A network interface attached to the specified subnet and security groups.
@@ -94,9 +93,11 @@ module "dsf_ciphertrust_manager" {
 
 To ensure high availability and disaster recovery, deploying multiple CipherTrust Manager instances.
 
-To finalize the cluster nodes setup, refer to the ciphertrust-manager-cluster-setup Terraform module [here](https://registry.terraform.io/modules/imperva/ciphertrust-manager-cluster-setup/null/latest)
+To finalize the cluster nodes setup, refer to the dsf-ciphertrust-manager-cluster-setup Terraform module [here](https://registry.terraform.io/modules/imperva/ciphertrust-manager-cluster-setup/null/latest)
 
 ## Additional Information
+
+For more information about the CipherTrust Manager and its features, refer to the official documentation [here](https://thalesdocs.com/ctp/cm/2.19/).
 
 For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.29).
 
