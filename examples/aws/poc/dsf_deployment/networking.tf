@@ -1,13 +1,15 @@
 locals {
-  hub_subnet_id             = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
-  hub_dr_subnet_id          = var.subnet_ids != null ? var.subnet_ids.hub_dr_subnet_id : module.vpc[0].public_subnets[1]
-  agentless_gw_subnet_id    = var.subnet_ids != null ? var.subnet_ids.agentless_gw_subnet_id : module.vpc[0].private_subnets[0]
-  agentless_gw_dr_subnet_id = var.subnet_ids != null ? var.subnet_ids.agentless_gw_dr_subnet_id : module.vpc[0].private_subnets[1]
-  db_subnet_ids             = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
-  mx_subnet_id              = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
-  dra_admin_subnet_id       = var.subnet_ids != null ? var.subnet_ids.dra_admin_subnet_id : module.vpc[0].public_subnets[0]
-  dra_analytics_subnet_id   = var.subnet_ids != null ? var.subnet_ids.dra_analytics_subnet_id : module.vpc[0].private_subnets[0]
-  agent_gw_subnet_id        = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
+  hub_subnet_id                  = var.subnet_ids != null ? var.subnet_ids.hub_subnet_id : module.vpc[0].public_subnets[0]
+  hub_dr_subnet_id               = var.subnet_ids != null ? var.subnet_ids.hub_dr_subnet_id : module.vpc[0].public_subnets[1]
+  agentless_gw_subnet_id         = var.subnet_ids != null ? var.subnet_ids.agentless_gw_subnet_id : module.vpc[0].private_subnets[0]
+  agentless_gw_dr_subnet_id      = var.subnet_ids != null ? var.subnet_ids.agentless_gw_dr_subnet_id : module.vpc[0].private_subnets[1]
+  db_subnet_ids                  = var.subnet_ids != null ? var.subnet_ids.db_subnet_ids : module.vpc[0].public_subnets
+  mx_subnet_id                   = var.subnet_ids != null ? var.subnet_ids.mx_subnet_id : module.vpc[0].public_subnets[0]
+  dra_admin_subnet_id            = var.subnet_ids != null ? var.subnet_ids.dra_admin_subnet_id : module.vpc[0].public_subnets[0]
+  dra_analytics_subnet_id        = var.subnet_ids != null ? var.subnet_ids.dra_analytics_subnet_id : module.vpc[0].private_subnets[0]
+  agent_gw_subnet_id             = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
+  ciphertrust_manager_subnet_id  = var.subnet_ids != null ? var.subnet_ids.ciphertrust_subnet_id : module.vpc[0].public_subnets[0]
+  cte_ddc_agent_subnet_id        = var.subnet_ids != null ? var.subnet_ids.cte_ddc_agent_subnet_id : module.vpc[0].public_subnets[0]
 }
 
 module "vpc" {
@@ -61,4 +63,12 @@ data "aws_subnet" "dra_admin" {
 
 data "aws_subnet" "dra_analytics" {
   id = local.dra_analytics_subnet_id
+}
+
+data "aws_subnet" "ciphertrust_manager" {
+  id = local.ciphertrust_manager_subnet_id
+}
+
+data "aws_subnet" "cte_ddc_agent" {
+  id = local.cte_ddc_agent_subnet_id
 }

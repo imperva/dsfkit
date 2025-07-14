@@ -595,6 +595,16 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>2. Added internal support for DRA version 15.0. Set the variable ‘dra_version’ to 15.0 to use it.
     </td>
   </tr>
+  <tr>
+    <td>15 Jul 2025
+    </td>
+    <td>1.7.31
+    </td>
+    <td>
+      1. Added support for CipherTrust in AWS.
+      <br/>2. Updated the AWS POC dsf_deployment example.
+    </td>
+  </tr>
   
 </table>
 

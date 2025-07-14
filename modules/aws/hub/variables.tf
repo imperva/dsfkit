@@ -311,6 +311,41 @@ variable "dra_details" {
   default = null
 }
 
+variable "cm_details" {
+  sensitive = true
+  description = "DSF CipherTrust Manager to onboard with the Sonar Hub. Supported in Sonar Hub version 4.18 and above. If null, no CipherTrust Manager will be onboarded."
+  type = object({
+    name                     = string
+    is_load_balancer         = bool
+    hostname                 = string
+    port                     = string
+    ddc_enabled              = string
+    ddc_connection_hostname  = string
+    ddc_connection_port      = string
+    registration_method      = string
+    username                 = string
+    password                 = string
+    registration_token       = string
+  })
+  validation {
+    condition     = (var.cm_details == null || (can(var.cm_details.name) && can(var.cm_details.hostname)))
+    error_message = "CipherTrust Manager must specify name and hostname"
+  }
+  validation {
+    condition     = (var.cm_details == null || try(var.cm_details.registration_method == "password" || var.cm_details.registration_method == "token", false))
+    error_message = "CipherTrust Manager registration_method must be either 'password' or 'token'"
+  }
+  validation {
+    condition     = (var.cm_details == null || try(var.cm_details.registration_method != "password" || (var.cm_details.registration_method == "password" && can(var.cm_details.username) && can(var.cm_details.password)), false))
+    error_message = "CipherTrust Manager must specify username and password for 'password' registration method"
+  }
+  validation {
+    condition     = (var.cm_details == null || try(var.cm_details.registration_method != "token" || (var.cm_details.registration_method == "token" && can(var.cm_details.registration_token)), false))
+    error_message = "CipherTrust Manager must specify registration_token for 'token' registration method"
+  }
+  default = null
+}
+
 variable "volume_attachment_device_name" {
   type        = string
   default     = null

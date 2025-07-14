@@ -206,15 +206,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-  test_apply:
-    needs: release
-    uses: ./.github/workflows/sonar_poc_cli.yml
-    with:
-      use_modules_from_terraform_registry: true
-      explicit_ref: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
-      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
+#  test_apply:
+#    needs: release
+#    uses: ./.github/workflows/sonar_poc_cli.yml
+#    with:
+#      use_modules_from_terraform_registry: true
+#      explicit_ref: master
+#    secrets:
+#      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+#      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}

@@ -12,7 +12,7 @@ on:
       deployment_type:
         required: false
         type: string
-        default: 'all'
+        default: 'all-permutations'
       version:
         type: string
         default: 'latest'
@@ -44,12 +44,12 @@ on:
         default: false
         required: false
       deployment_type:
-        description: 'Choose the type of deployments to run: all (default), sonar, dam, dra'
+        description: 'Choose the type of deployments to run: sonar, sonar-with-fam, dra, dam, all-products (currently does not include FAM) or all-permutations'
         type: string
-        default: 'all'
+        default: 'all-permutations'
         required: false
       product_version:
-        description: 'Product (DAM, DRA, SONAR) version to deploy, default is latest'
+        description: 'Product version to deploy. Valid for options: sonar, sonar-with-fam, dra and dam. Otherwise latest per product is used.'
         type: string
         default: 'latest'
         required: false
@@ -99,14 +99,15 @@ jobs:
       - name: Set Matrix
         id: set-matrix
         env:
-          VAR: ${{ github.event.inputs.deployment_type || 'all' }}
+          VAR: ${{ github.event.inputs.deployment_type || 'all-permutations' }}
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              (if $var == "all" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":true} else empty end),
-              (if $var == "all" or $var == "sonar" then {"name":"DSF POC - SONAR","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false} else empty end),
-              (if $var == "all" or $var == "dam" then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_dam":true,"enable_dra":false} else empty end),
-              (if $var == "all" or $var == "dra" then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_dam":false,"enable_dra":true} else empty end)
+              (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":true} else empty end),
+              (if $var == "all-permutations" or $var == "sonar" then {"name":"DSF POC - Sonar","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":false} else empty end),
+              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end),
+              (if $var == "all-permutations" or $var == "dam" then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":false} else empty end),
+              (if $var == "all-permutations" or $var == "dra" then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":true} else empty end)
             ]
           }')
 
@@ -122,6 +123,8 @@ jobs:
             elif [[ "${{ github.event.inputs.deployment_type }}" == "dra" ]]; then
               DEPLOYMENT_VERSION="dra_version=${{ github.event.inputs.product_version }}"
             elif [[ "${{ github.event.inputs.deployment_type }}" == "sonar" ]]; then
+              DEPLOYMENT_VERSION="sonar_version=${{ github.event.inputs.product_version }}"
+            elif [[ "${{ github.event.inputs.deployment_type }}" == "sonar-with-fam" ]]; then
               DEPLOYMENT_VERSION="sonar_version=${{ github.event.inputs.product_version }}"
             fi
           fi
@@ -139,6 +142,7 @@ jobs:
       EXAMPLE_DIR: ./examples/aws/poc/dsf_deployment
       AWS_REGION: eu-west-2
       TF_VAR_enable_sonar: ${{ matrix.enable_sonar }}
+      TF_VAR_enable_ciphertrust: ${{ matrix.enable_ciphertrust }}
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
       TF_VAR_allowed_ssh_cidrs: ${{ secrets.ALLOWED_SSH_CIDRS }}
@@ -229,6 +233,9 @@ jobs:
             mv $EXAMPLE_DIR/networking.tf{,_}
             mv $EXAMPLE_DIR/agentless_sources.tf{,_}
             mv $EXAMPLE_DIR/agent_sources.tf{,_}
+            mv $EXAMPLE_DIR/versions.tf{,_}
+            mv $EXAMPLE_DIR/cm.tf{,_}
+            mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
             terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
             mv $EXAMPLE_DIR/main.tf{_,}
             mv $EXAMPLE_DIR/outputs.tf{_,}
@@ -238,6 +245,9 @@ jobs:
             mv $EXAMPLE_DIR/networking.tf{_,}
             mv $EXAMPLE_DIR/agentless_sources.tf{_,}
             mv $EXAMPLE_DIR/agent_sources.tf{_,}
+            mv $EXAMPLE_DIR/versions.tf{_,}
+            mv $EXAMPLE_DIR/cm.tf{_,}
+            mv $EXAMPLE_DIR/cte_ddc_agents.tf{_,}
           fi
 
       - name: Terraform Validate

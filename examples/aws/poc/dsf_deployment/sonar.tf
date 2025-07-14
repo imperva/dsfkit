@@ -2,10 +2,14 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
+  # Minimal sonar version that supports CipherTrust Manager is 4.18
+  is_sonar_supports_cm_integration   =  !contains(["4.19", "4.18", "4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
+
   hub_public_ip          = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
   hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
+  cte_agents_cidr_list   = var.enable_ciphertrust && local.is_sonar_supports_cm_integration ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
 }
 
 module "hub_main" {
@@ -45,9 +49,23 @@ module "hub_main" {
     archiver_username = module.dra_analytics[0].archiver_user
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
+  cm_details = var.enable_ciphertrust && local.is_sonar_supports_cm_integration ? {
+    name                     = "CipherTrust Manager"
+    is_load_balancer         = false
+    hostname                 = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
+    port                     = 443
+    ddc_enabled              = true
+    ddc_connection_hostname  = null
+    ddc_connection_port      = null
+    username                 = local.ciphertrust_manager_web_console_username
+    password                 = local.ciphertrust_manager_password
+    registration_method      = "password"
+    registration_token       = null
+  } : null
   tags = local.tags
   depends_on = [
-    module.vpc
+    module.vpc,
+    ciphertrust_trial_license.trial_license
   ]
 }
 
@@ -120,6 +138,7 @@ module "agentless_gw_main" {
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw_dr.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
+  allowed_cte_agents_cidrs   = local.cte_agents_cidr_list
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {
@@ -154,6 +173,7 @@ module "agentless_gw_dr" {
   }
   allowed_agentless_gw_cidrs = [data.aws_subnet.agentless_gw.cidr_block]
   allowed_hub_cidrs          = [data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block]
+  allowed_cte_agents_cidrs   = local.cte_agents_cidr_list
   allowed_all_cidrs          = local.workstation_cidr
   allowed_ssh_cidrs          = var.allowed_ssh_cidrs
   ingress_communication_via_proxy = {

@@ -28,6 +28,12 @@ variable "enable_dra" {
   description = "Provision DRA Admin and Analytics"
 }
 
+variable "enable_ciphertrust" {
+  type        = bool
+  default     = true
+  description = "Provision CipherTrust Manager"
+}
+
 variable "agentless_gw_count" {
   type        = number
   default     = 1
@@ -46,6 +52,12 @@ variable "dra_analytics_count" {
   description = "Number of DRA Analytics servers. Provisioning Analytics servers requires the enable_dra variable to be set to 'true'."
 }
 
+variable "ciphertrust_manager_count" {
+  type        = number
+  default     = 2 # Minimum count for a cluster
+  description = "Number of CipherTrust Manager servers. If more than one server is specified, they will be configured as a cluster. Provisioning CipherTrust Manager servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
 variable "password" {
   sensitive   = true
   type        = string
@@ -59,7 +71,7 @@ variable "password" {
 variable "web_console_cidr" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
-  description = "DSF Hub, MX and DRA Admin web consoles IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
+  description = "DSF Hub, MX, DRA Admin and CipherTrust Manager web consoles IPs range. Specify IPs in the following format - [\"x.x.x.x/x\", \"y.y.y.y/y\"]. The default configuration opens the DSF Hub web console as a public website. It is recommended to specify a more restricted IP and CIDR range."
 }
 
 variable "workstation_cidr" {
@@ -94,20 +106,22 @@ variable "public_subnets" {
 
 variable "subnet_ids" {
   type = object({
-    hub_subnet_id             = string
-    hub_dr_subnet_id          = string
-    agentless_gw_subnet_id    = string
-    agentless_gw_dr_subnet_id = string
-    mx_subnet_id              = string
-    agent_gw_subnet_id        = string
-    dra_admin_subnet_id       = string
-    dra_analytics_subnet_id   = string
-    db_subnet_ids             = list(string)
+    hub_subnet_id                 = string
+    hub_dr_subnet_id              = string
+    agentless_gw_subnet_id        = string
+    agentless_gw_dr_subnet_id     = string
+    mx_subnet_id                  = string
+    agent_gw_subnet_id            = string
+    dra_admin_subnet_id           = string
+    dra_analytics_subnet_id       = string
+    ciphertrust_manager_subnet_id = string
+    cte_ddc_agent_subnet_id       = string
+    db_subnet_ids                 = list(string)
   })
   default     = null
   description = "The IDs of existing subnets to deploy resources in. Keep empty if you wish to provision new VPC and subnets. db_subnet_ids can be an empty list only if no databases should be provisioned"
   validation {
-    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
+    condition     = var.subnet_ids == null || try(var.subnet_ids.hub_subnet_id != null && var.subnet_ids.hub_dr_subnet_id != null && var.subnet_ids.agentless_gw_subnet_id != null && var.subnet_ids.agentless_gw_dr_subnet_id != null && var.subnet_ids.mx_subnet_id != null && var.subnet_ids.agent_gw_subnet_id != null && var.subnet_ids.dra_admin_subnet_id != null && var.subnet_ids.dra_analytics_subnet_id != null && var.subnet_ids.ciphertrust_manager_subnet_id != null && var.subnet_ids.cte_ddc_agent_subnet_id != null && var.subnet_ids.db_subnet_ids != null, false)
     error_message = "Value must either be null or specified for all"
   }
   validation {
@@ -337,4 +351,117 @@ variable "dra_analytics_ebs_details" {
     volume_size = 1010
     volume_type = "gp3"
   }
+}
+
+###############################
+#### CipherTrust variables ####
+###############################
+
+variable "ciphertrust_manager_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+  })
+  description = "CipherTrust Manager compute instance volume attributes"
+  default = {
+    volume_size = 256
+    volume_type = "gp2"
+  }
+}
+
+variable "ciphertrust_manager_password" {
+  sensitive   = true
+  type        = string
+  default     = null # Random
+  description = "Ciphertrust manager web console password"
+  validation {
+    condition     = var.ciphertrust_manager_password == null || try(length(var.ciphertrust_manager_password) >= 8 && length(var.ciphertrust_manager_password) <= 30, false)
+    error_message = "Password must be between 8 and 30 characters"
+  }
+
+  validation {
+    condition     = var.ciphertrust_manager_password == null || can(regex("[A-Z]+", var.ciphertrust_manager_password))
+    error_message = "Password must include at least 1 upper-case letter.\n"
+  }
+
+  validation {
+    condition     = var.ciphertrust_manager_password == null || can(regex("[a-z]+", var.ciphertrust_manager_password))
+    error_message = "Password must include at least 1 lower-case letter.\n"
+  }
+
+  validation {
+    condition     = var.ciphertrust_manager_password == null || can(regex("[0-9]+", var.ciphertrust_manager_password))
+    error_message = "Password must include at least 1 decimal digit.\n"
+  }
+
+  validation {
+    condition     = var.ciphertrust_manager_password == null || can(regex("[!@#$%^&*(),.?\":{}|<>]+", var.ciphertrust_manager_password))
+    error_message = "Password must include at least 1 special character.\n"
+  }
+}
+
+variable "ciphertrust_manager_ami_id" {
+  type        = string
+  description = "Ciphertrust Manager AMI id. If set to null, the latest AMI will be taken from AWS marketplace"
+  default     = null
+}
+
+variable "cte_agent_linux_installation_file" {
+  type        = string
+  description = "Path to the CTE agent linux installation file"
+  default     = null
+}
+
+variable "ddc_agent_linux_installation_file" {
+  type        = string
+  description = "Path to the DDC agent linux installation file"
+  default     = null
+}
+
+variable "cte_agent_windows_installation_file" {
+  type        = string
+  description = "Path to the CTE agent windows installation file"
+  default     = null
+}
+
+variable "ddc_agent_windows_installation_file" {
+  type        = string
+  description = "Path to the DDC agent windows installation file"
+  default     = null
+}
+
+variable "cte_ddc_agents_linux_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE-DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_agents_linux_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "ddc_agents_linux_count" {
+  type        = number
+  default     = 0
+  description = "Number of DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_ddc_agents_windows_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE-DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "cte_agents_windows_count" {
+  type        = number
+  default     = 0
+  description = "Number of CTE agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "ddc_agents_windows_count" {
+  type        = number
+  default     = 0
+  description = "Number of DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
