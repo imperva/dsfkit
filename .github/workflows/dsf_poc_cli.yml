@@ -49,7 +49,7 @@ on:
         default: 'all-permutations'
         required: false
       product_version:
-        description: 'Product (Sonar with/without FAM, DRA, DAM) version to deploy'
+        description: 'Product version to deploy. Valid for options: sonar, sonar-with-fam, dra, dam. Otherwise latest per product is used.'
         type: string
         default: 'latest'
         required: false
