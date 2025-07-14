@@ -4,7 +4,7 @@ on:
   workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub UI
     inputs:
       deployment_type:
-        description: "Deployment type to pass, choose: dra, dam or sonar."
+        description: "Deployment type to pass, choose: sonar, sonar-with-fam, dra or dam."
         required: true
         default: "dra"
       version:
