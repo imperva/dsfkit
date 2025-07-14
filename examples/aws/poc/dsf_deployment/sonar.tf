@@ -2,11 +2,14 @@ locals {
   tarball_location   = var.tarball_location != null ? var.tarball_location : module.globals.tarball_location
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
+  # Minimal sonar version that supports CipherTrust Manager is 4.18
+  is_sonar_supports_cm_integration   =  !contains(["4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
+
   hub_public_ip          = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
   hub_cidr_list          = compact([data.aws_subnet.hub.cidr_block, data.aws_subnet.hub_dr.cidr_block, local.hub_public_ip, local.hub_dr_public_ip])
   agentless_gw_cidr_list = [data.aws_subnet.agentless_gw.cidr_block, data.aws_subnet.agentless_gw_dr.cidr_block]
-  cte_agents_cidr_list   = local.enable_ciphertrust ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
+  cte_agents_cidr_list   = var.enable_ciphertrust && local.is_sonar_supports_cm_integration ? [data.aws_subnet.cte_ddc_agent.cidr_block] : []
 }
 
 module "hub_main" {
@@ -47,7 +50,7 @@ module "hub_main" {
     archiver_username = module.dra_analytics[0].archiver_user
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
-  cm_details = local.enable_ciphertrust ? {
+  cm_details = var.enable_ciphertrust && local.is_sonar_supports_cm_integration ? {
     name                     = "CipherTrust Manager"
     is_load_balancer         = false
     hostname                 = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)

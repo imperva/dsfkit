@@ -1,5 +1,5 @@
 locals {
-  ciphertrust_manager_count = local.enable_ciphertrust ? var.ciphertrust_manager_count : 0
+  ciphertrust_manager_count = var.enable_ciphertrust ? var.ciphertrust_manager_count : 0
   ciphertrust_cidr_list = [data.aws_subnet.ciphertrust_manager.cidr_block]
   ciphertrust_manager_web_console_username = "admin"
 }

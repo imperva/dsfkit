@@ -35,6 +35,4 @@ locals {
   workstation_cidr             = var.workstation_cidr != null ? var.workstation_cidr : local.workstation_cidr_24
   tags                         = merge(module.globals.tags, var.additional_tags, { "deployment_name" = local.deployment_name_salted })
   private_key_file_path        = module.key_pair.private_key_file_path
-  # Minimal sonar version that supports CipherTrust Manager is 4.18
-  enable_ciphertrust           = var.enable_ciphertrust && !contains(["4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
 }
