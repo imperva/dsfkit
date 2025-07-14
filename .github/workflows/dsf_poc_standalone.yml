@@ -1,4 +1,4 @@
-name: DSF POC Standalone
+name: DSF POC Standalone - AWS and Azure
 
 on:
   workflow_dispatch:  # This allows the workflow to be manually triggered from the GitHub UI
@@ -37,7 +37,7 @@ jobs:
     with:
       use_modules_from_terraform_registry: true
       explicit_ref: master
-      deployment_type: "dra"
+      deployment_type: ${{ github.event.inputs.deployment_type }}
       product_full_version: ${{ github.event.inputs.version }}
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
