@@ -30,7 +30,7 @@ variable "enable_dra" {
 
 variable "enable_ciphertrust" {
   type        = bool
-  default     = false
+  default     = true
   description = "Provision CipherTrust Manager"
 }
 
