@@ -162,7 +162,7 @@ output "cte_ddc_agents" {
         ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
-    cte_ddc_windows_agents = [
+    cte_ddc_agents = [
       for val in concat(local.linux_cte_ddc_instances, local.windows_cte_ddc_instances) :
       {
         private_ip   = module.cte_ddc_agents[val.id].private_ip

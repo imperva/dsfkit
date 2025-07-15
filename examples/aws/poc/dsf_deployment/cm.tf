@@ -8,6 +8,7 @@ module "ciphertrust_manager" {
   source  = "imperva/dsf-ciphertrust-manager/aws"
   version = "1.7.31" # latest release tag
   count   = local.ciphertrust_manager_count
+  ciphertrust_manager_version = var.ciphertrust_manager_version
   ami = var.ciphertrust_manager_ami_id == null ? null : {
     id               = var.ciphertrust_manager_ami_id
     name_regex       = null

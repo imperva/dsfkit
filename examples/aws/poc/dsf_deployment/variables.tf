@@ -357,6 +357,26 @@ variable "dra_analytics_ebs_details" {
 #### CipherTrust variables ####
 ###############################
 
+variable "ciphertrust_manager_version" {
+  type        = string
+  default     = "2.20"
+  description = "The CipherTrust Manager version from AWS marketplace to install. Supported versions are: 2.20 and up."
+  validation {
+    condition     = can(regex("^\\d{1,2}\\.\\d{1,3}$", var.ciphertrust_manager_version))
+    error_message = "Version must be in the format dd.dd where each dd is a number between 1-99 (e.g 2.20)"
+  }
+  validation {
+    condition     = split(".", var.ciphertrust_manager_version)[0] == "2"
+    error_message = "CipherTrust Manager version not supported."
+  }
+}
+
+variable "ciphertrust_manager_ami_id" {
+  type        = string
+  description = "Ciphertrust Manager AMI id. If set to null, the AMI will be taken from AWS marketplace according to 'ciphertrust_manager_version' variable."
+  default     = null
+}
+
 variable "ciphertrust_manager_ebs_details" {
   type = object({
     volume_size = number
@@ -364,7 +384,7 @@ variable "ciphertrust_manager_ebs_details" {
   })
   description = "CipherTrust Manager compute instance volume attributes"
   default = {
-    volume_size = 256
+    volume_size = 300
     volume_type = "gp2"
   }
 }
@@ -398,12 +418,6 @@ variable "ciphertrust_manager_password" {
     condition     = var.ciphertrust_manager_password == null || can(regex("[!@#$%^&*(),.?\":{}|<>]+", var.ciphertrust_manager_password))
     error_message = "Password must include at least 1 special character.\n"
   }
-}
-
-variable "ciphertrust_manager_ami_id" {
-  type        = string
-  description = "Ciphertrust Manager AMI id. If set to null, the latest AMI will be taken from AWS marketplace"
-  default     = null
 }
 
 variable "cte_agent_linux_installation_file" {
