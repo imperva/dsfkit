@@ -179,7 +179,7 @@ variable "tarball_location" {
     az_blob            = string
   })
   description = "Storage account and container location of the DSF Sonar installation software. az_blob is the full path to the tarball file within the storage account container"
-  default     = {
+  default = {
     az_resource_group  = ""
     az_storage_account = ""
     az_container       = ""

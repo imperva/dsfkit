@@ -3,7 +3,7 @@ locals {
 
   security_group_ids = concat(
     [for sg in aws_security_group.sg : sg.id],
-    var.security_group_ids)
+  var.security_group_ids)
 
   public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.cipthertrust_manager_instance.public_ip
   public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.cipthertrust_manager_instance.public_dns
@@ -23,9 +23,9 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_instance" "cipthertrust_manager_instance" {
-  ami                         = local.ami_id
-  instance_type               = var.instance_type
-  key_name                    = var.key_pair
+  ami           = local.ami_id
+  instance_type = var.instance_type
+  key_name      = var.key_pair
   root_block_device {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
@@ -35,13 +35,13 @@ resource "aws_instance" "cipthertrust_manager_instance" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  disable_api_termination     = true
+  disable_api_termination = true
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
   }
-  tags                        = merge(var.tags, { Name : var.friendly_name })
-  volume_tags                 = merge(var.tags, { Name : var.friendly_name })
+  tags        = merge(var.tags, { Name : var.friendly_name })
+  volume_tags = merge(var.tags, { Name : var.friendly_name })
 
   lifecycle {
     ignore_changes = [ami]

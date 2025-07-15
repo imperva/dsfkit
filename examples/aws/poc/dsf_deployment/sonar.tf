@@ -3,7 +3,7 @@ locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   # Minimal sonar version that supports CipherTrust Manager is 4.18
-  is_sonar_supports_cm_integration   =  !contains(["4.19", "4.18", "4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
+  is_sonar_supports_cm_integration = !contains(["4.19", "4.18", "4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
 
   hub_public_ip          = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
@@ -14,7 +14,7 @@ locals {
 
 module "hub_main" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = var.enable_sonar ? 1 : 0
 
   friendly_name               = join("-", [local.deployment_name_salted, "hub", "main"])
@@ -50,17 +50,17 @@ module "hub_main" {
     archiver_password = module.dra_analytics[0].archiver_password
   } : null
   cm_details = var.enable_ciphertrust && local.is_sonar_supports_cm_integration ? {
-    name                     = "CipherTrust Manager"
-    is_load_balancer         = false
-    hostname                 = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
-    port                     = 443
-    ddc_enabled              = true
-    ddc_connection_hostname  = null
-    ddc_connection_port      = null
-    username                 = local.ciphertrust_manager_web_console_username
-    password                 = local.ciphertrust_manager_password
-    registration_method      = "password"
-    registration_token       = null
+    name                    = "CipherTrust Manager"
+    is_load_balancer        = false
+    hostname                = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
+    port                    = 443
+    ddc_enabled             = true
+    ddc_connection_hostname = null
+    ddc_connection_port     = null
+    username                = local.ciphertrust_manager_web_console_username
+    password                = local.ciphertrust_manager_password
+    registration_method     = "password"
+    registration_token      = null
   } : null
   tags = local.tags
   depends_on = [
@@ -71,7 +71,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source  = "imperva/dsf-hub/aws"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = var.enable_sonar && var.hub_hadr ? 1 : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
@@ -104,7 +104,7 @@ module "hub_dr" {
 
 module "hub_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = length(module.hub_dr) > 0 ? 1 : 0
 
   sonar_version       = module.globals.tarball_location.version
@@ -122,7 +122,7 @@ module "hub_hadr" {
 
 module "agentless_gw_main" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = local.agentless_gw_count
 
   friendly_name         = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "main"])
@@ -154,7 +154,7 @@ module "agentless_gw_main" {
 
 module "agentless_gw_dr" {
   source  = "imperva/dsf-agentless-gw/aws"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = var.agentless_gw_hadr ? local.agentless_gw_count : 0
 
   friendly_name                = join("-", [local.deployment_name_salted, "agentless", "gw", count.index, "DR"])
@@ -189,7 +189,7 @@ module "agentless_gw_dr" {
 
 module "agentless_gw_hadr" {
   source  = "imperva/dsf-hadr/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = length(module.agentless_gw_dr)
 
   sonar_version       = module.globals.tarball_location.version
@@ -212,7 +212,7 @@ module "agentless_gw_hadr" {
 
 module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_main : idx => val
@@ -274,7 +274,7 @@ resource "null_resource" "force_gw_replication" {
 
 module "gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_dr : idx => val
@@ -304,7 +304,7 @@ module "gw_dr_federation" {
 
 module "hub_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = var.hub_hadr ? {
     for idx, val in concat(module.agentless_gw_main, module.agentless_gw_dr) : idx => val

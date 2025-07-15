@@ -17,7 +17,7 @@ locals {
       tcp             = [3389]
       cidrs           = concat(var.allowed_rdp_cidrs)
     }
-  ] : [
+    ] : [
     {
       name            = ["ssh"]
       internet_access = true

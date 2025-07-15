@@ -312,20 +312,20 @@ variable "dra_details" {
 }
 
 variable "cm_details" {
-  sensitive = true
+  sensitive   = true
   description = "DSF CipherTrust Manager to onboard with the Sonar Hub. Supported in Sonar Hub version 4.18 and above. If null, no CipherTrust Manager will be onboarded."
   type = object({
-    name                     = string
-    is_load_balancer         = bool
-    hostname                 = string
-    port                     = string
-    ddc_enabled              = string
-    ddc_connection_hostname  = string
-    ddc_connection_port      = string
-    registration_method      = string
-    username                 = string
-    password                 = string
-    registration_token       = string
+    name                    = string
+    is_load_balancer        = bool
+    hostname                = string
+    port                    = string
+    ddc_enabled             = string
+    ddc_connection_hostname = string
+    ddc_connection_port     = string
+    registration_method     = string
+    username                = string
+    password                = string
+    registration_token      = string
   })
   validation {
     condition     = (var.cm_details == null || (can(var.cm_details.name) && can(var.cm_details.hostname)))

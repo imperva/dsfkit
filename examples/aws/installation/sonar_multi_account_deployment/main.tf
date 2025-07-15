@@ -1,6 +1,6 @@
 module "globals" {
   source        = "imperva/dsf-globals/aws"
-  version       = "1.7.30" # latest release tag
+  version       = "1.7.31" # latest release tag
   sonar_version = var.sonar_version
 }
 
@@ -24,7 +24,7 @@ locals {
 module "key_pair_hub_main" {
   count                = local.should_create_hub_main_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.30" # latest release tag
+  version              = "1.7.31" # latest release tag
   key_name_prefix      = "imperva-dsf-hub-main"
   private_key_filename = "ssh_keys/dsf_ssh_key-hub-main-${terraform.workspace}"
   tags                 = local.tags
@@ -36,7 +36,7 @@ module "key_pair_hub_main" {
 module "key_pair_hub_dr" {
   count                = local.should_create_hub_dr_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.30" # latest release tag
+  version              = "1.7.31" # latest release tag
   key_name_prefix      = "imperva-dsf-hub-dr"
   private_key_filename = "ssh_keys/dsf_ssh_key-hub-dr-${terraform.workspace}"
   tags                 = local.tags
@@ -48,7 +48,7 @@ module "key_pair_hub_dr" {
 module "key_pair_gw_main" {
   count                = local.should_create_gw_main_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.30" # latest release tag
+  version              = "1.7.31" # latest release tag
   key_name_prefix      = "imperva-dsf-gw"
   private_key_filename = "ssh_keys/dsf_ssh_key-gw-main-${terraform.workspace}"
   tags                 = local.tags
@@ -60,7 +60,7 @@ module "key_pair_gw_main" {
 module "key_pair_gw_dr" {
   count                = local.should_create_gw_dr_key_pair ? 1 : 0
   source               = "imperva/dsf-globals/aws//modules/key_pair"
-  version              = "1.7.30" # latest release tag
+  version              = "1.7.31" # latest release tag
   key_name_prefix      = "imperva-dsf-gw-dr"
   private_key_filename = "ssh_keys/dsf_ssh_key-gw-dr-${terraform.workspace}"
   tags                 = local.tags
@@ -105,7 +105,7 @@ locals {
 ##############################
 module "hub_main" {
   source               = "imperva/dsf-hub/aws"
-  version              = "1.7.30" # latest release tag
+  version              = "1.7.31" # latest release tag
   friendly_name        = join("-", [local.deployment_name_salted, "hub", "main"])
   subnet_id            = var.subnet_hub_main
   security_group_ids   = var.security_group_ids_hub_main
@@ -143,7 +143,7 @@ module "hub_main" {
 
 module "hub_dr" {
   source                       = "imperva/dsf-hub/aws"
-  version                      = "1.7.30" # latest release tag
+  version                      = "1.7.31" # latest release tag
   friendly_name                = join("-", [local.deployment_name_salted, "hub", "DR"])
   subnet_id                    = var.subnet_hub_dr
   security_group_ids           = var.security_group_ids_hub_dr
@@ -185,7 +185,7 @@ module "hub_dr" {
 module "agentless_gw_main" {
   count                 = var.gw_count
   source                = "imperva/dsf-agentless-gw/aws"
-  version               = "1.7.30" # latest release tag
+  version               = "1.7.31" # latest release tag
   friendly_name         = join("-", [local.deployment_name_salted, "gw", count.index, "main"])
   subnet_id             = var.subnet_gw_main
   security_group_ids    = var.security_group_ids_gw_main
@@ -224,7 +224,7 @@ module "agentless_gw_main" {
 module "agentless_gw_dr" {
   count                        = var.gw_count
   source                       = "imperva/dsf-agentless-gw/aws"
-  version                      = "1.7.30" # latest release tag
+  version                      = "1.7.31" # latest release tag
   friendly_name                = join("-", [local.deployment_name_salted, "gw", count.index, "DR"])
   subnet_id                    = var.subnet_gw_dr
   security_group_ids           = var.security_group_ids_gw_dr
@@ -265,7 +265,7 @@ module "agentless_gw_dr" {
 
 module "hub_hadr" {
   source              = "imperva/dsf-hadr/null"
-  version             = "1.7.30" # latest release tag
+  version             = "1.7.31" # latest release tag
   sonar_version       = module.globals.tarball_location.version
   dsf_main_ip         = module.hub_main.private_ip
   dsf_main_private_ip = module.hub_main.private_ip
@@ -289,7 +289,7 @@ module "hub_hadr" {
 module "agentless_gw_hadr" {
   count               = var.gw_count
   source              = "imperva/dsf-hadr/null"
-  version             = "1.7.30" # latest release tag
+  version             = "1.7.31" # latest release tag
   sonar_version       = module.globals.tarball_location.version
   dsf_main_ip         = module.agentless_gw_main[count.index].private_ip
   dsf_main_private_ip = module.agentless_gw_main[count.index].private_ip
@@ -312,7 +312,7 @@ module "agentless_gw_hadr" {
 
 module "gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_main : idx => val
@@ -382,7 +382,7 @@ resource "null_resource" "force_gw_replication" {
 
 module "gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_dr : idx => val
@@ -417,7 +417,7 @@ module "gw_dr_federation" {
 
 module "hub_dr_gw_main_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_main : idx => val
@@ -455,7 +455,7 @@ module "hub_dr_gw_main_federation" {
 
 module "hub_dr_gw_dr_federation" {
   source  = "imperva/dsf-federation/null"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
 
   for_each = {
     for idx, val in module.agentless_gw_dr : idx => val

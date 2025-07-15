@@ -1,16 +1,16 @@
 locals {
-  hub_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
+  hub_subnet_id    = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
   hub_dr_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[1], null))
 
-  agentless_gw_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
+  agentless_gw_subnet_id    = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
   agentless_gw_dr_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[1], null))
 
   db_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
 
-  mx_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
+  mx_subnet_id       = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
   agent_gw_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
 
-  dra_admin_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
+  dra_admin_subnet_id     = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[0], null))
   dra_analytics_subnet_id = coalesce(var.subnet_id, try(module.network[0].vnet_subnets[1], null))
 
   subnet_prefixes = cidrsubnets(var.vnet_ip_range, 8, 8)
@@ -20,7 +20,7 @@ locals {
   _subnet_address_spaces = var.subnet_id == null ? module.network[0].vnet_address_space : data.azurerm_subnet.provided_subnet[0].address_prefixes
   # we can't currently use ipv6 IPs
   subnet_address_spaces = [
-    for cidr in local._subnet_address_spaces: cidr
+    for cidr in local._subnet_address_spaces : cidr
     if can(regex(local.ipv4_regex, cidr))
   ]
 }

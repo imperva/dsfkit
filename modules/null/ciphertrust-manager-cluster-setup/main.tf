@@ -5,7 +5,7 @@ locals {
 }
 
 resource "ciphertrust_cluster" "cluster" {
-  count = length(var.nodes)> 1 ? 1 : 0
+  count = length(var.nodes) > 1 ? 1 : 0
   dynamic "node" {
     for_each = { for index, instance in var.nodes : index => instance }
     content {
@@ -23,7 +23,7 @@ resource "null_resource" "ddc_active_node_setup" {
     command     = local.ddc_active_node_commands
     # Using env vars for credentials instead of template vars for security reasons
     environment = {
-      CM_USER = nonsensitive(var.credentials.user)
+      CM_USER     = nonsensitive(var.credentials.user)
       CM_PASSWORD = nonsensitive(var.credentials.password)
     }
   }

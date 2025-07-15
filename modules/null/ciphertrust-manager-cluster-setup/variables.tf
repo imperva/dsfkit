@@ -1,12 +1,12 @@
 variable "nodes" {
   type = list(object({
-    host            = string
-    public_address  = string
+    host           = string
+    public_address = string
   }))
   description = "List of CipherTrust Manager instances to form a cluster. Each instance should have a host and a public_address."
   validation {
-      condition     = length(var.nodes) > 1
-      error_message = "At least two CipherTrust Manager instances are required to form a cluster."
+    condition     = length(var.nodes) > 1
+    error_message = "At least two CipherTrust Manager instances are required to form a cluster."
   }
 }
 
@@ -25,8 +25,8 @@ variable "ddc_node_setup" {
 variable "credentials" {
   sensitive = true
   type = object({
-      user     = string
-      password = string
+    user     = string
+    password = string
   })
   description = "Credentials for the CipherTrust Manager api, including user and password."
   default = {

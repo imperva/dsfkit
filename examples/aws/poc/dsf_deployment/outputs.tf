@@ -125,14 +125,14 @@ output "ciphertrust" {
   value = var.enable_ciphertrust ? {
     ciphertrust_manager = [
       for idx, val in module.ciphertrust_manager : {
-        private_ip       = try(val.private_ip, null)
-        private_dns      = try(val.private_dns, null)
-        public_ip        = try(val.public_ip, null)
-        public_dns       = try(val.public_dns, null)
-        public_url       = try(join("", ["https://", val.public_dns]), null)
-        private_url      = try(join("", ["https://", val.private_dns]), null)
-        display_name     = try(val.display_name, null)
-        ssh_command      = try("ssh -i ${local.private_key_file_path} ${val.ssh_user}@${val.public_dns}", null)
+        private_ip   = try(val.private_ip, null)
+        private_dns  = try(val.private_dns, null)
+        public_ip    = try(val.public_ip, null)
+        public_dns   = try(val.public_dns, null)
+        public_url   = try(join("", ["https://", val.public_dns]), null)
+        private_url  = try(join("", ["https://", val.private_dns]), null)
+        display_name = try(val.display_name, null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${val.ssh_user}@${val.public_dns}", null)
       }
     ]
   } : null
@@ -143,34 +143,34 @@ output "cte_ddc_agents" {
     cte_agents = [
       for val in concat(local.linux_cte_only_instances, local.windows_cte_only_instances) :
       {
-        private_ip    = module.cte_ddc_agents[val.id].private_ip
-        private_dns   = module.cte_ddc_agents[val.id].private_dns
-        public_ip     = module.cte_ddc_agents[val.id].public_ip
-        public_dns    = module.cte_ddc_agents[val.id].public_dns
-        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        private_ip   = module.cte_ddc_agents[val.id].private_ip
+        private_dns  = module.cte_ddc_agents[val.id].private_dns
+        public_ip    = module.cte_ddc_agents[val.id].public_ip
+        public_dns   = module.cte_ddc_agents[val.id].public_dns
+        display_name = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
     ddc_agents = [
       for val in concat(local.linux_ddc_only_instances, local.windows_ddc_only_instances) :
       {
-        private_ip    = module.cte_ddc_agents[val.id].private_ip
-        private_dns   = module.cte_ddc_agents[val.id].private_dns
-        public_ip     = module.cte_ddc_agents[val.id].public_ip
-        public_dns    = module.cte_ddc_agents[val.id].public_dns
-        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        private_ip   = module.cte_ddc_agents[val.id].private_ip
+        private_dns  = module.cte_ddc_agents[val.id].private_dns
+        public_ip    = module.cte_ddc_agents[val.id].public_ip
+        public_dns   = module.cte_ddc_agents[val.id].public_dns
+        display_name = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
     cte_ddc_windows_agents = [
       for val in concat(local.linux_cte_ddc_instances, local.windows_cte_ddc_instances) :
       {
-        private_ip    = module.cte_ddc_agents[val.id].private_ip
-        private_dns   = module.cte_ddc_agents[val.id].private_dns
-        public_ip     = module.cte_ddc_agents[val.id].public_ip
-        public_dns    = module.cte_ddc_agents[val.id].public_dns
-        display_name  = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command   = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        private_ip   = module.cte_ddc_agents[val.id].private_ip
+        private_dns  = module.cte_ddc_agents[val.id].private_dns
+        public_ip    = module.cte_ddc_agents[val.id].public_ip
+        public_dns   = module.cte_ddc_agents[val.id].public_dns
+        display_name = try(module.cte_ddc_agents[val.id].display_name, null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
   } : null

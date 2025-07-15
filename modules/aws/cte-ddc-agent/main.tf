@@ -1,30 +1,30 @@
 locals {
-  enable_ldt         = 0
-  enable_fam         = 1
+  enable_ldt = 0
+  enable_fam = 1
 
   reg_params_template_name = "cte_agent_reg_params.tftpl"
 
   bastion_host        = try(var.ingress_communication_via_proxy.proxy_address, null)
   bastion_private_key = try(file(var.ingress_communication_via_proxy.proxy_private_ssh_key_path), "")
   bastion_user        = try(var.ingress_communication_via_proxy.proxy_ssh_user, null)
-  script_path = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
+  script_path         = var.terraform_script_path_folder == null ? null : (join("/", [var.terraform_script_path_folder, "terraform_%RAND%.sh"]))
 
-  public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.cte_ddc_agent.public_ip
-  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.cte_ddc_agent.public_dns
-  private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
-  instance_address     = var.use_public_ip ? local.public_ip : local.private_ip
+  public_ip        = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.cte_ddc_agent.public_ip
+  public_dns       = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.cte_ddc_agent.public_dns
+  private_ip       = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+  instance_address = var.use_public_ip ? local.public_ip : local.private_ip
 
   security_group_ids = concat(
     [for sg in aws_security_group.dsf_agent_sg : sg.id],
-    var.security_group_ids)
+  var.security_group_ids)
 
   # Determine the values based on the OS type
-  ami_id = var.os_type == "Windows" ? data.aws_ami.agent_ami_windows[0].id : data.aws_ami.agent_ami_linux[0].id
-  user_data = var.os_type == "Windows" ? local.user_data_windows : null
-  reboot_commands = var.os_type == "Windows" ? local.reboot_inline_commands_windows : local.reboot_inline_commands_linux
+  ami_id                    = var.os_type == "Windows" ? data.aws_ami.agent_ami_windows[0].id : data.aws_ami.agent_ami_linux[0].id
+  user_data                 = var.os_type == "Windows" ? local.user_data_windows : null
+  reboot_commands           = var.os_type == "Windows" ? local.reboot_inline_commands_windows : local.reboot_inline_commands_linux
   ddc_agent_inline_commands = var.os_type == "Windows" ? local.ddc_agent_inline_commands_windows : local.ddc_agent_inline_commands_linux
   cte_agent_inline_commands = var.os_type == "Windows" ? local.cte_agent_inline_commands_windows : local.cte_agent_inline_commands_linux
-  target_platform = var.os_type == "Windows" ? "windows" : null
+  target_platform           = var.os_type == "Windows" ? "windows" : null
 
   dummy_file_path = "${path.module}/dummy.txt"
 }
@@ -60,9 +60,9 @@ resource "aws_instance" "cte_ddc_agent" {
     http_endpoint = "enabled"
     http_tokens   = "required"
   }
-  tags                        = merge(var.tags, { Name : var.friendly_name })
-  volume_tags                 = merge(var.tags, { Name : var.friendly_name })
-  depends_on = [aws_eip.dsf_instance_eip]
+  tags        = merge(var.tags, { Name : var.friendly_name })
+  volume_tags = merge(var.tags, { Name : var.friendly_name })
+  depends_on  = [aws_eip.dsf_instance_eip]
 
   lifecycle {
     ignore_changes = [ami]
@@ -104,10 +104,10 @@ resource "null_resource" "cte_ddc_copy_file" {
   }
 
   connection {
-    type        = "ssh"
-    user        = local.agent_ami_ssh_user
-    private_key = file(var.ssh_key_pair.ssh_private_key_file_path)
-    host        = local.instance_address
+    type            = "ssh"
+    user            = local.agent_ami_ssh_user
+    private_key     = file(var.ssh_key_pair.ssh_private_key_file_path)
+    host            = local.instance_address
     target_platform = local.target_platform
 
     bastion_host        = local.bastion_host

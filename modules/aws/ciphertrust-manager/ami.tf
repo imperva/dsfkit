@@ -12,7 +12,7 @@ locals {
   ami_name_regex   = local.ami.name_regex != null ? local.ami.name_regex : ".*"
   ami_product_code = local.ami.product_code != null ? local.ami.product_code : "*"
 
-  ami_id           = local.ami.id != null ? local.ami.id : data.aws_ami.selected-ami[0].image_id
+  ami_id = local.ami.id != null ? local.ami.id : data.aws_ami.selected-ami[0].image_id
 }
 
 data "aws_ami" "selected-ami" {

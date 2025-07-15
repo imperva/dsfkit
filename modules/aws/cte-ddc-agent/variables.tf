@@ -68,13 +68,13 @@ variable "ssh_key_pair" {
 variable "cipher_trust_manager_address" {
   type        = string
   description = "CipherTrust Manager address to register to"
-  nullable = false
+  nullable    = false
 }
 
 variable "os_type" {
   type        = string
   description = "Os type to provision as EC2, available types are: ['Red Hat', 'Windows']"
-  nullable = false
+  nullable    = false
   validation {
     condition     = var.os_type == null || try(contains(["Red Hat", "Windows"], var.os_type), false)
     error_message = "Valid values should contain at least one of the following: 'Red Hat', 'Windows']"
@@ -82,17 +82,17 @@ variable "os_type" {
 }
 
 variable "agent_installation" {
-  type        = object({
-    registration_token = string
-    install_cte = bool
-    install_ddc = bool
+  type = object({
+    registration_token          = string
+    install_cte                 = bool
+    install_ddc                 = bool
     cte_agent_installation_file = string
     ddc_agent_installation_file = string
   })
   description = "Agent installation files to use for the agent installation and registration token for the CTE agent. The files should be accessible from the machine where Terraform is running."
-  nullable = false
+  nullable    = false
   validation {
-    condition = var.agent_installation.install_cte || var.agent_installation.install_ddc
+    condition     = var.agent_installation.install_cte || var.agent_installation.install_ddc
     error_message = "At least one of install_cte or install_ddc must be true"
   }
   validation {
@@ -114,10 +114,10 @@ variable "agent_installation" {
 }
 
 variable "instance_type" {
-    type        = string
-    description = "Instance type to use for the agent instances"
-    default     = "t2.large"
-    nullable    = false
+  type        = string
+  description = "Instance type to use for the agent instances"
+  default     = "t2.large"
+  nullable    = false
 }
 
 variable "use_public_ip" {
