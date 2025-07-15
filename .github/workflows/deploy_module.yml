@@ -132,11 +132,13 @@ jobs:
           - source_module: "aws/ciphertrust-manager"
             destination_repo: "terraform-aws-dsf-ciphertrust-manager"
             begin_tag: 1.7.31
-          - source_module: "aws/ciphertrust-manager-cluster-setup"
-            destination_repo: "terraform-aws-dsf-ciphertrust-manager-cluster-setup"
-            begin_tag: 1.7.31
           - source_module: "aws/cte-ddc-agent"
             destination_repo: "terraform-aws-dsf-cte-ddc-agent"
+            begin_tag: 1.7.31
+
+          ## null provider
+          - source_module: "null/ciphertrust-manager-cluster-setup"
+            destination_repo: "terraform-null-dsf-ciphertrust-manager-cluster-setup"
             begin_tag: 1.7.31
 
           # Globals
