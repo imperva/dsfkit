@@ -78,8 +78,7 @@ resource "ciphertrust_cte_registration_token" "reg_token" {
 }
 
 module "cte_ddc_agents" {
-  source = "../../../../modules/aws/cte-ddc-agent"
-  #   source  = "imperva/dsf-cte-ddc-agent/aws"
+  source  = "imperva/dsf-cte-ddc-agent/aws"
   version = "1.7.31" # latest release tag
   #   count   = local.cte_ddc_linux_count
   for_each      = local.all_agent_instances_map

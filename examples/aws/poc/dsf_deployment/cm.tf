@@ -5,8 +5,7 @@ locals {
 }
 
 module "ciphertrust_manager" {
-  source = "../../../../modules/aws/ciphertrust-manager"
-  #   source  = "imperva/dsf-ciphertrust-manager/aws"
+  source  = "imperva/dsf-ciphertrust-manager/aws"
   version = "1.7.31" # latest release tag
   count   = local.ciphertrust_manager_count
   ami = var.ciphertrust_manager_ami_id == null ? null : {
@@ -45,8 +44,7 @@ resource "ciphertrust_trial_license" "trial_license" {
 }
 
 module "ciphertrust_manager_cluster_setup" {
-  source = "../../../../modules/null/ciphertrust-manager-cluster-setup"
-  #   source  = "imperva/dsf-ciphertrust-manager-cluster-setup/aws"
+  source  = "imperva/dsf-ciphertrust-manager-cluster-setup/null"
   version = "1.7.31" # latest release tag
   count   = local.ciphertrust_manager_count > 1 ? 1 : 0
   nodes = [
