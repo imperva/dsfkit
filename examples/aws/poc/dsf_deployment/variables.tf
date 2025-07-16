@@ -85,7 +85,7 @@ variable "password" {
   }
 
   validation {
-    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.password))
+    condition     = var.password == null || can(regex("[*+=#%^:/~.,\\[\\]_]", var.password))
     error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
   }
 }
