@@ -360,7 +360,7 @@ variable "dra_analytics_ebs_details" {
 variable "ciphertrust_manager_version" {
   type        = string
   default     = "2.20"
-  description = "The CipherTrust Manager version from AWS marketplace to install. Supported versions are: 2.20 and up."
+  description = "The CipherTrust Manager version from AWS marketplace to install. Supported versions are: 2.19 and up."
   validation {
     condition     = can(regex("^\\d{1,2}\\.\\d{1,3}$", var.ciphertrust_manager_version))
     error_message = "Version must be in the format dd.dd where each dd is a number between 1-99 (e.g 2.20)"

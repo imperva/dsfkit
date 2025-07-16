@@ -605,6 +605,16 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>2. Updated the AWS POC dsf_deployment example.
     </td>
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.32
+    </td>
+    <td>
+      1. Added support for CipherTrust Manger version 2.20 in AWS. Set the variable ‘ciphertrust_manager_version’ to control the version (default: 2.20).
+      <br/>2. Updated the AWS POC dsf_deployment example.
+      <br/>3. Improvements and bug fixes.
+  </tr>
   
 </table>
 
