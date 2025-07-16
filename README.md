@@ -809,6 +809,10 @@ Restrictions on modules may apply</td>
   <tr>
     <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.0.0.10</td>
   </tr>
+  </tr>
+  <tr>
+    <td>CipherTrust Manager</td><td>2.20</td><td>2.20</td>
+  </tr>
 </table>
 
 Relevant variables are:
@@ -824,6 +828,10 @@ Relevant variables are:
    variable "dra_version" {
        type    = string
    }
+
+    variable "ciphertrust_manager_version" {
+      type    = string
+    }
    ```
 
 When specifying Sonar and DRA versions, both long and short version formats are supported, for example, 4.12.0.10 or 4.12. The short format maps to the latest patch.
