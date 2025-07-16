@@ -80,7 +80,6 @@ resource "ciphertrust_cte_registration_token" "reg_token" {
 module "cte_ddc_agents" {
   source  = "imperva/dsf-cte-ddc-agent/aws"
   version = "1.7.31" # latest release tag
-  #   count   = local.cte_ddc_linux_count
   for_each      = local.all_agent_instances_map
   friendly_name = join("-", [local.deployment_name_salted, each.value.id])
   subnet_id     = local.cte_ddc_agent_subnet_id
