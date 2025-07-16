@@ -62,7 +62,7 @@ module "dsf_ciphertrust_manager" {
   key_pair  = "my-keypair-name"
 
   ebs = {
-    volume_size = 256
+    volume_size = 300
     volume_type = "gp2"
   }
 
