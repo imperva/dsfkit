@@ -63,6 +63,31 @@ variable "password" {
   type        = string
   default     = null # Random
   description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX, DSF Hub and CipherTrust Manager web console (Randomly generated if not set)"
+
+  validation {
+    condition     = var.password == null || try(length(var.password) >= 8 && length(var.password) <= 14, false)
+    error_message = "Password must be 8-14 characters long"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("[A-Z]", var.password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("[a-z]", var.password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("\\d", var.password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
 }
 
 ##############################
