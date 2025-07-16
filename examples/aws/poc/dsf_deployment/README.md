@@ -111,6 +111,15 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway
 - `simulation_db_types_for_agent`: Types of databases to provision for Agent Gateways
 
+### CTE / DDC Agents
+
+- `cte_agent_linux_installation_file`: Local path to the CTE agent installation file for Linux (RHEL 8.9).
+- `ddc_agent_linux_installation_file`: Local path to the DDC agent installation file for Linux (RHEL 8.9).
+- `cte_agent_windows_installation_file`: Local path to the CTE agent installation file for Windows (Windows Server 2022).
+- `ddc_agent_windows_installation_file`: Local path to the DDC agent installation file for Windows (Windows Server 2022).
+
+Note: The installation files must reside on the local machine where the Terraform deployment is executed.
+
 ## Default Example
 To perform the default deployment, run the following command:
 
