@@ -58,7 +58,7 @@ module "hub_main" {
     ddc_connection_hostname = null
     ddc_connection_port     = null
     username                = local.ciphertrust_manager_web_console_username
-    password                = local.ciphertrust_manager_password
+    password                = local.password
     registration_method     = "password"
     registration_token      = null
   } : null

@@ -32,9 +32,9 @@ module "ciphertrust_manager" {
 }
 
 provider "ciphertrust" {
-  address  = local.ciphertrust_manager_count > 0 ? "https://${module.ciphertrust_manager[0].public_ip}" : null
+  address = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
-  password = local.ciphertrust_manager_password
+  password = local.password
   // destroy cluster can take almost a minute so give us a bit of a buffer
   rest_api_timeout = 720
 }
@@ -56,7 +56,7 @@ module "ciphertrust_manager_cluster_setup" {
   ]
   credentials = {
     user     = local.ciphertrust_manager_web_console_username
-    password = local.ciphertrust_manager_password
+    password = local.password
   }
   ddc_node_setup = {
     enabled      = true

@@ -62,7 +62,7 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Randomly generated if not set)"
+  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX, DSF Hub and CipherTrust Manager web console (Randomly generated if not set)"
 }
 
 ##############################
@@ -386,37 +386,6 @@ variable "ciphertrust_manager_ebs_details" {
   default = {
     volume_size = 300
     volume_type = "gp2"
-  }
-}
-
-variable "ciphertrust_manager_password" {
-  sensitive   = true
-  type        = string
-  default     = null # Random
-  description = "Ciphertrust manager web console password"
-  validation {
-    condition     = var.ciphertrust_manager_password == null || try(length(var.ciphertrust_manager_password) >= 8 && length(var.ciphertrust_manager_password) <= 30, false)
-    error_message = "Password must be between 8 and 30 characters"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[A-Z]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 upper-case letter.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[a-z]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 lower-case letter.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[0-9]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 decimal digit.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[!@#$%^&*(),.?\":{}|<>]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 special character.\n"
   }
 }
 
