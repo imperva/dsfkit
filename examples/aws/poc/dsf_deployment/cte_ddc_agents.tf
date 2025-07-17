@@ -75,6 +75,10 @@ resource "ciphertrust_cte_registration_token" "reg_token" {
   lifetime    = "90d"
   max_clients = 100
   name_prefix = "dsf-agent"
+
+  depends_on = [
+    module.ciphertrust_manager
+  ]
 }
 
 module "cte_ddc_agents" {

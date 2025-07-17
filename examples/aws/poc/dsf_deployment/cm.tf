@@ -42,6 +42,10 @@ provider "ciphertrust" {
 resource "ciphertrust_trial_license" "trial_license" {
   count = local.ciphertrust_manager_count > 0 ? 1 : 0
   flag  = "activate"
+
+  depends_on = [
+    module.ciphertrust_manager
+  ]
 }
 
 module "ciphertrust_manager_cluster_setup" {
