@@ -57,13 +57,13 @@ locals {
     : ""
   )
 
-  ddc_agent_inline_commands_windows = var.agent_installation.ddc_agent_installation_file != null ? [
-    "msiexec.exe /i \"${basename(var.agent_installation.ddc_agent_installation_file)}\" /qn /norestart TARGETIP=${var.cipher_trust_manager_address}",
-    "\"C:\\Program Files (x86)\\Ground Labs\\Enterprise Recon 2\\er2_config_cmd.exe\" -t" # test connection from DDC to CM
-  ] : []
   cte_agent_inline_commands_windows = var.agent_installation.cte_agent_installation_file != null ? [
     local.cte_agent_install_command_windows,
     "if %ERRORLEVEL% EQU 3010 (echo Reboot required, resetting errorlevel && exit /b 0) else (exit /b %ERRORLEVEL%)"
+  ] : []
+  ddc_agent_inline_commands_windows = var.agent_installation.ddc_agent_installation_file != null ? [
+    "msiexec.exe /i \"${basename(var.agent_installation.ddc_agent_installation_file)}\" /qn /norestart TARGETIP=${var.cipher_trust_manager_address}",
+    "\"C:\\Program Files (x86)\\Ground Labs\\Enterprise Recon 2\\er2_config_cmd.exe\" -t" # test connection from DDC to CM
   ] : []
   reboot_inline_commands_windows = [
     "echo 'About to reboot the host'",

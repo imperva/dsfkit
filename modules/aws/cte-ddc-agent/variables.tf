@@ -20,7 +20,7 @@ variable "friendly_name" {
 
 variable "subnet_id" {
   type        = string
-  description = "Subnet id for the DSF MX instance"
+  description = "Subnet id for the agent instance"
   validation {
     condition     = length(var.subnet_id) >= 15 && substr(var.subnet_id, 0, 7) == "subnet-"
     error_message = "Subnet id is invalid. Must be subnet-********"
@@ -73,7 +73,7 @@ variable "cipher_trust_manager_address" {
 
 variable "os_type" {
   type        = string
-  description = "Os type to provision as EC2, available types are: ['Red Hat', 'Windows']"
+  description = "OS type to provision as EC2, available types are: ['Red Hat', 'Windows']"
   nullable    = false
   validation {
     condition     = var.os_type == null || try(contains(["Red Hat", "Windows"], var.os_type), false)
@@ -89,7 +89,7 @@ variable "agent_installation" {
     cte_agent_installation_file = string
     ddc_agent_installation_file = string
   })
-  description = "Agent installation files to use for the agent installation and registration token for the CTE agent. The files should be accessible from the machine where Terraform is running."
+  description = "CTE and DDC agent installation files, and the registration token for registering the CTE agent with the CipherTrust Manager. 'cte_agent_installation_file' and 'ddc_agent_installation_file' are absolute paths in the machine where Terraform is executed."
   nullable    = false
   validation {
     condition     = var.agent_installation.install_cte || var.agent_installation.install_ddc
@@ -105,7 +105,7 @@ variable "agent_installation" {
   }
   validation {
     condition     = var.agent_installation.cte_agent_installation_file == null || try(fileexists(var.agent_installation.cte_agent_installation_file), false)
-    error_message = "CTE agent installation file does not exist at the specified path."
+    error_message = "CTE agent installation file does not exist at the specified path"
   }
   validation {
     condition     = var.agent_installation.ddc_agent_installation_file == null || try(fileexists(var.agent_installation.ddc_agent_installation_file), false)
@@ -115,7 +115,7 @@ variable "agent_installation" {
 
 variable "instance_type" {
   type        = string
-  description = "Instance type to use for the agent instances"
+  description = "EC2 instance type for the agent"
   default     = "t2.large"
   nullable    = false
 }
@@ -132,13 +132,13 @@ variable "ingress_communication_via_proxy" {
     proxy_private_ssh_key_path = string
     proxy_ssh_user             = string
   })
-  description = "Proxy address used for ssh for private CTE-DDC agent (Usually hub address), Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
+  description = "Proxy address used for ssh for private CTE and/or DDC agent, Proxy ssh key file path and Proxy ssh user. Keep empty if no proxy is in use"
   default     = null
 }
 
 variable "terraform_script_path_folder" {
   type        = string
-  description = "Terraform script path folder to create terraform temporary script files on the CTE-DDC agent instance. Use '.' to represent the instance home directory"
+  description = "Terraform script path folder to create terraform temporary script files on the CTE and/or DDC agent instance. Use '.' to represent the instance home directory"
   default     = null
   validation {
     condition     = var.terraform_script_path_folder != ""

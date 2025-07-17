@@ -2,7 +2,7 @@ locals {
   ami_default = {
     id               = null
     owner_account_id = "679593333241" // aws marketplace
-    name_regex       = "k170v-2.19.*"
+    name_regex       = "k170v-${var.ciphertrust_manager_version}.*"
     product_code     = "a5j8w8j2tn9crtnai795fkf6o"
   }
 

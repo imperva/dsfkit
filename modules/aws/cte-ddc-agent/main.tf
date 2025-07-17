@@ -22,8 +22,8 @@ locals {
   ami_id                    = var.os_type == "Windows" ? data.aws_ami.agent_ami_windows[0].id : data.aws_ami.agent_ami_linux[0].id
   user_data                 = var.os_type == "Windows" ? local.user_data_windows : null
   reboot_commands           = var.os_type == "Windows" ? local.reboot_inline_commands_windows : local.reboot_inline_commands_linux
-  ddc_agent_inline_commands = var.os_type == "Windows" ? local.ddc_agent_inline_commands_windows : local.ddc_agent_inline_commands_linux
   cte_agent_inline_commands = var.os_type == "Windows" ? local.cte_agent_inline_commands_windows : local.cte_agent_inline_commands_linux
+  ddc_agent_inline_commands = var.os_type == "Windows" ? local.ddc_agent_inline_commands_windows : local.ddc_agent_inline_commands_linux
   target_platform           = var.os_type == "Windows" ? "windows" : null
 
   dummy_file_path = "${path.module}/dummy.txt"
@@ -62,11 +62,15 @@ resource "aws_instance" "cte_ddc_agent" {
   }
   tags        = merge(var.tags, { Name : var.friendly_name })
   volume_tags = merge(var.tags, { Name : var.friendly_name })
-  depends_on  = [aws_eip.dsf_instance_eip]
 
   lifecycle {
     ignore_changes = [ami]
   }
+
+  depends_on = [
+    aws_network_interface.eni,
+    aws_eip.dsf_instance_eip
+  ]
 }
 
 resource "null_resource" "cte_ddc_copy_file" {

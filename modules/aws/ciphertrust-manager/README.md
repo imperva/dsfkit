@@ -62,8 +62,9 @@ module "dsf_ciphertrust_manager" {
   key_pair  = "my-keypair-name"
 
   ebs = {
-    volume_size = 256
-    volume_type = "gp2"
+    volume_size = 300
+    volume_type = "gp3"
+    iops        = 3000
   }
 
   allowed_web_console_and_api_cidrs = ["10.0.0.0/24"]

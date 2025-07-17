@@ -46,6 +46,10 @@ resource "aws_instance" "cipthertrust_manager_instance" {
   lifecycle {
     ignore_changes = [ami]
   }
+  depends_on = [
+    aws_network_interface.eni,
+    aws_eip.dsf_instance_eip
+  ]
 }
 
 resource "aws_network_interface" "eni" {
