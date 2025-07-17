@@ -20,6 +20,13 @@ locals {
       udp             = []
       tcp             = [3030, 27117, 22]
       cidrs           = concat(var.allowed_agentless_gw_cidrs, var.allowed_all_cidrs)
+    },
+    {
+      name            = ["cte", "agents"]
+      internet_access = false
+      udp             = []
+      tcp             = [11570, 10570] # syslog TLS port 11570, TCP is 10570
+      cidrs           = concat(var.allowed_cte_agents_cidrs, var.allowed_all_cidrs)
     }
   ]
 }

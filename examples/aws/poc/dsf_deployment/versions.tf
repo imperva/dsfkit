@@ -6,6 +6,11 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 4.23.0"
     }
+    ciphertrust = {
+      source = "ThalesGroup/ciphertrust"
+      #       version = "1.0.0-pre3"
+      version = "~> 0.11.1"
+    }
     local = {
       version = "~> 2.1"
     }

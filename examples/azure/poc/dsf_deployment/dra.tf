@@ -2,7 +2,7 @@ locals {
   dra_analytics_count = var.enable_dra ? var.dra_analytics_count : 0
 
   dra_admin_public_ip = var.enable_dra ? [format("%s/32", module.dra_admin[0].public_ip)] : []
-  dra_admin_cidr_list = concat(module.network[0].vnet_address_space, local.dra_admin_public_ip)
+  dra_admin_cidr_list = concat(local.subnet_address_spaces, local.dra_admin_public_ip)
 
   dra_admin_image_exits     = var.dra_admin_image_details != null ? true : false
   dra_admin_vhd_exits       = var.dra_admin_vhd_details != null ? true : false
@@ -12,7 +12,7 @@ locals {
 
 module "dra_admin" {
   source  = "imperva/dsf-dra-admin/azurerm"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = var.enable_dra ? 1 : 0
 
   name                        = join("-", [local.deployment_name_salted, "dra", "admin"])
@@ -24,7 +24,7 @@ module "dra_admin" {
   admin_ssh_password          = local.password
 
   allowed_web_console_cidrs = var.web_console_cidr
-  allowed_analytics_cidrs   = module.network[0].vnet_address_space
+  allowed_analytics_cidrs   = local.subnet_address_spaces
   allowed_hub_cidrs         = local.hub_cidr_list
   allowed_ssh_cidrs         = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
 
@@ -50,7 +50,7 @@ module "dra_admin" {
 
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/azurerm"
-  version = "1.7.30" # latest release tag
+  version = "1.7.31" # latest release tag
   count   = local.dra_analytics_count
 
   name                        = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
@@ -62,7 +62,7 @@ module "dra_analytics" {
   analytics_ssh_password      = local.password
   archiver_password           = local.password
 
-  allowed_admin_cidrs = module.network[0].vnet_address_space
+  allowed_admin_cidrs = local.subnet_address_spaces
   allowed_ssh_cidrs   = concat(local.workstation_cidr, local.hub_cidr_list)
   #allowed_ssh_cidrs = concat(var.allowed_ssh_cidrs, local.hub_cidr_list, local.workstation_cidr)
 

@@ -15,7 +15,7 @@ output "generated_network" {
   value = try({
     vnet          = module.network[0].vnet_id
     subnets       = module.network[0].vnet_subnets
-    address_space = module.network[0].vnet_address_space
+    address_space = local.subnet_address_spaces
   }, null)
 }
 
