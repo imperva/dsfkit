@@ -62,11 +62,15 @@ resource "aws_instance" "cte_ddc_agent" {
   }
   tags        = merge(var.tags, { Name : var.friendly_name })
   volume_tags = merge(var.tags, { Name : var.friendly_name })
-  depends_on  = [aws_eip.dsf_instance_eip]
 
   lifecycle {
     ignore_changes = [ami]
   }
+
+  depends_on = [
+    aws_network_interface.eni,
+    aws_eip.dsf_instance_eip
+  ]
 }
 
 resource "null_resource" "cte_ddc_copy_file" {

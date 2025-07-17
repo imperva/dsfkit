@@ -97,6 +97,7 @@ variable "ebs" {
   type = object({
     volume_size = number
     volume_type = string
+    iops        = number
   })
   description = "Compute instance volume attributes for the CipherTrust Manager"
 }

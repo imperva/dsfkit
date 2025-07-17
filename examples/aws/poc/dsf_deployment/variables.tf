@@ -406,11 +406,13 @@ variable "ciphertrust_manager_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
+    iops        = number
   })
   description = "CipherTrust Manager compute instance volume attributes"
   default = {
     volume_size = 300
-    volume_type = "gp2"
+    volume_type = "gp3"
+    iops        = 3000
   }
 }
 
