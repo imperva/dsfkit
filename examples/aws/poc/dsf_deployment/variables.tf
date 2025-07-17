@@ -443,35 +443,35 @@ variable "ddc_agent_windows_installation_file" {
 variable "cte_ddc_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of CTE-DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE and/or DDC agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of CTE agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "ddc_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of DDC agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_ddc_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of CTE-DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE and/or DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of CTE agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "ddc_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
