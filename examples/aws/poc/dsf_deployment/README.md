@@ -111,7 +111,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway
 - `simulation_db_types_for_agent`: Types of databases to provision for Agent Gateways
 
-### CTE / DDC Agents
+### CTE / DDC Agents for Simulation Purposes
 
 - `cte_agent_linux_installation_file`: Local path to the CTE agent installation file for Linux (RHEL 8.9).
 - `ddc_agent_linux_installation_file`: Local path to the DDC agent installation file for Linux (RHEL 8.9).

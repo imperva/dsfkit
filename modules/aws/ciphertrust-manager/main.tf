@@ -48,7 +48,8 @@ resource "aws_instance" "cipthertrust_manager_instance" {
   }
   depends_on = [
     aws_network_interface.eni,
-    aws_eip.dsf_instance_eip
+    aws_eip.dsf_instance_eip,
+    data.aws_ami.selected-ami
   ]
 }
 

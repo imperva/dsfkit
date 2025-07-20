@@ -72,6 +72,7 @@ locals {
 
 resource "ciphertrust_cte_registration_token" "reg_token" {
   count       = length(local.all_agent_instances_map) > 0 ? 1 : 0
+  # give enough time for adding agents post initial deployment
   lifetime    = "90d"
   max_clients = 100
   name_prefix = "dsf-agent"
