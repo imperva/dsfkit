@@ -95,7 +95,7 @@ module "cte_ddc_agents" {
   attach_persistent_public_ip  = true
   use_public_ip                = true
   allowed_ssh_cidrs            = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
-  allowed_rdp_cidrs            = each.value.os_type == "Windows" ? concat(local.workstation_cidr, var.allowed_ssh_cidrs) : null
+  allowed_rdp_cidrs            = each.value.os_type == "Windows" ? concat(local.workstation_cidr, var.allowed_ssh_cidrs) : []
   cipher_trust_manager_address = module.ciphertrust_manager[0].private_ip
   agent_installation = {
     registration_token          = ciphertrust_cte_registration_token.reg_token[0].token
