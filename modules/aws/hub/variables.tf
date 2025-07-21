@@ -313,7 +313,7 @@ variable "dra_details" {
 
 variable "cm_details" {
   sensitive   = true
-  description = "DSF CipherTrust Manager to onboard with the Sonar Hub. This Terraform variable is supported for Sonar Hub version 15.0 and above. If null, no CipherTrust Manager will be onboarded. For earlier versions, configure this manually via the DSF Hub web console integrations page."
+  description = "DSF CipherTrust Manager to onboard with the DSF Hub. CipherTrust Manager integration is supported for DSF Hub version 4.18 and above. If null, no CipherTrust Manager will be onboarded"
   type = object({
     name                    = string
     is_load_balancer        = bool
