@@ -1,5 +1,5 @@
 locals {
-  cm_association_log_path_in_hub = "/tmp/dsfkit_cm_association.log"
+  cm_association_log_path_in_hub = "/var/log/dsfkit_cm_association.log"
 
   // 4.18 and 4.19
   cm_payload_4_18 = var.cm_details == null ? null : jsonencode({
@@ -51,34 +51,35 @@ locals {
 
   cm_association_commands = var.cm_details == null ? "" : <<-EOF
     #!/bin/bash
-    exec > ${local.cm_association_log_path_in_hub} 2>&1
     set -e
     VERSION="$${JSONAR_VERSION:-0.0.0.0.0}"
+    LOGFILE=${local.cm_association_log_path_in_hub}
 
-    echo "JSONAR_VERSION: $VERSION"
+    sudo bash -c "echo JSONAR_VERSION: $VERSION >> $LOGFILE"
 
     if [[ "$VERSION" == 4.18.* || "$VERSION" == 4.19.* ]]; then
-      echo "Using payload for version 4.18 or 4.19"
+      sudo bash -c "echo Using payload for version 4.18 or 4.19 >> $LOGFILE"
       PAYLOAD='${replace(local.cm_payload_4_18, "'", "'\\''")}'
     elif [[ "$VERSION" == 15.0.* || "$VERSION" == 15.1.* ]]; then
-      echo "Using payload for version 15.0 or 15.1"
+      sudo bash -c "echo Using payload for version 15.0 or 15.1 >> $LOGFILE"
       PAYLOAD='${replace(local.cm_payload_15_0, "'", "'\\''")}'
     else
-      echo "Using payload for version 15.2 or above"
+      sudo bash -c "echo Using payload for version 15.2 or above >> $LOGFILE"
       PAYLOAD='${replace(local.cm_payload, "'", "'\\''")}'
     fi
 
     response=$(curl -k -s -w "\n%%{http_code}" -X POST 'https://127.0.0.1:8443/integrations/api/v1/ciphertrust' --header "Content-Type: application/json" --header "Authorization: Bearer ${module.hub_instance.access_tokens.usc.token}" --data "$PAYLOAD")
     BODY=$(echo "$response" | sed '$d')
     STATUS=$(echo "$response" | tail -n1)
+
     if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
-      echo "CipherTrust Manager successfully associated with the DSF Hub."
+      sudo bash -c "echo CipherTrust Manager successfully associated with the DSF Hub. >> $LOGFILE"
     else
-      echo "Request failed with HTTP status $STATUS"
-      echo "$BODY"
+      sudo bash -c "echo Request failed with HTTP status $STATUS >> $LOGFILE"
+      sudo bash -c "echo $BODY >> $LOGFILE"
       exit 1
     fi
-    EOF
+  EOF
 }
 
 resource "null_resource" "cm_association" {

@@ -67,7 +67,7 @@ This configuration will enable the Sonar module, including the DSF Hub, while di
 
 #### 4. CipherTrust Only Deployment
 
-To deploy only the Sonar module, set the following variables in your Terraform configuration:
+To deploy only the CipherTrust module, set the following variables in your Terraform configuration:
 ```
 enable_dam = false
 enable_sonar = false
