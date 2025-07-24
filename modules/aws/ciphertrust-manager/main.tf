@@ -5,6 +5,13 @@ locals {
     [for sg in aws_security_group.sg : sg.id],
   var.security_group_ids)
 
+  public_ip  = (var.attach_persistent_public_ip ?
+    (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null) :
+    aws_instance.cipthertrust_manager_instance.public_ip)
+  public_dns = (var.attach_persistent_public_ip ?
+    (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_dns : null) :
+    aws_instance.cipthertrust_manager_instance.public_dns)
+  private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 }
 
 resource "aws_eip" "dsf_instance_eip" {
