@@ -3,7 +3,7 @@ locals {
   agentless_gw_count = var.enable_sonar ? var.agentless_gw_count : 0
 
   # Minimal sonar version that supports CipherTrust Manager is 4.18
-  is_sonar_supports_cm_integration = !contains(["4.19", "4.18", "4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
+  is_sonar_supports_cm_integration = !contains(["4.17", "4.16", "4.15", "4.14", "4.13", "4.12", "4.11", "4.10", "4.9"], module.globals.tarball_location.version)
 
   hub_public_ip          = var.enable_sonar ? (length(module.hub_main[0].public_ip) > 0 ? format("%s/32", module.hub_main[0].public_ip) : null) : null
   hub_dr_public_ip       = var.enable_sonar && var.hub_hadr ? (length(module.hub_dr[0].public_ip) > 0 ? format("%s/32", module.hub_dr[0].public_ip) : null) : null
@@ -58,14 +58,15 @@ module "hub_main" {
     ddc_connection_hostname = null
     ddc_connection_port     = null
     username                = local.ciphertrust_manager_web_console_username
-    password                = local.ciphertrust_manager_password
+    password                = local.password
     registration_method     = "password"
     registration_token      = null
   } : null
   tags = local.tags
   depends_on = [
     module.vpc,
-    ciphertrust_trial_license.trial_license
+    ciphertrust_trial_license.trial_license,
+    module.ciphertrust_manager_cluster_setup
   ]
 }
 

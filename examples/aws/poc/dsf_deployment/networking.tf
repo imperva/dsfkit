@@ -8,7 +8,7 @@ locals {
   dra_admin_subnet_id           = var.subnet_ids != null ? var.subnet_ids.dra_admin_subnet_id : module.vpc[0].public_subnets[0]
   dra_analytics_subnet_id       = var.subnet_ids != null ? var.subnet_ids.dra_analytics_subnet_id : module.vpc[0].private_subnets[0]
   agent_gw_subnet_id            = var.subnet_ids != null ? var.subnet_ids.agent_gw_subnet_id : module.vpc[0].private_subnets[0]
-  ciphertrust_manager_subnet_id = var.subnet_ids != null ? var.subnet_ids.ciphertrust_subnet_id : module.vpc[0].public_subnets[0]
+  ciphertrust_manager_subnet_id = var.subnet_ids != null ? var.subnet_ids.ciphertrust_manager_subnet_id : module.vpc[0].public_subnets[0]
   cte_ddc_agent_subnet_id       = var.subnet_ids != null ? var.subnet_ids.cte_ddc_agent_subnet_id : module.vpc[0].public_subnets[0]
 }
 

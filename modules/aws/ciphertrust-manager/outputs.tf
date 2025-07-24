@@ -1,5 +1,5 @@
 output "public_ip" {
-  description = "Public elastic IP address of the CipherTrust Manager instance"
+  description = "Public IP address of the CipherTrust Manager instance"
   value       = local.public_ip
 }
 
@@ -9,7 +9,7 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  description = "Public DNS of the elastic IP address of the CipherTrust Manager instance"
+  description = "Public DNS of the IP address of the CipherTrust Manager instance"
   value       = local.public_dns
 }
 

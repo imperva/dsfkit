@@ -97,6 +97,7 @@ variable "ebs" {
   type = object({
     volume_size = number
     volume_type = string
+    iops        = number
   })
   description = "Compute instance volume attributes for the CipherTrust Manager"
 }
@@ -117,6 +118,20 @@ variable "ssh_user" {
   default = "ksadmin"
 }
 
+variable "ciphertrust_manager_version" {
+  type        = string
+  default     = "2.20"
+  description = "The CipherTrust Manager version to install"
+  validation {
+    condition     = can(regex("^\\d{1,2}\\.\\d{1,3}$", var.ciphertrust_manager_version))
+    error_message = "Version must be in the format dd.dd where each dd is a number between 1-99 (e.g 2.20)"
+  }
+  validation {
+    condition     = split(".", var.ciphertrust_manager_version)[0] == "2"
+    error_message = "CipherTrust Manager version not supported."
+  }
+}
+
 variable "ami" {
   type = object({
     id               = string
@@ -125,6 +140,8 @@ variable "ami" {
     owner_account_id = string
   })
   description = <<EOF
+This variable shouldn't be used unless you know you should use it. It allows you to pick a none official CipherTrust Manager release (not from market place).
+Keep empty if you prefer to use the ciphertrust_manager_version variable.
 This variable is used for selecting an AWS machine image based on various filters. It is an object type variable that includes the following fields: id, name_regex, product_code, and owner_account_id.
 If set to null, the recommended image will be used.
 The "id" and "name_regex" fields are used to filter the machine image by ID or name regex, respectively.
