@@ -65,7 +65,8 @@ module "hub_main" {
   tags = local.tags
   depends_on = [
     module.vpc,
-    ciphertrust_trial_license.trial_license
+    ciphertrust_trial_license.trial_license,
+    module.ciphertrust_manager_cluster_setup
   ]
 }
 

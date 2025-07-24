@@ -67,6 +67,7 @@ module "ciphertrust_manager_cluster_setup" {
     node_address = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
   }
   depends_on = [
-    module.ciphertrust_manager
+    module.ciphertrust_manager,
+    ciphertrust_trial_license.trial_license
   ]
 }
