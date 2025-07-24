@@ -27,8 +27,7 @@ resource "aws_eip_association" "eip_assoc" {
 }
 
 resource "aws_instance" "cipthertrust_manager_instance" {
-  # choosing ami logic is directly in the resource (not a local) to avoid locals destroy-time dependency issues
-  ami           = local.ami_id != null ? local.ami_id : data.aws_ami.selected-ami[0].image_id
+  ami           = local.ami_id
   instance_type = var.instance_type
   key_name      = var.key_pair
   root_block_device {
