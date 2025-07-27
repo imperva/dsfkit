@@ -18,6 +18,15 @@ variable "friendly_name" {
   }
 }
 
+variable "ebs" {
+  type = object({
+    volume_size = number
+    volume_type = string
+    iops        = number
+  })
+  description = "Compute instance volume attributes for the agent instance"
+}
+
 variable "subnet_id" {
   type        = string
   description = "Subnet id for the agent instance"

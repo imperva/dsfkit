@@ -87,6 +87,7 @@ module "cte_ddc_agents" {
   version = "1.7.31" # latest release tag
   for_each      = local.all_agent_instances_map
   friendly_name = join("-", [local.deployment_name_salted, each.value.id])
+  ebs           = var.cte_ddc_agent_ebs_details
   subnet_id     = local.cte_ddc_agent_subnet_id
   ssh_key_pair = {
     ssh_private_key_file_path = module.key_pair.private_key_file_path
