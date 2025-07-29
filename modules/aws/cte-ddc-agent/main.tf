@@ -51,6 +51,12 @@ resource "aws_instance" "cte_ddc_agent" {
   ami           = local.ami_id
   instance_type = var.instance_type
   key_name      = var.ssh_key_pair.ssh_public_key_name
+  root_block_device {
+    volume_size           = var.ebs.volume_size
+    volume_type           = var.ebs.volume_type
+    iops                  = var.ebs.iops
+    delete_on_termination = true
+  }
   user_data     = local.user_data
   network_interface {
     network_interface_id = aws_network_interface.eni.id

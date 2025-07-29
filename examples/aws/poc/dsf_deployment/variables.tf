@@ -416,6 +416,20 @@ variable "ciphertrust_manager_ebs_details" {
   }
 }
 
+variable "cte_ddc_agent_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+    iops        = number
+  })
+  description = "CTE and/or DDC agent compute instance volume attributes"
+  default = {
+    volume_size = 30
+    volume_type = "gp3"
+    iops        = 3000
+  }
+}
+
 variable "cte_agent_linux_installation_file" {
   type        = string
   description = "Path to the CTE agent linux installation file"
