@@ -62,7 +62,32 @@ variable "password" {
   sensitive   = true
   type        = string
   default     = null # Random
-  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX and DSF Hub web console (Randomly generated if not set)"
+  description = "Password for all users and components including internal communication (DRA instances, Agent and Agentless Gateways, MX and Hub) and also to MX, DSF Hub and CipherTrust Manager web console (Randomly generated if not set)"
+
+  validation {
+    condition     = var.password == null || try(length(var.password) >= 8 && length(var.password) <= 14, false)
+    error_message = "Password must be 8-14 characters long"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("[A-Z]", var.password))
+    error_message = "Password must contain at least one uppercase letter"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("[a-z]", var.password))
+    error_message = "Password must contain at least one lowercase letter"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("\\d", var.password))
+    error_message = "Password must contain at least one digit"
+  }
+
+  validation {
+    condition     = var.password == null || can(regex("[*+=#%^:/~.,\\[\\]_]", var.password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
 }
 
 ##############################
@@ -357,53 +382,52 @@ variable "dra_analytics_ebs_details" {
 #### CipherTrust variables ####
 ###############################
 
-variable "ciphertrust_manager_ebs_details" {
-  type = object({
-    volume_size = number
-    volume_type = string
-  })
-  description = "CipherTrust Manager compute instance volume attributes"
-  default = {
-    volume_size = 256
-    volume_type = "gp2"
-  }
-}
-
-variable "ciphertrust_manager_password" {
-  sensitive   = true
+variable "ciphertrust_manager_version" {
   type        = string
-  default     = null # Random
-  description = "Ciphertrust manager web console password"
+  default     = "2.20"
+  description = "The CipherTrust Manager version from AWS marketplace to install. Supported versions are: 2.19 and up."
   validation {
-    condition     = var.ciphertrust_manager_password == null || try(length(var.ciphertrust_manager_password) >= 8 && length(var.ciphertrust_manager_password) <= 30, false)
-    error_message = "Password must be between 8 and 30 characters"
+    condition     = can(regex("^\\d{1,2}\\.\\d{1,3}$", var.ciphertrust_manager_version))
+    error_message = "Version must be in the format dd.dd where each dd is a number between 1-99 (e.g 2.20)"
   }
-
   validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[A-Z]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 upper-case letter.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[a-z]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 lower-case letter.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[0-9]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 decimal digit.\n"
-  }
-
-  validation {
-    condition     = var.ciphertrust_manager_password == null || can(regex("[!@#$%^&*(),.?\":{}|<>]+", var.ciphertrust_manager_password))
-    error_message = "Password must include at least 1 special character.\n"
+    condition     = split(".", var.ciphertrust_manager_version)[0] == "2"
+    error_message = "CipherTrust Manager version not supported."
   }
 }
 
 variable "ciphertrust_manager_ami_id" {
   type        = string
-  description = "Ciphertrust Manager AMI id. If set to null, the latest AMI will be taken from AWS marketplace"
+  description = "Ciphertrust Manager AMI id. If set to null, the AMI will be taken from AWS marketplace according to 'ciphertrust_manager_version' variable."
   default     = null
+}
+
+variable "ciphertrust_manager_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+    iops        = number
+  })
+  description = "CipherTrust Manager compute instance volume attributes"
+  default = {
+    volume_size = 300
+    volume_type = "gp3"
+    iops        = 3000
+  }
+}
+
+variable "cte_ddc_agent_ebs_details" {
+  type = object({
+    volume_size = number
+    volume_type = string
+    iops        = number
+  })
+  description = "CTE and/or DDC agent compute instance volume attributes"
+  default = {
+    volume_size = 30
+    volume_type = "gp3"
+    iops        = 3000
+  }
 }
 
 variable "cte_agent_linux_installation_file" {
@@ -433,35 +457,35 @@ variable "ddc_agent_windows_installation_file" {
 variable "cte_ddc_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of CTE-DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE and/or DDC agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of CTE agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "ddc_agents_linux_count" {
   type        = number
   default     = 0
-  description = "Number of DDC agent linux servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of DDC agent linux servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_ddc_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of CTE-DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE and/or DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "cte_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of CTE agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of CTE agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
 
 variable "ddc_agents_windows_count" {
   type        = number
   default     = 0
-  description = "Number of DDC agent windows servers. Provisioning CTE-DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+  description = "Number of DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }

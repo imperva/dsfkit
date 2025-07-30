@@ -25,7 +25,7 @@ locals {
       name            = ["cte", "agents"]
       internet_access = false
       udp             = []
-      tcp             = [11570, 10570] # syslog TLS port 11570, TCP is 10570
+      tcp             = [11570, 10570] # syslog TLS port is 11570, TCP is 10570
       cidrs           = concat(var.allowed_cte_agents_cidrs, var.allowed_all_cidrs)
     }
   ]

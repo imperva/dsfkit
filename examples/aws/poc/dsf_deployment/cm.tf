@@ -8,6 +8,7 @@ module "ciphertrust_manager" {
   source  = "imperva/dsf-ciphertrust-manager/aws"
   version = "1.7.31" # latest release tag
   count   = local.ciphertrust_manager_count
+  ciphertrust_manager_version = var.ciphertrust_manager_version
   ami = var.ciphertrust_manager_ami_id == null ? null : {
     id               = var.ciphertrust_manager_ami_id
     name_regex       = null
@@ -31,9 +32,9 @@ module "ciphertrust_manager" {
 }
 
 provider "ciphertrust" {
-  address  = local.ciphertrust_manager_count > 0 ? "https://${module.ciphertrust_manager[0].public_ip}" : null
+  address = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
-  password = local.ciphertrust_manager_password
+  password = local.password
   // destroy cluster can take almost a minute so give us a bit of a buffer
   rest_api_timeout = 720
 }
@@ -41,6 +42,10 @@ provider "ciphertrust" {
 resource "ciphertrust_trial_license" "trial_license" {
   count = local.ciphertrust_manager_count > 0 ? 1 : 0
   flag  = "activate"
+
+  depends_on = [
+    module.ciphertrust_manager
+  ]
 }
 
 module "ciphertrust_manager_cluster_setup" {
@@ -55,13 +60,14 @@ module "ciphertrust_manager_cluster_setup" {
   ]
   credentials = {
     user     = local.ciphertrust_manager_web_console_username
-    password = local.ciphertrust_manager_password
+    password = local.password
   }
   ddc_node_setup = {
     enabled      = true
     node_address = coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)
   }
   depends_on = [
-    module.ciphertrust_manager
+    module.ciphertrust_manager,
+    ciphertrust_trial_license.trial_license
   ]
 }
