@@ -33,4 +33,13 @@ When deploying to multiple AWS accounts, use multiple forms.
 3. [DSF Kit - Request access to DRA AMI](https://forms.office.com/e/UnZ6gw05BB) (Microsoft form)
    1. **Open only to Imperva employees**
    2. Requesting access is for a specific version and specific regions
+   
+4. [DSF Kit - Request access to CipherTrust Manager AMI](https://aws.amazon.com/marketplace/pp?sku=a5j8w8j2tn9crtnai795fkf6o) (In AWS Marketplace)
+   1. Make sure you are logged in the AWS account
+   2. Open CipherTrust Manager marketplace link
+   3. Click “Continue to subscribe”
+   4. Click “Accept terms”
+   5. Wait for subscription to complete
+
+      **Note**: If you are already subscribed, you won’t see step (iv). You can manage your subscriptions [here](https://us-east-1.console.aws.amazon.com/marketplace/home#/subscriptions).
 
