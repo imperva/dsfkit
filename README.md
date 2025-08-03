@@ -702,7 +702,7 @@ For more details about each example, click on the example name.
       </td>
       <td>Lab/POC
       </td>
-      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), and Agent and Agentless audit sources.
+      <td>A full DSF deployment with DSF Hub and Agentless Gateways (formerly Sonar), DAM (MX and Agent Gateways), DRA (Admin and DRA Analytics), Agent and Agentless audit sources, CipherTrust Manager, and CTE and/or DDC agents.
       </td>
       <td><a href="https://github.com/imperva/dsfkit/tree/1.7.31/examples/aws/poc/dsf_deployment/dsf_deployment_1_7_31.zip">dsf_deployment_1_7_31.zip</a>
       </td>
