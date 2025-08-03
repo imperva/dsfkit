@@ -229,3 +229,11 @@ output "web_console_ciphertrust" {
     user        = local.ciphertrust_manager_web_console_username
   }, null)
 }
+
+output "classification_integration_resources" {
+  value = try({
+    scan_results_bucket_name                   = aws_s3_bucket.scan_results_bucket[0].id
+    scan_results_bucket_notifications_sqs_name = aws_sqs_queue.scan_results_bucket_notifications_sqs[0].name
+    classification_integration_policy          = aws_iam_policy.classification_integration_policy[0].arn
+  }, null)
+}

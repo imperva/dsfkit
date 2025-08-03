@@ -236,6 +236,7 @@ jobs:
             mv $EXAMPLE_DIR/versions.tf{,_}
             mv $EXAMPLE_DIR/cm.tf{,_}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
+            mv $EXAMPLE_DIR/classification_integration_resources.tf{,_}
             terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
             mv $EXAMPLE_DIR/main.tf{_,}
             mv $EXAMPLE_DIR/outputs.tf{_,}
@@ -248,6 +249,7 @@ jobs:
             mv $EXAMPLE_DIR/versions.tf{_,}
             mv $EXAMPLE_DIR/cm.tf{_,}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{_,}
+            mv $EXAMPLE_DIR/classification_integration_resources.tf{_,}
           fi
 
       - name: Terraform Validate

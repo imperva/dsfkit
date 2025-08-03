@@ -489,3 +489,9 @@ variable "ddc_agents_windows_count" {
   default     = 0
   description = "Number of DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
 }
+
+variable "create_classification_integration_resources" {
+  type        = bool
+  default     = false
+  description = "Whether to create the AWS S3 and SQS resources required for classification integration between Hub and CipherTrust."
+}
