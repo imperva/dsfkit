@@ -50,7 +50,7 @@ env:
   JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
   AWS_KEY_PATH: "jump_server_key.cer"
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
+  TF_VAR_additional_tags: ${{ vars.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
