@@ -23,6 +23,7 @@ module "ciphertrust_manager" {
   allowed_web_console_and_api_cidrs = var.web_console_cidr
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   allowed_cluster_nodes_cidrs       = [data.aws_subnet.ciphertrust_manager.cidr_block]
+  allowed_cte_agents_cidrs          = [data.aws_subnet.cte_ddc_agent.cidr_block]
   allowed_ddc_agents_cidrs          = [data.aws_subnet.cte_ddc_agent.cidr_block]
   allowed_all_cidrs                 = local.workstation_cidr
   tags                              = local.tags

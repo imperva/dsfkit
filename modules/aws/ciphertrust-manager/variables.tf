@@ -67,6 +67,16 @@ variable "allowed_cluster_nodes_cidrs" {
   default = []
 }
 
+variable "allowed_cte_agents_cidrs" {
+  type        = list(string)
+  description = "List of ingress CIDR patterns allowing CTE agents to access the CipherTrust Manager instance"
+  validation {
+    condition     = alltrue([for item in var.allowed_cte_agents_cidrs : can(cidrnetmask(item))])
+    error_message = "Each item of this list must be in a valid CIDR block format. For example: [\"10.106.108.0/25\"]"
+  }
+  default = []
+}
+
 variable "allowed_ddc_agents_cidrs" {
   type        = list(string)
   description = "List of ingress CIDR patterns allowing DDC agents to access the CipherTrust Manager instance"
