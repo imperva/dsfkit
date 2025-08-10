@@ -230,10 +230,10 @@ output "web_console_ciphertrust" {
   }, null)
 }
 
-output "classification_integration_resources" {
+output "fam_classification_integration_resources" {
   value = try({
-    scan_results_bucket_name                   = aws_s3_bucket.scan_results_bucket[0].id
-    scan_results_bucket_notifications_sqs_name = aws_sqs_queue.scan_results_bucket_notifications_sqs[0].name
-    classification_integration_policy          = aws_iam_policy.classification_integration_policy[0].arn
+    scan_results_bucket_name                   = aws_s3_bucket.fam_scan_results_bucket[0].id
+    scan_results_bucket_notifications_sqs_name = aws_sqs_queue.fam_scan_results_bucket_notifications_sqs[0].name
+    classification_integration_iam_policy      = aws_iam_policy.fam_classification_integration_policy[0].name
   }, null)
 }
