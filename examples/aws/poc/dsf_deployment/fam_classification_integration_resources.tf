@@ -3,12 +3,13 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "random_id" "fam_scan_results_bucket_suffix" {
+  count = var.create_fam_classification_integration_resources ? 1 : 0
   byte_length = 4 # 4 bytes → 8 hex chars
 }
 
 resource "aws_s3_bucket" "fam_scan_results_bucket" {
   count = var.create_fam_classification_integration_resources ? 1 : 0
-  bucket = join("-", [local.deployment_name_salted, "fam", "scan", "results", "bucket", random_id.fam_scan_results_bucket_suffix.hex])
+  bucket = join("-", [local.deployment_name_salted, "fam", "scan", "results", "bucket", random_id.fam_scan_results_bucket_suffix[0].hex])
   force_destroy = true
   tags = local.tags
 }
