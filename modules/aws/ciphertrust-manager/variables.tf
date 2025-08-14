@@ -50,11 +50,11 @@ variable "cm_password" {
     condition     = can(regex("[0-9]+", var.cm_password))
     error_message = "Password must include at least 1 decimal digit."
   }
-#
-#   validation {
-#     condition     = can(regex("[!@#$%^&*(),.?\":{}|<>]+", var.cm_password))
-#     error_message = "Password must include at least 1 special character.\n"
-#   }
+
+  validation {
+    condition     = can(regex("[*+=#%^:/~.,\\[\\]_]", var.cm_password))
+    error_message = "Password must contain at least one of the following special characters: *+=#%^:/~.,[]_"
+  }
 }
 
 variable "security_group_ids" {
