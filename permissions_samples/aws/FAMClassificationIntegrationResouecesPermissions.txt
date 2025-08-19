@@ -1,0 +1,102 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3Permissions",
+      "Effect": "Allow",
+      "Action": [
+        "s3:DeleteBucket",
+        "s3:DeleteObject",
+        "s3:CreateBucket",
+        "s3:PutObject",
+        "s3:PutObjectAcl",
+        "s3:PutBucketTagging",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:DeleteAccessPoint",
+        "s3:DeleteObjectVersion",
+        "s3:CreateAccessPoint",
+        "s3:PutBucketPublicAccessBlock",
+        "s3:PutAccountPublicAccessBlock",
+        "s3:PutEncryptionConfiguration",
+        "s3:PutBucketPolicy",
+        "s3:DeleteBucketPolicy",
+        "s3:PutBucketNotification"
+      ],
+      "Resource": [
+        "arn:aws:s3:::imperva-dsf-*",
+        "arn:aws:s3:::imperva-dsf-*/*"
+      ]
+    },
+    {
+        "Sid": "s3GeneralPermissions",
+        "Effect": "Allow",
+        "Action": [
+            "s3:ListBucket",
+            "s3:ListAllMyBuckets",
+            "s3:ListBucketVersions",
+            "s3:GetBucketPolicy",
+            "s3:GetBucketLocation",
+            "s3:GetBucketCORS",
+            "s3:GetBucketWebsite",
+            "s3:GetBucketVersioning",
+            "s3:GetAccelerateConfiguration",
+            "s3:GetBucketRequestPayment",
+            "s3:GetBucketLogging",
+            "s3:GetLifecycleConfiguration",
+            "s3:GetReplicationConfiguration",
+            "s3:GetEncryptionConfiguration",
+            "s3:GetBucketObjectLockConfiguration",
+            "s3:GetObject",
+            "s3:GetBucketAcl",
+            "s3:GetObjectAcl",
+            "s3:GetBucketLocation",
+            "s3:GetBucketTagging",
+            "s3:GetObjectTagging",
+            "s3:GetAccountPublicAccessBlock",
+            "s3:GetBucketPublicAccessBlock",
+            "s3:GetBucketNotification"
+        ],
+        "Resource": [
+            "arn:aws:s3:::imperva-dsf-*",
+            "arn:aws:s3:::imperva-dsf-*/*"
+        ]
+    },
+    {
+      "Sid": "SQSPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "sqs:CreateQueue",
+        "sqs:DeleteQueue",
+        "sqs:GetQueueAttributes",
+        "sqs:SetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:TagQueue",
+        "sqs:UntagQueue",
+        "sqs:ListQueueTags",
+        "sqs:AddPermission",
+        "sqs:RemovePermission"
+      ],
+      "Resource": [
+        "arn:aws:sqs:*:*:imperva-dsf-*"
+      ]
+    },
+    {
+      "Sid": "IAMPolicyPermissions",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreatePolicy",
+        "iam:DeletePolicy",
+        "iam:GetPolicy",
+        "iam:GetPolicyVersion",
+        "iam:ListPolicyVersions",
+        "iam:TagPolicy",
+        "iam:UntagPolicy",
+        "iam:ListPolicyTags"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:policy/imperva-dsf-*"
+      ]
+    }
+  ]
+}
