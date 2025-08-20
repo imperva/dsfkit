@@ -1,5 +1,6 @@
 locals {
   web_console_username = "admin"
+  web_console_default_password = "admin"
 
   security_group_ids = concat(
     [for sg in aws_security_group.sg : sg.id],
@@ -12,6 +13,8 @@ locals {
     (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_dns : null) :
     aws_instance.cipthertrust_manager_instance.public_dns)
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
+
+  cm_address = coalesce(local.public_ip, local.private_ip)
 }
 
 resource "aws_eip" "dsf_instance_eip" {
@@ -62,4 +65,78 @@ resource "aws_network_interface" "eni" {
   subnet_id       = var.subnet_id
   security_groups = local.security_group_ids
   tags            = var.tags
+}
+
+resource "null_resource" "set_password" {
+  provisioner "local-exec" {
+    command = <<EOF
+    set -e
+
+    # Wait up to 10 minutes for API to respond
+    echo "Waiting for service API to become reachable..."
+    for i in {1..60}; do
+      response=$(curl -k -s --connect-timeout 5 https://${local.cm_address}/api/v1/system/services/status 2>/dev/null) || true
+      if [ -n "$response" ]; then
+        echo "CipherTrust Manager API is reachable."
+        break
+      fi
+      echo "[$i] CipherTrust Manager API unreachable, retrying in 10s..."
+      sleep 10
+    done
+
+    if [ -z "$response" ]; then
+      echo "ERROR: CipherTrust Manager API did not become reachable in time."
+      exit 1
+    fi
+
+    # Wait up to 10 minutes for status = "started"
+    echo "Waiting for CipherTrust Manager services to start..."
+    for i in {1..60}; do
+      response=$(curl -k -s --connect-timeout 5 https://${local.cm_address}/api/v1/system/services/status 2>/dev/null) || true
+      if [ -z "$response" ]; then
+        echo "[$i] Services status API unreachable, retrying in 10s..."
+        sleep 10
+        continue
+      fi
+
+      # Remove carriage returns and newlines from the response since jq does not handle them well
+      clean_response=$${response//'\r'/}
+      clean_response=$${clean_response//'\n'/' '}
+      SERVICE_STATUS=$(echo "$clean_response" | jq -r '.status')
+      if [ "$SERVICE_STATUS" = "started" ]; then
+        echo "Service status is 'started'. Proceeding with password change."
+        response=$(curl -k -s -w "\n%%{http_code}" -X PATCH "https://${local.cm_address}/api/v1/auth/changepw" --header 'Content-Type: application/json' \
+          --data "{\"username\": \"admin\", \"password\": \"$PASSWORD\", \"new_password\": \"$NEW_PASSWORD\"}")
+
+        BODY=$(echo "$response" | sed '$d')
+        STATUS=$(echo "$response" | tail -n1)
+        if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
+          echo "CipherTrust Manager password was set successfully"
+          exit 0
+        else
+          echo "Request failed with HTTP status $STATUS"
+          echo "$BODY"
+          exit 1
+        fi
+      fi
+
+      echo "[$i] Services status: $SERVICE_STATUS... retrying in 10s"
+      sleep 10
+    done
+
+    echo "ERROR: Services did not start in time."
+    exit 1
+    EOF
+
+    environment = {
+      PASSWORD = local.web_console_default_password
+      NEW_PASSWORD = nonsensitive(var.cm_password)
+    }
+  }
+
+  depends_on = [
+    aws_instance.cipthertrust_manager_instance,
+    aws_network_interface.eni,
+    aws_eip_association.eip_assoc
+  ]
 }

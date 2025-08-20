@@ -39,6 +39,13 @@ locals {
       cidrs           = concat(var.allowed_ddc_agents_cidrs, var.allowed_all_cidrs)
     },
     {
+      name            = ["hub"]
+      internet_access = false
+      udp             = []
+      tcp             = [443]
+      cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
+    },
+    {
       name            = ["other"]
       internet_access = false
       udp             = []
