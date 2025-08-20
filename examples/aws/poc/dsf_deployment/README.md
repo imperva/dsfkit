@@ -23,6 +23,7 @@ The deployment is modular and allows users to deploy one or more of the followin
    - Agentless audit sources (RDS instances)
 6. CipherTrust Manager
 7. CipherTrust Transparent Encryption (CTE) and/or Data Discovery and Classification (DDC) Agents
+8. FAM classification integration resources (disabled by default)
 
 
 ### Deploying Specific Modules
@@ -87,6 +88,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `enable_dam`: Enable DAM sub-product
 - `enable_dra`: Enable DRA sub-product
 - `enable_ciphertrust`: Enable CipherTrust sub-product
+- `create_fam_classification_integration_resources`: Enable FAM classification integration resources (disabled by default)
 
 ### Server Count
 - `dra_analytics_count`: Number of DRA Analytics servers
