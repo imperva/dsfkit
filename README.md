@@ -1154,6 +1154,7 @@ The permissions are separated to different policies. Use the relevant policies a
 2. In order to create network resources such as VPC, NAT Gateway, Internet Gateway etc., use the permissions specified here - [create network resources permissions](/permissions_samples/aws/CreateNetworkResourcesPermissions.txt).
 3. In order to onboard a MySQL RDS with CloudWatch configured, use the permissions specified here - [onboard MySQL RDS permissions](/permissions_samples/aws/OnboardMysqlRdsPermissions.txt).
 4. In order to onboard a MsSQL RDS with audit configured and with synthetic data, use the permissions specified here - [onboard MsSQL RDS with synthetic data permissions](/permissions_samples/aws/OnboardMssqlRdsWithDataPermissions.txt).
+5. In order to create FAM classification integration resources such as S3 bucket, SQS, IAM policy etc., use the permissions specified here - [create FAM classification integration resources permissions](/permissions_samples/aws/FAMClassificationIntegrationResourcesPermissions.txt).
 
 **NOTE:** When running the deployment with a custom 'deployment_name' variable, you should ensure that the corresponding condition in the AWS permissions of the user who runs the deployment reflects the new custom variable.</br></br>
 **NOTE:** The permissions specified in option 2 are irrelevant for customers who prefer to use their own network objects, such as VPC, NAT Gateway, Internet Gateway, etc.
@@ -1581,6 +1582,14 @@ Below is a list of possible issues and troubleshooting remediations.
        fatal error: An error occurred (403) when calling the HeadObject operation: Forbidden
    </td>
    <td>Connect with SSH to the Sonar node EC2 and fix the aws cli profile misconfiguration. Run, for example, 'aws sts get-caller-identity' to test it.  
+   </td>
+  </tr>
+  <tr>
+   <td>CipherTrust connection timeout error
+   </td>
+   <td>Error: failed to set auth token Get "https://x.x.x.x/api/v1/system/services/status": dial tcp x.x.x.x:443: connect: operation timed out
+   </td>
+   <td>Check your network configuration. For the 'terraform destroy' command, you can set the enable_ciphertrust variable to false in order to skip the CipherTrust provider connection (in case the CipherTrust provider resources have not been created yet).
    </td>
   </tr>
  </table></details>
