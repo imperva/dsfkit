@@ -8,7 +8,7 @@ locals {
       internet_access = false
       udp             = []
       tcp             = [443, 80]
-      cidrs           = concat(var.allowed_web_console_and_api_cidrs, var.allowed_all_cidrs)
+      cidrs           = concat(var.allowed_web_console_and_api_cidrs, var.allowed_cte_agents_cidrs, var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     {
       name            = ["ssh"]
@@ -25,25 +25,11 @@ locals {
       cidrs           = concat(var.allowed_cluster_nodes_cidrs, var.allowed_all_cidrs)
     },
     {
-      name            = ["cte", "agents"]
-      internet_access = false
-      udp             = []
-      tcp             = [443]
-      cidrs           = concat(var.allowed_cte_agents_cidrs, var.allowed_all_cidrs)
-    },
-    {
       name            = ["ddc", "agents"]
       internet_access = false
       udp             = []
       tcp             = [11117]
       cidrs           = concat(var.allowed_ddc_agents_cidrs, var.allowed_all_cidrs)
-    },
-    {
-      name            = ["hub"]
-      internet_access = false
-      udp             = []
-      tcp             = [443]
-      cidrs           = concat(var.allowed_hub_cidrs, var.allowed_all_cidrs)
     },
     {
       name            = ["other"]
