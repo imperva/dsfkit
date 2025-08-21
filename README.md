@@ -1584,6 +1584,14 @@ Below is a list of possible issues and troubleshooting remediations.
    <td>Connect with SSH to the Sonar node EC2 and fix the aws cli profile misconfiguration. Run, for example, 'aws sts get-caller-identity' to test it.  
    </td>
   </tr>
+  <tr>
+   <td>CipherTrust connection timeout error
+   </td>
+   <td>Error: failed to set auth token Get "https://x.x.x.x/api/v1/system/services/status": dial tcp x.x.x.x:443: connect: operation timed out
+   </td>
+   <td>Check your network configuration. For the 'terraform destroy' command, you can set the enable_ciphertrust variable to false in order to skip the CipherTrust provider connection (in case the CipherTrust provider resources have not been created yet).
+   </td>
+  </tr>
  </table></details>
 <details>
  <summary>Azure issues</summary>
