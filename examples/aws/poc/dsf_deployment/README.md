@@ -88,7 +88,7 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `enable_dam`: Enable DAM sub-product
 - `enable_dra`: Enable DRA sub-product
 - `enable_ciphertrust`: Enable CipherTrust sub-product
-- `create_fam_classification_integration_resources`: Enable FAM classification integration resources (disabled by default)
+- `create_fam_classification_integration_resources`: Create FAM classification integration resources (disabled by default)
 
 ### Server Count
 - `dra_analytics_count`: Number of DRA Analytics servers
