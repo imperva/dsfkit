@@ -62,6 +62,8 @@ resource "aws_instance" "cte_ddc_agent" {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
+  disable_api_termination     = true
+  force_destroy               = true
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"
