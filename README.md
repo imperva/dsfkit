@@ -614,6 +614,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       1. Added support for CipherTrust Manger version 2.20 in AWS. Set the variable ‘ciphertrust_manager_version’ to control the version.
       <br/>2. Updated the AWS POC dsf_deployment example.
       <br/>3. Improvements and bug fixes.
+      <br/>4. Added internal support for DRA version 15.1. Set the variable ‘dra_version’ to 15.1 to use it.
   </tr>
   
 </table>
@@ -817,7 +818,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.0.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.1.0.10</td>
   </tr>
   </tr>
   <tr>
