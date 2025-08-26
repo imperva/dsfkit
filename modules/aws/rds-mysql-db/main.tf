@@ -62,6 +62,7 @@ resource "aws_db_instance" "rds_db" {
   identifier              = local.db_identifier
   publicly_accessible     = true
   backup_retention_period = 0
+  storage_encrypted       = true
 
   enabled_cloudwatch_logs_exports = local.cloudwatch_stream_names
   tags                            = var.tags

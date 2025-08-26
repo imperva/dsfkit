@@ -84,6 +84,7 @@ resource "aws_db_instance" "rds_db" {
   identifier              = local.db_identifier
   publicly_accessible     = true
   backup_retention_period = 0
+  storage_encrypted       = true
   tags                    = var.tags
 }
 
