@@ -605,15 +605,6 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>2. Updated the AWS POC dsf_deployment example.
     </td>
   </tr>
-  <tr>
-    <td>TBD
-    </td>
-    <td>1.7.32
-    </td>
-    <td>
-      Added internal support for DRA version 15.1. Set the variable ‘dra_version’ to 15.1 to use it.
-    </td>
-  </tr>
   
 </table>
 
@@ -816,7 +807,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.1.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.0.0.10</td>
   </tr>
 </table>
 
