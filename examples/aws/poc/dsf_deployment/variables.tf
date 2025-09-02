@@ -432,13 +432,13 @@ variable "cte_ddc_agent_ebs_details" {
 
 variable "cte_agent_linux_installation_file" {
   type        = string
-  description = "Path to the CTE agent linux installation file"
+  description = "Path to the CTE agent linux (RHEL 8.9) installation file"
   default     = null
 }
 
 variable "ddc_agent_linux_installation_file" {
   type        = string
-  description = "Path to the DDC agent linux installation file"
+  description = "Path to the DDC agent linux (RHEL 8.9) installation file"
   default     = null
 }
 
