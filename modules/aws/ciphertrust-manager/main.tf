@@ -130,7 +130,7 @@ resource "null_resource" "set_password" {
     exit 1
     EOF
 
-    interpreter = ["/bin/bash", "-c"]
+    interpreter = ["bash", "-c"]
 
     environment = {
       PASSWORD = local.web_console_default_password
