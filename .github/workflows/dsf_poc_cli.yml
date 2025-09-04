@@ -44,12 +44,12 @@ on:
         default: false
         required: false
       deployment_type:
-        description: 'Choose the type of deployments to run: sonar, sonar-with-fam, dra, dam, all-products (currently does not include FAM) or all-permutations'
+        description: 'Choose the type of deployments to run: sonar-with-fam, all-products or all-permutations'
         type: string
         default: 'all-permutations'
         required: false
       product_version:
-        description: 'Product version to deploy. Valid for options: sonar, sonar-with-fam, dra and dam. Otherwise latest per product is used.'
+        description: 'Product version to deploy. Valid for options: sonar-with-fam. Otherwise latest per product is used.'
         type: string
         default: 'latest'
         required: false
@@ -103,11 +103,8 @@ jobs:
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":true} else empty end),
-              (if $var == "all-permutations" or $var == "sonar" then {"name":"DSF POC - Sonar","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "dam" then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "dra" then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":true} else empty end)
+              (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":true,"enable_dra":true} else empty end),
+              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end)
             ]
           }')
 
