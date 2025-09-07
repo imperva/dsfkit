@@ -9,43 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  master_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@master
-    with:
-      branch: master
-      workspace: simple_cli_master_nightly
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
-
-  dev_basic_poc:
-    uses: imperva/dsfkit/.github/workflows/nightly_sonar_poc_basic_cli.yml@dev
-    with:
-      branch: dev
-      workspace: simple_cli_dev_nightly
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
 
   master_single_account:
     uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@master
     with:
       branch: master
-    secrets:
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
-
-  dev_single_account:
-    uses: imperva/dsfkit/.github/workflows/sonar_single_account_cli.yml@dev
-    with:
-      branch: dev
     secrets:
       AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
       AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
@@ -66,41 +34,10 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
 
-  # dev waits for master since they use the same constant resources - NAT, VPC, etc.
-  # In addition, dev can't run if master fails since master resources may still be up if the failure happened after
-  # apply, otherwise we could have added 'if: always()'.
-  dev_multi_account:
-    needs: master_multi_account
-    uses: imperva/dsfkit/.github/workflows/sonar_multi_account_cli.yml@dev
-    with:
-      branch: dev
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
-
   master_dsf_single_account:
     uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@master
     with:
       branch: master
-    secrets:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_ACCESS_KEY_ID_STAGE: ${{ secrets.AWS_ACCESS_KEY_ID_STAGE }}
-      AWS_SECRET_ACCESS_KEY_STAGE: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGE }}
-      JUMP_SERVER_KEY: ${{ secrets.JUMP_SERVER_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-      DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
-
-  dev_dsf_single_account:
-    uses: imperva/dsfkit/.github/workflows/dsf_single_account_cli.yml@dev
-    with:
-      branch: dev
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
