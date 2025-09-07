@@ -143,6 +143,7 @@ jobs:
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
       TF_VAR_allowed_ssh_cidrs: ${{ secrets.ALLOWED_SSH_CIDRS }}
+      TF_VAR_password: ${{ secrets.PASSWORD }}
       DEPLOYMENT_VERSION: ${{ needs.prepare-matrix.outputs.deployment_version }}
 
       # Define the dynamic version string based on deployment_type and product_version
