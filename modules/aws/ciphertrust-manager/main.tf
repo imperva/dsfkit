@@ -71,6 +71,7 @@ resource "aws_network_interface" "eni" {
 resource "null_resource" "set_password" {
   provisioner "local-exec" {
     command = <<EOF
+    #!/bin/bash -x
     set -e
 
     # Wait up to 10 minutes for API to respond
@@ -128,6 +129,8 @@ resource "null_resource" "set_password" {
     echo "ERROR: Services did not start in time."
     exit 1
     EOF
+
+    interpreter = ["bash", "-c"]
 
     environment = {
       PASSWORD = local.web_console_default_password
