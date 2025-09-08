@@ -21,7 +21,7 @@ jobs:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: ${{ github.ref }}
       deployment_type: ${{ github.event.inputs.deployment_type }}
       version: ${{ github.event.inputs.version }}
     secrets:
@@ -36,7 +36,7 @@ jobs:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: ${{ github.ref }}
       deployment_type: ${{ github.event.inputs.deployment_type }}
       product_full_version: ${{ github.event.inputs.version }}
     secrets:
