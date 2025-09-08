@@ -99,7 +99,7 @@ jobs:
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              (if $var == "all" then {"name":"DSF POC","workspace":"azure_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":false} else empty end),
+              (if $var == "all" then {"name":"DSF POC - no DRA","workspace":"azure_cli-all-","enable_sonar":true,"enable_dam":true,"enable_dra":false} else empty end),
               (if $var == "all" or $var == "sonar" then {"name":"DSF POC - SONAR","workspace":"azure_cli-sonar-","enable_sonar":true,"enable_dam":false,"enable_dra":false} else empty end)
             ]
           }')
