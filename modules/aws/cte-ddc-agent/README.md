@@ -101,6 +101,6 @@ module "dsf_cte_ddc_agent" {
 For more information about the CipherTrust Transparent Encryption (CTE) agent and its features, refer to the official documentation [here](https://thalesdocs.com/ctp/cm/2.19/admin/cte_ag/).
 For more information about the Data Discovery and Classification (DDC) agent and its features, refer to the official documentation [here](https://thalesdocs.com/ctp/cm/2.19/admin/ddc_ag/).
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.31).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.32).
 
 

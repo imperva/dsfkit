@@ -57,13 +57,13 @@ resource "aws_instance" "cte_ddc_agent" {
     iops                  = var.ebs.iops
     delete_on_termination = true
   }
-  user_data     = local.user_data
+  user_data = local.user_data
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
   }
-  disable_api_termination     = true
-  force_destroy               = true
+  disable_api_termination = true
+  force_destroy           = true
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"

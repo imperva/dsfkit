@@ -5,9 +5,9 @@ locals {
 }
 
 module "ciphertrust_manager" {
-  source  = "imperva/dsf-ciphertrust-manager/aws"
-  version = "1.7.31" # latest release tag
-  count   = local.ciphertrust_manager_count
+  source                      = "imperva/dsf-ciphertrust-manager/aws"
+  version                     = "1.7.32" # latest release tag
+  count                       = local.ciphertrust_manager_count
   ciphertrust_manager_version = var.ciphertrust_manager_version
   ami = var.ciphertrust_manager_ami_id == null ? null : {
     id               = var.ciphertrust_manager_ami_id
@@ -34,7 +34,7 @@ module "ciphertrust_manager" {
 }
 
 provider "ciphertrust" {
-  address = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
+  address  = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.password
   // destroy cluster can take almost a minute so give us a bit of a buffer
@@ -52,7 +52,7 @@ resource "ciphertrust_trial_license" "trial_license" {
 
 module "ciphertrust_manager_cluster_setup" {
   source  = "imperva/dsf-ciphertrust-manager-cluster-setup/null"
-  version = "1.7.31" # latest release tag
+  version = "1.7.32" # latest release tag
   count   = local.ciphertrust_manager_count > 1 ? 1 : 0
   nodes = [
     for i in range(length(module.ciphertrust_manager)) : {
