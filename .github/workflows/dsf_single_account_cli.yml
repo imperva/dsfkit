@@ -192,6 +192,8 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform -chdir=$EXAMPLE_DIR init
+      env:
+        TF_WORKSPACE: default
 
     - name: Cleaning environment
       run: |
