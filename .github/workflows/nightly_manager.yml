@@ -60,6 +60,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
       DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
+      PASSWORD: ${{ secrets.PASSWORD }}
 
   dev_dsf_poc:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@dev
@@ -73,6 +74,7 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
       DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
+      PASSWORD: ${{ secrets.PASSWORD }}
 
   master_dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
