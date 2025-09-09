@@ -32,6 +32,8 @@ on:
         required: true
       DEPLOYMENT_TAGS:
         required: true
+      PASSWORD:
+        required: true
 
   workflow_dispatch:
     inputs:
