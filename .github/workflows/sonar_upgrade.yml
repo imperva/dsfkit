@@ -310,17 +310,13 @@ jobs:
         id: destroy_deployment
         if: always()
         run: |
-          if [ '${{ steps.apply_deployment.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
-            terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
-          fi
+          terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
 
       - name: Terraform Destroy for upgrade
         id: destroy_upgrade
         if: always()
         run: |
-          if [ '${{ steps.apply_upgrade.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
-            terraform -chdir=$UPGRADE_EXAMPLE_DIR destroy -auto-approve
-          fi
+          terraform -chdir=$UPGRADE_EXAMPLE_DIR destroy -auto-approve
 
       - name: Terraform Delete Workspace
         if: always()
