@@ -170,9 +170,9 @@ jobs:
             mv $DEPLOYMENT_EXAMPLE_DIR/networking.tf{,_}
             mv $DEPLOYMENT_EXAMPLE_DIR/agentless_sources.tf{,_}
             mv $DEPLOYMENT_EXAMPLE_DIR/agent_sources.tf{,_}
-            mv $EXAMPLE_DIR/cm.tf{,_}
-            mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
-            mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/cm.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/cte_ddc_agents.tf{,_}
+            mv $DEPLOYMENT_EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
             terraform -chdir=$DEPLOYMENT_EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
             mv $DEPLOYMENT_EXAMPLE_DIR/main.tf{_,}
             mv $DEPLOYMENT_EXAMPLE_DIR/outputs.tf{_,}
