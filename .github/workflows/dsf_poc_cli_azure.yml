@@ -196,7 +196,7 @@ jobs:
         fi
         
         if [ "${{ github.event.inputs.deployment_type }}" == "sonar" ] && [ "${{ github.event.inputs.product_full_version }}" != "latest" ] && [ -n "${{ github.event.inputs.product_full_version }}" ]; then  
-        AZ_BLOB_SONAR="jsonar-${{ github.event.inputs.product_full_version }}.tar.gaz"
+        AZ_BLOB_SONAR="jsonar-${{ github.event.inputs.product_full_version }}.tar.gz"
         else
         AZ_BLOB_SONAR="jsonar-4.17.0.10.0.tar.gz"
         fi
