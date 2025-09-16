@@ -138,7 +138,7 @@ jobs:
         run: |
           cat << EOF > $EXAMPLE_DIR/terraform.tfvars
           ${{ vars.TFVAR_PARAMETERS_SINGLE_ACCOUNT_AUTOMATION_V1 }}
-          additional_tags = ${{ secrets.DEPLOYMENT_TAGS }}
+          additional_tags = ${{ vars.DEPLOYMENT_TAGS }}
           EOF
           
 

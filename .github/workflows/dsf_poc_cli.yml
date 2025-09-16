@@ -32,6 +32,8 @@ on:
         required: true
       DEPLOYMENT_TAGS:
         required: true
+      PASSWORD:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -44,12 +46,12 @@ on:
         default: false
         required: false
       deployment_type:
-        description: 'Choose the type of deployments to run: sonar, sonar-with-fam, dra, dam, all-products (currently does not include FAM) or all-permutations'
+        description: 'Choose the type of deployments to run: sonar-with-fam, all-products or all-permutations'
         type: string
         default: 'all-permutations'
         required: false
       product_version:
-        description: 'Product version to deploy. Valid for options: sonar, sonar-with-fam, dra and dam. Otherwise latest per product is used.'
+        description: 'Product version to deploy. Valid for options: sonar-with-fam. Otherwise latest per product is used.'
         type: string
         default: 'latest'
         required: false
@@ -84,7 +86,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DESTROY_DELAY_SECONDS: 1800
-  TF_VAR_additional_tags: ${{ secrets.DEPLOYMENT_TAGS }}
+  TF_VAR_additional_tags: ${{ vars.DEPLOYMENT_TAGS }}
 
 permissions:
   contents: read
@@ -103,11 +105,8 @@ jobs:
         run: |
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
-              (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":true} else empty end),
-              (if $var == "all-permutations" or $var == "sonar" then {"name":"DSF POC - Sonar","workspace":"dsf_cli-sonar-","enable_sonar":true,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "dam" then {"name":"DSF POC - DAM","workspace":"dsf_cli-dam-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":true,"enable_dra":false} else empty end),
-              (if $var == "all-permutations" or $var == "dra" then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":true} else empty end)
+              (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":true,"enable_dra":true} else empty end),
+              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end)
             ]
           }')
 
@@ -146,6 +145,7 @@ jobs:
       TF_VAR_enable_dam: ${{ matrix.enable_dam }}
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
       TF_VAR_allowed_ssh_cidrs: ${{ secrets.ALLOWED_SSH_CIDRS }}
+      TF_VAR_password: ${{ secrets.PASSWORD }}
       DEPLOYMENT_VERSION: ${{ needs.prepare-matrix.outputs.deployment_version }}
 
       # Define the dynamic version string based on deployment_type and product_version
@@ -236,6 +236,7 @@ jobs:
             mv $EXAMPLE_DIR/versions.tf{,_}
             mv $EXAMPLE_DIR/cm.tf{,_}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
+            mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
             terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
             mv $EXAMPLE_DIR/main.tf{_,}
             mv $EXAMPLE_DIR/outputs.tf{_,}
@@ -248,6 +249,7 @@ jobs:
             mv $EXAMPLE_DIR/versions.tf{_,}
             mv $EXAMPLE_DIR/cm.tf{_,}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{_,}
+            mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{_,}
           fi
 
       - name: Terraform Validate

@@ -72,7 +72,7 @@ resource "null_resource" "onboard_db_to_dsf" {
         database_asset_data = jsonencode(local.database_data)
         database_id         = urlencode(local.database_data.data.id)
         usc_access_token    = nonsensitive(var.usc_access_token)
-        enable_audit        = nonsensitive(var.enable_audit)
+        enable_audit        = var.enable_audit
       })
     ]
   }

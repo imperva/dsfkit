@@ -90,6 +90,21 @@
             }
         },
         {
+            "Sid": "ec2CreateTagsForDefaultResources",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": [
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:network-acl/*",
+                "arn:aws:ec2:*:*:route-table/*"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "aws:RequestTag/deployment_name": "imperva-dsf-*"
+                }
+            }
+        },
+        {
             "Sid": "RunInstancePermissions",
             "Effect": "Allow",
             "Action": [

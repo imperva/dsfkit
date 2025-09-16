@@ -21,7 +21,7 @@ jobs:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli.yml@master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: ${{ github.ref }}
       deployment_type: ${{ github.event.inputs.deployment_type }}
       version: ${{ github.event.inputs.version }}
     secrets:
@@ -30,13 +30,13 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
-      DEPLOYMENT_TAGS: ${{ secrets.DEPLOYMENT_TAGS }}
+      DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
 
   dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master
     with:
       use_modules_from_terraform_registry: true
-      explicit_ref: master
+      explicit_ref: ${{ github.ref }}
       deployment_type: ${{ github.event.inputs.deployment_type }}
       product_full_version: ${{ github.event.inputs.version }}
     secrets:

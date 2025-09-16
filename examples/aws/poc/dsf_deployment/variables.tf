@@ -432,13 +432,13 @@ variable "cte_ddc_agent_ebs_details" {
 
 variable "cte_agent_linux_installation_file" {
   type        = string
-  description = "Path to the CTE agent linux installation file"
+  description = "Path to the CTE agent linux (RHEL 8.9) installation file"
   default     = null
 }
 
 variable "ddc_agent_linux_installation_file" {
   type        = string
-  description = "Path to the DDC agent linux installation file"
+  description = "Path to the DDC agent linux (RHEL 8.9) installation file"
   default     = null
 }
 
@@ -488,4 +488,10 @@ variable "ddc_agents_windows_count" {
   type        = number
   default     = 0
   description = "Number of DDC agent windows servers. Provisioning CTE and/or DDC agent servers requires the enable_ciphertrust variable to be set to 'true'."
+}
+
+variable "create_fam_classification_integration_resources" {
+  type        = bool
+  default     = false
+  description = "Whether to create the AWS S3 and SQS resources required for FAM classification integration between Hub and CipherTrust."
 }

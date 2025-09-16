@@ -7,7 +7,7 @@ terraform {
       version = ">= 4.23.0"
     }
     ciphertrust = {
-      source = "ThalesGroup/ciphertrust"
+      source  = "ThalesGroup/ciphertrust"
       version = "~> 0.11.1"
     }
     local = {
