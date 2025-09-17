@@ -616,6 +616,14 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
       <br/>3. Added internal support for DRA version 15.1. Set the variable ‘dra_version’ to 15.1 to use it.
       <br/>4. Improvements and bug fixes.
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.33
+    </td>
+    <td>
+      Added internal support for Sonar version 15.0. Set the variable ‘sonar_version’ to 15.0 to use it.
+  </tr>
   
 </table>
 
@@ -649,7 +657,7 @@ Before using DSF Kit to deploy DSF, it is necessary to satisfy a set of prerequi
 2. Only if you chose the [CLI Deployment Mode](#cli-deployment-mode), install [Terraform](https://www.terraform.io). It is recommended on MacOS systems to use the "Package Manager" option during installation.
 3. Latest Supported Terraform Version: 1.7.x. Using a higher version may result in unexpected behavior or errors.
 4. [jq](https://jqlang.github.io/jq/) - Command-line JSON processor.
-5. [curl](https://curl.se/) - Command-line tool for transferring data.
+5. [curl](https://curl.se/) - Command-line tool for transferring data (version 8.12.1 or later).
 
 ### AWS Prerequisites
 
@@ -807,7 +815,7 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.17.0.10</td><td>4.9 - 4.19.0.10
+    <td>Sonar</td><td>4.17.0.10</td><td>4.9 - 15.0.0.10
 
 Restrictions on modules may apply</td>
   </tr>
