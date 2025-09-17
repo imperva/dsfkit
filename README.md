@@ -622,8 +622,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>1.7.33
     </td>
     <td>
-      1. Added internal support for Sonar version 15.0. Set the variable ‘sonar_version’ to 15.0 to use it.
-      <br/>2. Updated the AWS and Azure POC dsf_deployment example so that Hub and Agentless Gateway HADR are enabled by default. HADR can be disabled using the ‘hub_hadr’ and ‘agentless_gw_hadr’ variables.
+      Added internal support for Sonar version 15.0. Set the variable ‘sonar_version’ to 15.0 to use it.
   </tr>
   
 </table>
