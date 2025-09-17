@@ -815,7 +815,7 @@ This includes the following version of the DSF sub-products:
     </td>
   </tr>
   <tr>
-    <td>Sonar</td><td>4.17.0.10</td><td>4.9 - 4.19.0.10
+    <td>Sonar</td><td>4.17.0.10</td><td>4.9 - 15.0.0.10
 
 Restrictions on modules may apply</td>
   </tr>
