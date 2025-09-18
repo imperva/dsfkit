@@ -100,6 +100,6 @@ To finalize the cluster nodes setup, refer to the dsf-ciphertrust-manager-cluste
 
 For more information about the CipherTrust Manager and its features, refer to the official documentation [here](https://thalesdocs.com/ctp/cm/2.19/).
 
-For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.32).
+For additional information about DSF deployment using terraform, refer to the main repo README [here](https://github.com/imperva/dsfkit/tree/1.7.33).
 
 

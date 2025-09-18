@@ -84,7 +84,7 @@ resource "ciphertrust_cte_registration_token" "reg_token" {
 
 module "cte_ddc_agents" {
   source        = "imperva/dsf-cte-ddc-agent/aws"
-  version       = "1.7.32" # latest release tag
+  version       = "1.7.33" # latest release tag
   for_each      = local.all_agent_instances_map
   friendly_name = join("-", [local.deployment_name_salted, each.value.id])
   ebs           = var.cte_ddc_agent_ebs_details
