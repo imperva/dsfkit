@@ -29,7 +29,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-      ALLOWED_SSH_CIDRS: ${{secrets.ALLOWED_SSH_CIDRS }}
+      ALLOWED_SSH_CIDRS: ${{vars.ALLOWED_SSH_CIDRS }}
       DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
 
   dsf_poc_azure:
@@ -45,4 +45,4 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
-      ALLOWED_SSH_CIDRS: ${{ secrets.ALLOWED_SSH_CIDRS }}
+      ALLOWED_SSH_CIDRS: ${{ vars.ALLOWED_SSH_CIDRS }}
