@@ -835,7 +835,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.1.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.2.0.10</td>
   </tr>
   </tr>
   <tr>
