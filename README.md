@@ -624,6 +624,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>
       Added internal support for Sonar version 15.0. Set the variable ‘sonar_version’ to 15.0 to use it.
   </tr>
+
+ <tr>
+    <td>
+    </td>
+    <td>1.7.34</td>
+    <td>
+        1. Added internal support for DRA version 15.2. Set the variable ‘dra_version’ to 15.2 to use it.
+     </td>  
+  </tr>
   
 </table>
 
@@ -826,7 +835,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.1.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.2.0.10</td>
   </tr>
   </tr>
   <tr>
