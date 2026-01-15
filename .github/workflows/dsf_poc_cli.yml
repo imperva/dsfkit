@@ -237,7 +237,16 @@ jobs:
             mv $EXAMPLE_DIR/cm.tf{,_}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
             mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
-            terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+
+            # Try destroy first
+            if ! terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve; then
+              echo "First destroy attempt failed, trying to remove ciphertrust_trial_license state"
+              # Try to remove the state, but don't fail if this doesn't work
+              terraform -chdir=$EXAMPLE_DIR state rm ciphertrust_trial_license.trial_license || true
+              # Retry destroy
+              terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+            fi
+
             mv $EXAMPLE_DIR/main.tf{_,}
             mv $EXAMPLE_DIR/outputs.tf{_,}
             mv $EXAMPLE_DIR/dam.tf{_,}
@@ -319,11 +328,20 @@ jobs:
         if: always()
         run: |
           if [ '${{ steps.apply.conclusion }}' == 'success' ] || [ ${{ github.event_name }} != 'schedule' ]; then
+              # Try destroy first
               if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
-                    terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve
-                else
-                    terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
-                fi
+                  DESTROY_CMD="terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve"
+              else
+                  DESTROY_CMD="terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve"
+              fi
+
+              if ! eval $DESTROY_CMD; then
+                  echo "First destroy attempt failed, trying to remove ciphertrust_trial_license state"
+                  # Try to remove the state, but don't fail if this doesn't work
+                  terraform -chdir=$EXAMPLE_DIR state rm ciphertrust_trial_license.trial_license || true
+                  # Retry destroy
+                  eval $DESTROY_CMD
+              fi
           fi
 
       - name: Terraform Delete Workspace
