@@ -21,6 +21,7 @@ module "dra_admin" {
   allowed_hub_cidrs           = local.hub_cidr_list
   allowed_ssh_cidrs           = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   attach_persistent_public_ip = true
+  eip_allocation_id           = local.dra_admin_eip_allocation_id
 
   tags = local.tags
   depends_on = [
@@ -31,8 +32,7 @@ module "dra_admin" {
 module "dra_analytics" {
   source  = "imperva/dsf-dra-analytics/aws"
   version = "1.7.34" # latest release tag
-
-  count                       = local.dra_analytics_count
+  count   = local.dra_analytics_count
   name                        = join("-", [local.deployment_name_salted, "dra", "analytics", count.index])
   subnet_id                   = local.dra_analytics_subnet_id
   dra_version                 = module.globals.dra_version

@@ -24,6 +24,7 @@ module "hub_main" {
   ebs                         = var.hub_ebs_details
   instance_type               = var.hub_instance_type
   attach_persistent_public_ip = true
+  eip_allocation_id           = local.hub_main_eip_allocation_id
   use_public_ip               = true
   generate_access_tokens      = true
   ssh_key_pair = {
@@ -80,6 +81,7 @@ module "hub_dr" {
   ebs                          = var.hub_ebs_details
   instance_type                = var.hub_instance_type
   attach_persistent_public_ip  = true
+  eip_allocation_id            = local.hub_dr_eip_allocation_id
   use_public_ip                = true
   hadr_dr_node                 = true
   main_node_sonarw_public_key  = module.hub_main[0].sonarw_public_key

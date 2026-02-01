@@ -169,6 +169,22 @@ variable "allowed_all_cidrs" {
   default = []
 }
 
+variable "eip_allocation_id" {
+  type        = string
+  default     = null
+  description = <<EOF
+Optional: Allocation ID of an existing Elastic IP to use instead of creating a new one.
+When provided, Terraform will associate this EIP instead of creating a new one.
+When null (default), Terraform creates and manages a new EIP (current behavior).
+Example: "eipalloc-0123456789abcdef0"
+EOF
+
+  validation {
+    condition     = var.eip_allocation_id == null || can(regex("^eipalloc-[a-f0-9]{8,}$", var.eip_allocation_id))
+    error_message = "eip_allocation_id must be in format 'eipalloc-xxxxxxxxx' or null"
+  }
+}
+
 variable "attach_persistent_public_ip" {
   type        = bool
   default     = true

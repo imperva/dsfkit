@@ -1,6 +1,17 @@
 locals {
-  public_ip  = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_ip : aws_instance.dsf_base_instance.public_ip
-  public_dns = var.attach_persistent_public_ip ? aws_eip.dsf_instance_eip[0].public_dns : aws_instance.dsf_base_instance.public_dns
+  # Determine public IP/DNS based on whether using existing EIP or created EIP
+  public_ip = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      data.aws_eip.existing[0].public_ip :  # From existing EIP
+      aws_eip.dsf_instance_eip[0].public_ip  # From created EIP
+  ) : aws_instance.dsf_base_instance.public_ip
+
+  public_dns = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      data.aws_eip.existing[0].public_dns :
+      aws_eip.dsf_instance_eip[0].public_dns
+  ) : aws_instance.dsf_base_instance.public_dns
+
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   # root volume details
@@ -22,10 +33,24 @@ locals {
   # If the binaries_location.s3_key is "file.zip", then the installation_s3_prefix will be null
   installation_s3_prefix            = try(regex("^(.*)/[^/]+", var.binaries_location.s3_key)[0], null)
   installation_s3_bucket_and_prefix = local.installation_s3_prefix != null ? join("/", [var.binaries_location.s3_bucket, local.installation_s3_prefix]) : var.binaries_location.s3_bucket
+
+  # Determine which allocation ID to use
+  eip_allocation_id = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      var.eip_allocation_id :  # Use provided allocation ID
+      aws_eip.dsf_instance_eip[0].id  # Use created EIP
+  ) : null
 }
 
+# Data source to lookup existing EIP (when allocation ID provided)
+data "aws_eip" "existing" {
+  count = var.attach_persistent_public_ip && var.eip_allocation_id != null ? 1 : 0
+  id    = var.eip_allocation_id
+}
+
+# Create new EIP (only when allocation ID NOT provided)
 resource "aws_eip" "dsf_instance_eip" {
-  count  = var.attach_persistent_public_ip ? 1 : 0
+  count  = var.attach_persistent_public_ip && var.eip_allocation_id == null ? 1 : 0
   domain = "vpc"
   tags   = merge(var.tags, { Name = var.name })
 }
@@ -33,7 +58,7 @@ resource "aws_eip" "dsf_instance_eip" {
 resource "aws_eip_association" "eip_assoc" {
   count         = var.attach_persistent_public_ip ? 1 : 0
   instance_id   = aws_instance.dsf_base_instance.id
-  allocation_id = aws_eip.dsf_instance_eip[0].id
+  allocation_id = local.eip_allocation_id
 }
 
 resource "aws_instance" "dsf_base_instance" {

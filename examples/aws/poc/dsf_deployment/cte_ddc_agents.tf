@@ -95,6 +95,7 @@ module "cte_ddc_agents" {
   }
   os_type                      = each.value.os_type
   attach_persistent_public_ip  = true
+  eip_allocation_id            = lookup(local.cte_agent_eip_allocation_ids, each.key, null)
   use_public_ip                = true
   allowed_ssh_cidrs            = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
   allowed_rdp_cidrs            = each.value.os_type == "Windows" ? concat(local.workstation_cidr, var.allowed_ssh_cidrs) : []

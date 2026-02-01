@@ -5,9 +5,9 @@ locals {
 }
 
 module "ciphertrust_manager" {
-  source                      = "imperva/dsf-ciphertrust-manager/aws"
-  version                     = "1.7.34" # latest release tag
-  count                       = local.ciphertrust_manager_count
+  source  = "imperva/dsf-ciphertrust-manager/aws"
+  version = "1.7.34" # latest release tag
+  count   = local.ciphertrust_manager_count
   ciphertrust_manager_version = var.ciphertrust_manager_version
   ami = var.ciphertrust_manager_ami_id == null ? null : {
     id               = var.ciphertrust_manager_ami_id
@@ -20,6 +20,7 @@ module "ciphertrust_manager" {
   subnet_id                         = local.ciphertrust_manager_subnet_id
   cm_password                       = local.password
   attach_persistent_public_ip       = true
+  eip_allocation_id                 = length(local.ciphertrust_manager_eip_allocation_ids) > 0 ? local.ciphertrust_manager_eip_allocation_ids[count.index] : null
   key_pair                          = module.key_pair.key_pair.key_pair_name
   allowed_web_console_and_api_cidrs = concat(local.workstation_cidr, var.web_console_cidr)
   allowed_ssh_cidrs                 = concat(local.workstation_cidr, var.allowed_ssh_cidrs)
@@ -33,7 +34,20 @@ module "ciphertrust_manager" {
   ]
 }
 
+# When using pooled EIPs, the public IP is known immediately but the association takes time
+# Add a delay to ensure the EIP is associated before the provider tries to connect
+resource "time_sleep" "wait_for_ciphertrust_eip" {
+  count = local.ciphertrust_manager_count > 0 && var.use_eip_pool ? 1 : 0
+
+  depends_on = [
+    module.ciphertrust_manager
+  ]
+
+  create_duration = "30s"
+}
+
 provider "ciphertrust" {
+  # Use public IP for connectivity from local Mac/CI runners
   address  = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.password
@@ -46,7 +60,8 @@ resource "ciphertrust_trial_license" "trial_license" {
   flag  = "activate"
 
   depends_on = [
-    module.ciphertrust_manager
+    module.ciphertrust_manager,
+    time_sleep.wait_for_ciphertrust_eip  # Ensure EIP is associated before connecting
   ]
 }
 
