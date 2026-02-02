@@ -108,6 +108,8 @@ Several variables in the `variables.tf` file are important for configuring the d
 
 ### Networking
 - `subnet_ids`: IDs of the subnets for the deployment. If not specified, a new vpc is created.
+- `use_eip_pool`: Set to `true` to use pre-allocated Elastic IPs from a pool instead of creating new ones. Default: `false`
+- `eip_pool_tag`: AWS tag value to identify the EIP pool (e.g., `dsf-eip-pool`). Only used when `use_eip_pool = true`. EIPs must be tagged with `Pool=<eip_pool_tag>` in AWS before deployment.
 
 ### Audit Sources for Simulation Purposes
 - `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway

@@ -633,6 +633,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
         2. Improvements and bug fixes.
      </td>  
   </tr>
+ <tr>
+    <td>TBD
+    </td>
+    <td>1.7.35</td>
+    <td>
+        1. Added support for Elastic IP (EIP) pool for AWS deployments. Set 'use_eip_pool' to true and specify 'eip_pool_tag' to use pre-allocated EIPs with predictable IP addresses.
+        <br/>2. Improvements and bug fixes.
+     </td>
+  </tr>
   
 </table>
 
