@@ -111,6 +111,13 @@ Several variables in the `variables.tf` file are important for configuring the d
 - `use_eip_pool`: Set to `true` to use pre-allocated Elastic IPs from a pool instead of creating new ones. Default: `false`
 - `eip_pool_tag`: AWS tag value to identify the EIP pool (e.g., `dsf-eip-pool`). Only used when `use_eip_pool = true`. EIPs must be tagged with `Pool=<eip_pool_tag>` in AWS before deployment.
 
+> **EIP Pool — Fixed Slot Distribution**: The pool uses fixed slot positions to ensure IP stability:
+> - Slot 0: Hub Main, Slot 1: Hub DR, Slot 2: MX, Slot 3: DRA Admin, Slots 4+: CipherTrust Managers, then CTE/DDC Agents.
+> - Enabling/disabling modules (sonar, dam, dra) does **not** shift EIPs for other resources.
+> - The pool must contain enough EIPs to cover through the highest used slot (some lower slots may be unused).
+> - Changing `ciphertrust_manager_count` will shift agent EIP assignments; for full stability, supply specific `eip_allocation_id` values directly to each module.
+> - All pool EIPs must be unassociated before the first deployment. A validation check will warn if any pool EIPs are already associated to non-managed resources.
+
 ### Audit Sources for Simulation Purposes
 - `simulation_db_types_for_agentless`: Types of databases to provision and onboard to an Agentless Gateway
 - `simulation_db_types_for_agent`: Types of databases to provision for Agent Gateways
