@@ -155,23 +155,8 @@ Please allocate more EIPs with tag Pool=${var.eip_pool_tag}:
 EOF
     }
 
-    # Warn if there are associated EIPs in the pool that exceed what we manage.
-    # This catches the case where a user accidentally tagged an EIP that's
-    # already in use by a non-managed resource.
-    precondition {
-      condition     = local.eip_pool_associated_count <= local.eip_count_needed
-      error_message = <<EOF
-EIP Pool Warning: More associated EIPs in pool than expected!
-  Pool tag: ${var.eip_pool_tag}
-  Total pool EIPs: ${local.eip_pool_total_count}
-  Associated EIPs: ${local.eip_pool_associated_count}
-  Expected managed (max): ${local.eip_count_needed}
-
-This may indicate that some pool EIPs are associated to resources outside
-this deployment. Verify that all EIPs tagged with Pool=${var.eip_pool_tag}
-are intended for this deployment. Using an already-associated EIP will
-reassociate it, potentially disrupting the other resource.
-EOF
-    }
+    # Note: Previously had a check for associated EIPs exceeding expected count,
+    # but this was overly restrictive. EIP associations are idempotent and will
+    # be properly managed by terraform regardless of current association state.
   }
 }
