@@ -6,19 +6,40 @@ locals {
     [for sg in aws_security_group.sg : sg.id],
   var.security_group_ids)
 
-  public_ip = (var.attach_persistent_public_ip ?
-    (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null) :
-  aws_instance.cipthertrust_manager_instance.public_ip)
-  public_dns = (var.attach_persistent_public_ip ?
-    (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_dns : null) :
-  aws_instance.cipthertrust_manager_instance.public_dns)
+  # Determine public IP/DNS based on whether using existing EIP or created EIP
+  public_ip = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      data.aws_eip.existing[0].public_ip :  # From existing EIP
+      (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_ip : null)  # From created EIP
+  ) : aws_instance.cipthertrust_manager_instance.public_ip
+
+  public_dns = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      data.aws_eip.existing[0].public_dns :
+      (length(aws_eip.dsf_instance_eip) > 0 ? aws_eip.dsf_instance_eip[0].public_dns : null)
+  ) : aws_instance.cipthertrust_manager_instance.public_dns
+
   private_ip = length(aws_network_interface.eni.private_ips) > 0 ? tolist(aws_network_interface.eni.private_ips)[0] : null
 
   cm_address = coalesce(local.public_ip, local.private_ip)
+
+  # Determine which allocation ID to use
+  eip_allocation_id = var.attach_persistent_public_ip ? (
+    var.eip_allocation_id != null ?
+      var.eip_allocation_id :  # Use provided allocation ID
+      aws_eip.dsf_instance_eip[0].id  # Use created EIP
+  ) : null
 }
 
+# Data source to lookup existing EIP (when allocation ID provided)
+data "aws_eip" "existing" {
+  count = var.attach_persistent_public_ip && var.eip_allocation_id != null ? 1 : 0
+  id    = var.eip_allocation_id
+}
+
+# Create new EIP (only when allocation ID NOT provided)
 resource "aws_eip" "dsf_instance_eip" {
-  count  = var.attach_persistent_public_ip ? 1 : 0
+  count  = var.attach_persistent_public_ip && var.eip_allocation_id == null ? 1 : 0
   domain = "vpc"
   tags   = merge(var.tags, { Name = var.friendly_name })
 }
@@ -26,7 +47,7 @@ resource "aws_eip" "dsf_instance_eip" {
 resource "aws_eip_association" "eip_assoc" {
   count         = var.attach_persistent_public_ip ? 1 : 0
   instance_id   = aws_instance.cipthertrust_manager_instance.id
-  allocation_id = aws_eip.dsf_instance_eip[0].id
+  allocation_id = local.eip_allocation_id
 }
 
 resource "aws_instance" "cipthertrust_manager_instance" {

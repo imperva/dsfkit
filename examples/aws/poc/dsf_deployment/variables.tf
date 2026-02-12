@@ -495,3 +495,28 @@ variable "create_fam_classification_integration_resources" {
   default     = false
   description = "Whether to create the AWS S3 and SQS resources required for FAM classification integration between Hub and CipherTrust."
 }
+
+variable "use_eip_pool" {
+  type        = bool
+  default     = false
+  description = <<EOF
+Whether to use pre-allocated Elastic IPs from a pool for all resources.
+When true, Terraform queries AWS for EIPs tagged with eip_pool_tag and distributes them to resources.
+When false (default), Terraform creates and manages new EIPs.
+
+IMPORTANT: Before setting to true, you must:
+1. Manually create EIPs in AWS with the Pool tag
+2. Ensure you have at least as many EIPs as resources that need them
+3. Run: aws ec2 describe-addresses --filters "Name=tag:Pool,Values=<your-tag>"
+EOF
+}
+
+variable "eip_pool_tag" {
+  type        = string
+  default     = "dsf-eip-pool"
+  description = <<EOF
+The Pool tag value used to identify the EIP pool in AWS.
+Only used when use_eip_pool = true.
+Example: "dsf-eip-pool" will query for EIPs tagged with Pool=dsf-eip-pool
+EOF
+}

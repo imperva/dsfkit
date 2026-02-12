@@ -30,6 +30,7 @@ module "mx" {
     port         = 8443
   } : null
   attach_persistent_public_ip = true
+  eip_allocation_id           = local.mx_eip_allocation_id
   large_scale_mode            = var.large_scale_mode.mx
 
   create_server_group = length(var.simulation_db_types_for_agent) > 0

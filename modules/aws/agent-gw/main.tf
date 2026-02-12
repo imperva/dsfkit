@@ -93,6 +93,7 @@ module "agent_gw" {
     timeout  = local.timeout
   }
   attach_persistent_public_ip = false
+  eip_allocation_id           = var.eip_allocation_id
   tags                        = var.tags
   send_usage_statistics       = var.send_usage_statistics
 }

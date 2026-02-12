@@ -24,4 +24,12 @@ myip-default
 __pycache__/
 upgrade_status.json
 .coverage
-
+.vscode/*
+*.log
+*.txt
+*.bin
+*.exe
+*.rpm
+examples/azure/poc/dsf_deployment/y/*
+*.msi
+*.tfstate*

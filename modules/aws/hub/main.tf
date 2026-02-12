@@ -51,6 +51,7 @@ module "hub_instance" {
   security_group_ids                = var.security_group_ids
   instance_profile_name             = var.instance_profile_name
   attach_persistent_public_ip       = var.attach_persistent_public_ip
+  eip_allocation_id                 = var.eip_allocation_id
   use_public_ip                     = var.use_public_ip
   additional_install_parameters     = var.additional_install_parameters
   password                          = var.password

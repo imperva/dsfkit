@@ -88,6 +88,7 @@ module "mx" {
   instance_profile_name       = var.instance_profile_name
   key_pair                    = var.key_pair
   attach_persistent_public_ip = var.attach_persistent_public_ip
+  eip_allocation_id           = var.eip_allocation_id
   instance_readiness_params = {
     commands = local.readiness_commands
     enable   = true

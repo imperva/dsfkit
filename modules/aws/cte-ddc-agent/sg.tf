@@ -38,7 +38,7 @@ data "aws_subnet" "subnet" {
 
 resource "aws_security_group" "dsf_agent_sg" {
   for_each    = { for idx, config in local._security_groups_config : idx => config }
-  name        = join("-", [var.friendly_name, join("-", each.value.name)])
+  name_prefix = join("-", [var.friendly_name, join("-", each.value.name), ""])
   vpc_id      = data.aws_subnet.subnet.vpc_id
   description = format("%s - %s ingress access", var.friendly_name, join(" ", each.value.name))
 
@@ -72,4 +72,8 @@ resource "aws_security_group" "dsf_agent_sg" {
   }
 
   tags = merge(var.tags, { Name = join("-", [var.friendly_name, join("-", each.value.name)]) })
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
