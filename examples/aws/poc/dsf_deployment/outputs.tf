@@ -29,7 +29,7 @@ output "sonar" {
       jsonar_uid   = try(module.hub_main[0].jsonar_uid, null)
       display_name = try(module.hub_main[0].display_name, null)
       role_arn     = try(module.hub_main[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_main[0].ssh_user}@${local.dns_hub_main}", null)
       tokens       = nonsensitive(module.hub_main[0].access_tokens)
     }
     hub_dr = var.hub_hadr ? {
@@ -40,7 +40,7 @@ output "sonar" {
       jsonar_uid   = try(module.hub_dr[0].jsonar_uid, null)
       display_name = try(module.hub_dr[0].display_name, null)
       role_arn     = try(module.hub_dr[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_dr[0].ssh_user}@${module.hub_dr[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.hub_dr[0].ssh_user}@${local.dns_hub_dr}", null)
     } : null
     agentless_gw_main = [
       for idx, val in module.agentless_gw_main :
@@ -50,7 +50,7 @@ output "sonar" {
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${local.dns_hub_main}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
     agentless_gw_dr = var.agentless_gw_hadr ? [
@@ -61,7 +61,7 @@ output "sonar" {
         jsonar_uid   = try(val.jsonar_uid, null)
         display_name = try(val.display_name, null)
         role_arn     = try(val.iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${module.hub_main[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.hub_main[0].ssh_user}@${local.dns_hub_main}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ] : []
   } : null
@@ -76,8 +76,8 @@ output "dam" {
       private_dns      = try(module.mx[0].private_dns, null)
       display_name     = try(module.mx[0].display_name, null)
       role_arn         = try(module.mx[0].iam_role, null)
-      ssh_command      = try("ssh -i ${local.private_key_file_path} ${module.mx[0].ssh_user}@${module.mx[0].public_dns}", null)
-      public_url       = try(join("", ["https://", module.mx[0].public_dns, ":8083/"]), null)
+      ssh_command      = try("ssh -i ${local.private_key_file_path} ${module.mx[0].ssh_user}@${local.dns_mx}", null)
+      public_url       = try(join("", ["https://", local.dns_mx, ":8083/"]), null)
       private_url      = try(join("", ["https://", module.mx[0].private_dns, ":8083/"]), null)
       password         = nonsensitive(local.password)
       user             = module.mx[0].web_console_user
@@ -92,7 +92,7 @@ output "dam" {
         display_name     = try(val.display_name, null)
         role_arn         = try(val.iam_role, null)
         group_id         = try(val.group_id, null)
-        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command      = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${local.dns_mx}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
         large_scale_mode = val.large_scale_mode
       }
     ]
@@ -108,14 +108,14 @@ output "dra" {
       private_dns  = try(module.dra_admin[0].private_dns, null)
       display_name = try(module.dra_admin[0].display_name, null)
       role_arn     = try(module.dra_admin[0].iam_role, null)
-      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_dns}", null)
+      ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.dra_admin[0].ssh_user}@${local.dns_dra_admin}", null)
     }
     analytics = [
       for idx, val in module.dra_analytics : {
         private_ip    = val.private_ip
         private_dns   = val.private_dns
         archiver_user = val.archiver_user
-        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${module.dra_admin[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command   = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.dra_admin[0].ssh_user}@${local.dns_dra_admin}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
   } : null
@@ -129,10 +129,10 @@ output "ciphertrust" {
         private_dns  = try(val.private_dns, null)
         public_ip    = try(val.public_ip, null)
         public_dns   = try(val.public_dns, null)
-        public_url   = try(join("", ["https://", val.public_dns]), null)
+        public_url   = try(join("", ["https://", local.dns_enabled ? "${local.deployment_name_salted}-cm-${idx}.${var.dns_zone_domain}" : val.public_dns]), null)
         private_url  = try(join("", ["https://", val.private_dns]), null)
         display_name = try(val.display_name, null)
-        ssh_command  = try("ssh -i ${local.private_key_file_path} ${val.ssh_user}@${val.public_dns}", null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${val.ssh_user}@${local.dns_enabled ? "${local.deployment_name_salted}-cm-${idx}.${var.dns_zone_domain}" : val.public_dns}", null)
       }
     ]
   } : null
@@ -148,7 +148,7 @@ output "cte_ddc_agents" {
         public_ip    = module.cte_ddc_agents[val.id].public_ip
         public_dns   = module.cte_ddc_agents[val.id].public_dns
         display_name = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${local.dns_enabled ? "${local.deployment_name_salted}-${val.id}.${var.dns_zone_domain}" : module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
     ddc_agents = [
@@ -159,7 +159,7 @@ output "cte_ddc_agents" {
         public_ip    = module.cte_ddc_agents[val.id].public_ip
         public_dns   = module.cte_ddc_agents[val.id].public_dns
         display_name = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${local.dns_enabled ? "${local.deployment_name_salted}-${val.id}.${var.dns_zone_domain}" : module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
     cte_ddc_agents = [
@@ -170,7 +170,7 @@ output "cte_ddc_agents" {
         public_ip    = module.cte_ddc_agents[val.id].public_ip
         public_dns   = module.cte_ddc_agents[val.id].public_dns
         display_name = try(module.cte_ddc_agents[val.id].display_name, null)
-        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${module.cte_ddc_agents[val.id].public_ip}", null)
+        ssh_command  = try("ssh -i ${local.private_key_file_path} ${module.cte_ddc_agents[val.id].ssh_user}@${local.dns_enabled ? "${local.deployment_name_salted}-${val.id}.${var.dns_zone_domain}" : module.cte_ddc_agents[val.id].public_ip}", null)
       }
     ]
   } : null
@@ -185,7 +185,7 @@ output "audit_sources" {
         private_dns = val.private_dns
         db_type     = val.db_type
         os_type     = val.os_type
-        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${module.mx[0].public_ip}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+        ssh_command = try("ssh -o UserKnownHostsFile=/dev/null -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${local.private_key_file_path} -W %h:%p ${module.mx[0].ssh_user}@${local.dns_mx}' -i ${local.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
       }
     ]
     agentless_sources = var.enable_sonar ? {
@@ -200,21 +200,21 @@ output "web_console_dsf_hub" {
   value = try({
     user        = module.hub_main[0].web_console_user
     password    = nonsensitive(local.password)
-    public_url  = join("", ["https://", module.hub_main[0].public_dns, ":8443/"])
+    public_url  = join("", ["https://", local.dns_hub_main, ":8443/"])
     private_url = join("", ["https://", module.hub_main[0].private_dns, ":8443/"])
   }, null)
 }
 
 output "web_console_dra" {
   value = try({
-    public_url  = join("", ["https://", module.dra_admin[0].public_dns, ":8443/"])
+    public_url  = join("", ["https://", local.dns_dra_admin, ":8443/"])
     private_url = join("", ["https://", module.dra_admin[0].private_dns, ":8443/"])
   }, null)
 }
 
 output "web_console_dam" {
   value = try({
-    public_url  = join("", ["https://", module.mx[0].public_dns, ":8083/"])
+    public_url  = join("", ["https://", local.dns_mx, ":8083/"])
     private_url = join("", ["https://", module.mx[0].private_dns, ":8083/"])
     password    = nonsensitive(local.password)
     user        = module.mx[0].web_console_user
@@ -223,11 +223,23 @@ output "web_console_dam" {
 
 output "web_console_ciphertrust" {
   value = try({
-    public_url  = join("", ["https://", module.ciphertrust_manager[0].public_dns])
+    public_url  = join("", ["https://", local.dns_enabled ? "${local.deployment_name_salted}-cm-0.${var.dns_zone_domain}" : module.ciphertrust_manager[0].public_dns])
     private_url = join("", ["https://", module.ciphertrust_manager[0].private_dns])
     password    = nonsensitive(local.password)
     user        = local.ciphertrust_manager_web_console_username
   }, null)
+}
+
+output "dns_records" {
+  description = "DNS CNAME records for all public-facing instances. Shows records that need to exist for zScaler access."
+  value = local.dns_enabled ? {
+    for suffix, target in local.dns_record_targets :
+    "${local.deployment_name_salted}-${suffix}.${var.dns_zone_domain}" => {
+      type         = "CNAME"
+      target       = target
+      auto_created = local.dns_auto_create
+    }
+  } : null
 }
 
 output "fam_classification_integration_resources" {
