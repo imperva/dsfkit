@@ -7,7 +7,7 @@ output "dsf_agentless_gw" {
         jsonar_uid   = try(module.agentless_gw_main[idx].jsonar_uid, null)
         display_name = try(module.agentless_gw_main[idx].display_name, null)
         role_arn     = try(module.agentless_gw_main[idx].iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}' -i ${module.key_pair.private_key_file_path} ${module.agentless_gw_main[idx].ssh_user}@${module.agentless_gw_main[idx].private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${local.dns_hub_main}' -i ${module.key_pair.private_key_file_path} ${module.agentless_gw_main[idx].ssh_user}@${module.agentless_gw_main[idx].private_ip}", null)
       }
       dr = {
         private_ip   = try(module.agentless_gw_dr[idx].private_ip, null)
@@ -15,7 +15,7 @@ output "dsf_agentless_gw" {
         jsonar_uid   = try(module.agentless_gw_dr[idx].jsonar_uid, null)
         display_name = try(module.agentless_gw_dr[idx].display_name, null)
         role_arn     = try(module.agentless_gw_dr[idx].iam_role, null)
-        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${module.hub_main.public_ip}' -i ${module.key_pair.private_key_file_path} ${module.agentless_gw_dr[idx].ssh_user}@${module.agentless_gw_dr[idx].private_ip}", null)
+        ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub_main.ssh_user}@${local.dns_hub_main}' -i ${module.key_pair.private_key_file_path} ${module.agentless_gw_dr[idx].ssh_user}@${module.agentless_gw_dr[idx].private_ip}", null)
       }
     }
   }
@@ -31,7 +31,7 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub_main.jsonar_uid, null)
       display_name = try(module.hub_main.display_name, null)
       role_arn     = try(module.hub_main.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_main.ssh_user}@${module.hub_main.public_dns}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_main.ssh_user}@${local.dns_hub_main}", null)
     }
     dr = {
       public_ip    = try(module.hub_dr.public_ip, null)
@@ -41,14 +41,14 @@ output "dsf_hubs" {
       jsonar_uid   = try(module.hub_dr.jsonar_uid, null)
       display_name = try(module.hub_dr.display_name, null)
       role_arn     = try(module.hub_dr.iam_role, null)
-      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_dr.ssh_user}@${module.hub_dr.public_dns}", null)
+      ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub_dr.ssh_user}@${local.dns_hub_dr}", null)
     }
   }
 }
 
 output "web_console_dsf_hub" {
   value = {
-    public_url     = try(join("", ["https://", module.hub_main.public_dns, ":8443/"]), null)
+    public_url     = try(join("", ["https://", local.dns_hub_main, ":8443/"]), null)
     private_url    = try(join("", ["https://", module.hub_main.private_dns, ":8443/"]), null)
     admin_password = nonsensitive(local.password)
   }
@@ -77,4 +77,16 @@ output "mssql_db_details" {
 
 output "postgres_db_details" {
   value = try(module.rds_postgres, null)
+}
+
+output "dns_records" {
+  description = "DNS CNAME records for all public-facing instances. Shows records that need to exist for zScaler access."
+  value = local.dns_enabled ? {
+    for suffix, target in local.dns_record_targets :
+    "${local.deployment_name_salted}-${suffix}.${var.dns_zone_domain}" => {
+      type         = "CNAME"
+      target       = target
+      auto_created = local.dns_auto_create
+    }
+  } : {}
 }
