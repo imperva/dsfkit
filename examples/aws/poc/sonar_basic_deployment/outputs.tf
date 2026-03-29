@@ -7,7 +7,7 @@ output "dsf_agentless_gw" {
       jsonar_uid   = try(val.jsonar_uid, null)
       display_name = try(val.display_name, null)
       role_arn     = try(val.iam_role, null)
-      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub.ssh_user}@${module.hub.public_ip}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
+      ssh_command  = try("ssh -o ProxyCommand='ssh -o UserKnownHostsFile=/dev/null -i ${module.key_pair.private_key_file_path} -W %h:%p ${module.hub.ssh_user}@${local.dns_hub}' -i ${module.key_pair.private_key_file_path} ${val.ssh_user}@${val.private_ip}", null)
     }
   }
 }
@@ -21,13 +21,13 @@ output "dsf_hub" {
     jsonar_uid   = try(module.hub.jsonar_uid, null)
     display_name = try(module.hub.display_name, null)
     role_arn     = try(module.hub.iam_role, null)
-    ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub.ssh_user}@${module.hub.public_dns}", null)
+    ssh_command  = try("ssh -i ${module.key_pair.private_key_file_path} ${module.hub.ssh_user}@${local.dns_hub}", null)
   }
 }
 
 output "web_console_dsf_hub" {
   value = {
-    public_url     = try(join("", ["https://", module.hub.public_dns, ":8443/"]), null)
+    public_url     = try(join("", ["https://", local.dns_hub, ":8443/"]), null)
     private_url    = try(join("", ["https://", module.hub.private_dns, ":8443/"]), null)
     admin_password = nonsensitive(local.password)
   }
@@ -69,4 +69,16 @@ output "generated_network" {
 output "tokens" {
   value     = module.hub.access_tokens
   sensitive = true
+}
+
+output "dns_records" {
+  description = "DNS CNAME records for all public-facing instances. Shows records that need to exist for zScaler access."
+  value = local.dns_enabled ? {
+    for suffix, target in local.dns_record_targets :
+    "${local.deployment_name_salted}-${suffix}.${var.dns_zone_domain}" => {
+      type         = "CNAME"
+      target       = target
+      auto_created = local.dns_auto_create
+    }
+  } : {}
 }
