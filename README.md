@@ -848,7 +848,7 @@ Restrictions on modules may apply</td>
   </tr>
   </tr>
   <tr>
-    <td>CipherTrust Manager</td><td>2.20</td><td>2.19 - 2.20</td>
+    <td>CipherTrust Manager</td><td>2.22</td><td>2.19 - 2.22</td>
   </tr>
 </table>
 

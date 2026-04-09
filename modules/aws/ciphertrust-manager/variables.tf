@@ -170,7 +170,7 @@ variable "ssh_user" {
 
 variable "ciphertrust_manager_version" {
   type        = string
-  default     = "2.20"
+  default     = "2.22"
   description = "The CipherTrust Manager version to install"
   validation {
     condition     = can(regex("^\\d{1,2}\\.\\d{1,3}$", var.ciphertrust_manager_version))
