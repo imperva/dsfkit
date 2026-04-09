@@ -151,7 +151,7 @@ variable "simulation_db_types_for_agentless" {
 variable "dns_zone_domain" {
   type        = string
   default     = null
-  description = "DNS zone domain for creating CNAME records for public instances (e.g., 'clouddev.cdi-csp.thalesgroup.com'). When set, outputs include the DNS records to create. Customers should leave this null."
+  description = "DNS zone domain for creating CNAME records for public instances (e.g., 'dns.example.com'). When set, outputs include the DNS records to create. Customers should leave this null."
 }
 
 variable "dns_route53_role_arn" {

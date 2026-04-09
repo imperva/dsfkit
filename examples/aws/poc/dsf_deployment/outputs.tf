@@ -239,7 +239,7 @@ output "dns_records" {
       target       = target
       auto_created = local.dns_auto_create
     }
-  } : null
+  } : {}
 }
 
 output "fam_classification_integration_resources" {

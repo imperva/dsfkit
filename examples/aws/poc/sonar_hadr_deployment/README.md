@@ -22,6 +22,26 @@ This deployment consists of:
     ```
     For more details, go to the rds-mssql-db module.
 
+## DNS / CNAME Support (Optional)
+
+This example supports optional DNS CNAME record management for public-facing instances via Route53. This is useful when direct AWS public IP/DNS access is blocked (e.g., by zScaler).
+
+There are two modes of operation:
+
+**Mode 1 — Manual (output only):** Set only `dns_zone_domain`. The deployment outputs will show the CNAME records you need to create manually in your DNS provider.
+```hcl
+dns_zone_domain = "dns.example.com"
+```
+
+**Mode 2 — Auto-create (Route53):** Set all three DNS variables. CNAME records are automatically created in Route53 using a cross-account IAM role.
+```hcl
+dns_zone_domain      = "dns.example.com"
+dns_route53_role_arn = "arn:aws:iam::123456789012:role/Route53CrossAccountRole"
+dns_route53_zone_id  = "Z0123456789ABCDEFGHIJ"
+```
+
+When DNS is configured, all outputs (SSH commands, web console URLs) will automatically use the DNS hostnames instead of the raw AWS public DNS names.
+
 ## Default Example
 ```bash
 terraform apply -auto-approve
