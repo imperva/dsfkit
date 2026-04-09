@@ -24,4 +24,5 @@ myip-default
 __pycache__/
 upgrade_status.json
 .coverage
+PLAN_*.md
 

@@ -1,6 +1,6 @@
 locals {
   agent_ami_owner_linux    = "309956199498" // aws
-  agent_ami_name_linux     = "RHEL-8.9.*"
+  agent_ami_name_linux     = "RHEL-8.10.*"
   agent_ami_ssh_user_linux = "ec2-user"
 
   agent_ami_owner_windows    = "amazon"

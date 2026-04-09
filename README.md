@@ -639,6 +639,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>TBD</td>
     <td>
         1. Added internal support for DRA version 15.3. Set the variable ‘dra_version’ to 15.3 to use it.
+        <br/>2. Added optional DNS CNAME support for AWS POC examples (dsf_deployment, sonar_basic_deployment, sonar_hadr_deployment). When configured, creates friendly DNS names for public-facing instances via Route53 cross-account. Set the 'dns_zone_domain' and optionally 'dns_route53_role_arn' and 'dns_route53_zone_id' variables to enable it. Disabled by default.
      </td>  
   </tr>
   

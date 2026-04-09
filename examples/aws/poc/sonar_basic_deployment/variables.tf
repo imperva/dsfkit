@@ -143,3 +143,25 @@ variable "simulation_db_types_for_agentless" {
     error_message = "Value must be a subset of: ['RDS MySQL', 'RDS MsSQL', 'RDS PostgreSQL']"
   }
 }
+
+##############################
+####    DNS / CNAME       ####
+##############################
+
+variable "dns_zone_domain" {
+  type        = string
+  default     = null
+  description = "DNS zone domain for creating CNAME records for public instances (e.g., 'dns.example.com'). When set, outputs include the DNS records to create. Customers should leave this null."
+}
+
+variable "dns_route53_role_arn" {
+  type        = string
+  default     = null
+  description = "IAM role ARN for cross-account Route53 access. When set along with dns_zone_domain and dns_route53_zone_id, CNAME records are automatically created in Route53."
+}
+
+variable "dns_route53_zone_id" {
+  type        = string
+  default     = null
+  description = "Route53 hosted zone ID for the dns_zone_domain. Required for auto-creating CNAME records."
+}
