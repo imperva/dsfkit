@@ -37,8 +37,8 @@ provider "ciphertrust" {
   address  = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.password
-  // destroy cluster can take almost a minute so give us a bit of a buffer
-  rest_api_timeout = 720
+  // CM 2.22 cluster join can take >10 minutes; destroy can take ~1 minute
+  rest_api_timeout = 1500
 }
 
 resource "ciphertrust_trial_license" "trial_license" {
