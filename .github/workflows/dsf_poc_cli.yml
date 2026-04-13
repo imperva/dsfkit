@@ -246,6 +246,7 @@ jobs:
             mv $EXAMPLE_DIR/cm.tf{,_}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
             mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
+            mv $EXAMPLE_DIR/dns.tf{,_}
 
             # Try destroy first
             if ! terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve; then
@@ -268,6 +269,7 @@ jobs:
             mv $EXAMPLE_DIR/cm.tf{_,}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{_,}
             mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{_,}
+            mv $EXAMPLE_DIR/dns.tf{_,}
           fi
 
       - name: Terraform Validate
