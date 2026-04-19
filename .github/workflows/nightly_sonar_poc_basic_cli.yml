@@ -43,6 +43,9 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   TF_WORKSPACE: ${{ inputs.workspace }}
   TF_VAR_additional_tags: ${{ vars.DEPLOYMENT_TAGS }}
+  TF_VAR_dns_zone_domain: ${{ vars.DNS_ZONE_DOMAIN }}
+  TF_VAR_dns_route53_role_arn: ${{ vars.DNS_ROUTE53_ROLE_ARN }}
+  TF_VAR_dns_route53_zone_id: ${{ vars.DNS_ROUTE53_ZONE_ID }}
 
 permissions:
   contents: read
@@ -104,9 +107,11 @@ jobs:
       run: |
         mv $EXAMPLE_DIR/main.tf{,_}
         mv $EXAMPLE_DIR/outputs.tf{,_}
+        mv $EXAMPLE_DIR/dns.tf{,_}
         terraform -chdir=$EXAMPLE_DIR destroy -auto-approve
         mv $EXAMPLE_DIR/main.tf{_,}
         mv $EXAMPLE_DIR/outputs.tf{_,}
+        mv $EXAMPLE_DIR/dns.tf{_,}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks

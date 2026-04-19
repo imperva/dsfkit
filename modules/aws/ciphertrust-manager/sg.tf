@@ -2,7 +2,7 @@ locals {
   # Skip sg creation if external sg list is given
   _security_groups_config = length(var.security_group_ids) == 0 ? local.security_groups_config : []
 
-  security_groups_config = [ // https://thalesdocs.com/ctp/cm/2.19/get_started/deployment/hardening-guidelines/index.html
+  security_groups_config = [ // https://docs-cybersec.thalesgroup.com/bundle/latest-cdsp-cm/page/get_started/deployment/hardening-guidelines/index.html
     {
       name            = ["web", "console", "and", "api"]
       internet_access = false
@@ -21,7 +21,7 @@ locals {
       name            = ["cluster", "nodes"]
       internet_access = false
       udp             = []
-      tcp             = [5432]
+      tcp             = [5432, 2380]
       cidrs           = concat(var.allowed_cluster_nodes_cidrs, var.allowed_all_cidrs)
     },
     {

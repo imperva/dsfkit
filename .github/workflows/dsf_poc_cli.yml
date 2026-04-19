@@ -34,6 +34,12 @@ on:
         required: true
       PASSWORD:
         required: true
+      DNS_ZONE_DOMAIN:
+        required: true
+      DNS_ROUTE53_ROLE_ARN:
+        required: true
+      DNS_ROUTE53_ZONE_ID:
+        required: true
 
   workflow_dispatch:
     inputs:
@@ -146,6 +152,9 @@ jobs:
       TF_VAR_enable_dra: ${{ matrix.enable_dra }}
       TF_VAR_allowed_ssh_cidrs: ${{ vars.ALLOWED_SSH_CIDRS }}
       TF_VAR_password: ${{ secrets.PASSWORD }}
+      TF_VAR_dns_zone_domain: ${{ vars.DNS_ZONE_DOMAIN }}
+      TF_VAR_dns_route53_role_arn: ${{ vars.DNS_ROUTE53_ROLE_ARN }}
+      TF_VAR_dns_route53_zone_id: ${{ vars.DNS_ROUTE53_ZONE_ID }}
       DEPLOYMENT_VERSION: ${{ needs.prepare-matrix.outputs.deployment_version }}
 
       # Define the dynamic version string based on deployment_type and product_version
@@ -237,6 +246,7 @@ jobs:
             mv $EXAMPLE_DIR/cm.tf{,_}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{,_}
             mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{,_}
+            mv $EXAMPLE_DIR/dns.tf{,_}
 
             # Try destroy first
             if ! terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve; then
@@ -259,6 +269,7 @@ jobs:
             mv $EXAMPLE_DIR/cm.tf{_,}
             mv $EXAMPLE_DIR/cte_ddc_agents.tf{_,}
             mv $EXAMPLE_DIR/fam_classification_integration_resources.tf{_,}
+            mv $EXAMPLE_DIR/dns.tf{_,}
           fi
 
       - name: Terraform Validate
