@@ -37,8 +37,12 @@ provider "ciphertrust" {
   address  = local.ciphertrust_manager_count > 0 ? "https://${coalesce(module.ciphertrust_manager[0].public_ip, module.ciphertrust_manager[0].private_ip)}" : null
   username = local.ciphertrust_manager_web_console_username
   password = local.password
-  // CM 2.22 cluster join can take >10 minutes; destroy can take ~1 minute
-  rest_api_timeout = 1500
+  // CM 2.22 cluster join is observed to take up to ~30 minutes when the joining
+  // node is still settling (services flapping through `error` -> `starting` ->
+  // `started`). 1500s (25m) was occasionally too tight and caused intermittent
+  // CI failures with "joining node is not ready, status: error". 2400s (40m)
+  // gives enough headroom while still bounding the wait.
+  rest_api_timeout = 2400
 }
 
 resource "ciphertrust_trial_license" "trial_license" {
