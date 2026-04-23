@@ -31,9 +31,6 @@ jobs:
       DAM_LICENSE: ${{ secrets.DAM_LICENSE }}
       ALLOWED_SSH_CIDRS: ${{vars.ALLOWED_SSH_CIDRS }}
       DEPLOYMENT_TAGS: ${{ vars.DEPLOYMENT_TAGS }}
-      DNS_ZONE_DOMAIN: ${{ vars.DNS_ZONE_DOMAIN }}
-      DNS_ROUTE53_ROLE_ARN: ${{ vars.DNS_ROUTE53_ROLE_ARN }}
-      DNS_ROUTE53_ZONE_ID: ${{ vars.DNS_ROUTE53_ZONE_ID }}
 
   dsf_poc_azure:
     uses: imperva/dsfkit/.github/workflows/dsf_poc_cli_azure.yml@master

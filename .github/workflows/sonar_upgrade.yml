@@ -22,12 +22,6 @@ on:
         required: true
       DEPLOYMENT_TAGS:
         required: true
-      DNS_ZONE_DOMAIN:
-        required: true
-      DNS_ROUTE53_ROLE_ARN:
-        required: true
-      DNS_ROUTE53_ZONE_ID:
-        required: true
 
   workflow_dispatch:
     inputs:
