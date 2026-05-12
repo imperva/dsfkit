@@ -181,7 +181,14 @@ jobs:
     needs: deploy_modules
     uses: ./.github/workflows/plan_cli.yml
     with:
-      use_modules_from_terraform_registry: true
+      # Use the in-repo modules instead of the Terraform Registry. The release
+      # flow must not depend on the registry having indexed the new tag, since
+      # the GitHub -> Terraform Registry webhook can be delayed or dropped
+      # (see release 1.7.35: tag was pushed to all per-module repos but never
+      # indexed by the registry, causing test_plan to fail with
+      # "Unresolvable module version constraint"). The in-repo modules are the
+      # same code that deploy_modules publishes to the per-module repos.
+      use_modules_from_terraform_registry: false
       explicit_ref: master
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -210,7 +217,8 @@ jobs:
     needs: release
     uses: ./.github/workflows/sonar_poc_cli.yml
     with:
-      use_modules_from_terraform_registry: true
+      # See test_plan above for rationale.
+      use_modules_from_terraform_registry: false
       explicit_ref: master
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
