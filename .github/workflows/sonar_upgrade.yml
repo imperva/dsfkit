@@ -268,6 +268,14 @@ jobs:
             run_postflight_validations = true
             stop_on_failure            = true
 
+            # Skip healthchecks that are expected to trip on a freshly-deployed POC
+            # environment and are not actionable for the upgrade:
+            #   - sonargd-audit-directory: emits a WARNING when /imperva/data/sonargd/audit
+            #     contains any files (threshold is 0). On a fresh DSF POC the directory
+            #     always has at least one file, which would otherwise abort the upgrade
+            #     during preflight validations.
+            ignore_healthcheck_checks = ["sonargd-audit-directory"]
+
           }
           EOF
           cat ${UPGRADE_EXAMPLE_DIR}/main.tf

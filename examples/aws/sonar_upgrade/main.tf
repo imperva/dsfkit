@@ -83,4 +83,14 @@ module "sonar_upgrader" {
   run_postflight_validations = true
   stop_on_failure            = true
 
+  # Optionally skip individual healthchecks that are not actionable for the upgrade.
+  # For example, on a freshly-deployed POC environment the "sonargd-audit-directory"
+  # healthcheck emits a WARNING ("Files count for /imperva/data/sonargd/audit (1)
+  # exceed threshold (0). This might indicate an ingestion issue.") which would
+  # otherwise abort the upgrade during preflight validations.
+  # ignore_healthcheck_checks = ["sonargd-audit-directory"]
+
+  # Alternatively, ignore all WARNING-level healthchecks (FAILUREs will still abort):
+  # ignore_healthcheck_warnings = true
+
 }
