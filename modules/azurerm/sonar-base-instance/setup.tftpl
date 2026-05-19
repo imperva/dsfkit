@@ -30,6 +30,25 @@ function internet_access() {
     fi
 }
 
+# Retry a yum/dnf-based command with cache repair between attempts. Recovers
+# from transient Microsoft RHUI failures (HTTP 400 on
+# https://rhui-{1,2,3}.microsoft.com/.../repomd.xml, "All mirrors were tried",
+# "Failed to download metadata for repo"), which otherwise poison the local
+# cache and make every retry fail the same way.
+function yum_retry() {
+    local attempt
+    for attempt in 1 2 3 4 5; do
+        if "$@"; then
+            return 0
+        fi
+        echo "Command failed (attempt $attempt): $*. Cleaning yum/dnf cache and retrying..."
+        yum clean all || true
+        rm -rf /var/cache/yum /var/cache/dnf || true
+        sleep $((attempt * 10))
+    done
+    return 1
+}
+
 function install_yum_dep_from_internet() {
     if ! internet_access; then
         echo "Error: No outbound internet access. Either enable outbound internet access, or make sure $@ is installed in the base ami"
@@ -38,12 +57,10 @@ function install_yum_dep_from_internet() {
     local package="$1"
     local package_name="$${2:-$1}"
 
+    # yum_retry takes care of cache repair between attempts, so a transient
+    # Microsoft RHUI 400 / repomd.xml download glitch heals automatically.
     if ! yum list installed "$${package_name}"; then
-        yum install "$${package}" -y \
-          || yum install "$${package}" -y \
-          || yum install "$${package}" -y \
-          || yum install "$${package}" -y \
-          || yum install "$${package}" -y # trying x times since sometimes there is a glitch with the entitlement server
+        yum_retry yum install "$${package}" -y
     fi
 }
 
@@ -52,16 +69,16 @@ function install_azcli_from_internet() {
         echo "Error: No outbound internet access. Either enable outbound internet access, or make sure az cli is installed in the base image"
         exit 1
     fi
-    rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    yum_retry rpm --import https://packages.microsoft.com/keys/microsoft.asc
     if [ "$RHEL_MAJOR_VERSION" -eq 8 ]; then
-        dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+        yum_retry dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
     elif [ "$RHEL_MAJOR_VERSION" -eq 9 ]; then
-        dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+        yum_retry dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
     else
         echo "Unsupported RHEL version: $RHEL_MAJOR_VERSION"
         exit 1
     fi
-    dnf install azure-cli -y
+    yum_retry dnf install azure-cli -y
     az login --identity --allow-no-subscriptions
 }
 

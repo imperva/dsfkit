@@ -9,11 +9,31 @@ function wait-for-admin(){
   done
 }
 
+# Retry a command on transient dnf/yum-mirror or RHUI failures (e.g. HTTP 400
+# from rhui-{1,2,3}.microsoft.com, "Failed to download metadata for repo",
+# brief TLS hangups). Cleans the dnf cache between attempts.
+function dnf_retry(){
+  local attempt
+  for attempt in 1 2 3 4 5; do
+    if "$@"; then
+      return 0
+    fi
+    echo "Command failed (attempt $attempt): $*. Cleaning dnf cache and retrying..."
+    dnf clean all || true
+    rm -rf /var/cache/dnf || true
+    sleep $((attempt * 10))
+  done
+  return 1
+}
+
 function install-azure-cli(){
-  rpm --import https://packages.microsoft.com/keys/microsoft.asc
-  dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
-  dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
-  dnf install azure-cli -y
+  dnf_retry rpm --import https://packages.microsoft.com/keys/microsoft.asc
+  # One of the next two lines is expected to fail depending on RHEL major
+  # version; we don't want to block on either, so retries are bounded and
+  # failures are tolerated.
+  dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm || true
+  dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm || true
+  dnf_retry dnf install azure-cli -y
   az login --identity
 }
 
