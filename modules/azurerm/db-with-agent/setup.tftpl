@@ -2,6 +2,7 @@
 set -e
 set -u
 set -x
+set -o pipefail
 cd /root || exit 1
 
 # Turn off interactive prompts and skip translations
@@ -12,15 +13,68 @@ if [ -x "$(command -v apt-get)" ]; then
   cat <<EOF | sudo tee /etc/apt/apt.conf.d/99translations
 Acquire::Languages "none";
 EOF
+
+  # Configure APT to retry transient mirror failures (e.g. truncated InRelease,
+  # split-up-into-data-and-signature errors, brief TLS hangups).
+  cat <<EOF | sudo tee /etc/apt/apt.conf.d/80-retries
+Acquire::Retries "5";
+Acquire::http::Timeout "30";
+Acquire::https::Timeout "30";
+EOF
 fi
+
+# apt-get update with self-repair on corrupted /var/lib/apt/lists (we have
+# observed transient failures from archive.ubuntu.com where InRelease files
+# are written truncated, e.g. "Splitting up ... into data and signature failed").
+apt_update_resilient() {
+    for attempt in 1 2 3 4 5; do
+        if sudo apt-get -o DPkg::Lock::Timeout=120 update; then
+            return 0
+        fi
+        echo "apt-get update failed (attempt $attempt). Repairing apt lists..."
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get clean
+        sleep $((attempt * 5))
+    done
+    return 1
+}
+
+# apt-get install with retry-on-failure plus a list repair between attempts.
+apt_install_resilient() {
+    for attempt in 1 2 3; do
+        if sudo apt-get install -y "$@"; then
+            return 0
+        fi
+        echo "apt-get install of '$*' failed (attempt $attempt). Recovering..."
+        apt_update_resilient || true
+        sleep $((attempt * 10))
+    done
+    return 1
+}
 
 # Clean and update the apt cache to avoid missing package list errors
 sudo rm -rf /var/lib/apt/lists/*
 sudo apt-get clean
-sudo apt-get update
+apt_update_resilient
 
 function install_azcli_from_internet() {
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    # Note: --retry-all-errors is curl >= 7.71.0, but Ubuntu 20.04 ships
+    # curl 7.68.0. Relying on the outer attempt loop below for resilience
+    # avoids breaking the script on older curl (which exits 2 on unknown
+    # options, while `set -o pipefail` would otherwise hide that failure
+    # behind the pipe to `sudo bash`).
+    for attempt in 1 2 3; do
+        if curl -fsSL --retry 5 https://aka.ms/InstallAzureCLIDeb | sudo bash; then
+            break
+        fi
+        echo "Azure CLI install failed (attempt $attempt). Repairing apt lists..."
+        apt_update_resilient || true
+        sleep $((attempt * 10))
+        if [ "$attempt" = 3 ]; then
+            echo "Azure CLI install: giving up after 3 attempts"
+            return 1
+        fi
+    done
     az login --identity --allow-no-subscriptions >/dev/null
 }
 
@@ -54,6 +108,5 @@ echo "Installing database:"
 ${database_installation_commands}
 install_azcli
 install_agent_and_periodic_db_query_cronjob
-
 
 

@@ -14,11 +14,24 @@ locals {
             echo "Waiting for the lock to be released..."
             sleep 1
         done
-        sudo apt update -y
+        # apt_update_resilient is defined in setup.tftpl; falls back to a plain
+        # update if for any reason it is not available (defense in depth).
+        if declare -F apt_update_resilient >/dev/null; then
+            apt_update_resilient
+        else
+            sudo apt update -y
+        fi
       EOF
       database_installation_commands = {
         PostgreSql = <<-EOF
-          command -v psql || sudo apt install postgresql -y
+          # apt_install_resilient is defined in setup.tftpl and retries on
+          # transient apt-mirror failures; fall back to a plain install if
+          # the helper is unavailable for any reason.
+          if declare -F apt_install_resilient >/dev/null; then
+              command -v psql || apt_install_resilient postgresql
+          else
+              command -v psql || sudo apt install postgresql -y
+          fi
           if ! sudo systemctl is-active --quiet postgresql; then
               sudo systemctl start postgresql.service
               echo "PostgreSQL service started successfully."
@@ -27,7 +40,11 @@ locals {
           fi
         EOF
         MySql      = <<-EOF
-          command -v mysql || sudo apt install mysql-server -y
+          if declare -F apt_install_resilient >/dev/null; then
+              command -v mysql || apt_install_resilient mysql-server
+          else
+              command -v mysql || sudo apt install mysql-server -y
+          fi
           if ! sudo systemctl is-active --quiet mysql; then
               sudo systemctl start mysql.service
               echo "MySQL service started successfully."
