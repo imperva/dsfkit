@@ -3,6 +3,8 @@ set -x
 exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
 echo BEGIN
 
+RHEL_MAJOR_VERSION=$(cat /etc/os-release | grep VERSION_ID | sed -E 's/^.*"([0-9]+)\.[0-9]+".*$/\1/')
+
 function wait-for-admin(){
   while ! nc -z ${admin_server_private_ip} 8443; do
     sleep 0.1
@@ -28,11 +30,20 @@ function dnf_retry(){
 
 function install-azure-cli(){
   dnf_retry rpm --import https://packages.microsoft.com/keys/microsoft.asc
-  # One of the next two lines is expected to fail depending on RHEL major
-  # version; we don't want to block on either, so retries are bounded and
-  # failures are tolerated.
-  dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm || true
-  dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm || true
+  # Install only the packages-microsoft-prod RPM that matches the running
+  # RHEL major version. Previously we attempted both RHEL 8 and RHEL 9
+  # variants and tolerated the failing one with `|| true`, but combined
+  # with dnf_retry that wasted up to ~5 minutes of bounded retries on the
+  # impossible install -- enough to push past the downstream null_resource
+  # readiness timeout.
+  if [ "$RHEL_MAJOR_VERSION" = "9" ]; then
+    dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+  elif [ "$RHEL_MAJOR_VERSION" = "8" ]; then
+    dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+  else
+    echo "Unsupported RHEL version: $RHEL_MAJOR_VERSION"
+    exit 1
+  fi
   dnf_retry dnf install azure-cli -y
   az login --identity
 }
