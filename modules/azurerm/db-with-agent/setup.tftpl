@@ -2,6 +2,7 @@
 set -e
 set -u
 set -x
+set -o pipefail
 cd /root || exit 1
 
 # Turn off interactive prompts and skip translations
@@ -57,8 +58,13 @@ sudo apt-get clean
 apt_update_resilient
 
 function install_azcli_from_internet() {
+    # Note: --retry-all-errors is curl >= 7.71.0, but Ubuntu 20.04 ships
+    # curl 7.68.0. Relying on the outer attempt loop below for resilience
+    # avoids breaking the script on older curl (which exits 2 on unknown
+    # options, while `set -o pipefail` would otherwise hide that failure
+    # behind the pipe to `sudo bash`).
     for attempt in 1 2 3; do
-        if curl -fsSL --retry 5 --retry-all-errors https://aka.ms/InstallAzureCLIDeb | sudo bash; then
+        if curl -fsSL --retry 5 https://aka.ms/InstallAzureCLIDeb | sudo bash; then
             break
         fi
         echo "Azure CLI install failed (attempt $attempt). Repairing apt lists..."
