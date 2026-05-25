@@ -116,8 +116,9 @@ variable "ebs" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
-  description = "Compute instance volume attributes"
+  description = "Compute instance volume attributes. Both the root and external EBS volumes are encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
 }
 
 variable "ingress_communication_via_proxy" {

@@ -199,11 +199,13 @@ variable "mx_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
   description = "MX compute instance volume attributes"
   default = {
     volume_size = 160
     volume_type = "gp2"
+    encrypted   = true
   }
 }
 
@@ -211,11 +213,13 @@ variable "agent_gw_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
   description = "Agent Gateway compute instance volume attributes"
   default = {
     volume_size = 160
     volume_type = "gp2"
+    encrypted   = true
   }
 }
 
@@ -300,11 +304,13 @@ variable "hub_ebs_details" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
   default = {
     disk_size        = 250
     provisioned_iops = 0
     throughput       = 125
+    encrypted        = true
   }
   description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }
@@ -314,11 +320,13 @@ variable "agentless_gw_ebs_details" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
   default = {
     disk_size        = 150
     provisioned_iops = 0
     throughput       = 125
+    encrypted        = true
   }
   description = "DSF Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
 }
@@ -358,11 +366,13 @@ variable "dra_admin_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
   description = "DRA Admin compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 260
     volume_type = "gp3"
+    encrypted   = true
   }
 }
 
@@ -370,11 +380,13 @@ variable "dra_analytics_ebs_details" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
   description = "DRA Analytics compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.11-data-risk-analytics-installation-guide/page/69846.htm"
   default = {
     volume_size = 1010
     volume_type = "gp3"
+    encrypted   = true
   }
 }
 
@@ -407,12 +419,14 @@ variable "ciphertrust_manager_ebs_details" {
     volume_size = number
     volume_type = string
     iops        = number
+    encrypted   = optional(bool, true)
   })
   description = "CipherTrust Manager compute instance volume attributes"
   default = {
     volume_size = 300
     volume_type = "gp3"
     iops        = 3000
+    encrypted   = true
   }
 }
 
@@ -421,12 +435,14 @@ variable "cte_ddc_agent_ebs_details" {
     volume_size = number
     volume_type = string
     iops        = number
+    encrypted   = optional(bool, true)
   })
   description = "CTE and/or DDC agent compute instance volume attributes"
   default = {
     volume_size = 30
     volume_type = "gp3"
     iops        = 3000
+    encrypted   = true
   }
 }
 

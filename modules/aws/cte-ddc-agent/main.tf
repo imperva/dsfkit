@@ -55,6 +55,7 @@ resource "aws_instance" "cte_ddc_agent" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     iops                  = var.ebs.iops
+    encrypted             = var.ebs.encrypted
     delete_on_termination = true
   }
   user_data = local.user_data

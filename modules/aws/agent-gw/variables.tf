@@ -90,11 +90,13 @@ variable "ebs" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
-  description = "Compute instance volume attributes for the Agentless Gateway"
+  description = "Compute instance volume attributes for the Agent Gateway. The root EBS volume is encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
   default = {
     volume_size = 160
     volume_type = "gp2"
+    encrypted   = true
   }
 }
 

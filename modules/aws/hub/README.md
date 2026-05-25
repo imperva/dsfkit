@@ -31,7 +31,7 @@ The following input variables are **required**:
 * `subnet_id`: The ID of the subnet in which to launch the DSF Hub instance
 * `ssh_key_pair`: AWS key pair name and path for ssh connectivity
 * `password`: Initial password for all users
-* `ebs`: AWS EBS details
+* `ebs`: AWS EBS details. Includes an optional `encrypted` field (defaults to `true`); the root and external EBS volumes are encrypted by default using the account default EBS KMS key. Set to `false` to opt out
 * `binaries_location`: S3 DSF installation location
 * `allowed_web_console_and_api_cidrs`: List of ingress CIDR patterns allowing web console access
 * `allowed_hub_cidrs`: List of ingress CIDR patterns allowing other hubs to access the DSF hub instance
@@ -77,6 +77,7 @@ module "dsf_hub" {
     disk_size        = 500
     provisioned_iops = 0
     throughput       = 125
+    encrypted        = true  # set to false to opt out of encrypting root + external EBS volumes
   }
   binaries_location                 = {
     s3_bucket        = "my_S3_bucket"

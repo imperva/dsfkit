@@ -179,11 +179,13 @@ variable "ebs" {
   type = object({
     volume_size = number
     volume_type = string
+    encrypted   = optional(bool, true)
   })
-  description = "Compute instance volume attributes for the DRA Admin"
+  description = "Compute instance volume attributes for the DRA Admin. The root EBS volume is encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
   default = {
     volume_size = 260
     volume_type = "gp3"
+    encrypted   = true
   }
 }
 

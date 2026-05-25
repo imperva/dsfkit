@@ -29,7 +29,7 @@ The following input variables are **required**:
 
 * `subnet_id`: The subnet ID to attach the CipherTrust instance to.
 * `key_pair`: Name of the AWS EC2 key pair used for SSH access.
-* `ebs`: AWS EBS details.
+* `ebs`: AWS EBS details. Includes an optional `encrypted` field (defaults to `true`); the root EBS volume is encrypted by default using the account default EBS KMS key. Set to `false` to opt out.
 
 Additionally, the following variables are often **required unless defaults suffice**:
 
@@ -65,6 +65,7 @@ module "dsf_ciphertrust_manager" {
     volume_size = 300
     volume_type = "gp3"
     iops        = 3000
+    encrypted   = true  # set to false to opt out of encrypting the root EBS volume
   }
 
   allowed_web_console_and_api_cidrs = ["10.0.0.0/24"]

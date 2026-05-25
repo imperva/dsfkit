@@ -642,6 +642,14 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
         <br/>2. Added optional DNS CNAME support for AWS POC examples (dsf_deployment, sonar_basic_deployment, sonar_hadr_deployment). When configured, creates friendly DNS names for public-facing instances via Route53 cross-account. Set the 'dns_zone_domain' and optionally 'dns_route53_role_arn' and 'dns_route53_zone_id' variables to enable it. Disabled by default.
      </td>  
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.36</td>
+    <td>
+        AWS EBS volumes are now encrypted by default. To opt out, set 'encrypted = false' in the relevant '*_ebs_details' / 'ebs' variable.
+     </td>  
+  </tr>
   
 </table>
 
