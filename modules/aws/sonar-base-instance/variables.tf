@@ -68,8 +68,9 @@ variable "ebs_details" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
-  description = "Compute instance external volume attributes"
+  description = "Compute instance external volume attributes. Both the root and external EBS volumes are encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
   validation {
     condition     = var.ebs_details.disk_size >= 150
     error_message = "Disk size must be at least 150 GB"

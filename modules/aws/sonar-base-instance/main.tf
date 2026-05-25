@@ -43,6 +43,7 @@ resource "aws_instance" "dsf_base_instance" {
   user_data     = local.install_script
   root_block_device {
     volume_size = local.root_volume_size
+    encrypted   = var.ebs_details.encrypted
   }
   iam_instance_profile = local.instance_profile
   network_interface {
@@ -72,6 +73,7 @@ resource "aws_ebs_volume" "ebs_external_data_vol" {
   type              = local.ebs_state_disk_type
   iops              = local.ebs_state_iops
   throughput        = local.ebs_state_throughput
+  encrypted         = var.ebs_details.encrypted
   availability_zone = data.aws_subnet.selected_subnet.availability_zone
   tags              = merge(var.tags, { Name = join("-", [var.name, "data", "volume", "ebs"]) })
   lifecycle {

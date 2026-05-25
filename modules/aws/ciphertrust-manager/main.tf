@@ -37,6 +37,7 @@ resource "aws_instance" "cipthertrust_manager_instance" {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
     iops                  = var.ebs.iops
+    encrypted             = var.ebs.encrypted
     delete_on_termination = true
   }
   network_interface {

@@ -23,8 +23,9 @@ variable "ebs" {
     volume_size = number
     volume_type = string
     iops        = number
+    encrypted   = optional(bool, true)
   })
-  description = "Compute instance volume attributes for the agent instance"
+  description = "Compute instance volume attributes for the agent instance. The root EBS volume is encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
 }
 
 variable "subnet_id" {

@@ -148,8 +148,9 @@ variable "ebs" {
     volume_size = number
     volume_type = string
     iops        = number
+    encrypted   = optional(bool, true)
   })
-  description = "Compute instance volume attributes for the CipherTrust Manager"
+  description = "Compute instance volume attributes for the CipherTrust Manager. The root EBS volume is encrypted by default (using the account default EBS KMS key). Set 'encrypted' to false to opt out."
 }
 
 variable "attach_persistent_public_ip" {

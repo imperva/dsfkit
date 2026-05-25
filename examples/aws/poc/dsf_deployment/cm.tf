@@ -5,8 +5,7 @@ locals {
 }
 
 module "ciphertrust_manager" {
-  source                      = "imperva/dsf-ciphertrust-manager/aws"
-  version                     = "1.7.35" # latest release tag
+  source                      = "../../../../modules/aws/ciphertrust-manager" # TEST OVERRIDE — revert to: source = "imperva/dsf-ciphertrust-manager/aws", version = "1.7.35"
   count                       = local.ciphertrust_manager_count
   ciphertrust_manager_version = var.ciphertrust_manager_version
   ami = var.ciphertrust_manager_ami_id == null ? null : {

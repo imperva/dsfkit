@@ -32,6 +32,7 @@ resource "aws_instance" "dsf_base_instance" {
   root_block_device {
     volume_size           = var.ebs.volume_size
     volume_type           = var.ebs.volume_type
+    encrypted             = var.ebs.encrypted
     delete_on_termination = true
   }
   iam_instance_profile = local.instance_profile

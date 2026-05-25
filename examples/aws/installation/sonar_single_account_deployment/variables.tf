@@ -119,12 +119,14 @@ variable "hub_ebs_details" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
   description = "DSF Hub compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 500
     provisioned_iops = 0
     throughput       = 125
+    encrypted        = true
   }
 }
 
@@ -133,12 +135,14 @@ variable "agentless_gw_ebs_details" {
     disk_size        = number
     provisioned_iops = number
     throughput       = number
+    encrypted        = optional(bool, true)
   })
   description = "Agentless Gateway compute instance volume attributes. More info in sizing doc - https://docs.imperva.com/bundle/v4.10-sonar-installation-and-setup-guide/page/78729.htm"
   default = {
     disk_size        = 150
     provisioned_iops = 0
     throughput       = 125
+    encrypted        = true
   }
 }
 
