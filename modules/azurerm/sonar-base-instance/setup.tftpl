@@ -37,15 +37,19 @@ function internet_access() {
 # cache and make every retry fail the same way.
 function yum_retry() {
     local attempt
-    for attempt in 1 2 3 4 5; do
+    for attempt in {1..10}; do
         if "$@"; then
             return 0
         fi
-        echo "Command failed (attempt $attempt): $*. Cleaning yum/dnf cache and retrying..."
+        echo "Command failed (attempt $attempt/10): $*"
+        echo "Cleaning yum/dnf cache and retrying..."
         yum clean all || true
         rm -rf /var/cache/yum /var/cache/dnf || true
-        sleep $((attempt * 10))
+        sleep $((attempt < 6 ? attempt * 10 : 60))
     done
+    echo "All $attempt attempts failed for: $*"
+    echo "RHUI diagnostics:"
+    curl -sI https://rhui-1.microsoft.com 2>&1 | head -5 || true
     return 1
 }
 
@@ -57,9 +61,8 @@ function install_yum_dep_from_internet() {
     local package="$1"
     local package_name="$${2:-$1}"
 
-    # yum_retry takes care of cache repair between attempts, so a transient
-    # Microsoft RHUI 400 / repomd.xml download glitch heals automatically.
-    if ! yum list installed "$${package_name}"; then
+    # Use rpm -q to check if installed without contacting RHUI repos
+    if ! rpm -q "$${package_name}" &>/dev/null; then
         yum_retry yum install "$${package}" -y
     fi
 }
@@ -84,8 +87,8 @@ function install_azcli_from_internet() {
 
 function wait_for_systemd() {
     for i in $(seq 1 10); do
-        is_running="$(systemctl is-system-running; echo "")"
-        if "$is_running" == "running" || "$is_running" == "degraded"; then
+        is_running="$(systemctl is-system-running || true)"
+        if [[ "$is_running" == "running" || "$is_running" == "degraded" ]]; then
             return 0
         fi
         sleep 10
@@ -95,9 +98,6 @@ function wait_for_systemd() {
 function install_deps() {
     install_yum_dep_from_internet unzip
     install_yum_dep_from_internet lvm2
-    install_yum_dep_from_internet "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$RHEL_MAJOR_VERSION.noarch.rpm" epel-release
-    install_yum_dep_from_internet jq
-    install_yum_dep_from_internet wget
     command -v az || install_azcli_from_internet
 }
 
@@ -187,7 +187,7 @@ function install_tarball() {
     # Download installation tarball
     if [[ -n "${tarball_url}" ]]; then
         TARBALL_FILE=$APPS_DIR/$(basename "${tarball_url}")
-        wget "${tarball_url}" -O "$TARBALL_FILE" --progress=dot:giga
+        curl -fL --retry 5 --retry-delay 10 -o "$TARBALL_FILE" "${tarball_url}"
     else
         TARBALL_FILE=$APPS_DIR/$(basename "${az_blob}")
         az storage blob download --account-name "${az_storage_account}" --container-name "${az_container}" --name "${az_blob}" --file "$TARBALL_FILE" --auth-mode login >/dev/null
@@ -201,7 +201,7 @@ function install_tarball() {
 }
 
 function set_instance_fqdn() {
-    instance_fqdn=$(cloud-init query -a | jq -r .ds.meta_data.imds.network.interface[0].ipv4.ipAddress[0].privateIpAddress)
+    instance_fqdn=$(cloud-init query -a | python3 -c "import sys,json; print(json.load(sys.stdin)['ds']['meta_data']['imds']['network']['interface'][0]['ipv4']['ipAddress'][0]['privateIpAddress'])")
     if [ -z "$instance_fqdn" ]; then
         echo "Failed to extract instance private FQDN"
         exit 1

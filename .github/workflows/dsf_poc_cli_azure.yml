@@ -289,11 +289,11 @@ jobs:
       run: |
         terraform -chdir=$EXAMPLE_DIR workspace list
         # Only pass DEPLOYMENT_VERSION if it's not empty
-          if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
-              terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }}
-          else
-              terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
-          fi
+        if [[ -n "${{ env.DEPLOYMENT_VERSION }}" && "${{ env.DEPLOYMENT_VERSION }}" != $'\n' ]]; then
+            terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv -var "${{ env.DEPLOYMENT_VERSION }}"
+        else
+            terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
+        fi
    
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
@@ -302,8 +302,8 @@ jobs:
       id: apply
       # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       run: |
-        if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
-          terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }}
+        if [[ -n "${{ env.DEPLOYMENT_VERSION }}" && "${{ env.DEPLOYMENT_VERSION }}" != $'\n' ]]; then
+          terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -var "${{ env.DEPLOYMENT_VERSION }}" -auto-approve
         else
           terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve
         fi
@@ -348,7 +348,7 @@ jobs:
       id: destroy
       if: always()
       run: |
-        if [ -n "${{ env.DEPLOYMENT_VERSION }}" && "${{ env.DEPLOYMENT_VERSION }}" != $'\n' ]; then
+        if [[ -n "${{ env.DEPLOYMENT_VERSION }}" && "${{ env.DEPLOYMENT_VERSION }}" != $'\n' ]]; then
             terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -var "${{ env.DEPLOYMENT_VERSION }}" -auto-approve
         else
             terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
