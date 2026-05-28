@@ -30,21 +30,27 @@ function dnf_retry(){
 
 function install-azure-cli(){
   dnf_retry rpm --import https://packages.microsoft.com/keys/microsoft.asc
-  # Install only the packages-microsoft-prod RPM that matches the running
-  # RHEL major version. Previously we attempted both RHEL 8 and RHEL 9
-  # variants and tolerated the failing one with `|| true`, but combined
-  # with dnf_retry that wasted up to ~5 minutes of bounded retries on the
-  # impossible install -- enough to push past the downstream null_resource
-  # readiness timeout.
+
+  local msrepo_url
   if [ "$RHEL_MAJOR_VERSION" = "9" ]; then
-    dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+    msrepo_url="https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm"
   elif [ "$RHEL_MAJOR_VERSION" = "8" ]; then
-    dnf_retry dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+    msrepo_url="https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm"
   else
     echo "Unsupported RHEL version: $RHEL_MAJOR_VERSION"
     exit 1
   fi
-  dnf_retry dnf install azure-cli -y
+
+  # rpm -Uvh avoids dnf's mandatory metadata refresh, which fails when
+  # Azure RHUI returns 400 on rhel-*-baseos-rhui-rpms.
+  dnf_retry rpm -Uvh --replacepkgs "$msrepo_url"
+
+  # Fall back to disabling RHUI if it's degraded; --nobest lets dnf pick the
+  # newest azure-cli whose python pin matches what's already in the Azure
+  # RHEL PAYG base image (python3.9) when the appstream repo is unreachable.
+  dnf_retry dnf install azure-cli -y \
+    || dnf_retry dnf install azure-cli -y --disablerepo='*rhui*' --nobest
+
   az login --identity
 }
 
