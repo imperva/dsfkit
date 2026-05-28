@@ -91,7 +91,7 @@ function install_azcli_from_internet() {
     # Fall back to disabling RHUI if it's degraded; azure-cli's RHEL-side deps
     # are already in the Azure RHEL PAYG base image.
     yum_retry dnf install azure-cli -y \
-        || yum_retry dnf install azure-cli -y --disablerepo='*rhui*'
+        || yum_retry dnf install azure-cli -y --disablerepo='*rhui*' --nobest
 
     az login --identity --allow-no-subscriptions
 }
