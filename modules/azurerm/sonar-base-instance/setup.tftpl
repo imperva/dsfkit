@@ -36,18 +36,19 @@ function internet_access() {
 # "Failed to download metadata for repo"), which otherwise poison the local
 # cache and make every retry fail the same way.
 function yum_retry() {
+    local max_attempts="$${YUM_RETRY_ATTEMPTS:-10}"
     local attempt
-    for attempt in {1..10}; do
+    for attempt in $(seq 1 "$max_attempts"); do
         if "$@"; then
             return 0
         fi
-        echo "Command failed (attempt $attempt/10): $*"
+        echo "Command failed (attempt $attempt/$max_attempts): $*"
         echo "Cleaning yum/dnf cache and retrying..."
         yum clean all || true
         rm -rf /var/cache/yum /var/cache/dnf || true
         sleep $((attempt < 6 ? attempt * 10 : 60))
     done
-    echo "All $attempt attempts failed for: $*"
+    echo "All $max_attempts attempts failed for: $*"
     echo "RHUI diagnostics:"
     curl -sI https://rhui-1.microsoft.com 2>&1 | head -5 || true
     return 1
@@ -88,9 +89,13 @@ function install_azcli_from_internet() {
     # Azure RHUI returns 400 on rhel-*-baseos-rhui-rpms.
     yum_retry rpm -Uvh --replacepkgs "$msrepo_url"
 
-    # Fall back to disabling RHUI if it's degraded; azure-cli's RHEL-side deps
-    # are already in the Azure RHEL PAYG base image.
-    yum_retry dnf install azure-cli -y \
+    # Primary path uses fewer attempts (3) so we fail over fast when RHUI is
+    # degraded -- a real RHUI incident lasts hours, retrying 10x just burns
+    # cloud-init time. Fallback keeps the default 10 attempts as last resort.
+    # --nobest lets dnf walk back to an older azure-cli whose python pin
+    # matches what's already in the Azure RHEL PAYG base image (python3.9)
+    # when the appstream repo is unreachable.
+    YUM_RETRY_ATTEMPTS=3 yum_retry dnf install azure-cli -y \
         || yum_retry dnf install azure-cli -y --disablerepo='*rhui*' --nobest
 
     az login --identity --allow-no-subscriptions

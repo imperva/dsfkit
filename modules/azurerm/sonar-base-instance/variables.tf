@@ -227,7 +227,7 @@ variable "base_directory" {
 
 variable "cloud_init_timeout" {
   type        = number
-  default     = 900
+  default     = 1800
   description = "Max time to wait for the machine to start"
 }
 
