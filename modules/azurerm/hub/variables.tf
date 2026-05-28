@@ -318,7 +318,7 @@ variable "dra_details" {
 
 variable "cloud_init_timeout" {
   type        = number
-  default     = 1200
+  default     = 1800
   description = "Max time to wait for the machine to start"
 }
 
