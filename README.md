@@ -650,6 +650,14 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
         AWS EBS volumes are now encrypted by default. To opt out, set 'encrypted = false' in the relevant '*_ebs_details' / 'ebs' variable.
      </td>  
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>TBD</td>
+    <td>
+        1. Added internal support for DRA version 15.4. Set the variable ‘dra_version’ to 15.4 to use it.
+     </td>  
+  </tr>
   
 </table>
 
@@ -852,7 +860,7 @@ Restrictions on modules may apply</td>
 
   </tr>
   <tr>
-    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.3.0.10</td>
+    <td>DRA</td><td>4.17.0.10</td><td>4.11.0.10 - 15.4.0.10</td>
   </tr>
   </tr>
   <tr>
