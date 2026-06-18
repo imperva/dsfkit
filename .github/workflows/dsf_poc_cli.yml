@@ -46,7 +46,7 @@ on:
         default: false
         required: false
       deployment_type:
-        description: 'Choose the type of deployments to run: sonar-with-fam, all-products or all-permutations'
+        description: 'Choose the type of deployments to run: sonar-with-fam, all-products, all-permutations or dra'
         type: string
         default: 'all-permutations'
         required: false
@@ -74,7 +74,7 @@ on:
       - 'dev'
     paths:
       - 'modules/aws/**'
-      - '!modules/aws/sonar-upgrader/*'
+      - '!modules/aws/sonar-upgrader/**'
       - '!modules/aws/statistics/*'
       - 'modules/null/**'
       - '!modules/null/statistics/*'
@@ -106,7 +106,8 @@ jobs:
           MATRIX=$(jq -n --compact-output --arg var "$VAR" '{
             "include": [
               (if $var == "all-permutations" or $var == "all-products" then {"name":"DSF POC","workspace":"dsf_cli-all-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":true,"enable_dra":true} else empty end),
-              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end)
+              (if $var == "all-permutations" or $var == "sonar-with-fam" then {"name":"DSF POC - Sonar with FAM","workspace":"dsf_cli-sonar-with-fam-","enable_sonar":true,"enable_ciphertrust":true,"enable_dam":false,"enable_dra":false} else empty end),
+              (if $var == "dra" then {"name":"DSF POC - DRA","workspace":"dsf_cli-dra-","enable_sonar":false,"enable_ciphertrust":false,"enable_dam":false,"enable_dra":true} else empty end)
             ]
           }')
 
@@ -380,5 +381,3 @@ jobs:
             echo "Sleeping for $((DESTROY_DELAY_SECONDS / 60)) minutes before destroying the environment"
             sleep $DESTROY_DELAY_SECONDS
           fi
-
-
