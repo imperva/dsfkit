@@ -275,7 +275,7 @@ jobs:
         run: |
           terraform -chdir=$EXAMPLE_DIR workspace list
           # Only pass DEPLOYMENT_VERSION if it's not empty
-            if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
+            if [ -n "${{ env.DEPLOYMENT_VERSION }}" ]; then
                 terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }}
             else
                 terraform -chdir=$EXAMPLE_DIR plan -var dam_license=license.mprv
@@ -287,11 +287,31 @@ jobs:
         id: apply
         # if: github.ref == 'refs/heads/"master"' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
-          if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
-              terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve
+          # Capture apply output to a file so the failure is always retrievable,
+          # even when the GitHub web log viewer cannot render the large step.
+          # set -o pipefail ensures a failed apply still fails the step (tee would mask it otherwise).
+          set -o pipefail
+          APPLY_LOG="$EXAMPLE_DIR/apply-${{ matrix.workspace }}.log"
+          if [ -n "${{ env.DEPLOYMENT_VERSION }}" ]; then
+              terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve 2>&1 | tee "$APPLY_LOG"
           else
-              terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve
+              terraform -chdir=$EXAMPLE_DIR apply -var dam_license=license.mprv -auto-approve 2>&1 | tee "$APPLY_LOG"
           fi
+
+      # Print the real Terraform error to the run Summary page, which always renders
+      # regardless of log size (unlike the in-step log viewer).
+      - name: Surface Terraform error
+        if: failure() && steps.apply.outcome == 'failure'
+        run: |
+          echo "### ❌ Terraform Apply failed — ${{ matrix.name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          ERR=$(grep -iE "^Error:|level=error|status: error|Process completed with exit" "$EXAMPLE_DIR"/apply-*.log 2>/dev/null | tail -n 50)
+          if [ -n "$ERR" ]; then
+            echo "$ERR" >> "$GITHUB_STEP_SUMMARY"
+          else
+            tail -n 80 "$EXAMPLE_DIR"/apply-*.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo "No apply log found." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Terraform Output
         if: always()
@@ -305,6 +325,7 @@ jobs:
           name: collected-keys-${{ env.TF_WORKSPACE }}
           path: |
             ${{ env.EXAMPLE_DIR }}/ssh_keys
+            ${{ env.EXAMPLE_DIR }}/apply-*.log
 
       - name: Check how was the workflow run
         id: check-trigger
@@ -334,7 +355,7 @@ jobs:
         if: always()
         run: |
           # Try destroy first
-          if [ -n "${{ env.DEPLOYMENT_VERSION }}" && ${{ env.DEPLOYMENT_VERSION }} != $'\n' ]; then
+          if [ -n "${{ env.DEPLOYMENT_VERSION }}" ]; then
               DESTROY_CMD="terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve"
           else
               DESTROY_CMD="terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve"
