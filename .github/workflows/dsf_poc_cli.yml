@@ -150,7 +150,16 @@ jobs:
       TF_VAR_dns_zone_domain: ${{ vars.DNS_ZONE_DOMAIN }}
       TF_VAR_dns_route53_role_arn: ${{ vars.DNS_ROUTE53_ROLE_ARN }}
       TF_VAR_dns_route53_zone_id: ${{ vars.DNS_ROUTE53_ZONE_ID }}
+      # GitHub-hosted runners run on Azure infrastructure whose outbound NAT can
+      # egress through a different IP/subnet than the one detected via
+      # icanhazip.com during `terraform apply`. This makes the auto-detected
+      # workstation_cidr unreliable for allowing this runner's traffic to reach
+      # the CM web console/API, which can cause null_resource.set_password to
+      # time out and (due to depends_on chains) block DNS record creation.
+      # Widen web_console_cidr for this CI test environment to avoid that.
+      TF_VAR_web_console_cidr: '["0.0.0.0/0"]'
       DEPLOYMENT_VERSION: ${{ needs.prepare-matrix.outputs.deployment_version }}
+
 
       # Define the dynamic version string based on deployment_type and product_version
 
