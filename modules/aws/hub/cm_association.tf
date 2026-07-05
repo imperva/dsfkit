@@ -75,12 +75,19 @@ locals {
     if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 300 ]; then
       sudo bash -c "echo CipherTrust Manager successfully associated with the DSF Hub. >> $LOGFILE"
     else
-      sudo bash -c "echo Request failed with HTTP status $STATUS >> $LOGFILE"
+      # NOTE: intentionally not exiting with a non-zero status here. A failure
+      # to associate the CM with the Hub (e.g. because the CM admin password
+      # was never successfully changed) shouldn't fail the entire Terraform
+      # apply, as doing so can prevent independent resources elsewhere in the
+      # graph (e.g. Route53 DNS records) from being created in the same run.
+      # The failure is still logged clearly on the Hub instance and here.
+      sudo bash -c "echo ERROR: Request failed with HTTP status $STATUS >> $LOGFILE"
       sudo bash -c "echo $BODY >> $LOGFILE"
-      exit 1
+      sudo bash -c "echo ERROR: CipherTrust Manager association with the DSF Hub failed. Not failing the apply so other independent resources (e.g. DNS records) can still be created. >> $LOGFILE"
     fi
   EOF
 }
+
 
 resource "null_resource" "cm_association" {
   count = var.cm_details != null ? 1 : 0

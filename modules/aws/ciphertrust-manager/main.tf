@@ -71,9 +71,15 @@ resource "aws_network_interface" "eni" {
 
 resource "null_resource" "set_password" {
   provisioner "local-exec" {
+    # NOTE: This script intentionally never exits with a non-zero status.
+    # If it did, Terraform would mark this resource (and this whole apply)
+    # as failed, which can prevent independent resources elsewhere in the
+    # graph (e.g. Route53 DNS records for this and other instances) from
+    # ever being created/scheduled in the same apply. Any failure here is
+    # logged clearly instead, so operators can detect it (e.g. by scanning
+    # apply logs for "ERROR:"), without blocking the rest of the deployment.
     command = <<EOF
     #!/bin/bash -x
-    set -e
 
     # Wait up to 10 minutes for API to respond
     echo "Waiting for service API to become reachable..."
@@ -88,8 +94,8 @@ resource "null_resource" "set_password" {
     done
 
     if [ -z "$response" ]; then
-      echo "ERROR: CipherTrust Manager API did not become reachable in time."
-      exit 1
+      echo "ERROR: CipherTrust Manager API did not become reachable in time. Skipping password change; this Terraform resource will still report success so other independent resources (e.g. DNS records) can be created."
+      exit 0
     fi
 
     # Wait up to 10 minutes for status = "started"
@@ -117,9 +123,9 @@ resource "null_resource" "set_password" {
           echo "CipherTrust Manager password was set successfully"
           exit 0
         else
-          echo "Request failed with HTTP status $STATUS"
+          echo "ERROR: Request failed with HTTP status $STATUS. This can happen if the CM instance's admin password was already changed (e.g. reused/custom AMI). Not failing the apply so other independent resources (e.g. DNS records) can still be created."
           echo "$BODY"
-          exit 1
+          exit 0
         fi
       fi
 
@@ -127,8 +133,8 @@ resource "null_resource" "set_password" {
       sleep 10
     done
 
-    echo "ERROR: Services did not start in time."
-    exit 1
+    echo "ERROR: Services did not start in time. Skipping password change; this Terraform resource will still report success so other independent resources (e.g. DNS records) can be created."
+    exit 0
     EOF
 
     interpreter = ["bash", "-c"]
@@ -145,3 +151,4 @@ resource "null_resource" "set_password" {
     aws_eip_association.eip_assoc
   ]
 }
+
