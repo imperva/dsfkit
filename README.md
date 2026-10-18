@@ -656,6 +656,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>TBD</td>
     <td>
         1. Added internal support for DRA version 15.4. Set the variable ‘dra_version’ to 15.4 to use it.
+        <br/>2. Updated the default DAM version in the AWS examples (dsf_deployment, dsf_single_account_deployment) to 14.19.1.160, since the AWS Marketplace images of DAM versions 14.11 - 14.17 are deprecated. Set the variable ‘dam_version’ to control the version.
      </td>  
   </tr>
   
@@ -854,9 +855,13 @@ This includes the following version of the DSF sub-products:
 Restrictions on modules may apply</td>
   </tr>
   <tr>
-    <td>DAM</td><td>14.17.1.10</td><td>14.11.1.10 - 14.17.1.10
+    <td>DAM</td><td>14.19.1.160 (AWS)
+
+14.17.1.10 (Azure)</td><td>14.11.1.10 - 14.19.1.160
 
 14.7.x.y (LTS)
+
+On AWS, versions older than 14.18.1.11 are no longer available in the AWS Marketplace</td>
 
   </tr>
   <tr>
