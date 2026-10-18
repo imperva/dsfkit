@@ -630,7 +630,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>1.7.34</td>
     <td>
         1. Added internal support for DRA version 15.2. Set the variable ‘dra_version’ to 15.2 to use it.
-        2. Improvements and bug fixes.
+        <br/>2. Improvements and bug fixes.
      </td>  
   </tr>
   <tr>
