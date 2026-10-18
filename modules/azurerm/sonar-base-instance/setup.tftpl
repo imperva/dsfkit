@@ -115,6 +115,14 @@ function install_deps() {
     install_yum_dep_from_internet unzip
     install_yum_dep_from_internet lvm2
     command -v az || install_azcli_from_internet
+    install_yum_dep_from_internet rng-tools
+}
+
+function start_entropy_daemon() {
+    # Sonar's Java services seed SecureRandom from /dev/random, which blocks on RHEL 8 kernels
+    # when the entropy pool is low (common on fresh cloud VMs), stalling setup for tens of minutes
+    systemctl enable --now rngd || echo "Warning: failed to start rngd"
+    cat /proc/sys/kernel/random/entropy_avail
 }
 
 function create_users_and_groups() {
@@ -343,6 +351,7 @@ APPS_DIR="$APPS_DIR/apps"
 
 wait_for_systemd
 install_deps
+start_entropy_daemon
 firewall_open_ports || true
 create_users_and_groups
 attach_disk
