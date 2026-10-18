@@ -228,6 +228,17 @@ jobs:
 
       - name: Cleaning environment
         run: |
+          # Resources of the CipherTrust provider (e.g. ciphertrust_cluster, ciphertrust_trial_license) can't be destroyed
+          # once their provider configuration is gone, and they only live on the CipherTrust Manager instances that are
+          # destroyed anyway, so drop them from the state. Raw state is used since it needs no provider schemas.
+          remove_ciphertrust_resources_from_state() {
+            terraform -chdir=$EXAMPLE_DIR state pull \
+              | jq -r '.resources[]? | select(.mode == "managed" and (.provider | ascii_downcase | contains("thalesgroup/ciphertrust"))) | (if .module then .module + "." else "" end) + .type + "." + .name' \
+              | while read -r address; do
+                  terraform -chdir=$EXAMPLE_DIR state rm "$address"
+                done
+          }
+
           if [ ${{ github.event_name }} == 'schedule' ]; then
             mv $EXAMPLE_DIR/main.tf{,_}
             mv $EXAMPLE_DIR/outputs.tf{,_}
@@ -245,9 +256,9 @@ jobs:
 
             # Try destroy first
             if ! terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve; then
-              echo "First destroy attempt failed, trying to remove ciphertrust_trial_license state"
+              echo "First destroy attempt failed, trying to remove CipherTrust provider resources from state"
               # Try to remove the state, but don't fail if this doesn't work
-              terraform -chdir=$EXAMPLE_DIR state rm ciphertrust_trial_license.trial_license || true
+              remove_ciphertrust_resources_from_state || true
               # Retry destroy
               terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
             fi
@@ -354,6 +365,15 @@ jobs:
         id: destroy
         if: always()
         run: |
+          # See the "Cleaning environment" step
+          remove_ciphertrust_resources_from_state() {
+            terraform -chdir=$EXAMPLE_DIR state pull \
+              | jq -r '.resources[]? | select(.mode == "managed" and (.provider | ascii_downcase | contains("thalesgroup/ciphertrust"))) | (if .module then .module + "." else "" end) + .type + "." + .name' \
+              | while read -r address; do
+                  terraform -chdir=$EXAMPLE_DIR state rm "$address"
+                done
+          }
+
           # Try destroy first
           if [ -n "${{ env.DEPLOYMENT_VERSION }}" ]; then
               DESTROY_CMD="terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -var ${{ env.DEPLOYMENT_VERSION }} -auto-approve"
@@ -362,9 +382,9 @@ jobs:
           fi
 
           if ! eval $DESTROY_CMD; then
-              echo "First destroy attempt failed, trying to remove ciphertrust_trial_license state"
+              echo "First destroy attempt failed, trying to remove CipherTrust provider resources from state"
               # Try to remove the state, but don't fail if this doesn't work
-              terraform -chdir=$EXAMPLE_DIR state rm ciphertrust_trial_license.trial_license || true
+              remove_ciphertrust_resources_from_state || true
               # Retry destroy
               eval $DESTROY_CMD
           fi
