@@ -144,7 +144,6 @@ jobs:
         MY_SECRET: ${{ secrets.DAM_LICENSE }}
       run: |
         echo "${{ secrets.DAM_LICENSE }}" | base64 -d > $EXAMPLE_DIR/license.mprv
-        cat $EXAMPLE_DIR/license.mprv
 
     - name: Add Profile Credentials to ~/.aws/credentials
       run: |
@@ -216,10 +215,41 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=$EXAMPLE_DIR plan
+      id: plan
+      run: |
+        # Capture plan output to a file so the failure is always retrievable,
+        # even when the GitHub web log viewer cannot render the large step.
+        # set -o pipefail ensures a failed plan still fails the step (tee would mask it otherwise).
+        set -o pipefail
+        terraform -chdir=$EXAMPLE_DIR plan 2>&1 | tee "$EXAMPLE_DIR/plan.log"
 
     - name: Terraform Apply
-      run: terraform -chdir=$EXAMPLE_DIR apply -auto-approve
+      id: apply
+      run: |
+        set -o pipefail
+        terraform -chdir=$EXAMPLE_DIR apply -auto-approve 2>&1 | tee "$EXAMPLE_DIR/apply.log"
+
+    # Print the real Terraform error to the run Summary page, which always renders
+    # regardless of log size (unlike the in-step log viewer).
+    - name: Surface Terraform error
+      if: failure() && (steps.plan.outcome == 'failure' || steps.apply.outcome == 'failure')
+      run: |
+        if [ "${{ steps.plan.outcome }}" == "failure" ]; then
+          TF_STEP=Plan
+          TF_LOG="$EXAMPLE_DIR/plan.log"
+        else
+          TF_STEP=Apply
+          TF_LOG="$EXAMPLE_DIR/apply.log"
+        fi
+        echo "### ❌ Terraform $TF_STEP failed" >> "$GITHUB_STEP_SUMMARY"
+        echo '```' >> "$GITHUB_STEP_SUMMARY"
+        ERR=$(grep -iE -A 10 "^Error:|level=error|status: error" "$TF_LOG" 2>/dev/null | tail -n 80)
+        if [ -n "$ERR" ]; then
+          echo "$ERR" >> "$GITHUB_STEP_SUMMARY"
+        else
+          tail -n 80 "$TF_LOG" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || echo "No $TF_STEP log found." >> "$GITHUB_STEP_SUMMARY"
+        fi
+        echo '```' >> "$GITHUB_STEP_SUMMARY"
 
     - name: Terraform Output
       if: always()
@@ -233,6 +263,7 @@ jobs:
         name: collected-keys-${{ env.TF_WORKSPACE }}
         path: |
           ${{ env.EXAMPLE_DIR }}/ssh_keys
+          ${{ env.EXAMPLE_DIR }}/*.log
 
     - name: Check how was the workflow run
       id: check-trigger
