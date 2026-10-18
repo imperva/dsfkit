@@ -658,6 +658,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
         1. Added internal support for DRA version 15.4. Set the variable ‘dra_version’ to 15.4 to use it.
         <br/>2. Updated the default DAM version in the AWS examples (dsf_deployment, dsf_single_account_deployment) to 14.19.1.160, since the AWS Marketplace images of DAM versions 14.11 - 14.17 are deprecated. Set the variable ‘dam_version’ to control the version.
         <br/>3. Known issue: the DAM v14 offer was removed from the Azure Marketplace for new purchases, so deploying DAM in Azure with a non-LTS version fails.
+        <br/>4. Improvements and bug fixes.
      </td>  
   </tr>
   
