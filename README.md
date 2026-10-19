@@ -657,7 +657,7 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>
         1. Added internal support for DRA version 15.4. Set the variable ‘dra_version’ to 15.4 to use it.
         <br/>2. Updated the default DAM version in the AWS examples (dsf_deployment, dsf_single_account_deployment) to 14.19.1.160, since the AWS Marketplace images of DAM versions 14.11 - 14.17 are deprecated. Set the variable ‘dam_version’ to control the version.
-        <br/>3. Known issue: the DAM v14 offer was removed from the Azure Marketplace for new purchases, so deploying DAM in Azure with a non-LTS version fails.
+        <br/>3. Since the DAM v14 offer (imperva-dam-v14) was removed from the Azure Marketplace, DAM v14 is now deployed in Azure from the DAM v14 LTS offer (imperva-dam-v14-lts), and the default DAM version in the Azure dsf_deployment example was updated to 14.19.1.160. Make sure programmatic deployment is enabled for the DAM LTS image in your Azure subscription.
         <br/>4. Improvements and bug fixes.
      </td>  
   </tr>
@@ -859,13 +859,13 @@ Restrictions on modules may apply</td>
   <tr>
     <td>DAM</td><td>14.19.1.160 (AWS)
 
-14.17.1.10 (Azure)</td><td>14.11.1.10 - 14.19.1.160
+14.19.1.160 (Azure)</td><td>14.11.1.10 - 14.19.1.160
 
 14.7.x.y (LTS)
 
 On AWS, versions older than 14.18.1.11 are no longer available in the AWS Marketplace.
 
-On Azure, the DAM v14 offer (imperva-dam-v14) was removed from the Azure Marketplace for new purchases, so non-LTS DAM versions can't currently be deployed</td>
+On Azure, only versions published in the DAM v14 LTS Azure Marketplace offer (imperva-dam-v14-lts) are available - currently 14.7.x.y and 14.19.1.y</td>
 
   </tr>
   <tr>
