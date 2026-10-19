@@ -28,6 +28,10 @@ resource "aws_instance" "agent" {
   ami           = data.aws_ami.selected-ami.id
   instance_type = "t2.micro"
   key_name      = var.key_pair
+  root_block_device {
+    encrypted             = true
+    delete_on_termination = true
+  }
   network_interface {
     network_interface_id = aws_network_interface.eni.id
     device_index         = 0
