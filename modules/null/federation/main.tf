@@ -23,6 +23,14 @@ locals {
     gw_proxy_private_ssh_key_path = var.gw_proxy_info.proxy_private_ssh_key_path != null ? var.gw_proxy_info.proxy_private_ssh_key_path : ""
     gw_proxy_ssh_user             = var.gw_proxy_info.proxy_ssh_user != null ? var.gw_proxy_info.proxy_ssh_user : ""
   })
+  refederate_remotes_cmds = templatefile("${path.module}/refederate_remotes.tftpl", {
+    ssh_key_path                   = var.hub_info.hub_private_ssh_key_path
+    dsf_hub_ip                     = var.hub_info.hub_ip_address
+    hub_ssh_user                   = var.hub_info.hub_ssh_user
+    hub_proxy_address              = var.hub_proxy_info.proxy_address != null ? var.hub_proxy_info.proxy_address : ""
+    hub_proxy_private_ssh_key_path = var.hub_proxy_info.proxy_private_ssh_key_path != null ? var.hub_proxy_info.proxy_private_ssh_key_path : ""
+    hub_proxy_ssh_user             = var.hub_proxy_info.proxy_ssh_user != null ? var.hub_proxy_info.proxy_ssh_user : ""
+  })
   sleep_value = "40s"
 }
 
@@ -32,7 +40,7 @@ resource "time_sleep" "sleep" {
 
 resource "null_resource" "federate_cmds" {
   provisioner "local-exec" {
-    command     = "${local.lock_shell_cmds} ${local.federate_hub_cmds} ${local.federate_gw_cmds}"
+    command     = "${local.lock_shell_cmds} ${local.federate_hub_cmds} ${local.federate_gw_cmds} ${local.refederate_remotes_cmds}"
     interpreter = ["/bin/bash", "-c"]
   }
   depends_on = [
