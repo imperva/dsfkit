@@ -14,22 +14,30 @@ locals {
   # password in this string. If those endpoints look healthy, the cluster join
   # API is almost always ready as well.
   cluster_join_probe_addresses = join(" ", [for n in var.nodes : n.public_address])
+
+  cluster_init_commands = length(var.nodes) > 1 ? templatefile("${path.module}/cluster_init.tftpl", {
+    original_node_address = var.nodes[0].public_address
+    original_node_host    = var.nodes[0].host
+    all_node_addresses    = local.cluster_join_probe_addresses
+  }) : null
 }
 
 # -----------------------------------------------------------------------------
 # Stability fix (intermittent failure: "joining node is not ready, status: error")
 #
-# The ThalesGroup/ciphertrust provider's `ciphertrust_cluster` resource performs
-# the cluster-join API call against the joining nodes. If those nodes report
-# transient `status: error` while their internal services are still settling
-# (which the CipherTrust Manager API is known to do for several minutes after
-# `set_password` returns "started"), the provider does NOT retry — it fails the
-# whole apply with `Error: joining node is not ready, status: error`.
+# The ThalesGroup/ciphertrust provider's `ciphertrust_cluster` resource checks the
+# services status only once, with no retry, and fails the whole apply if it isn't
+# "started". When the provider creates the cluster on the original node itself, that
+# node's cluster-raft service restarts and the node reports "error" for ~30s (then
+# "starting" for 1m). The provider's check often lands in that window.
 #
-# This null_resource adds an explicit pre-flight readiness probe that waits
-# until every node reports a healthy cluster-management API for several
-# consecutive checks. It is a no-op on the happy path and only adds latency
-# in the (previously fatal) case where one of the nodes is still settling.
+# To avoid it:
+# - cluster_join_readiness waits until every node is stable before we start.
+# - cluster_init activates a trial license on any unlicensed node (as the provider
+#   does when it creates the cluster itself, but not when the cluster already
+#   exists), creates the cluster on the original node and waits for the
+#   cluster-raft restart to settle. ciphertrust_cluster then finds the cluster
+#   already created and only joins the other nodes.
 # -----------------------------------------------------------------------------
 resource "null_resource" "cluster_join_readiness" {
   count = length(var.nodes) > 1 ? 1 : 0
@@ -100,6 +108,25 @@ resource "null_resource" "cluster_join_readiness" {
   }
 }
 
+resource "null_resource" "cluster_init" {
+  count = length(var.nodes) > 1 ? 1 : 0
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command     = local.cluster_init_commands
+    # Using env vars for credentials instead of template vars for security reasons
+    environment = {
+      CM_USER     = nonsensitive(var.credentials.user)
+      CM_PASSWORD = nonsensitive(var.credentials.password)
+    }
+  }
+  triggers = {
+    content = local.cluster_init_commands
+  }
+  depends_on = [
+    null_resource.cluster_join_readiness
+  ]
+}
+
 resource "ciphertrust_cluster" "cluster" {
   count = length(var.nodes) > 1 ? 1 : 0
   dynamic "node" {
@@ -111,7 +138,7 @@ resource "ciphertrust_cluster" "cluster" {
     }
   }
   depends_on = [
-    null_resource.cluster_join_readiness
+    null_resource.cluster_init
   ]
 }
 
