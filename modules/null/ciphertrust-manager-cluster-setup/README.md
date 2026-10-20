@@ -8,12 +8,13 @@ This Terraform module configures a CipherTrust Manager Cluster, connecting multi
 * Two or more running CipherTrust Manager servers.
 * Network access between the cluster nodes on the required ports (e.g., 5432).
 * API credentials (username & password) with permissions to manage DDC settings.
-* `jq` utility installed on the system executing Terraform (used in DDC node activation).
+* `jq` utility installed on the system executing Terraform (used in cluster initialization and DDC node activation).
 
 ## Resources Provisioned
 
 This module provisions the following:
 
+* A cluster initialization step using the CipherTrust REST API: activates the available trial license on any unlicensed node, creates the cluster on the first node and waits for it to stabilize.
 * A `ciphertrust_cluster` resource defining and forming the CipherTrust cluster.
 * Optional activation of the DDC Active Node using the CipherTrust REST API.
 

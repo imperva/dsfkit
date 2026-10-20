@@ -1,0 +1,154 @@
+#!/bin/bash
+# set -x
+set -e
+
+if ! command -v jq; then
+  echo "jq utility is required to run this module. Refer to jq installation steps in your workstation platform."
+  exit 1
+fi
+
+ORIGINAL_ADDRESS="${original_node_address}"
+ORIGINAL_HOST="${original_node_host}"
+ALL_ADDRESSES=(${all_node_addresses})
+
+POLL_INTERVAL=10
+CONSECUTIVE_REQUIRED=6     # ~60s of consecutive "started" responses
+STABLE_MAX_WAIT=900        # 15 minutes
+RAFT_RESTART_MAX_WAIT=180  # how long to wait for the post-creation cluster-raft restart to show up
+
+get_services_status () {
+  local addr="$1"
+  local resp
+  resp=$(curl -k -s --connect-timeout 5 --max-time 10 "https://$addr/api/v1/system/services/status" 2>/dev/null || true)
+  # Strip CR/LF that the CM API sometimes returns inside JSON values
+  resp=$${resp//$'\r'/}
+  resp=$${resp//$'\n'/ }
+  echo "$resp" | jq -r '.status' 2>/dev/null || echo ""
+}
+
+wait_for_stable_started () {
+  local addr="$1"
+  local elapsed=0
+  local consecutive_ok=0
+  while [ "$elapsed" -lt "$STABLE_MAX_WAIT" ]; do
+    status=$(get_services_status "$addr")
+    if [ "$status" = "started" ]; then
+      consecutive_ok=$((consecutive_ok + 1))
+      echo "[$addr] services started ($consecutive_ok/$CONSECUTIVE_REQUIRED)"
+      if [ "$consecutive_ok" -ge "$CONSECUTIVE_REQUIRED" ]; then
+        return 0
+      fi
+    else
+      echo "[$addr] services status='$status', waiting..."
+      consecutive_ok=0
+    fi
+    sleep "$POLL_INTERVAL"
+    elapsed=$((elapsed + POLL_INTERVAL))
+  done
+  echo "ERROR: [$addr] services did not stabilize within $${STABLE_MAX_WAIT}s"
+  return 1
+}
+
+get_token () {
+  local addr="$1"
+  local response body status token
+  response=$(curl -k -s -w "\n%%{http_code}" -X POST "https://$addr/api/v1/auth/tokens" \
+    --header "Content-Type: application/json" \
+    --data "$(jq -n --arg user "$CM_USER" --arg password "$CM_PASSWORD" \
+      '{grant_type: "password", labels: ["terraform"], username: $user, password: $password, refresh_token_lifetime: 1}')")
+  body=$(echo "$response" | sed '$d')
+  status=$(echo "$response" | tail -n1)
+  if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+    echo "[$addr] Failed to retrieve token. HTTP $status: $body" >&2
+    return 1
+  fi
+  token=$(echo "$body" | jq -r '.jwt')
+  if [ -z "$token" ] || [ "$token" = "null" ]; then
+    echo "[$addr] Failed to extract token" >&2
+    return 1
+  fi
+  echo "$token"
+}
+
+# Same as the provider's own license step: if the node has no license, activate its available trial.
+# The provider only does this for the nodes it creates the cluster with, so once the cluster already
+# exists it would try to join unlicensed nodes, which CM rejects ("Operation not permitted by current license").
+activate_trial_if_unlicensed () {
+  local addr="$1"
+  local token="$2"
+  local licenses trial_id response body status
+  licenses=$(curl -k -s "https://$addr/api/v1/licensing/licenses" --header "Authorization: Bearer $token" | jq -r '.total // 0')
+  if [ "$licenses" -gt 0 ]; then
+    echo "[$addr] already licensed."
+    return 0
+  fi
+  # The trials API returns either a plain array or a {resources: [...]} page
+  trial_id=$(curl -k -s "https://$addr/api/v1/licensing/trials" --header "Authorization: Bearer $token" \
+    | jq -r '(if type == "array" then . else (.resources // []) end) as $trials
+      | if ([$trials[] | select(.status == "activated")] | length) > 0 then ""
+        else ([$trials[] | select(.status == "available")][0].id // "") end')
+  if [ -z "$trial_id" ]; then
+    echo "[$addr] no license and no available trial to activate, continuing."
+    return 0
+  fi
+  echo "[$addr] activating trial license..."
+  response=$(curl -k -s -w "\n%%{http_code}" -X POST "https://$addr/api/v1/licensing/trials/$trial_id/activate" \
+    --header "Authorization: Bearer $token")
+  body=$(echo "$response" | sed '$d')
+  status=$(echo "$response" | tail -n1)
+  if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+    echo "[$addr] Failed to activate trial license. Status: $status, Response: $body"
+    return 1
+  fi
+  wait_for_stable_started "$addr"
+}
+
+# Step 1: Make sure every node is stable and licensed before touching the cluster
+for addr in "$${ALL_ADDRESSES[@]}"; do
+  wait_for_stable_started "$addr"
+  token=$(get_token "$addr")
+  activate_trial_if_unlicensed "$addr" "$token"
+done
+
+# Step 2: Skip creation if the original node is already part of a cluster (e.g. re-run after a partial apply)
+TOKEN=$(get_token "$ORIGINAL_ADDRESS")
+CLUSTER_SIZE=$(curl -k -s "https://$ORIGINAL_ADDRESS/api/v1/cluster/summary" \
+  --header "Authorization: Bearer $TOKEN" | jq -r '.total // 0')
+
+if [ "$CLUSTER_SIZE" -gt 0 ]; then
+  echo "[$ORIGINAL_ADDRESS] is already part of a cluster, skipping cluster creation."
+  exit 0
+fi
+
+# Step 3: Create the cluster on the original node
+echo "Creating cluster on $ORIGINAL_ADDRESS ($ORIGINAL_HOST)..."
+response=$(curl -k -s -w "\n%%{http_code}" -X POST "https://$ORIGINAL_ADDRESS/api/v1/cluster/new" \
+  --header "Authorization: Bearer $TOKEN" \
+  --header "Content-Type: application/json" \
+  --data "$(jq -n --arg host "$ORIGINAL_HOST" --arg address "$ORIGINAL_ADDRESS" '{localNodeHost: $host, publicAddress: $address}')")
+
+BODY=$(echo "$response" | sed '$d')
+STATUS=$(echo "$response" | tail -n1)
+
+if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 300 ]; then
+  echo "Failed to create cluster. Status: $STATUS, Response: $BODY"
+  exit 1
+fi
+echo "Cluster created on $ORIGINAL_ADDRESS."
+
+# Step 4: Creating the cluster restarts the node's cluster-raft service, which makes the node report
+# "error" for ~30s and then "starting" for 1m. Wait for that restart to happen and settle, so the
+# ciphertrust_cluster join (which checks the services status only once) doesn't run into it.
+elapsed=0
+while [ "$elapsed" -lt "$RAFT_RESTART_MAX_WAIT" ]; do
+  status=$(get_services_status "$ORIGINAL_ADDRESS")
+  if [ "$status" != "started" ]; then
+    echo "[$ORIGINAL_ADDRESS] services status='$status' after cluster creation, waiting for it to settle..."
+    break
+  fi
+  sleep "$POLL_INTERVAL"
+  elapsed=$((elapsed + POLL_INTERVAL))
+done
+
+wait_for_stable_started "$ORIGINAL_ADDRESS"
+echo "CipherTrust Manager cluster initialized on $ORIGINAL_ADDRESS."
