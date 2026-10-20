@@ -1,0 +1,16 @@
+PROXY_CMD=""
+if [ -n "${hub_proxy_address}" ]; then
+    PROXY_CMD='ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${hub_proxy_private_ssh_key_path} -W %h:%p ${hub_proxy_ssh_user}@${hub_proxy_address}'
+fi
+
+# Re-exchange the federation CA certificates between the hub and its registered remotes, in case the initial
+# exchange was incomplete (reported by health-checker as "Federated truststore certificates FAILURE").
+# refederate-remotes is idempotent, so it's safe to run when federation is already healthy.
+# It's a safety net on top of a federation that already succeeded, so a failure here doesn't fail the deployment.
+echo 'Running refederate-remotes on hub[${dsf_hub_ip}]'
+ssh -o ConnectionAttempts=6 -o ConnectTimeout=15 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $${PROXY_CMD:+-o ProxyCommand="$PROXY_CMD"} -i ${ssh_key_path} ${hub_ssh_user}@${dsf_hub_ip} '
+if sudo "$JSONAR_BASEDIR"/bin/federated --help | grep -q refederate-remotes; then
+    sudo "$JSONAR_BASEDIR"/bin/federated refederate-remotes
+else
+    echo "refederate-remotes is not supported by this Sonar version, skipping"
+fi' || echo 'Warning: refederate-remotes failed on hub[${dsf_hub_ip}]'
