@@ -661,6 +661,15 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
         <br/>4. Improvements and bug fixes.
      </td>  
   </tr>
+  <tr>
+    <td>TBD
+    </td>
+    <td>1.7.38</td>
+    <td>
+        1. Added support for Terraform versions up to 1.16.x.
+        <br/>2. Improvements and bug fixes.
+     </td>  
+  </tr>
   
 </table>
 
