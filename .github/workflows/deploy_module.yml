@@ -199,7 +199,11 @@ jobs:
         run: |
           find . | grep -v ".git/"
           git config --unset-all http.https://github.com/.extraheader # override github_action own authentication method
-          git remote set-url origin https://${github_token}@github.com/imperva/${destination_repo}.git
+          # pass the token as a header rather than in the remote URL - git drops URL credentials when github redirects, failing the push
+          auth_header=$(printf 'x-access-token:%s' "${github_token}" | base64 -w0)
+          echo "::add-mask::${auth_header}"
+          git config http.https://github.com/.extraheader "AUTHORIZATION: basic ${auth_header}"
+          git remote set-url origin https://github.com/imperva/${destination_repo}.git
           git branch -m main
           refs=$(git ls-remote --tags 2>/dev/null | awk '{print $NF}')
           if [ -n "$refs" ]; then

@@ -239,7 +239,7 @@ jobs:
       uses: hashicorp/setup-terraform@v2
       with:
         terraform_wrapper: false
-        terraform_version: ~1.7.0
+        terraform_version: ~1.16.0
 
     - name: Setup jq
       uses: sergeysova/jq-action@v2
@@ -269,7 +269,19 @@ jobs:
           mv $EXAMPLE_DIR/agentless_sources.tf{,_}
           mv $EXAMPLE_DIR/networking.tf{,_}
           ls -la $EXAMPLE_DIR
-          terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+          if ! terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve; then
+            # A resource that is no longer tracked in the state (e.g. an orphaned VM) can block the destroy (NicInUse).
+            # Delete the whole resource group directly, then let terraform reconcile the state.
+            rg_name=$(terraform -chdir=$EXAMPLE_DIR state show 'azurerm_resource_group.rg[0]' | awk -F'"' '/^ *name /{print $2}')
+            if [ -z "$rg_name" ]; then
+              echo "Could not determine the resource group from the state, failing"
+              exit 1
+            fi
+            echo "Destroy failed, deleting resource group $rg_name directly"
+            az login --service-principal -u "$ARM_CLIENT_ID" -p "$ARM_CLIENT_SECRET" --tenant "$ARM_TENANT_ID" --output none
+            az group delete --subscription "$ARM_SUBSCRIPTION_ID" --name "$rg_name" --yes
+            terraform -chdir=$EXAMPLE_DIR destroy -var dam_license=license.mprv -auto-approve
+          fi
           mv $EXAMPLE_DIR/main.tf{_,}
           mv $EXAMPLE_DIR/outputs.tf{_,}
           mv $EXAMPLE_DIR/sonar.tf{_,}
