@@ -446,15 +446,25 @@ variable "cte_ddc_agent_ebs_details" {
   }
 }
 
+variable "cte_ddc_agents_linux_rhel_version" {
+  type        = string
+  default     = "8"
+  description = "RHEL major version of the CTE and/or DDC agent linux servers, available versions are: ['8', '9']. The Linux installation files must match this version."
+  validation {
+    condition     = contains(["8", "9"], var.cte_ddc_agents_linux_rhel_version)
+    error_message = "Valid values for cte_ddc_agents_linux_rhel_version are: '8', '9'"
+  }
+}
+
 variable "cte_agent_linux_installation_file" {
   type        = string
-  description = "Path to the CTE agent linux (RHEL 8.9) installation file"
+  description = "Path to the CTE agent linux (RHEL 8 or 9, according to cte_ddc_agents_linux_rhel_version) installation file"
   default     = null
 }
 
 variable "ddc_agent_linux_installation_file" {
   type        = string
-  description = "Path to the DDC agent linux (RHEL 8.9) installation file"
+  description = "Path to the DDC agent linux (RHEL 8 or 9, according to cte_ddc_agents_linux_rhel_version) installation file"
   default     = null
 }
 

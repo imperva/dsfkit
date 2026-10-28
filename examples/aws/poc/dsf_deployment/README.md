@@ -115,8 +115,9 @@ Several variables in the `variables.tf` file are important for configuring the d
 
 ### CTE / DDC Agents for Simulation Purposes
 
-- `cte_agent_linux_installation_file`: Local path to the CTE agent installation file for Linux (RHEL 8.9).
-- `ddc_agent_linux_installation_file`: Local path to the DDC agent installation file for Linux (RHEL 8.9).
+- `cte_ddc_agents_linux_rhel_version`: RHEL major version of the Linux agent servers, `8` (default) or `9`. The Linux installation files must match it.
+- `cte_agent_linux_installation_file`: Local path to the CTE agent installation file for Linux (RHEL 8 or 9, according to `cte_ddc_agents_linux_rhel_version`).
+- `ddc_agent_linux_installation_file`: Local path to the DDC agent installation file for Linux (RHEL 8 or 9, according to `cte_ddc_agents_linux_rhel_version`).
 - `cte_agent_windows_installation_file`: Local path to the CTE agent installation file for Windows (Windows Server 2022).
 - `ddc_agent_windows_installation_file`: Local path to the DDC agent installation file for Windows (Windows Server 2022).
 

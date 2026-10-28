@@ -1,7 +1,7 @@
 # DSF CTE-DDC Agent
 [![GitHub tag](https://img.shields.io/github/v/tag/imperva/dsfkit.svg)](https://github.com/imperva/dsfkit/tags)
 
-This Terraform module provisions a CipherTrust Transparent Encryption (CTE) and/or Data Discovery and Classification (DDC) agent instance on AWS EC2, installs the required agent packages, registers them with a CipherTrust Manager, and handles connectivity, registration, and reboot where required. The module supports both Linux (RHEL 8.9) and Windows Server 2022.
+This Terraform module provisions a CipherTrust Transparent Encryption (CTE) and/or Data Discovery and Classification (DDC) agent instance on AWS EC2, installs the required agent packages, registers them with a CipherTrust Manager, and handles connectivity, registration, and reboot where required. The module supports both Linux (RHEL 8 or 9) and Windows Server 2022.
 
 ## Requirements
 * Terraform, refer to [versions.tf](https://github.com/imperva/dsfkit/blob/master/modules/aws/cte-ddc-agent/versions.tf) for supported versions.
@@ -12,7 +12,7 @@ This Terraform module provisions a CipherTrust Transparent Encryption (CTE) and/
 
 ## Resources Provisioned
 This Terraform module provisions several resources on AWS to create the DSF CTE-DDC Agent instance. These resources include:
-* An EC2 instance running Linux (RHEL 8.9) or Windows Server 2022.
+* An EC2 instance running Linux (RHEL 8 or 9) or Windows Server 2022.
 * A network interface (ENI).
 * A security group, unless a list of security groups is provided.
 * An optional elastic public IP.
@@ -32,6 +32,7 @@ The following input variables are **required**:
 
 Additionally, the following variables are often **required unless defaults suffice**:
 
+* `rhel_major_version`: RHEL major version when `os_type` is `Red Hat`. Supported values: `8` (default, RHEL 8.10), `9` (RHEL 9.4). The CTE and DDC installation files must match this version (e.g. the CTE `rh8` vs `rh9` build).
 * `allowed_ssh_cidrs`: CIDRs allowed to SSH into Linux/Windows agent instance (port 22).
 * `allowed_rdp_cidrs`: CIDRs allowed to RDP into Windows agent instance (port 3389).
 * `attach_persistent_public_ip`: Whether to allocate and attach an Elastic IP (default: `false`).
