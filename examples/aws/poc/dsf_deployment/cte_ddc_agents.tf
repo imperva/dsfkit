@@ -94,6 +94,7 @@ module "cte_ddc_agents" {
     ssh_public_key_name       = module.key_pair.key_pair.key_pair_name
   }
   os_type                      = each.value.os_type
+  rhel_major_version           = var.cte_ddc_agents_linux_rhel_version
   attach_persistent_public_ip  = true
   use_public_ip                = true
   allowed_ssh_cidrs            = concat(local.workstation_cidr, var.allowed_ssh_cidrs)

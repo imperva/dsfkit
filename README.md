@@ -667,7 +667,8 @@ The following table lists the _latest_ DSF Kit releases, their release date and 
     <td>1.7.38</td>
     <td>
         1. Added support for Terraform versions up to 1.16.x.
-        <br/>2. Improvements and bug fixes.
+        <br/>2. Added support for RHEL 9 in the CTE/DDC agent module and the PoC example (new `rhel_major_version` / `cte_ddc_agents_linux_rhel_version` variables, default remains RHEL 8).
+        <br/>3. Improvements and bug fixes.
      </td>  
   </tr>
   

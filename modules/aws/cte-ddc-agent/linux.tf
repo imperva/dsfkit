@@ -7,8 +7,8 @@ locals {
   ] : []
   ddc_agent_inline_commands_linux = var.agent_installation.ddc_agent_installation_file != null ? [
     "set -xe",
-    "sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm",
-    "sudo yum install libxml2 libgsasl openssl libcurl libuuid protobuf krb5-libs libaio libnsl -y",
+    "sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-${var.rhel_major_version}.noarch.rpm",
+    "sudo yum install libxml2 libgsasl openssl libcurl libuuid protobuf krb5-libs libaio ${var.rhel_major_version == "8" ? "libnsl" : "libnsl2"} -y",
     "sudo rpm -ivh ${basename(var.agent_installation.ddc_agent_installation_file)}",
     "sudo er2-config -i ${var.cipher_trust_manager_address}",
     "sudo er2-config -t",

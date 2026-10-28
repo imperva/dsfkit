@@ -91,6 +91,17 @@ variable "os_type" {
   }
 }
 
+variable "rhel_major_version" {
+  type        = string
+  description = "Red Hat Enterprise Linux major version of the agent instance, available versions are: ['8', '9']. Relevant only when 'os_type' is 'Red Hat'. The CTE and DDC installation files must match this version."
+  default     = "8"
+  nullable    = false
+  validation {
+    condition     = contains(["8", "9"], var.rhel_major_version)
+    error_message = "Valid values for rhel_major_version are: '8', '9'"
+  }
+}
+
 variable "agent_installation" {
   type = object({
     registration_token          = string
